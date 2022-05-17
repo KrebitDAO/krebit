@@ -1,0 +1,10 @@
+{
+  "name": "tsconfig",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "ISC",
+  "files": [
+    "base.json",
+    "nextjs.json"
+  ]
+}
