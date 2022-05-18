@@ -1,5 +1,5 @@
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
+import { getResolver } from '@ceramicnetwork/3id-did-resolver';
 import { ThreeIdConnect, EthereumAuthProvider } from '@3id/connect';
 import { DataModel } from '@glazed/datamodel';
 import { DIDDataStore } from '@glazed/did-datastore';
@@ -23,7 +23,7 @@ const authenticateDID = async (address: string, ethProvider: any) => {
 
   const did = new DID({
     provider,
-    resolver: ThreeIdResolver.getResolver(client),
+    resolver: getResolver(client),
   });
   await did.authenticate();
   await client.setDID(did);
