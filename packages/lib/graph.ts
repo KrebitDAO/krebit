@@ -24,7 +24,7 @@ interface GetProps {
 const { APP_GRAPH_URL } = process.env;
 
 const client = createClient({
-  url: APP_GRAPH_URL,
+  url: APP_GRAPH_URL!,
 });
 
 const verifiableCredentialsQuery = async (props: ListProps) => {

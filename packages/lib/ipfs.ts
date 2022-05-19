@@ -94,7 +94,7 @@ const getCitiesByCountry = async (countryCode: string) => {
 const getCityByCode = async (locode: string) => {
   let cityList = await getCitiesByCountry(locode.split(' ')[0]);
 
-  let codex = cityList.findIndex(c => {
+  let codex = cityList.findIndex((c: any) => {
     return c.locode === locode;
   });
 
@@ -114,7 +114,7 @@ const getIPFSFile = async (ipfsHash: string) => {
 };
 
 const getClaimTypes = async () => {
-  const ipfsPath = APP_CLAIM_TYPES;
+  const ipfsPath = APP_CLAIM_TYPES!;
   const chunks = [];
 
   for await (const chunk of ipfs.cat(ipfsPath)) {
