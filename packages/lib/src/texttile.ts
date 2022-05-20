@@ -1,12 +1,13 @@
 import { Client, createUserAuth, Identity } from '@textile/hub';
 
-const { APP_USER_GROUP_KEY, APP_USER_GROUP_SECRET } = process.env;
+const USER_GROUP_KEY = process.env.NEXT_PUBLIC_USER_GROUP_KEY;
+const USER_GROUP_SECRET = process.env.NEXT_PUBLIC_USER_GROUP_SECRET;
 
 const setAuth = async () => {
   const expiration = new Date(Date.now() + 3600 * 1000 * 24);
   const userAuth = await createUserAuth(
-    APP_USER_GROUP_KEY,
-    APP_USER_GROUP_SECRET,
+    USER_GROUP_KEY,
+    USER_GROUP_SECRET,
     expiration
   );
 

@@ -21,15 +21,16 @@ interface ICountry {
   ];
 }
 
-const { APP_IPFS_GATEWAY, APP_UNLOCODE_FOLDER, APP_CLAIM_TYPES } = process.env;
+const IPFS_GATEWAY = process.env.NEXT_PUBLIC_IPFS_GATEWAY;
+const UNLOCODE_FOLDER = process.env.NEXT_PUBLIC_UNLOCODE_FOLDER;
+const CLAIM_TYPES = process.env.NEXT_PUBLIC_CLAIM_TYPES;
 
 const ipfs = create({
-  url: APP_IPFS_GATEWAY,
+  url: IPFS_GATEWAY,
 });
-(window as any).ipfs = ipfs;
 
 const getCountryByCode = async (isoCode: string) => {
-  const ipfsPath = APP_UNLOCODE_FOLDER + '/country.json';
+  const ipfsPath = UNLOCODE_FOLDER + '/country.json';
   const chunks = [];
 
   for await (const chunk of ipfs.cat(ipfsPath)) {
@@ -47,7 +48,7 @@ const getCountryByCode = async (isoCode: string) => {
 };
 
 const getCountries = async () => {
-  const ipfsPath = APP_UNLOCODE_FOLDER + '/country.json';
+  const ipfsPath = UNLOCODE_FOLDER + '/country.json';
   const chunks = [];
 
   for await (const chunk of ipfs.cat(ipfsPath)) {
@@ -70,7 +71,7 @@ const getCountries = async () => {
 
 const getCitiesByCountry = async (countryCode: string) => {
   const ipfsPath =
-    APP_UNLOCODE_FOLDER + '/cities/' + countryCode.toLowerCase() + '.json';
+    UNLOCODE_FOLDER + '/cities/' + countryCode.toLowerCase() + '.json';
   const chunks = [];
 
   for await (const chunk of ipfs.cat(ipfsPath)) {
@@ -114,7 +115,7 @@ const getIPFSFile = async (ipfsHash: string) => {
 };
 
 const getClaimTypes = async () => {
-  const ipfsPath = APP_CLAIM_TYPES!;
+  const ipfsPath = CLAIM_TYPES!;
   const chunks = [];
 
   for await (const chunk of ipfs.cat(ipfsPath)) {

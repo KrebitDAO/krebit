@@ -2,7 +2,8 @@ import { ethers } from 'ethers';
 
 import { krbToken } from './schemas';
 
-const { APP_NETWORK_PROVIDER, APP_NETWORK } = process.env;
+const NETWORK_PROVIDER = process.env.NEXT_PUBLIC_NETWORK_PROVIDER;
+const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
 
 const getProvider = async () => {
   if (window && (window as any).ethereum) {
@@ -11,7 +12,7 @@ const getProvider = async () => {
         method: 'wallet_switchEthereumChain',
         params: [
           {
-            chainId: `0x${Number(krbToken[APP_NETWORK].domain.chainId).toString(
+            chainId: `0x${Number(krbToken[NETWORK].domain.chainId).toString(
               16
             )}`,
           },
@@ -24,17 +25,17 @@ const getProvider = async () => {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: `0x${Number(
-                  krbToken[APP_NETWORK].domain.chainId
-                ).toString(16)}`,
-                rpcUrls: [APP_NETWORK_PROVIDER],
-                chainName: krbToken[APP_NETWORK].name,
+                chainId: `0x${Number(krbToken[NETWORK].domain.chainId).toString(
+                  16
+                )}`,
+                rpcUrls: [NETWORK_PROVIDER],
+                chainName: krbToken[NETWORK].name,
                 nativeCurrency: {
-                  name: krbToken[APP_NETWORK].token,
-                  symbol: krbToken[APP_NETWORK].token,
+                  name: krbToken[NETWORK].token,
+                  symbol: krbToken[NETWORK].token,
                   decimals: 18,
                 },
-                blockExplorerUrls: [krbToken[APP_NETWORK].blockUrl],
+                blockExplorerUrls: [krbToken[NETWORK].blockUrl],
               },
             ],
           });
@@ -47,13 +48,13 @@ const getProvider = async () => {
     } finally {
       const provider = new ethers.providers.Web3Provider(
         (window as any).ethereum,
-        APP_NETWORK
+        NETWORK
       );
 
       (window as any).ethereum.on('chainChanged', (newNetwork: string) => {
         if (
           newNetwork !=
-          `0x${Number(krbToken[APP_NETWORK].domain.chainId).toString(16)}`
+          `0x${Number(krbToken[NETWORK].domain.chainId).toString(16)}`
         ) {
           window.location.reload();
         }
@@ -63,7 +64,7 @@ const getProvider = async () => {
     }
   }
 
-  return new ethers.providers.JsonRpcProvider(APP_NETWORK_PROVIDER);
+  return new ethers.providers.JsonRpcProvider(NETWORK_PROVIDER);
 };
 
 export { getProvider };

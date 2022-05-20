@@ -7,9 +7,9 @@ import { DID } from 'dids';
 
 import { datamodel, idx } from './schemas';
 
-const { SERVER_CERAMIC_URL } = process.env;
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL;
 
-const client = new CeramicClient(SERVER_CERAMIC_URL);
+const client = new CeramicClient(CERAMIC_URL);
 
 const authenticateDID = async (address: string, ethProvider: any) => {
   const threeIdConnect = new ThreeIdConnect();

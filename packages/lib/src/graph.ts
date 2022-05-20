@@ -21,10 +21,10 @@ interface GetProps {
   id: string;
 }
 
-const { APP_GRAPH_URL } = process.env;
+const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL;
 
 const client = createClient({
-  url: APP_GRAPH_URL!,
+  url: GRAPH_URL!,
 });
 
 const verifiableCredentialsQuery = async (props: ListProps) => {

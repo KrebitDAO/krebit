@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel"
+    "dev": "turbo run dev --parallel --no-cache",
+    "clean": "turbo run clean && rm -rf node_modules"
   },
   "workspaces": [
     "apps/*",
