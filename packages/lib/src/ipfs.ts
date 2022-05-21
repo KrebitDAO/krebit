@@ -29,6 +29,10 @@ const ipfs = create({
   url: IPFS_GATEWAY,
 });
 
+if (global.window) {
+  (window as any).ipfs = ipfs;
+}
+
 const getCountryByCode = async (isoCode: string) => {
   const ipfsPath = UNLOCODE_FOLDER + '/country.json';
   const chunks = [];
