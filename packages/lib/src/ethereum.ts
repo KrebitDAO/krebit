@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 
+import { WalletProvider } from './utils';
 import { krbToken } from './schemas';
 
 const NETWORK_PROVIDER = process.env.NEXT_PUBLIC_NETWORK_PROVIDER;
@@ -64,7 +65,7 @@ const getProvider = async () => {
     }
   }
 
-  return new ethers.providers.JsonRpcProvider(NETWORK_PROVIDER);
+  return new WalletProvider(NETWORK_PROVIDER, NETWORK);
 };
 
 export { getProvider };
