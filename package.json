@@ -1,0 +1,31 @@
+{
+  "name": "krebit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "dotenv -e .env -- turbo run dev --parallel --no-cache",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KrebitDAO/krebit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KrebitDAO/krebit/issues"
+  },
+  "homepage": "https://github.com/KrebitDAO/krebit#readme",
+  "devDependencies": {
+    "dotenv-cli": "^5.1.0",
+    "turbo": "^1.2.9"
+  }
+}
