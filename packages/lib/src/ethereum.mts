@@ -1,13 +1,17 @@
 import { ethers } from 'ethers';
 
-import { WalletProvider } from './utils';
-import { krbToken } from './schemas';
+import { WalletProvider } from './utils/index.mjs';
+import { krbToken } from './schemas/index.mjs';
 
 const NETWORK_PROVIDER = process.env.NEXT_PUBLIC_NETWORK_PROVIDER;
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
 
 const getProvider = async () => {
-  if (window && (window as any).ethereum) {
+  if (!global.window) {
+    return new WalletProvider(NETWORK_PROVIDER, NETWORK);
+  }
+
+  if ((window as any).ethereum) {
     try {
       await (window as any).ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -64,8 +68,6 @@ const getProvider = async () => {
       return provider;
     }
   }
-
-  return new WalletProvider(NETWORK_PROVIDER, NETWORK);
 };
 
 export { getProvider };

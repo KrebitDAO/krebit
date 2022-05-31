@@ -3,8 +3,8 @@ import { DIDDataStore } from '@glazed/did-datastore';
 import eip712VC from '@krebitdao/eip712-vc';
 import { PrivateKey, PublicKey, Users } from '@textile/hub';
 
-import { krbToken } from '../schemas';
-import { ILastMessage } from './getLastMessage';
+import { krbToken } from '../schemas/index.mjs';
+import { ILastMessage } from './getLastMessage.mjs';
 
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
 const TRUST = 100;

@@ -1,4 +1,4 @@
-import { datamodel } from './datamodel';
+import { datamodel } from './datamodel.mjs';
 import encodedModel from './encodedModel.json';
 import idx from './idx.json';
 import krbToken from './krbToken.json';

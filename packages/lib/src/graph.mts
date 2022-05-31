@@ -1,4 +1,4 @@
-import { createClient } from 'urql';
+import urql from 'urql';
 
 import {
   verifiableCredentials,
@@ -8,7 +8,7 @@ import {
   credentialRegistry,
   erc20Balance,
   erc20Balances,
-} from './queries';
+} from './queries/index.mjs';
 
 interface ListProps {
   first?: number;
@@ -23,7 +23,7 @@ interface GetProps {
 
 const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL;
 
-const client = createClient({
+const client = urql.createClient({
   url: GRAPH_URL!,
 });
 

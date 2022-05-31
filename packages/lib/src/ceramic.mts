@@ -9,7 +9,7 @@ import { hash } from '@stablelib/sha256';
 import { fromString } from 'uint8arrays';
 import { DID } from 'dids';
 
-import { datamodel, idx } from './schemas';
+import { datamodel, idx } from './schemas/index.mjs';
 
 const authSecretMsg = 'Allow this account to control your identity';
 const DID_ERROR = 'Self.id not authenticated';
