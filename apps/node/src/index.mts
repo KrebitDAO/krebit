@@ -4,8 +4,8 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { ethereum, texttile, schemas, utils, ceramic } from 'lib';
 
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL;
 const ETHEREUM_SEED = process.env.SERVER_ETHEREUM_SEED;
-const CERAMIC_URL = process.env.NODE_APP_CERAMIC_URL;
 
 const ceramicClient = new CeramicClient(CERAMIC_URL);
 
