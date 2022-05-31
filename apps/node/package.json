@@ -1,0 +1,24 @@
+{
+  "name": "node",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.mjs",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "tsc",
+    "start": "node --experimental-json-modules dist/index.mjs",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lib": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.36",
+    "tsconfig": "*",
+    "typescript": "^4.7.2"
+  }
+}
