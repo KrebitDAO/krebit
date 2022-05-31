@@ -25,9 +25,9 @@ export const getED25519 = async (idx: DIDDataStore, ceramic: CeramicClient) => {
     await idx.set(CURRENT_VALUE, ed25519);
   }
 
-  const ed25519Private = (
-    await ceramic.did.decryptJWE(ed25519.privateKey)
-  ).toString();
+  const ed25519Private = (await ceramic.did.decryptJWE(
+    ed25519.privateKey
+  )) as Uint8Array & string;
   ed25519Identity = PrivateKey.fromString(ed25519Private);
 
   return ed25519Identity;

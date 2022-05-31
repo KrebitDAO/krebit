@@ -4,7 +4,9 @@ const USER_GROUP_KEY = process.env.NEXT_PUBLIC_USER_GROUP_KEY;
 const USER_GROUP_SECRET = process.env.NEXT_PUBLIC_USER_GROUP_SECRET;
 
 const setAuth = async () => {
+  // Create an expiration and create a signature. 60s or less is recommended.
   const expiration = new Date(Date.now() + 3600 * 1000 * 24);
+  // Generate a new UserAuth
   const userAuth = await createUserAuth(
     USER_GROUP_KEY,
     USER_GROUP_SECRET,
