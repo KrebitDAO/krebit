@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "private": true,
+  "packageManager": "yarn@1.22.18",
   "scripts": {
     "build": "turbo run build",
     "dev": "dotenv -e .env -- turbo run dev --parallel --no-cache",
     "clean": "turbo run clean && rm -rf node_modules",
-    "node-start": "dotenv -e .env -- turbo run start --filter=node --no-cache"
+    "node-start": "turbo run start --filter=node"
   },
   "workspaces": [
     "apps/*",

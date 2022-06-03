@@ -91,8 +91,8 @@ const run = async () => {
 
                   // Connect to discord and get user ID from token
                   const discord = await utils.getDiscordUser(
-                    description.evidence.accessToken,
-                    description.evidence.tokenType
+                    description.evidence.tokenType,
+                    description.evidence.accessToken
                   );
 
                   // If discord userID == the VC userID
