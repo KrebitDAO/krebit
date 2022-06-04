@@ -18,7 +18,7 @@ export interface ILastMessage {
   deal: any;
 }
 
-const MESSAGES_LIMIT = 20;
+const MESSAGES_LIMIT = parseInt(process.env.SERVER_MESSAGES_LIMIT, 10);
 
 export const getLastMessage = async (
   ed25519: PrivateKey,

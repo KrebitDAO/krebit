@@ -6,6 +6,7 @@ import { ethereum, texttile, schemas, utils, ceramic } from 'lib';
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
 const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL;
 const ETHEREUM_SEED = process.env.SERVER_ETHEREUM_SEED;
+const DELAY_TIME = parseInt(process.env.SERVER_DELAY_TIME, 10);
 
 const ceramicClient = new CeramicClient(CERAMIC_URL);
 
@@ -141,6 +142,8 @@ const run = async () => {
       }
     }
 
+    // Once all this process is done, let sleep the node for a while
+    await utils.sleep(DELAY_TIME);
     process.exit(0);
   } catch (error) {
     throw new Error(error);

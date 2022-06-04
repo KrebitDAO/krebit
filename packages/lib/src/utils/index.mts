@@ -3,6 +3,7 @@ import { getED25519 } from './getED25519.mjs';
 import { getLastMessage } from './getLastMessage.mjs';
 import { getDiscordUser } from './getDiscordUser.mjs';
 import { verifyClaim } from './verifyClaim.mjs';
+import { sleep } from './sleep.mjs';
 
 export {
   WalletProvider,
@@ -10,4 +11,5 @@ export {
   getLastMessage,
   getDiscordUser,
   verifyClaim,
+  sleep,
 };

@@ -7,9 +7,9 @@ import { krbToken } from '../schemas/index.mjs';
 import { ILastMessage } from './getLastMessage.mjs';
 
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
-const TRUST = 100;
-const STAKE = 1;
-const EXPIRES_YEARS = '3';
+const TRUST = parseInt(process.env.SERVER_TRUST, 10);
+const STAKE = parseInt(process.env.SERVER_STAKE, 10);
+const EXPIRES_YEARS = parseInt(process.env.SERVER_EXPIRES_YEARS, 10);
 
 export const verifyClaim = async (
   wallet: ethers.Wallet,
@@ -22,9 +22,7 @@ export const verifyClaim = async (
   const issuanceDate = Date.now() - 1000 * 60 * 60 * 12;
   const expirationDate = new Date();
 
-  expirationDate.setFullYear(
-    expirationDate.getFullYear() + Number(EXPIRES_YEARS)
-  );
+  expirationDate.setFullYear(expirationDate.getFullYear() + EXPIRES_YEARS);
 
   const credential = {
     '@context': [
@@ -40,9 +38,7 @@ export const verifyClaim = async (
     credentialSubject: {
       ...claim.credentialSubject,
       nbf: Math.floor(issuanceDate / 1000),
-      exp: Number(EXPIRES_YEARS)
-        ? Math.floor(expirationDate.getTime() / 1000)
-        : 0,
+      exp: EXPIRES_YEARS ? Math.floor(expirationDate.getTime() / 1000) : 0,
       trust: TRUST,
       stake: STAKE,
       price: message.deal.price * 10 ** 18,
