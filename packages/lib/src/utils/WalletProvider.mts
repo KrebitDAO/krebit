@@ -23,24 +23,20 @@ export class WalletProvider extends ethers.providers.JsonRpcProvider {
       );
 
       params(null, { result: signature });
-    }
-
-    if (method == 'eth_sign') {
+    } else if (method == 'eth_sign') {
       const signature = await this._wallet.signMessage(
         ethers.utils.arrayify(params[1])
       );
 
       return signature;
-    }
-
-    if (method == 'eth_accounts') {
+    } else if (method == 'eth_accounts') {
       return [this._wallet.address];
+    } else {
+      if (method.method && typeof params === 'function') {
+        params(null, await super.send(method.method, method.params));
+      } else {
+        return await super.send(method, params);
+      }
     }
-
-    if (method.method && typeof params === 'function') {
-      params(null, await super.send(method.method, method.params));
-    }
-
-    return await super.send(method, params);
   };
 }

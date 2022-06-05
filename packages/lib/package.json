@@ -2,9 +2,9 @@
   "name": "lib",
   "version": "0.0.1",
   "description": "",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "source": "./src/index.ts",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "source": "./src/index.mts",
   "files": [
     "dist/**"
   ],
@@ -18,14 +18,18 @@
   "license": "ISC",
   "dependencies": {
     "@3id/connect": "^0.4.1",
+    "@3id/did-provider": "^0.4.1",
     "@ceramicnetwork/3id-did-resolver": "^2.0.0",
     "@ceramicnetwork/http-client": "^2.0.0",
     "@glazed/datamodel": "^0.3.0",
     "@glazed/did-datastore": "^0.3.0",
+    "@krebitdao/eip712-vc": "^0.3.4",
     "@textile/hub": "^6.3.4",
     "dids": "^3.1.0",
     "ethers": "^5.6.6",
+    "graphql": "^16.5.0",
     "ipfs-http-client": "^56.0.3",
+    "key-did-resolver": "^2.0.4",
     "uint8arrays": "^3.0.0",
     "urql": "^2.2.0"
   },
