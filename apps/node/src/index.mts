@@ -99,7 +99,7 @@ const run = async () => {
                   // If discord userID == the VC userID
                   if (discord.id === value.id) {
                     // Issue Verifiable credential
-                    console.log('good discord:', discord);
+                    console.log('Valid discord:', discord);
                     const result = await utils.verifyClaim(
                       wallet,
                       idx,
@@ -129,6 +129,53 @@ const run = async () => {
               throw new Error(
                 `No claims attached, message deleted: ${message.id}`
               );
+            }
+          } else if (message.subject === 'Import from Dework') {
+            // Connect to discord and get reputation from address
+            const dework = await utils.getDeworkUser(message.address);
+
+            console.log('Importing from dework:', dework.address);
+
+            if (dework.tasks && dework.tasks.length > 0) {
+              let results = 0;
+              for (let task of dework.tasks) {
+                console.log('Importing task:', task);
+                if (task.rewards && task.rewards.length > 0) {
+                  let claim = {
+                    id: task.permalink,
+                    credentialSubject: {
+                      ethereumAddress: message.address,
+                      id: message.did,
+                      type: 'workExperience',
+                      issuingEntity: 'Dework',
+                      value: JSON.stringify(task),
+                      encrypted: 'null',
+                      typeSchema:
+                        'https://github.com/KrebitDAO/schemas/workExperience',
+                      startDate: 'null',
+                      endDate: task.date,
+                      evidence:
+                        'https://api.deworkxyz.com/v1/reputation/' +
+                        message.address,
+                    },
+                  };
+                  //console.log('Importing claim:', claim);
+                  let result = await utils.verifyClaim(
+                    wallet,
+                    idx,
+                    message,
+                    claim,
+                    ed25519,
+                    userAPI
+                  );
+                  if (result) results++;
+                }
+              }
+              // Delete message
+              if (results == dework.tasks.length) {
+                await userAPI.deleteInboxMessage(message.id);
+                console.log('Message deleted: ', message.id);
+              }
             }
           } else {
             // Else mark message as Read
