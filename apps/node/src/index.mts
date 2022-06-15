@@ -134,7 +134,7 @@ const run = async () => {
             // Connect to discord and get reputation from address
             const dework = await utils.getDeworkUser(message.address);
 
-            console.log('Importing from dework:', dework.address);
+            console.log('Importing from Dework:', dework.address);
 
             if (dework.tasks && dework.tasks.length > 0) {
               let results = 0;
@@ -144,19 +144,21 @@ const run = async () => {
                   let claim = {
                     id: task.permalink,
                     credentialSubject: {
+                      encrypted: 'null',
                       ethereumAddress: message.address,
                       id: message.did,
                       type: 'workExperience',
-                      issuingEntity: 'Dework',
-                      value: JSON.stringify(task),
-                      encrypted: 'null',
+                      value: JSON.stringify({
+                        ...task,
+                        issuingEntity: 'Dework',
+                        startDate: 'null',
+                        endDate: task.date,
+                        evidence:
+                          'https://api.deworkxyz.com/v1/reputation/' +
+                          message.address,
+                      }),
                       typeSchema:
                         'https://github.com/KrebitDAO/schemas/workExperience',
-                      startDate: 'null',
-                      endDate: task.date,
-                      evidence:
-                        'https://api.deworkxyz.com/v1/reputation/' +
-                        message.address,
                     },
                   };
                   //console.log('Importing claim:', claim);
