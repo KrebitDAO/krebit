@@ -137,7 +137,6 @@ const run = async () => {
             console.log('Importing from Dework:', dework.address);
 
             if (dework.tasks && dework.tasks.length > 0) {
-              let results = 0;
               for (let task of dework.tasks) {
                 console.log('Importing task:', task);
                 if (task.rewards && task.rewards.length > 0) {
@@ -170,14 +169,12 @@ const run = async () => {
                     ed25519,
                     userAPI
                   );
-                  if (result) results++;
                 }
               }
               // Delete message
-              if (results == dework.tasks.length) {
-                await userAPI.deleteInboxMessage(message.id);
-                console.log('Message deleted: ', message.id);
-              }
+
+              await userAPI.deleteInboxMessage(message.id);
+              console.log('Message deleted: ', message.id);
             }
           } else {
             // Else mark message as Read
