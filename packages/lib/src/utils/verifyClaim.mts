@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { DIDDataStore } from '@glazed/did-datastore';
+import { TileDocument } from '@ceramicnetwork/stream-tile';
 import eip712VC from '@krebitdao/eip712-vc';
 import { PrivateKey, PublicKey, Users } from '@textile/hub';
 
@@ -81,15 +82,30 @@ export const verifyClaim = async (
       console.log('Saving signed attestation on Self.Id...');
 
       // Update Attestations
+      /*
       const attestationDoc = await idx.model.createTile(
         'VerifiableCredential',
         w3Credential
       );
+      */
+
+      const attestationDoc = await TileDocument.create(
+        idx.ceramic,
+        w3Credential,
+        {
+          schema: idx.model.getSchemaURL('VerifiableCredential'),
+          family: 'krebit',
+          controllers: [idx.id],
+          tags: credential.type,
+        }
+      );
+      console.log('Created stream: ', attestationDoc.id.toUrl());
+
       const krbProfile = await idx.get('issuedCredentials');
 
       let result = null;
 
-      if (krbProfile) {
+      if (krbProfile && krbProfile.issued && krbProfile.issued.length < 100) {
         const current = krbProfile.issued ? krbProfile.issued : [];
 
         if (!current.includes(attestationDoc.id.toUrl())) {
