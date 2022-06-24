@@ -166,20 +166,25 @@ export const Wrapper = styled.div`
     }
 
     .decentralized {
-      margin-top: 150px;
+      margin-top: 75px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        margin-top: 150px;
+      }
 
       .decentralized-title {
         font-family: 'HelveticaNowDisplay-Medium';
         font-size: ${theme.fonts['4xl']};
         color: ${theme.colors.bunting};
-        margin: 75px 20px;
+        margin: 0 20px;
+        margin-bottom: 75px;
         max-width: 901px;
+        text-align: center;
 
         @media (min-width: ${theme.screens.lg}) {
           margin: 0 auto;
           margin-bottom: 150px;
           font-size: ${theme.fonts['6xl']};
-          text-align: center;
         }
       }
     }
