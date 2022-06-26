@@ -27,18 +27,21 @@ export const Wrapper = styled.nav<Props>`
       align-items: center;
 
       .logo {
-        width: 101px;
-        height: 35px;
-        background-image: url('/imgs/logos/Logo.svg');
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
         cursor: pointer;
         z-index: 20;
 
-        @media (min-width: ${theme.screens.lg}) {
-          height: 51px;
-          width: 153px;
+        & > svg {
+          width: 101px;
+          height: 35px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            height: 51px;
+            width: 153px;
+          }
+
+          & > .color {
+            fill: ${theme.colors.white};
+          }
         }
       }
 

@@ -6,13 +6,11 @@ interface Props {
   text: string;
   primaryColor: string;
   secondaryColor: string;
-  backgroundColor: string;
   onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 export const Button: FunctionComponent<Props> = props => {
-  const { text, primaryColor, secondaryColor, backgroundColor, onClick } =
-    props;
+  const { text, primaryColor, secondaryColor, onClick } = props;
 
   return (
     <Wrapper

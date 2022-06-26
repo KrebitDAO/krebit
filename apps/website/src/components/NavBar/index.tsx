@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { Wrapper } from './styles';
-import { Menu, Close } from 'components/Icons';
+import { Menu, Close, Logo } from 'components/Icons';
 import { Button } from 'components/Button';
 
 export const NavBar = () => {
@@ -16,7 +16,9 @@ export const NavBar = () => {
     <Wrapper isMenuOpen={isMenuOpen}>
       <div className="header">
         <Link href="/">
-          <div className="logo"></div>
+          <div className="logo">
+            <Logo />
+          </div>
         </Link>
         <div className="menu" onClick={handleMenuOpen}>
           {isMenuOpen ? <Close /> : <Menu />}
@@ -31,7 +33,6 @@ export const NavBar = () => {
               text="Connect wallet"
               primaryColor="cyan"
               secondaryColor="rose"
-              backgroundColor="#5a86f4"
               onClick={() => {}}
             />
           </div>
@@ -48,7 +49,6 @@ export const NavBar = () => {
             text="Connect wallet"
             primaryColor="rose"
             secondaryColor="blueRibbon"
-            backgroundColor="#5a86f4"
             onClick={() => {}}
           />
         </div>

@@ -459,6 +459,10 @@ export const Wrapper = styled.div`
     .brands {
       margin-bottom: 75px;
 
+      @media (min-width: ${theme.screens.lg}) {
+        margin-bottom: 150px;
+      }
+
       .brands-title {
         font-family: 'HelveticaNowDisplay-Medium';
         font-size: ${theme.fonts.xl};
@@ -599,6 +603,125 @@ export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
       color: ${theme.colors.bunting};
       line-height: 1.4;
       transition: 0.5s;
+    }
+  `}
+`;
+
+export const Footer = styled.footer`
+  ${({ theme }) => css`
+    .footer-image {
+      background-image: url('/imgs/images/home.png');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 100%;
+      height: 607px;
+      display: grid;
+      justify-content: center;
+      align-content: center;
+      grid-gap: 58px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        height: 673px;
+        grid-gap: 47px;
+      }
+
+      .footer-image-title {
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts['4xl']};
+        color: ${theme.colors.cyan};
+        text-align: center;
+        padding: 0 20px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts['6xl']};
+          padding: 0;
+          max-width: 683px;
+          width: 100%;
+        }
+      }
+
+      .footer-image-button {
+        width: 170px;
+        height: 49px;
+        margin: 0 auto;
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 211px;
+          height: 58px;
+        }
+      }
+    }
+
+    .footer-content {
+      padding: 35px 0;
+      display: grid;
+      justify-content: center;
+      grid-gap: 95px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        padding: 40px 94px;
+        justify-content: space-between;
+        align-items: center;
+        grid-template-columns: repeat(2, auto);
+        grid-gap: 0;
+      }
+
+      .footer-content-left {
+        display: grid;
+        grid-gap: 16px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          grid-template-columns: repeat(2, auto);
+          grid-gap: 32px;
+          align-items: center;
+        }
+
+        .footer-content-left-logo {
+          margin: 0 auto;
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin: 0;
+          }
+
+          & > svg {
+            width: 101px;
+            height: 35px;
+
+            @media (min-width: ${theme.screens.lg}) {
+              height: 51px;
+              width: 153px;
+            }
+
+            & > .color {
+              fill: ${theme.colors.white};
+            }
+          }
+        }
+
+        .footer-content-left-text {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.bunting};
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts.base};
+          }
+        }
+      }
+
+      .footer-content-right {
+        display: flex;
+        grid-gap: 36px;
+
+        .footer-content-right-option {
+          font-family: 'HelveticaNowDisplay-Medium';
+          font-size: ${theme.fonts.base};
+          margin: 0;
+          color: ${theme.colors.bunting};
+          cursor: pointer;
+        }
+      }
     }
   `}
 `;
