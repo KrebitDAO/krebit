@@ -48,6 +48,8 @@ declare module '@emotion/react' {
       white: string;
       transparent: string;
       cyan: string;
+      wildSand: string;
+      haiti: string;
     };
     shadows: {
       smallest: string;

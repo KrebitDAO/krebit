@@ -1,57 +1,14 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+interface PrivateOptionQuestionProps {
+  isExtended: boolean;
+}
+
 export const Wrapper = styled.div`
   ${({ theme }) => css`
     max-width: 1474px;
     margin: 0 auto;
-
-    /* .body-ellipse-5 {
-      background-image: url('/imgs/backgrounds/Ellipse_5.svg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      position: absolute;
-      width: 100%;
-      height: 654.68px;
-      left: -137px;
-      top: 271.85px;
-      background-color: #ff0087;
-      filter: blur(100px);
-      transform: rotate(-15deg);
-      z-index: 0;
-    }
-
-    .body-ellipse-6 {
-      background-image: url('/imgs/backgrounds/Ellipse_6.svg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      position: absolute;
-      width: 100%;
-      height: 650px;
-      left: -248px;
-      top: -53px;
-      background-color: #00fffe;
-      filter: blur(100px);
-
-      z-index: 0;
-    }
-
-    .body-ellipse-12 {
-      background-image: url('/imgs/backgrounds/Ellipse_12.svg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      position: absolute;
-      width: 100%;
-      height: 399px;
-      left: 0;
-      top: -162px;
-      background-color: #f1f6fa;
-      filter: blur(100px);
-      z-index: 0;
-    } */
 
     .main {
       min-height: 100vh;
@@ -166,17 +123,16 @@ export const Wrapper = styled.div`
     }
 
     .decentralized {
-      margin-top: 75px;
+      margin: 75px 20px;
 
       @media (min-width: ${theme.screens.lg}) {
-        margin-top: 150px;
+        margin: 150px 0;
       }
 
       .decentralized-title {
         font-family: 'HelveticaNowDisplay-Medium';
         font-size: ${theme.fonts['4xl']};
         color: ${theme.colors.bunting};
-        margin: 0 20px;
         margin-bottom: 75px;
         max-width: 901px;
         text-align: center;
@@ -187,6 +143,462 @@ export const Wrapper = styled.div`
           font-size: ${theme.fonts['6xl']};
         }
       }
+
+      .decentralized-users {
+        display: grid;
+        grid-template-rows: 60px 399px auto;
+        grid-template-areas: 'menu' 'card' 'list';
+
+        @media (min-width: ${theme.screens.lg}) {
+          grid-template-rows: 120px 1fr;
+          grid-template-columns: 532px 495px;
+          grid-template-areas: 'menu card' 'list card';
+          grid-gap: 0 115px;
+          justify-content: center;
+        }
+
+        .decentralized-users-sort-menu {
+          grid-area: menu;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          align-self: flex-end;
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin-bottom: 33px;
+          }
+
+          .decentralized-users-sort-menu-title {
+            margin: 0;
+            font-family: 'HelveticaNowDisplay-Medium';
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.bunting};
+          }
+
+          .decentralized-users-sort-menu-option {
+            display: flex;
+            align-items: center;
+
+            .decentralized-users-sort-menu-option-title {
+              margin: 0;
+              margin-right: 21px;
+              font-size: ${theme.fonts.sm};
+            }
+
+            & > svg {
+              width: 20px;
+              height: 20px;
+              fill: ${theme.colors.bunting};
+            }
+          }
+        }
+
+        .decentralized-users-card {
+          grid-area: card;
+          width: 100%;
+          height: 335px;
+          box-shadow: ${theme.shadows.smallest};
+          background-color: ${theme.colors.white};
+          padding: 15px 15px 10px 15px;
+          margin-top: 16px;
+          margin-bottom: 48px;
+          position: relative;
+
+          @media (min-width: ${theme.screens.lg}) {
+            height: 504px;
+            padding: 24px 24px 17px 24px;
+            margin: 0;
+          }
+
+          .decentralized-users-card-box {
+            height: 30px;
+            width: 100px;
+            border-radius: 20px;
+            background-color: ${theme.colors.cyan};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+
+            @media (min-width: ${theme.screens.lg}) {
+              height: 40px;
+              width: 128px;
+              top: 8px;
+              right: 8px;
+            }
+
+            & > svg {
+              width: 20px;
+              height: 20px;
+              margin-right: 5px;
+            }
+
+            .decentralized-users-card-box-title {
+              margin: 0;
+              font-family: 'HelveticaNowDisplay-Medium';
+              font-size: ${theme.fonts.sm};
+              color: ${theme.colors.blueRibbon};
+
+              @media (min-width: ${theme.screens.lg}) {
+                font-size: ${theme.fonts.base};
+              }
+            }
+          }
+
+          .decentralized-users-card-image {
+            background-image: url('/imgs/images/home.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 271px;
+
+            @media (min-width: ${theme.screens.lg}) {
+              height: 408px;
+            }
+          }
+
+          .decentralized-users-card-bottom {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 11px;
+            align-items: center;
+
+            @media (min-width: ${theme.screens.lg}) {
+              padding-top: 17px;
+            }
+
+            .decentralized-users-card-bottom-presentration {
+              display: flex;
+              align-items: center;
+
+              .decentralized-users-card-bottom-presentration-image {
+                background-image: url('/imgs/images/home.png');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                width: 25px;
+                height: 25px;
+                margin-right: 5px;
+                border-radius: 9999px;
+
+                @media (min-width: ${theme.screens.lg}) {
+                  width: 38px;
+                  height: 38px;
+                  margin-right: 8px;
+                }
+              }
+
+              .decentralized-users-card-bottom-presentration-title {
+                margin: 0;
+                font-family: 'HelveticaNowDisplay-Medium';
+                font-size: ${theme.fonts.lg};
+                color: ${theme.colors.bunting};
+              }
+            }
+
+            .decentralized-users-card-bottom-title {
+              font-size: ${theme.fonts.sm};
+              margin: 0;
+              color: ${theme.colors.bunting};
+
+              @media (min-width: ${theme.screens.lg}) {
+                font-size: ${theme.fonts.base};
+              }
+            }
+          }
+        }
+
+        .decentralized-users-list {
+          grid-area: list;
+
+          .decentralized-users-item {
+            width: 100%;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            padding-top: 18px;
+            cursor: pointer;
+
+            @media (min-width: ${theme.screens.lg}) {
+              padding-top: 26px;
+            }
+
+            .decentralized-users-item-content {
+              display: flex;
+              align-items: center;
+
+              .decentralized-users-item-content-image {
+                background-image: url('/imgs/images/home.png');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                width: 38px;
+                height: 38px;
+                border-radius: 9999px;
+                margin-right: 8px;
+              }
+
+              .decentralized-users-item-content-title {
+                font-size: ${theme.fonts.base};
+                font-family: 'HelveticaNowDisplay-Medium';
+                color: ${theme.colors.bunting};
+                margin: 0;
+                margin-right: 8px;
+
+                @media (min-width: ${theme.screens.lg}) {
+                  font-size: ${theme.fonts.lg};
+                }
+              }
+
+              & > svg {
+                width: 20px;
+                height: 20px;
+
+                & > .front {
+                  fill: ${theme.colors.wildSand};
+                }
+              }
+            }
+
+            .decentralized-users-item-content-id {
+              margin: 0;
+              font-size: ${theme.fonts.sm};
+              color: ${theme.colors.bunting};
+
+              @media (min-width: ${theme.screens.lg}) {
+                font-size: ${theme.fonts.base};
+              }
+            }
+          }
+
+          .is-active {
+            border: 1px solid ${theme.colors.blueRibbon};
+            height: 54px;
+            padding: 0 12px;
+
+            @media (min-width: ${theme.screens.lg}) {
+              height: 59px;
+            }
+          }
+        }
+      }
+    }
+
+    .private {
+      margin: 0 20px;
+      margin-bottom: 75px;
+      display: grid;
+      grid-template-areas: 'image' 'content';
+
+      @media (min-width: ${theme.screens.lg}) {
+        margin: 0;
+        margin-bottom: 150px;
+        grid-template-areas: 'image content';
+        grid-template-columns: 623px 527px;
+        justify-content: center;
+        grid-gap: 102px;
+      }
+
+      .private-image {
+        grid-area: image;
+        background-image: url('/imgs/images/home.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: 357px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 656px;
+        }
+      }
+
+      .private-content {
+        grid-area: content;
+        align-self: center;
+
+        .private-content-title {
+          margin: 0;
+          color: ${theme.colors.bunting};
+          font-size: ${theme.fonts['4xl']};
+          font-family: 'HelveticaNowDisplay-Medium';
+          margin-top: 30px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts['6xl']};
+            margin: 0;
+          }
+        }
+
+        .private-content-description {
+          margin: 12px 0;
+          color: ${theme.colors.bunting};
+          font-size: ${theme.fonts.sm};
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin: 28px 0;
+            font-size: ${theme.fonts.base};
+          }
+        }
+      }
+    }
+
+    .private-different {
+      @media (min-width: ${theme.screens.lg}) {
+        grid-template-areas: 'content image';
+        grid-template-columns: 527px 623px;
+      }
+    }
+
+    .brands {
+      margin-bottom: 75px;
+
+      .brands-title {
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.xl};
+        color: ${theme.colors.bunting};
+        margin: 0;
+        margin-bottom: 39px;
+        text-align: center;
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts['3xl']};
+          margin-bottom: 47px;
+        }
+      }
+
+      .brands-images {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        grid-gap: 39px 18px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          grid-gap: 0 88px;
+        }
+
+        .brands-images-1 {
+          background-image: url('/imgs/logos/metamask-logo.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          width: 105px;
+          height: 34px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 187px;
+            height: 61px;
+          }
+        }
+
+        .brands-images-2 {
+          background-image: url('/imgs/logos/fleek-logo.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          width: 82px;
+          height: 34px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 128px;
+            height: 56px;
+          }
+        }
+
+        .brands-images-3 {
+          background-image: url('/imgs/logos/ethereum-logo.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          width: 87px;
+          height: 34px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 141px;
+            height: 56px;
+          }
+        }
+
+        .brands-images-4 {
+          background-image: url('/imgs/logos/openzepellin-logo.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          width: 163px;
+          height: 19px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 249px;
+            height: 29px;
+          }
+        }
+
+        .brands-images-5 {
+          background-image: url('/imgs/logos/ceramic-logo.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          width: 115px;
+          height: 38px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 175px;
+            height: 56px;
+          }
+        }
+      }
+    }
+  `}
+`;
+
+export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
+  ${({ theme, isExtended }) => css`
+    height: ${isExtended ? 'auto' : '66px'};
+    border-bottom: 1px solid ${theme.colors.haiti}33;
+
+    .questions-option-header {
+      width: 100%;
+      height: ${isExtended ? '66px' : '100%'};
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+
+      .questions-option-title {
+        margin: 0;
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.bunting};
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.xl};
+        }
+      }
+
+      & > svg {
+        color: ${theme.colors.bunting};
+        width: 24px;
+        height: 24px;
+        transform: ${isExtended ? 'rotate(180deg)' : 'rotate(0deg)'};
+        transition: 0.5s;
+      }
+    }
+
+    .questions-option-description {
+      display: ${isExtended ? 'block' : 'none'};
+      margin: 0;
+      margin-bottom: 14px;
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.bunting};
+      line-height: 1.4;
+      transition: 0.5s;
     }
   `}
 `;

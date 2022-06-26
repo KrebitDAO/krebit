@@ -21,48 +21,6 @@ export const Wrapper = styled.nav<Props>`
       padding: 23px 50px;
     }
 
-    /* .menu-ellipse-6 {
-      background-image: url('/imgs/backgrounds/Ellipse_6.svg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 614px;
-      height: 650px;
-      position: absolute;
-      left: -202px;
-      top: -30px;
-      background-color: ${theme.colors.cyan};
-      filter: blur(300px);
-    }
-
-    .menu-ellipse-12 {
-      background-image: url('/imgs/backgrounds/Ellipse_12.svg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 400px;
-      height: 399px;
-      position: absolute;
-      left: -63px;
-      top: 386px;
-      background-color: ${theme.colors.white};
-      filter: blur(300px);
-    }
-
-    .menu-ellipse-16 {
-      background-image: url('/imgs/backgrounds/Ellipse_16.svg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 459px;
-      height: 459px;
-      position: absolute;
-      left: 110px;
-      top: -48px;
-      background-color: ${theme.colors.blueRibbon};
-      filter: blur(300px);
-    } */
-
     .header {
       display: flex;
       justify-content: space-between;

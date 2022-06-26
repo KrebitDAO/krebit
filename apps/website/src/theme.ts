@@ -8,6 +8,8 @@ export const theme: Theme = {
     white: 'white',
     transparent: 'transparent',
     cyan: '#00FFFE',
+    wildSand: '#F5F5F5',
+    haiti: '#101033',
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',
