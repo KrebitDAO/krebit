@@ -1,12 +1,20 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+interface Props {
+  currentDecentralizedCardImage: string;
+}
+
+interface DecentralizedUsersItemProps {
+  currentUserImage: string;
+}
+
 interface PrivateOptionQuestionProps {
   isExtended: boolean;
 }
 
-export const Wrapper = styled.div`
-  ${({ theme }) => css`
+export const Wrapper = styled.div<Props>`
+  ${({ theme, currentDecentralizedCardImage }) => css`
     max-width: 1474px;
     margin: 0 auto;
 
@@ -249,7 +257,7 @@ export const Wrapper = styled.div`
           }
 
           .decentralized-users-card-image {
-            background-image: url('/imgs/images/home.png');
+            background-image: url('${currentDecentralizedCardImage}');
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -276,7 +284,7 @@ export const Wrapper = styled.div`
               align-items: center;
 
               .decentralized-users-card-bottom-presentration-image {
-                background-image: url('/imgs/images/home.png');
+                background-image: url('${currentDecentralizedCardImage}');
                 background-position: center;
                 background-repeat: no-repeat;
                 background-size: cover;
@@ -300,13 +308,24 @@ export const Wrapper = styled.div`
               }
             }
 
-            .decentralized-users-card-bottom-title {
-              font-size: ${theme.fonts.sm};
-              margin: 0;
-              color: ${theme.colors.bunting};
+            .decentralized-users-card-bottom-skills {
+              display: flex;
+              flex-wrap: nowrap;
+              grid-gap: 5px;
 
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
+              .decentralized-users-card-bottom-skill {
+                margin: 0;
+                height: 100%;
+                padding: 5px 10px;
+                border-radius: 9999px;
+                background: linear-gradient(
+                  to right,
+                  ${theme.colors.rose},
+                  ${theme.colors.blueRibbon}
+                );
+                opacity: 50%;
+                color: ${theme.colors.white};
+                font-size: ${theme.fonts.sm};
               }
             }
           }
@@ -315,76 +334,8 @@ export const Wrapper = styled.div`
         .decentralized-users-list {
           grid-area: list;
 
-          .decentralized-users-item {
-            width: 100%;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
-            padding-top: 18px;
-            cursor: pointer;
-
-            @media (min-width: ${theme.screens.lg}) {
-              padding-top: 26px;
-            }
-
-            .decentralized-users-item-content {
-              display: flex;
-              align-items: center;
-
-              .decentralized-users-item-content-image {
-                background-image: url('/imgs/images/home.png');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                width: 38px;
-                height: 38px;
-                border-radius: 9999px;
-                margin-right: 8px;
-              }
-
-              .decentralized-users-item-content-title {
-                font-size: ${theme.fonts.base};
-                font-family: 'HelveticaNowDisplay-Medium';
-                color: ${theme.colors.bunting};
-                margin: 0;
-                margin-right: 8px;
-
-                @media (min-width: ${theme.screens.lg}) {
-                  font-size: ${theme.fonts.lg};
-                }
-              }
-
-              & > svg {
-                width: 20px;
-                height: 20px;
-
-                & > .front {
-                  fill: ${theme.colors.wildSand};
-                }
-              }
-            }
-
-            .decentralized-users-item-content-id {
-              margin: 0;
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.bunting};
-
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
-              }
-            }
-          }
-
           .is-active {
             border: 1px solid ${theme.colors.blueRibbon};
-            height: 54px;
-            padding: 0 12px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              height: 59px;
-            }
           }
         }
       }
@@ -557,6 +508,70 @@ export const Wrapper = styled.div`
             height: 56px;
           }
         }
+      }
+    }
+  `}
+`;
+
+export const DecentralizedUsersItem = styled.div<DecentralizedUsersItemProps>`
+  ${({ theme, currentUserImage }) => css`
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    height: 54px;
+    cursor: pointer;
+
+    @media (min-width: ${theme.screens.lg}) {
+      height: 59px;
+    }
+
+    .decentralized-users-item-content {
+      display: flex;
+      align-items: center;
+
+      .decentralized-users-item-content-image {
+        background-image: url('${currentUserImage}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 38px;
+        height: 38px;
+        border-radius: 9999px;
+        margin-right: 8px;
+      }
+
+      .decentralized-users-item-content-title {
+        font-size: ${theme.fonts.base};
+        font-family: 'HelveticaNowDisplay-Medium';
+        color: ${theme.colors.bunting};
+        margin: 0;
+        margin-right: 8px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.lg};
+        }
+      }
+
+      & > svg {
+        width: 20px;
+        height: 20px;
+
+        & > .front {
+          fill: ${theme.colors.wildSand};
+        }
+      }
+    }
+
+    .decentralized-users-item-content-id {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.bunting};
+
+      @media (min-width: ${theme.screens.lg}) {
+        font-size: ${theme.fonts.base};
       }
     }
   `}
