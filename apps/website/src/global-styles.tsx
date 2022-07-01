@@ -4,6 +4,14 @@ export const globalStyles = (
   <Global
     styles={css`
       @font-face {
+        font-family: 'HelveticaNowDisplay-Bold';
+        src: local('HelveticaNowDisplay-Bold'),
+          local('HelveticaNowDisplay-Bold'),
+          url('/fonts/HelveticaNowDisplay-Bold.otf') format('opentype');
+        font-display: swap;
+      }
+
+      @font-face {
         font-family: 'HelveticaNowDisplay-Medium';
         src: local('HelveticaNowDisplay-Medium'),
           local('HelveticaNowDisplay-Medium'),
@@ -31,6 +39,7 @@ export const globalStyles = (
         margin: 0;
         padding: 0;
         background-color: white;
+        overflow-x: hidden;
 
         @media (min-width: 1024px) {
         }

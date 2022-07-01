@@ -27,7 +27,8 @@ export const NavBar = () => {
           <a className="menu-bar-item">Discord</a>
           <a className="menu-bar-item">Blog</a>
           <a className="menu-bar-item">Docs</a>
-          <a className="menu-bar-item">DAO</a>
+          <a className="menu-bar-item">Recruiters</a>
+          <a className="menu-bar-item">Verifiers</a>
           <div className="menu-bar-button">
             <Button
               text="Connect wallet"
@@ -39,11 +40,11 @@ export const NavBar = () => {
         </div>
       </div>
       <div className="menu-content">
-        <a className="menu-content-item">Comunnity</a>
+        <a className="menu-content-item">Discord</a>
         <a className="menu-content-item">Blog</a>
         <a className="menu-content-item">Docs</a>
-        <a className="menu-content-item">DAO</a>
-        <a className="menu-content-item">Discord</a>
+        <a className="menu-content-item">Recruiters</a>
+        <a className="menu-content-item">Verifiers</a>
         <div className="menu-content-button">
           <Button
             text="Connect wallet"

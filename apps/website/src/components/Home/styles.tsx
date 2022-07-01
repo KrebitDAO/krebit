@@ -31,20 +31,21 @@ export const Wrapper = styled.div<Props>`
       .main-content {
         padding: 0 20px;
         padding-top: 126px;
-        z-index: 200;
         align-self: center;
+        position: relative;
+        z-index: 10;
 
-        @media (min-width: ${theme.screens.lg}) {
+        @media (min-width: ${theme.screens.xl}) {
           padding: 0;
         }
 
         .main-title {
           font-size: ${theme.fonts['5xl']};
-          font-family: 'HelveticaNowDisplay-Medium';
+          font-family: 'HelveticaNowDisplay-Bold';
           color: ${theme.colors.bunting};
           position: relative;
           z-index: 10;
-          line-height: 1.2;
+          line-height: 1.1;
 
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts['7xl']};
@@ -68,7 +69,6 @@ export const Wrapper = styled.div<Props>`
         .main-buttons {
           display: flex;
           grid-gap: 20px;
-          justify-content: center;
           padding-top: 32px;
 
           @media (min-width: ${theme.screens.lg}) {
@@ -138,12 +138,13 @@ export const Wrapper = styled.div<Props>`
       }
 
       .decentralized-title {
-        font-family: 'HelveticaNowDisplay-Medium';
+        font-family: 'HelveticaNowDisplay-Bold';
         font-size: ${theme.fonts['4xl']};
         color: ${theme.colors.bunting};
         margin-bottom: 75px;
-        max-width: 901px;
+        max-width: 904px;
         text-align: center;
+        line-height: 1.1;
 
         @media (min-width: ${theme.screens.lg}) {
           margin: 0 auto;
@@ -154,7 +155,7 @@ export const Wrapper = styled.div<Props>`
 
       .decentralized-users {
         display: grid;
-        grid-template-rows: 60px 399px auto;
+        grid-template-rows: 60px auto auto;
         grid-template-areas: 'menu' 'card' 'list';
 
         @media (min-width: ${theme.screens.lg}) {
@@ -205,7 +206,7 @@ export const Wrapper = styled.div<Props>`
         .decentralized-users-card {
           grid-area: card;
           width: 100%;
-          height: 335px;
+          height: auto;
           box-shadow: ${theme.shadows.smallest};
           background-color: ${theme.colors.white};
           padding: 15px 15px 10px 15px;
@@ -270,12 +271,12 @@ export const Wrapper = styled.div<Props>`
           }
 
           .decentralized-users-card-bottom {
-            display: flex;
-            justify-content: space-between;
             padding-top: 11px;
-            align-items: center;
 
             @media (min-width: ${theme.screens.lg}) {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
               padding-top: 17px;
             }
 
@@ -312,6 +313,11 @@ export const Wrapper = styled.div<Props>`
               display: flex;
               flex-wrap: nowrap;
               grid-gap: 5px;
+              padding-top: 11px;
+
+              @media (min-width: ${theme.screens.lg}) {
+                padding: 0;
+              }
 
               .decentralized-users-card-bottom-skill {
                 margin: 0;
@@ -378,7 +384,8 @@ export const Wrapper = styled.div<Props>`
           margin: 0;
           color: ${theme.colors.bunting};
           font-size: ${theme.fonts['4xl']};
-          font-family: 'HelveticaNowDisplay-Medium';
+          font-family: 'HelveticaNowDisplay-Bold';
+          line-height: 1.1;
           margin-top: 30px;
 
           @media (min-width: ${theme.screens.lg}) {
@@ -642,11 +649,12 @@ export const Footer = styled.footer`
       }
 
       .footer-image-title {
-        font-family: 'HelveticaNowDisplay-Medium';
+        font-family: 'HelveticaNowDisplay-Bold';
         font-size: ${theme.fonts['4xl']};
         color: ${theme.colors.cyan};
         text-align: center;
         padding: 0 20px;
+        line-height: 1.1;
 
         @media (min-width: ${theme.screens.lg}) {
           font-size: ${theme.fonts['6xl']};
