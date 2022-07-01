@@ -15,7 +15,7 @@ const BOXES = [
   {
     box: 'KRB 140',
     username: 'Andres Montoya',
-    image: '/imgs/images/user1.png',
+    image: '/imgs/images/rare-buddies-1.png',
     skills: ['JavaScript', 'Software', 'Ethereum'],
   },
   {
@@ -119,35 +119,37 @@ export const Home = () => {
                   }
                   classNames="fade"
                 >
-                  <Fade left>
-                    <div className="decentralized-users-card">
-                      <div className="decentralized-users-card-box">
-                        <Krebit />
-                        <p className="decentralized-users-card-box-title">
-                          {BOXES[currentUser].box}
-                        </p>
-                      </div>
-                      <div className="decentralized-users-card-image"></div>
-                      <div className="decentralized-users-card-bottom">
-                        <div className="decentralized-users-card-bottom-presentration">
-                          <div className="decentralized-users-card-bottom-presentration-image"></div>
-                          <p className="decentralized-users-card-bottom-presentration-title">
-                            {BOXES[currentUser].username}
+                  <div className="decentralized-users-card-container">
+                    <Fade left>
+                      <div className="decentralized-users-card">
+                        <div className="decentralized-users-card-box">
+                          <Krebit />
+                          <p className="decentralized-users-card-box-title">
+                            {BOXES[currentUser].box}
                           </p>
                         </div>
-                        <div className="decentralized-users-card-bottom-skills">
-                          {BOXES[currentUser].skills.map((skill, index) => (
-                            <p
-                              className="decentralized-users-card-bottom-skill"
-                              key={index}
-                            >
-                              {skill}
+                        <div className="decentralized-users-card-image"></div>
+                        <div className="decentralized-users-card-bottom">
+                          <div className="decentralized-users-card-bottom-presentration">
+                            <div className="decentralized-users-card-bottom-presentration-image"></div>
+                            <p className="decentralized-users-card-bottom-presentration-title">
+                              {BOXES[currentUser].username}
                             </p>
-                          ))}
+                          </div>
+                          <div className="decentralized-users-card-bottom-skills">
+                            {BOXES[currentUser].skills.map((skill, index) => (
+                              <p
+                                className="decentralized-users-card-bottom-skill"
+                                key={index}
+                              >
+                                {skill}
+                              </p>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Fade>
+                    </Fade>
+                  </div>
                 </CSSTransition>
               </SwitchTransition>
               <div className="decentralized-users-list">

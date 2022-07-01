@@ -216,135 +216,139 @@ export const Wrapper = styled.div<Props>`
           }
         }
 
-        .decentralized-users-card {
+        .decentralized-users-card-container {
           grid-area: card;
           width: 100%;
-          height: auto;
-          box-shadow: ${theme.shadows.smallest};
-          background-color: ${theme.colors.white};
-          padding: 15px 15px 10px 15px;
-          margin-top: 16px;
-          margin-bottom: 48px;
-          position: relative;
 
-          @media (min-width: ${theme.screens.lg}) {
-            height: 504px;
-            padding: 24px 24px 17px 24px;
-            margin: 0;
-          }
-
-          .decentralized-users-card-box {
-            height: 30px;
-            width: 100px;
-            border-radius: 20px;
-            background-color: ${theme.colors.cyan};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 5px;
-            right: 5px;
+          .decentralized-users-card {
+            width: 100%;
+            height: auto;
+            box-shadow: ${theme.shadows.smallest};
+            background-color: ${theme.colors.white};
+            padding: 15px 15px 10px 15px;
+            margin-top: 16px;
+            margin-bottom: 48px;
+            position: relative;
 
             @media (min-width: ${theme.screens.lg}) {
-              height: 40px;
-              width: 128px;
-              top: 8px;
-              right: 8px;
-            }
-
-            & > svg {
-              width: 20px;
-              height: 20px;
-              margin-right: 5px;
-            }
-
-            .decentralized-users-card-box-title {
+              height: 504px;
+              padding: 24px 24px 17px 24px;
               margin: 0;
-              font-family: 'HelveticaNowDisplay-Medium';
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.blueRibbon};
+            }
+
+            .decentralized-users-card-box {
+              height: 30px;
+              width: 100px;
+              border-radius: 20px;
+              background-color: ${theme.colors.cyan};
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              position: absolute;
+              top: 5px;
+              right: 5px;
 
               @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
+                height: 40px;
+                width: 128px;
+                top: 8px;
+                right: 8px;
               }
-            }
-          }
 
-          .decentralized-users-card-image {
-            background-image: url('${currentDecentralizedCardImage}');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            width: 100%;
-            height: 271px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              height: 408px;
-            }
-          }
-
-          .decentralized-users-card-bottom {
-            padding-top: 11px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding-top: 17px;
-            }
-
-            .decentralized-users-card-bottom-presentration {
-              display: flex;
-              align-items: center;
-
-              .decentralized-users-card-bottom-presentration-image {
-                background-image: url('${currentDecentralizedCardImage}');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                width: 25px;
-                height: 25px;
+              & > svg {
+                width: 20px;
+                height: 20px;
                 margin-right: 5px;
-                border-radius: 9999px;
-
-                @media (min-width: ${theme.screens.lg}) {
-                  width: 38px;
-                  height: 38px;
-                  margin-right: 8px;
-                }
               }
 
-              .decentralized-users-card-bottom-presentration-title {
+              .decentralized-users-card-box-title {
                 margin: 0;
                 font-family: 'HelveticaNowDisplay-Medium';
-                font-size: ${theme.fonts.lg};
-                color: ${theme.colors.bunting};
+                font-size: ${theme.fonts.sm};
+                color: ${theme.colors.blueRibbon};
+
+                @media (min-width: ${theme.screens.lg}) {
+                  font-size: ${theme.fonts.base};
+                }
               }
             }
 
-            .decentralized-users-card-bottom-skills {
-              display: flex;
-              flex-wrap: nowrap;
-              grid-gap: 5px;
+            .decentralized-users-card-image {
+              background-image: url('${currentDecentralizedCardImage}');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: cover;
+              width: 100%;
+              height: 271px;
+
+              @media (min-width: ${theme.screens.lg}) {
+                height: 408px;
+              }
+            }
+
+            .decentralized-users-card-bottom {
               padding-top: 11px;
 
               @media (min-width: ${theme.screens.lg}) {
-                padding: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 17px;
               }
 
-              .decentralized-users-card-bottom-skill {
-                margin: 0;
-                height: 100%;
-                padding: 5px 10px;
-                border-radius: 9999px;
-                background: linear-gradient(
-                  to right,
-                  ${theme.colors.rose}80,
-                  ${theme.colors.blueRibbon}80
-                );
-                color: ${theme.colors.white};
-                font-family: 'HelveticaNowDisplay-Medium';
-                font-size: ${theme.fonts.sm};
+              .decentralized-users-card-bottom-presentration {
+                display: flex;
+                align-items: center;
+
+                .decentralized-users-card-bottom-presentration-image {
+                  background-image: url('${currentDecentralizedCardImage}');
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                  width: 25px;
+                  height: 25px;
+                  margin-right: 5px;
+                  border-radius: 9999px;
+
+                  @media (min-width: ${theme.screens.lg}) {
+                    width: 38px;
+                    height: 38px;
+                    margin-right: 8px;
+                  }
+                }
+
+                .decentralized-users-card-bottom-presentration-title {
+                  margin: 0;
+                  font-family: 'HelveticaNowDisplay-Medium';
+                  font-size: ${theme.fonts.lg};
+                  color: ${theme.colors.bunting};
+                }
+              }
+
+              .decentralized-users-card-bottom-skills {
+                display: flex;
+                flex-wrap: nowrap;
+                grid-gap: 5px;
+                padding-top: 11px;
+
+                @media (min-width: ${theme.screens.lg}) {
+                  padding: 0;
+                }
+
+                .decentralized-users-card-bottom-skill {
+                  margin: 0;
+                  height: 100%;
+                  padding: 5px 10px;
+                  border-radius: 9999px;
+                  background: linear-gradient(
+                    to right,
+                    ${theme.colors.rose}80,
+                    ${theme.colors.blueRibbon}80
+                  );
+                  color: ${theme.colors.white};
+                  font-family: 'HelveticaNowDisplay-Medium';
+                  font-size: ${theme.fonts.sm};
+                }
               }
             }
           }

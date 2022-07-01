@@ -24,7 +24,14 @@ export const NavBar = () => {
           {isMenuOpen ? <Close /> : <Menu />}
         </div>
         <div className="menu-bar">
-          <a className="menu-bar-item">Discord</a>
+          <a
+            className="menu-bar-item"
+            href="https://discord.gg/y7sMYVjxrd"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Discord
+          </a>
           <a className="menu-bar-item">Blog</a>
           <a className="menu-bar-item">Docs</a>
           <a className="menu-bar-item">Recruiters</a>
@@ -40,7 +47,14 @@ export const NavBar = () => {
         </div>
       </div>
       <div className="menu-content">
-        <a className="menu-content-item">Discord</a>
+        <a
+          className="menu-content-item"
+          href="https://discord.gg/y7sMYVjxrd"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Discord
+        </a>
         <a className="menu-content-item">Blog</a>
         <a className="menu-content-item">Docs</a>
         <a className="menu-content-item">Recruiters</a>
