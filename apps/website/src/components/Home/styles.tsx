@@ -326,11 +326,11 @@ export const Wrapper = styled.div<Props>`
                 border-radius: 9999px;
                 background: linear-gradient(
                   to right,
-                  ${theme.colors.rose},
-                  ${theme.colors.blueRibbon}
+                  ${theme.colors.rose}80,
+                  ${theme.colors.blueRibbon}80
                 );
-                opacity: 50%;
                 color: ${theme.colors.white};
+                font-family: 'HelveticaNowDisplay-Medium';
                 font-size: ${theme.fonts.sm};
               }
             }

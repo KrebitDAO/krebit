@@ -38,8 +38,27 @@ export const globalStyles = (
         scroll-behavior: smooth;
         margin: 0;
         padding: 0;
-        background-color: white;
         overflow-x: hidden;
+        background-image: linear-gradient(
+          to right bottom,
+          #50ffff,
+          #00e9ff,
+          #00d1ff,
+          #78d7ff,
+          #cee5ff,
+          #e9efff,
+          #e3e5fd,
+          #e1dffc,
+          #c7c8fb,
+          #859df8,
+          #538af7,
+          #7a79ea,
+          #9765d8,
+          #b45bcf,
+          #cd50c2,
+          #e244b2,
+          #f3389f
+        );
 
         @media (min-width: 1024px) {
         }

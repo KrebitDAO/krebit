@@ -301,6 +301,7 @@ export const Home = () => {
               text="Connect wallet"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
+              hasTransparency={false}
               onClick={() => {}}
             />
           </div>
