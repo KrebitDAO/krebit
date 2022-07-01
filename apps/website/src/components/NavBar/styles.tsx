@@ -106,7 +106,7 @@ export const Wrapper = styled.nav<Props>`
         margin: 0;
         margin-top: 27px;
 
-        &:first-child {
+        &:first-of-type {
           margin-top: 33px;
         }
       }
