@@ -115,7 +115,7 @@ export const Wrapper = styled.div<Props>`
       .main-content-image {
         position: absolute;
         bottom: 0;
-        background-image: url('/imgs/images/home.png');
+        background-image: url('/imgs/images/tagline.png');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -178,11 +178,24 @@ export const Wrapper = styled.div<Props>`
             margin-bottom: 33px;
           }
 
-          .decentralized-users-sort-menu-title {
+          .decentralized-users-sort-menu-input {
             margin: 0;
-            font-family: 'HelveticaNowDisplay-Medium';
-            font-size: ${theme.fonts.base};
+            font-size: ${theme.fonts.sm};
             color: ${theme.colors.bunting};
+            background-color: ${theme.colors.white};
+            border: 1px solid ${theme.colors.bunting}40;
+            border-radius: 20px;
+            padding: 5px 10px;
+            width: 240px;
+
+            &:focus {
+              outline: none;
+            }
+
+            @media (min-width: ${theme.screens.lg}) {
+              padding: 10px 15px;
+              width: 340px;
+            }
           }
 
           .decentralized-users-sort-menu-option {
@@ -364,7 +377,6 @@ export const Wrapper = styled.div<Props>`
 
       .private-image {
         grid-area: image;
-        background-image: url('/imgs/images/home.png');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -374,6 +386,14 @@ export const Wrapper = styled.div<Props>`
         @media (min-width: ${theme.screens.lg}) {
           height: 656px;
         }
+      }
+
+      .private-image-first {
+        background-image: url('/imgs/images/user1.png');
+      }
+
+      .private-image-second {
+        background-image: url('/imgs/images/hire.png');
       }
 
       .private-content {
@@ -503,7 +523,7 @@ export const Wrapper = styled.div<Props>`
         }
 
         .brands-images-5 {
-          background-image: url('/imgs/logos/ceramic-logo.png');
+          background-image: url('/imgs/logos/ceramic.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
@@ -632,7 +652,7 @@ export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
 export const Footer = styled.footer`
   ${({ theme }) => css`
     .footer-image {
-      background-image: url('/imgs/images/home.png');
+      background-image: url('/imgs/images/footer.png');
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;

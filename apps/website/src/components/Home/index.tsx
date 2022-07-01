@@ -15,31 +15,31 @@ const BOXES = [
   {
     box: 'KRB 140',
     username: 'Andres Montoya',
-    image: '/imgs/images/home.png',
+    image: '/imgs/images/user1.png',
     skills: ['JavaScript', 'Software', 'Ethereum'],
   },
   {
     box: 'KRB 141',
     username: 'Alejandro',
-    image: '/imgs/logos/Logo.svg',
+    image: '/imgs/images/rare-buddies-1.png',
     skills: ['Engnieering', 'Lead', 'Krebit'],
   },
   {
     box: 'KRB 142',
     username: 'Oliver',
-    image: '/imgs/images/home.png',
+    image: '/imgs/images/tagline.png',
     skills: ['Design', 'Software', 'UX'],
   },
   {
     box: 'KRB 143',
     username: 'Juan',
-    image: '/imgs/images/home.png',
+    image: '/imgs/images/user1.png',
     skills: ['Math', 'Teach', 'School'],
   },
   {
     box: 'KRB 144',
     username: 'Andrea',
-    image: '/imgs/images/home.png',
+    image: '/imgs/images/user1.png',
     skills: ['Marketing', 'Software', 'Design'],
   },
 ];
@@ -100,9 +100,10 @@ export const Home = () => {
           <Fade bottom>
             <div className="decentralized-users">
               <div className="decentralized-users-sort-menu">
-                <p className="decentralized-users-sort-menu-title">
-                  Top Krebit profiles
-                </p>
+                <input
+                  className="decentralized-users-sort-menu-input"
+                  placeholder="Search by credential"
+                />
                 <div className="decentralized-users-sort-menu-option">
                   <p className="decentralized-users-sort-menu-option-title">
                     Sort by
@@ -118,33 +119,35 @@ export const Home = () => {
                   }
                   classNames="fade"
                 >
-                  <div className="decentralized-users-card">
-                    <div className="decentralized-users-card-box">
-                      <Krebit />
-                      <p className="decentralized-users-card-box-title">
-                        {BOXES[currentUser].box}
-                      </p>
-                    </div>
-                    <div className="decentralized-users-card-image"></div>
-                    <div className="decentralized-users-card-bottom">
-                      <div className="decentralized-users-card-bottom-presentration">
-                        <div className="decentralized-users-card-bottom-presentration-image"></div>
-                        <p className="decentralized-users-card-bottom-presentration-title">
-                          {BOXES[currentUser].username}
+                  <Fade left>
+                    <div className="decentralized-users-card">
+                      <div className="decentralized-users-card-box">
+                        <Krebit />
+                        <p className="decentralized-users-card-box-title">
+                          {BOXES[currentUser].box}
                         </p>
                       </div>
-                      <div className="decentralized-users-card-bottom-skills">
-                        {BOXES[currentUser].skills.map((skill, index) => (
-                          <p
-                            className="decentralized-users-card-bottom-skill"
-                            key={index}
-                          >
-                            {skill}
+                      <div className="decentralized-users-card-image"></div>
+                      <div className="decentralized-users-card-bottom">
+                        <div className="decentralized-users-card-bottom-presentration">
+                          <div className="decentralized-users-card-bottom-presentration-image"></div>
+                          <p className="decentralized-users-card-bottom-presentration-title">
+                            {BOXES[currentUser].username}
                           </p>
-                        ))}
+                        </div>
+                        <div className="decentralized-users-card-bottom-skills">
+                          {BOXES[currentUser].skills.map((skill, index) => (
+                            <p
+                              className="decentralized-users-card-bottom-skill"
+                              key={index}
+                            >
+                              {skill}
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Fade>
                 </CSSTransition>
               </SwitchTransition>
               <div className="decentralized-users-list">
@@ -173,7 +176,7 @@ export const Home = () => {
         </div>
         <Fade bottom>
           <div className="private">
-            <div className="private-image"></div>
+            <div className="private-image private-image-first"></div>
             <div className="private-content">
               <p className="private-content-title">
                 Consolidate and own your professional Reputation
@@ -228,7 +231,7 @@ export const Home = () => {
         </Fade>
         <Fade bottom>
           <div className="private private-different">
-            <div className="private-image"></div>
+            <div className="private-image private-image-second"></div>
             <div className="private-content">
               <p className="private-content-title">
                 Identify and recruit the best Talent
