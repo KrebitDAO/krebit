@@ -1,13 +1,54 @@
 import { useState } from 'react';
+import Fade from 'react-reveal/Fade';
+import { SwitchTransition, CSSTransition } from 'react-transition-group';
 
-import { Wrapper, PrivateOptionQuestion, Footer } from './styles';
+import {
+  Wrapper,
+  PrivateOptionQuestion,
+  Footer,
+  DecentralizedUsersItem,
+} from './styles';
 import { Button } from 'components/Button';
 import { Arrow, Krebit, Logo, Play } from 'components/Icons';
 
+const BOXES = [
+  {
+    box: 'KRB 140',
+    username: 'Andres Montoya',
+    image: '/imgs/images/rare-buddies-1.png',
+    skills: ['JavaScript', 'Software', 'Ethereum'],
+  },
+  {
+    box: 'KRB 141',
+    username: 'Alejandro',
+    image: '/imgs/images/rare-buddies-1.png',
+    skills: ['Engnieering', 'Lead', 'Krebit'],
+  },
+  {
+    box: 'KRB 142',
+    username: 'Oliver',
+    image: '/imgs/images/tagline.png',
+    skills: ['Design', 'Software', 'UX'],
+  },
+  {
+    box: 'KRB 143',
+    username: 'Juan',
+    image: '/imgs/images/user1.png',
+    skills: ['Math', 'Teach', 'School'],
+  },
+  {
+    box: 'KRB 144',
+    username: 'Andrea',
+    image: '/imgs/images/user1.png',
+    skills: ['Marketing', 'Software', 'Design'],
+  },
+];
+
 export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(0);
 
-  const handleExtended = index => {
+  const handleExtended = (index: number | undefined) => {
     if (isExtended === undefined || isExtended !== index) {
       setExtended(index);
     }
@@ -17,17 +58,21 @@ export const Home = () => {
     }
   };
 
+  const handleCurrentUser = (index: number = 0) => {
+    setCurrentUser(index);
+  };
+
   return (
     <>
-      <Wrapper>
+      <Wrapper currentDecentralizedCardImage={BOXES[currentUser].image}>
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
-              Decentralization to drive your career forward.
+              Connecting the best Talent through portable Reputation
             </h1>
             <p className="main-description">
-              Krebit.id is an open identity verification protocol, DAO and
-              marketplace for Web3 Verifiable Credentials.
+              Own a professional profile that recruiters can trust with
+              verifiable-credentials.
             </p>
             <div className="main-buttons">
               <div className="main-button">
@@ -47,182 +92,221 @@ export const Home = () => {
           <div className="main-content-image"></div>
         </div>
         <div className="decentralized">
-          <h2 className="decentralized-title">
-            Decentralized Identity to enable users control their profiles and
-            data-stores.
-          </h2>
-          <div className="decentralized-users">
-            <div className="decentralized-users-sort-menu">
-              <p className="decentralized-users-sort-menu-title">
-                Top Krebit profiles
-              </p>
-              <div className="decentralized-users-sort-menu-option">
-                <p className="decentralized-users-sort-menu-option-title">
-                  Sort by
-                </p>
-                <Arrow />
-              </div>
-            </div>
-            <div className="decentralized-users-card">
-              <div className="decentralized-users-card-box">
-                <Krebit />
-                <p className="decentralized-users-card-box-title">rkRB 140</p>
-              </div>
-              <div className="decentralized-users-card-image"></div>
-              <div className="decentralized-users-card-bottom">
-                <div className="decentralized-users-card-bottom-presentration">
-                  <div className="decentralized-users-card-bottom-presentration-image"></div>
-                  <p className="decentralized-users-card-bottom-presentration-title">
-                    Theoliver333
+          <Fade bottom>
+            <h2 className="decentralized-title">
+              Your professional Reputation verified once, reused everywhere
+            </h2>
+          </Fade>
+          <Fade bottom>
+            <div className="decentralized-users">
+              <div className="decentralized-users-sort-menu">
+                <input
+                  className="decentralized-users-sort-menu-input"
+                  placeholder="Search by credential"
+                />
+                <div className="decentralized-users-sort-menu-option">
+                  <p className="decentralized-users-sort-menu-option-title">
+                    Sort by
                   </p>
-                </div>
-                <div className="decentralized-users-card-bottom-title">
-                  Product Designer
+                  <Arrow />
                 </div>
               </div>
-            </div>
-            <div className="decentralized-users-list">
-              {new Array(4).fill(0).map((_, index) => (
-                <div
-                  key={index}
-                  className={`decentralized-users-item ${
-                    index === 0 ? 'is-active' : ''
-                  }`}
+              <SwitchTransition mode="out-in">
+                <CSSTransition
+                  key={BOXES[currentUser].username}
+                  addEndListener={(node, done) =>
+                    node.addEventListener('transitionend', done, false)
+                  }
+                  classNames="fade"
                 >
-                  <div className="decentralized-users-item-content">
-                    <div className="decentralized-users-item-content-image"></div>
-                    <p className="decentralized-users-item-content-title">
-                      Theoliver333
-                    </p>
-                    <Krebit />
+                  <div className="decentralized-users-card-container">
+                    <Fade left>
+                      <div className="decentralized-users-card">
+                        <div className="decentralized-users-card-box">
+                          <Krebit />
+                          <p className="decentralized-users-card-box-title">
+                            {BOXES[currentUser].box}
+                          </p>
+                        </div>
+                        <div className="decentralized-users-card-image"></div>
+                        <div className="decentralized-users-card-bottom">
+                          <div className="decentralized-users-card-bottom-presentration">
+                            <div className="decentralized-users-card-bottom-presentration-image"></div>
+                            <p className="decentralized-users-card-bottom-presentration-title">
+                              {BOXES[currentUser].username}
+                            </p>
+                          </div>
+                          <div className="decentralized-users-card-bottom-skills">
+                            {BOXES[currentUser].skills.map((skill, index) => (
+                              <p
+                                className="decentralized-users-card-bottom-skill"
+                                key={index}
+                              >
+                                {skill}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </Fade>
                   </div>
-                  <p className="decentralized-users-item-content-id">
-                    rkRB 140
-                  </p>
+                </CSSTransition>
+              </SwitchTransition>
+              <div className="decentralized-users-list">
+                {BOXES.map((user, index) => (
+                  <DecentralizedUsersItem
+                    key={index}
+                    currentUserImage={user.image}
+                    className={currentUser === index ? 'is-active' : ''}
+                    onClick={() => handleCurrentUser(index)}
+                  >
+                    <div className="decentralized-users-item-content">
+                      <div className="decentralized-users-item-content-image"></div>
+                      <p className="decentralized-users-item-content-title">
+                        {user.username}
+                      </p>
+                      <Krebit />
+                    </div>
+                    <p className="decentralized-users-item-content-id">
+                      {user.box}
+                    </p>
+                  </DecentralizedUsersItem>
+                ))}
+              </div>
+            </div>
+          </Fade>
+        </div>
+        <Fade bottom>
+          <div className="private">
+            <div className="private-image private-image-first"></div>
+            <div className="private-content">
+              <p className="private-content-title">
+                Consolidate and own your professional Reputation
+              </p>
+              <p className="private-content-description">
+                Today you have to build your reputation on each platform every
+                time. How can we unlock reputation from centralized platforms?
+                With Krebit you can apply to jobs with your Credentials, not
+                filling endless forms.
+              </p>
+              <PrivateOptionQuestion isExtended={isExtended === 0}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(0)}
+                >
+                  <p className="questions-option-title">Portable</p>
+                  <Arrow />
                 </div>
-              ))}
+                <p className="questions-option-description">
+                  Give access to dApps that want to check your existing
+                  reputation
+                </p>
+              </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 1}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(1)}
+                >
+                  <p className="questions-option-title">Privacy-Preserving</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                  Show your talent to the world, without loosing your private
+                  life.
+                </p>
+              </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 2}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(2)}
+                >
+                  <p className="questions-option-title">Decentralized</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                  Krebit's protocol makes Web3 Identity more trustworthy with
+                  community-verified credentials.
+                </p>
+              </PrivateOptionQuestion>
             </div>
           </div>
-        </div>
-        <div className="private">
-          <div className="private-image"></div>
-          <div className="private-content">
-            <p className="private-content-title">
-              We keep your life private so you can live.
-            </p>
-            <p className="private-content-description">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit sed et
-              orci maximus, blandit enim non lorem ipsum dolor sit amet,
-              consectetur adipiscing elit sed et orci maximus, blandit enim non.
-            </p>
-            <PrivateOptionQuestion isExtended={isExtended === 0}>
-              <div
-                className="questions-option-header"
-                onClick={() => handleExtended(0)}
-              >
-                <p className="questions-option-title">Privacy</p>
-                <Arrow />
-              </div>
-              <p className="questions-option-description">
-                Hola! Texto de prueba
+        </Fade>
+        <Fade bottom>
+          <div className="private private-different">
+            <div className="private-image private-image-second"></div>
+            <div className="private-content">
+              <p className="private-content-title">
+                Identify and recruit the best Talent
               </p>
-            </PrivateOptionQuestion>
-            <PrivateOptionQuestion isExtended={isExtended === 1}>
-              <div
-                className="questions-option-header"
-                onClick={() => handleExtended(1)}
-              >
-                <p className="questions-option-title">Security</p>
-                <Arrow />
-              </div>
-              <p className="questions-option-description">
-                Hola! Texto de prueba
+              <p className="private-content-description">
+                Recruitment is a complex, time consuming and often a frustrating
+                process if not managed properly. Krebit is best decentralized
+                platform to Verify the Reputation of Talent in Web3.
               </p>
-            </PrivateOptionQuestion>
-            <PrivateOptionQuestion isExtended={isExtended === 2}>
-              <div
-                className="questions-option-header"
-                onClick={() => handleExtended(2)}
-              >
-                <p className="questions-option-title">Transparency</p>
-                <Arrow />
-              </div>
-              <p className="questions-option-description">
-                Hola! Texto de prueba
-              </p>
-            </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 3}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(3)}
+                >
+                  <p className="questions-option-title">Effective</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                  Discover candidates you might be ignoring/missing. Hire
+                  pseudonymous talent based on pre-vetted merit.
+                </p>
+              </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 4}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(4)}
+                >
+                  <p className="questions-option-title">Time-Saving</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                  Contact pre-vetted candidates.
+                </p>
+              </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 5}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(5)}
+                >
+                  <p className="questions-option-title">Composable</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                  Itegrate with ATS systems: "Apply to this Job with Krebit"
+                </p>
+              </PrivateOptionQuestion>
+            </div>
           </div>
-        </div>
-        <div className="private private-different">
-          <div className="private-image"></div>
-          <div className="private-content">
-            <p className="private-content-title">
-              We keep your life private so you can live.
-            </p>
-            <p className="private-content-description">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit sed et
-              orci maximus, blandit enim non lorem ipsum dolor sit amet,
-              consectetur adipiscing elit sed et orci maximus, blandit enim non.
-            </p>
-            <PrivateOptionQuestion isExtended={isExtended === 3}>
-              <div
-                className="questions-option-header"
-                onClick={() => handleExtended(3)}
-              >
-                <p className="questions-option-title">Privacy</p>
-                <Arrow />
-              </div>
-              <p className="questions-option-description">
-                Hola! Texto de prueba
-              </p>
-            </PrivateOptionQuestion>
-            <PrivateOptionQuestion isExtended={isExtended === 4}>
-              <div
-                className="questions-option-header"
-                onClick={() => handleExtended(4)}
-              >
-                <p className="questions-option-title">Security</p>
-                <Arrow />
-              </div>
-              <p className="questions-option-description">
-                Hola! Texto de prueba
-              </p>
-            </PrivateOptionQuestion>
-            <PrivateOptionQuestion isExtended={isExtended === 5}>
-              <div
-                className="questions-option-header"
-                onClick={() => handleExtended(5)}
-              >
-                <p className="questions-option-title">Transparency</p>
-                <Arrow />
-              </div>
-              <p className="questions-option-description">
-                Hola! Texto de prueba
-              </p>
-            </PrivateOptionQuestion>
+        </Fade>
+        <Fade bottom>
+          <div className="brands">
+            <p className="brands-title">Trusted by the best</p>
+            <div className="brands-images">
+              <div className="brands-images-1" />
+              <div className="brands-images-2" />
+              <div className="brands-images-3" />
+              <div className="brands-images-4" />
+              <div className="brands-images-5" />
+            </div>
           </div>
-        </div>
-        <div className="brands">
-          <p className="brands-title">Trusted by the best</p>
-          <div className="brands-images">
-            <div className="brands-images-1" />
-            <div className="brands-images-2" />
-            <div className="brands-images-3" />
-            <div className="brands-images-4" />
-            <div className="brands-images-5" />
-          </div>
-        </div>
+        </Fade>
       </Wrapper>
       <Footer>
         <div className="footer-image">
           <h2 className="footer-image-title">
-            Decentralization to drive your career forward.
+            Share your Talent, keep your Privacy
           </h2>
           <div className="footer-image-button">
             <Button
               text="Connect wallet"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
+              hasTransparency={false}
               onClick={() => {}}
             />
           </div>

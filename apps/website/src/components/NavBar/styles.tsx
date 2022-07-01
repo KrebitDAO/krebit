@@ -13,9 +13,14 @@ export const Wrapper = styled.nav<Props>`
     left: 0;
     right: 0;
     z-index: 20;
-    background-color: ${isMenuOpen
-      ? theme.colors.white
-      : theme.colors.transparent};
+    background-color: ${isMenuOpen ? 'initial' : theme.colors.transparent};
+    background: ${isMenuOpen
+      ? `linear-gradient(
+      to right bottom,
+      ${theme.colors.cyan}FF,
+      ${theme.colors.blueRibbon}FF
+    )`
+      : 'initial'};
 
     @media (min-width: ${theme.screens.lg}) {
       padding: 23px 50px;
@@ -101,7 +106,7 @@ export const Wrapper = styled.nav<Props>`
         margin: 0;
         margin-top: 27px;
 
-        &:first-child {
+        &:first-of-type {
           margin-top: 33px;
         }
       }

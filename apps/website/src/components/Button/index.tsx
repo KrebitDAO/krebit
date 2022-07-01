@@ -7,17 +7,26 @@ interface Props {
   primaryColor: string;
   secondaryColor: string;
   onClick: MouseEventHandler<HTMLButtonElement>;
+  hasTransparency?: boolean;
 }
 
 export const Button: FunctionComponent<Props> = props => {
-  const { text, primaryColor, secondaryColor, onClick } = props;
+  const {
+    text,
+    primaryColor,
+    secondaryColor,
+    onClick,
+    hasTransparency = true,
+  } = props;
 
   return (
     <Wrapper
       primaryColor={primaryColor}
       secondaryColor={secondaryColor}
+      hasTransparency={hasTransparency}
       onClick={onClick}
-      data={text}
-    />
+    >
+      {text}
+    </Wrapper>
   );
 };

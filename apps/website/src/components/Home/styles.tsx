@@ -1,12 +1,20 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+interface Props {
+  currentDecentralizedCardImage: string;
+}
+
+interface DecentralizedUsersItemProps {
+  currentUserImage: string;
+}
+
 interface PrivateOptionQuestionProps {
   isExtended: boolean;
 }
 
-export const Wrapper = styled.div`
-  ${({ theme }) => css`
+export const Wrapper = styled.div<Props>`
+  ${({ theme, currentDecentralizedCardImage }) => css`
     max-width: 1474px;
     margin: 0 auto;
 
@@ -23,20 +31,21 @@ export const Wrapper = styled.div`
       .main-content {
         padding: 0 20px;
         padding-top: 126px;
-        z-index: 200;
         align-self: center;
+        position: relative;
+        z-index: 10;
 
-        @media (min-width: ${theme.screens.lg}) {
+        @media (min-width: ${theme.screens.xl}) {
           padding: 0;
         }
 
         .main-title {
           font-size: ${theme.fonts['5xl']};
-          font-family: 'HelveticaNowDisplay-Medium';
+          font-family: 'HelveticaNowDisplay-Bold';
           color: ${theme.colors.bunting};
           position: relative;
           z-index: 10;
-          line-height: 1.2;
+          line-height: 1.1;
 
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts['7xl']};
@@ -60,7 +69,6 @@ export const Wrapper = styled.div`
         .main-buttons {
           display: flex;
           grid-gap: 20px;
-          justify-content: center;
           padding-top: 32px;
 
           @media (min-width: ${theme.screens.lg}) {
@@ -107,7 +115,7 @@ export const Wrapper = styled.div`
       .main-content-image {
         position: absolute;
         bottom: 0;
-        background-image: url('/imgs/images/home.png');
+        background-image: url('/imgs/images/tagline.png');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -130,12 +138,13 @@ export const Wrapper = styled.div`
       }
 
       .decentralized-title {
-        font-family: 'HelveticaNowDisplay-Medium';
+        font-family: 'HelveticaNowDisplay-Bold';
         font-size: ${theme.fonts['4xl']};
         color: ${theme.colors.bunting};
         margin-bottom: 75px;
-        max-width: 901px;
+        max-width: 904px;
         text-align: center;
+        line-height: 1.1;
 
         @media (min-width: ${theme.screens.lg}) {
           margin: 0 auto;
@@ -146,7 +155,7 @@ export const Wrapper = styled.div`
 
       .decentralized-users {
         display: grid;
-        grid-template-rows: 60px 399px auto;
+        grid-template-rows: 60px auto auto;
         grid-template-areas: 'menu' 'card' 'list';
 
         @media (min-width: ${theme.screens.lg}) {
@@ -169,11 +178,24 @@ export const Wrapper = styled.div`
             margin-bottom: 33px;
           }
 
-          .decentralized-users-sort-menu-title {
+          .decentralized-users-sort-menu-input {
             margin: 0;
-            font-family: 'HelveticaNowDisplay-Medium';
-            font-size: ${theme.fonts.base};
+            font-size: ${theme.fonts.sm};
             color: ${theme.colors.bunting};
+            background-color: ${theme.colors.white};
+            border: 1px solid ${theme.colors.bunting}40;
+            border-radius: 20px;
+            padding: 5px 10px;
+            width: 240px;
+
+            &:focus {
+              outline: none;
+            }
+
+            @media (min-width: ${theme.screens.lg}) {
+              padding: 10px 15px;
+              width: 340px;
+            }
           }
 
           .decentralized-users-sort-menu-option {
@@ -194,119 +216,139 @@ export const Wrapper = styled.div`
           }
         }
 
-        .decentralized-users-card {
+        .decentralized-users-card-container {
           grid-area: card;
           width: 100%;
-          height: 335px;
-          box-shadow: ${theme.shadows.smallest};
-          background-color: ${theme.colors.white};
-          padding: 15px 15px 10px 15px;
-          margin-top: 16px;
-          margin-bottom: 48px;
-          position: relative;
 
-          @media (min-width: ${theme.screens.lg}) {
-            height: 504px;
-            padding: 24px 24px 17px 24px;
-            margin: 0;
-          }
-
-          .decentralized-users-card-box {
-            height: 30px;
-            width: 100px;
-            border-radius: 20px;
-            background-color: ${theme.colors.cyan};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 5px;
-            right: 5px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              height: 40px;
-              width: 128px;
-              top: 8px;
-              right: 8px;
-            }
-
-            & > svg {
-              width: 20px;
-              height: 20px;
-              margin-right: 5px;
-            }
-
-            .decentralized-users-card-box-title {
-              margin: 0;
-              font-family: 'HelveticaNowDisplay-Medium';
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.blueRibbon};
-
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
-              }
-            }
-          }
-
-          .decentralized-users-card-image {
-            background-image: url('/imgs/images/home.png');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
+          .decentralized-users-card {
             width: 100%;
-            height: 271px;
+            height: auto;
+            box-shadow: ${theme.shadows.smallest};
+            background-color: ${theme.colors.white};
+            padding: 15px 15px 10px 15px;
+            margin-top: 16px;
+            margin-bottom: 48px;
+            position: relative;
 
             @media (min-width: ${theme.screens.lg}) {
-              height: 408px;
-            }
-          }
-
-          .decentralized-users-card-bottom {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 11px;
-            align-items: center;
-
-            @media (min-width: ${theme.screens.lg}) {
-              padding-top: 17px;
+              height: 504px;
+              padding: 24px 24px 17px 24px;
+              margin: 0;
             }
 
-            .decentralized-users-card-bottom-presentration {
+            .decentralized-users-card-box {
+              height: 30px;
+              width: 100px;
+              border-radius: 20px;
+              background-color: ${theme.colors.cyan};
               display: flex;
               align-items: center;
+              justify-content: center;
+              position: absolute;
+              top: 5px;
+              right: 5px;
 
-              .decentralized-users-card-bottom-presentration-image {
-                background-image: url('/imgs/images/home.png');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                width: 25px;
-                height: 25px;
+              @media (min-width: ${theme.screens.lg}) {
+                height: 40px;
+                width: 128px;
+                top: 8px;
+                right: 8px;
+              }
+
+              & > svg {
+                width: 20px;
+                height: 20px;
                 margin-right: 5px;
-                border-radius: 9999px;
+              }
+
+              .decentralized-users-card-box-title {
+                margin: 0;
+                font-family: 'HelveticaNowDisplay-Medium';
+                font-size: ${theme.fonts.sm};
+                color: ${theme.colors.blueRibbon};
 
                 @media (min-width: ${theme.screens.lg}) {
-                  width: 38px;
-                  height: 38px;
-                  margin-right: 8px;
+                  font-size: ${theme.fonts.base};
+                }
+              }
+            }
+
+            .decentralized-users-card-image {
+              background-image: url('${currentDecentralizedCardImage}');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: cover;
+              width: 100%;
+              height: 271px;
+
+              @media (min-width: ${theme.screens.lg}) {
+                height: 408px;
+              }
+            }
+
+            .decentralized-users-card-bottom {
+              padding-top: 11px;
+
+              @media (min-width: ${theme.screens.lg}) {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 17px;
+              }
+
+              .decentralized-users-card-bottom-presentration {
+                display: flex;
+                align-items: center;
+
+                .decentralized-users-card-bottom-presentration-image {
+                  background-image: url('${currentDecentralizedCardImage}');
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                  width: 25px;
+                  height: 25px;
+                  margin-right: 5px;
+                  border-radius: 9999px;
+
+                  @media (min-width: ${theme.screens.lg}) {
+                    width: 38px;
+                    height: 38px;
+                    margin-right: 8px;
+                  }
+                }
+
+                .decentralized-users-card-bottom-presentration-title {
+                  margin: 0;
+                  font-family: 'HelveticaNowDisplay-Medium';
+                  font-size: ${theme.fonts.lg};
+                  color: ${theme.colors.bunting};
                 }
               }
 
-              .decentralized-users-card-bottom-presentration-title {
-                margin: 0;
-                font-family: 'HelveticaNowDisplay-Medium';
-                font-size: ${theme.fonts.lg};
-                color: ${theme.colors.bunting};
-              }
-            }
+              .decentralized-users-card-bottom-skills {
+                display: flex;
+                flex-wrap: nowrap;
+                grid-gap: 5px;
+                padding-top: 11px;
 
-            .decentralized-users-card-bottom-title {
-              font-size: ${theme.fonts.sm};
-              margin: 0;
-              color: ${theme.colors.bunting};
+                @media (min-width: ${theme.screens.lg}) {
+                  padding: 0;
+                }
 
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
+                .decentralized-users-card-bottom-skill {
+                  margin: 0;
+                  height: 100%;
+                  padding: 5px 10px;
+                  border-radius: 9999px;
+                  background: linear-gradient(
+                    to right,
+                    ${theme.colors.rose}80,
+                    ${theme.colors.blueRibbon}80
+                  );
+                  color: ${theme.colors.white};
+                  font-family: 'HelveticaNowDisplay-Medium';
+                  font-size: ${theme.fonts.sm};
+                }
               }
             }
           }
@@ -315,76 +357,8 @@ export const Wrapper = styled.div`
         .decentralized-users-list {
           grid-area: list;
 
-          .decentralized-users-item {
-            width: 100%;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
-            padding-top: 18px;
-            cursor: pointer;
-
-            @media (min-width: ${theme.screens.lg}) {
-              padding-top: 26px;
-            }
-
-            .decentralized-users-item-content {
-              display: flex;
-              align-items: center;
-
-              .decentralized-users-item-content-image {
-                background-image: url('/imgs/images/home.png');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                width: 38px;
-                height: 38px;
-                border-radius: 9999px;
-                margin-right: 8px;
-              }
-
-              .decentralized-users-item-content-title {
-                font-size: ${theme.fonts.base};
-                font-family: 'HelveticaNowDisplay-Medium';
-                color: ${theme.colors.bunting};
-                margin: 0;
-                margin-right: 8px;
-
-                @media (min-width: ${theme.screens.lg}) {
-                  font-size: ${theme.fonts.lg};
-                }
-              }
-
-              & > svg {
-                width: 20px;
-                height: 20px;
-
-                & > .front {
-                  fill: ${theme.colors.wildSand};
-                }
-              }
-            }
-
-            .decentralized-users-item-content-id {
-              margin: 0;
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.bunting};
-
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
-              }
-            }
-          }
-
           .is-active {
             border: 1px solid ${theme.colors.blueRibbon};
-            height: 54px;
-            padding: 0 12px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              height: 59px;
-            }
           }
         }
       }
@@ -407,7 +381,6 @@ export const Wrapper = styled.div`
 
       .private-image {
         grid-area: image;
-        background-image: url('/imgs/images/home.png');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -419,6 +392,14 @@ export const Wrapper = styled.div`
         }
       }
 
+      .private-image-first {
+        background-image: url('/imgs/images/user1.png');
+      }
+
+      .private-image-second {
+        background-image: url('/imgs/images/hire.png');
+      }
+
       .private-content {
         grid-area: content;
         align-self: center;
@@ -427,7 +408,8 @@ export const Wrapper = styled.div`
           margin: 0;
           color: ${theme.colors.bunting};
           font-size: ${theme.fonts['4xl']};
-          font-family: 'HelveticaNowDisplay-Medium';
+          font-family: 'HelveticaNowDisplay-Bold';
+          line-height: 1.1;
           margin-top: 30px;
 
           @media (min-width: ${theme.screens.lg}) {
@@ -545,7 +527,7 @@ export const Wrapper = styled.div`
         }
 
         .brands-images-5 {
-          background-image: url('/imgs/logos/ceramic-logo.png');
+          background-image: url('/imgs/logos/ceramic.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
@@ -557,6 +539,70 @@ export const Wrapper = styled.div`
             height: 56px;
           }
         }
+      }
+    }
+  `}
+`;
+
+export const DecentralizedUsersItem = styled.div<DecentralizedUsersItemProps>`
+  ${({ theme, currentUserImage }) => css`
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    height: 54px;
+    cursor: pointer;
+
+    @media (min-width: ${theme.screens.lg}) {
+      height: 59px;
+    }
+
+    .decentralized-users-item-content {
+      display: flex;
+      align-items: center;
+
+      .decentralized-users-item-content-image {
+        background-image: url('${currentUserImage}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 38px;
+        height: 38px;
+        border-radius: 9999px;
+        margin-right: 8px;
+      }
+
+      .decentralized-users-item-content-title {
+        font-size: ${theme.fonts.base};
+        font-family: 'HelveticaNowDisplay-Medium';
+        color: ${theme.colors.bunting};
+        margin: 0;
+        margin-right: 8px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.lg};
+        }
+      }
+
+      & > svg {
+        width: 20px;
+        height: 20px;
+
+        & > .front {
+          fill: ${theme.colors.wildSand};
+        }
+      }
+    }
+
+    .decentralized-users-item-content-id {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.bunting};
+
+      @media (min-width: ${theme.screens.lg}) {
+        font-size: ${theme.fonts.base};
       }
     }
   `}
@@ -610,7 +656,7 @@ export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
 export const Footer = styled.footer`
   ${({ theme }) => css`
     .footer-image {
-      background-image: url('/imgs/images/home.png');
+      background-image: url('/imgs/images/footer.png');
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
@@ -627,11 +673,12 @@ export const Footer = styled.footer`
       }
 
       .footer-image-title {
-        font-family: 'HelveticaNowDisplay-Medium';
+        font-family: 'HelveticaNowDisplay-Bold';
         font-size: ${theme.fonts['4xl']};
         color: ${theme.colors.cyan};
         text-align: center;
         padding: 0 20px;
+        line-height: 1.1;
 
         @media (min-width: ${theme.screens.lg}) {
           font-size: ${theme.fonts['6xl']};
