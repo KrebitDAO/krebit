@@ -115,7 +115,7 @@ export const Wrapper = styled.div<Props>`
       .main-content-image {
         position: absolute;
         bottom: 0;
-        background-image: url('/imgs/images/tagline.png');
+        background-image: url('/imgs/images/istockphoto-1372115212-612x612.jpg');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -393,11 +393,11 @@ export const Wrapper = styled.div<Props>`
       }
 
       .private-image-first {
-        background-image: url('/imgs/images/user1.png');
+        background-image: url('/imgs/images/istockphoto-1342108979-612x612-cut.jpg');
       }
 
       .private-image-second {
-        background-image: url('/imgs/images/hire.png');
+        background-image: url('/imgs/images/trust.jpg');
       }
 
       .private-content {
@@ -471,29 +471,29 @@ export const Wrapper = styled.div<Props>`
         }
 
         .brands-images-1 {
-          background-image: url('/imgs/logos/metamask-logo.png');
+          background-image: url('/imgs/logos/openzepellin-logo.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
-          width: 105px;
-          height: 34px;
+          width: 163px;
+          height: 19px;
 
           @media (min-width: ${theme.screens.lg}) {
-            width: 187px;
-            height: 61px;
+            width: 249px;
+            height: 29px;
           }
         }
 
         .brands-images-2 {
-          background-image: url('/imgs/logos/fleek-logo.png');
+          background-image: url('/imgs/logos/ceramic.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
-          width: 82px;
-          height: 34px;
+          width: 115px;
+          height: 38px;
 
           @media (min-width: ${theme.screens.lg}) {
-            width: 128px;
+            width: 175px;
             height: 56px;
           }
         }
@@ -513,32 +513,33 @@ export const Wrapper = styled.div<Props>`
         }
 
         .brands-images-4 {
-          background-image: url('/imgs/logos/openzepellin-logo.png');
+          background-image: url('/imgs/logos/fleek-logo.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
-          width: 163px;
-          height: 19px;
+          width: 82px;
+          height: 34px;
 
           @media (min-width: ${theme.screens.lg}) {
-            width: 249px;
-            height: 29px;
+            width: 128px;
+            height: 56px;
           }
         }
 
         .brands-images-5 {
-          background-image: url('/imgs/logos/ceramic.png');
+          background-image: url('/imgs/logos/metamask-logo.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
-          width: 115px;
-          height: 38px;
+          width: 105px;
+          height: 34px;
 
           @media (min-width: ${theme.screens.lg}) {
-            width: 175px;
-            height: 56px;
+            width: 187px;
+            height: 61px;
           }
         }
+
       }
     }
   `}
@@ -656,7 +657,7 @@ export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
 export const Footer = styled.footer`
   ${({ theme }) => css`
     .footer-image {
-      background-image: url('/imgs/images/footer.png');
+      background-image: url('/imgs/images/istockphoto-1372115185-612x612.jpg');
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
@@ -664,7 +665,8 @@ export const Footer = styled.footer`
       height: 607px;
       display: grid;
       justify-content: center;
-      align-content: center;
+      align-content: flex-start;
+      padding-top: 3em;
       grid-gap: 58px;
 
       @media (min-width: ${theme.screens.lg}) {

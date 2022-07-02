@@ -13,33 +13,33 @@ import { Arrow, Krebit, Logo, Play } from 'components/Icons';
 
 const BOXES = [
   {
-    box: 'KRB 140',
-    username: 'Andres Montoya',
+    box: 'KRB 180',
+    username: 'fuano.eth',
     image: '/imgs/images/rare-buddies-1.png',
-    skills: ['JavaScript', 'Software', 'Ethereum'],
+    skills: ['Illustrator', 'NFT Creator', 'Developer'],
   },
   {
-    box: 'KRB 141',
-    username: 'Alejandro',
-    image: '/imgs/images/rare-buddies-1.png',
-    skills: ['Engnieering', 'Lead', 'Krebit'],
+    box: 'KRB 171',
+    username: 'alerios.eth',
+    image: '/imgs/images/alerios.png',
+    skills: ['Developer', 'Product'],
   },
   {
-    box: 'KRB 142',
-    username: 'Oliver',
-    image: '/imgs/images/tagline.png',
+    box: 'KRB 152',
+    username: 'texasfr.eth',
+    image: '/imgs/images/texasfr.png',
     skills: ['Design', 'Software', 'UX'],
   },
   {
     box: 'KRB 143',
-    username: 'Juan',
-    image: '/imgs/images/user1.png',
+    username: 'piraseligman.eth',
+    image: '/imgs/images/piraseligman.png',
     skills: ['Math', 'Teach', 'School'],
   },
   {
-    box: 'KRB 144',
-    username: 'Andrea',
-    image: '/imgs/images/user1.png',
+    box: 'KRB 140',
+    username: 'andresmontoya.eth',
+    image: '/imgs/images/user2.png',
     skills: ['Marketing', 'Software', 'Design'],
   },
 ];
@@ -77,7 +77,7 @@ export const Home = () => {
             <div className="main-buttons">
               <div className="main-button">
                 <Button
-                  text="Connect wallet"
+                  text="Get Verified"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
                   onClick={() => {}}
@@ -108,7 +108,7 @@ export const Home = () => {
                   <p className="decentralized-users-sort-menu-option-title">
                     Sort by
                   </p>
-                  <Arrow />
+                  <Arrow /> Reputation
                 </div>
               </div>
               <SwitchTransition mode="out-in">
@@ -181,11 +181,13 @@ export const Home = () => {
             <div className="private-image private-image-first"></div>
             <div className="private-content">
               <p className="private-content-title">
-                Consolidate and own your professional Reputation
+                Consolidate and own your Identity and Reputation
               </p>
               <p className="private-content-description">
                 Today you have to build your reputation on each platform every
                 time. How can we unlock reputation from centralized platforms?
+              </p>
+              <p className="private-content-description">
                 With Krebit you can apply to jobs with your Credentials, not
                 filling endless forms.
               </p>
@@ -240,7 +242,9 @@ export const Home = () => {
               </p>
               <p className="private-content-description">
                 Recruitment is a complex, time consuming and often a frustrating
-                process if not managed properly. Krebit is best decentralized
+                process if not managed properly.
+              </p>
+              <p className="private-content-description"> Krebit is best decentralized
                 platform to Verify the Reputation of Talent in Web3.
               </p>
               <PrivateOptionQuestion isExtended={isExtended === 3}>
@@ -285,13 +289,13 @@ export const Home = () => {
         </Fade>
         <Fade bottom>
           <div className="brands">
-            <p className="brands-title">Trusted by the best</p>
+            <p className="brands-title">Powered by the best Web3 Stack</p>
             <div className="brands-images">
-              <div className="brands-images-1" />
-              <div className="brands-images-2" />
-              <div className="brands-images-3" />
-              <div className="brands-images-4" />
-              <div className="brands-images-5" />
+            <div className="brands-images-1" />
+            <div className="brands-images-2" />
+            <div className="brands-images-3" />
+            <div className="brands-images-4" />
+            <div className="brands-images-5" />  
             </div>
           </div>
         </Fade>
@@ -299,7 +303,7 @@ export const Home = () => {
       <Footer>
         <div className="footer-image">
           <h2 className="footer-image-title">
-            Share your Talent, keep your Privacy
+            Share your Reputation, keep your Privacy
           </h2>
           <div className="footer-image-button">
             <Button
@@ -317,7 +321,7 @@ export const Home = () => {
               <Logo />
             </div>
             <p className="footer-content-left-text">
-              © {new Date().getFullYear()} Krebit, All right reserved.
+              © {new Date().getFullYear()} Krebit, All rights reserved.
             </p>
           </div>
           <div className="footer-content-right">
