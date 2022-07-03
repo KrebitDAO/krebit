@@ -12,6 +12,10 @@ export const NavBar = () => {
     setIsMenuOpen(prevState => !prevState);
   };
 
+  const handleCloseMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <Wrapper isMenuOpen={isMenuOpen}>
       <div className="header">
@@ -24,17 +28,18 @@ export const NavBar = () => {
           {isMenuOpen ? <Close /> : <Menu />}
         </div>
         <div className="menu-bar">
-          <a
-            className="menu-bar-item"
+          <Link
             href="https://discord.gg/y7sMYVjxrd"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Discord
-          </a>
+            <a className="menu-bar-item">Discord</a>
+          </Link>
           <a className="menu-bar-item">Blog</a>
           <a className="menu-bar-item">Docs</a>
-          <a className="menu-bar-item" href="#hire">Recruiters</a>
+          <Link href="#hire">
+            <a className="menu-bar-item">Recruiters</a>
+          </Link>
           <a className="menu-bar-item">Credential Issuers</a>
           <div className="menu-bar-button">
             <Button
@@ -47,17 +52,20 @@ export const NavBar = () => {
         </div>
       </div>
       <div className="menu-content">
-        <a
-          className="menu-content-item"
+        <Link
           href="https://discord.gg/y7sMYVjxrd"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Discord
-        </a>
+          <a className="menu-content-item">Discord</a>
+        </Link>
         <a className="menu-content-item">Blog</a>
         <a className="menu-content-item">Docs</a>
-        <a className="menu-content-item" href="#hire">Recruiters</a>
+        <Link href="#hire">
+          <a className="menu-content-item" onClick={handleCloseMenu}>
+            Recruiters
+          </a>
+        </Link>
         <a className="menu-content-item">Credential Issuers</a>
         <div className="menu-content-button">
           <Button
