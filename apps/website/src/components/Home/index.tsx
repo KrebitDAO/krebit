@@ -342,8 +342,8 @@ export const Home = () => {
               <Logo />
             </div>
             <p className="footer-content-left-text">
-              Portable Reputation for Better Job Matching. ©{' '}
-              {new Date().getFullYear()} Krebit, All rights reserved.
+              Portable Reputation for Better Job Matching.
+              <br />© {new Date().getFullYear()} Krebit, All rights reserved.
             </p>
           </div>
           <div className="footer-content-right">
