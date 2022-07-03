@@ -41,7 +41,14 @@ export const NavBar = () => {
           <Link href="#hire">
             <a className="menu-bar-item">Recruiters</a>
           </Link>
-          <a className="menu-bar-item">Credential Issuers</a>
+          <Link
+            href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
+            rel="noopener noreferrer"
+          >
+            <a target="_blank" className="menu-bar-item">
+              Credential Issuers
+            </a>
+          </Link>
           <div className="menu-bar-button">
             <Button
               text="Try the Beta"
@@ -56,12 +63,12 @@ export const NavBar = () => {
       </div>
       <div className="menu-content">
         <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
-          <a target="_blank" className="menu-bar-item">
+          <a target="_blank" className="menu-content-item">
             Discord
           </a>
         </Link>
         <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
-          <a target="_blank" className="menu-bar-item">
+          <a target="_blank" className="menu-content-item">
             Docs
           </a>
         </Link>
@@ -70,7 +77,14 @@ export const NavBar = () => {
             Recruiters
           </a>
         </Link>
-        <a className="menu-content-item">Credential Issuers</a>
+        <Link
+          href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
+          rel="noopener noreferrer"
+        >
+          <a target="_blank" className="menu-content-item">
+            Credential Issuers
+          </a>
+        </Link>
         <div className="menu-content-button">
           <Button
             text="Try the Beta"
