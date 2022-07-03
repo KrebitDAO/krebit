@@ -22,7 +22,7 @@ const BOXES = [
   {
     box: 'KRB 171',
     username: 'alerios.eth',
-    image: '/imgs/images/alerios.png',
+    image: '/imgs/images/alerios.jpg',
     skills: ['Developer', 'Product'],
   },
   {
@@ -32,16 +32,16 @@ const BOXES = [
     skills: ['Talent', 'Software', 'QA'],
   },
   {
+    box: 'KRB 150',
+    username: 'andresmontoya.eth',
+    image: '/imgs/images/andresmontoya.jpeg',
+    skills: ['Javascript', 'UX', 'Frontend'],
+  },
+  {
     box: 'KRB 143',
     username: 'piraseligman.eth',
     image: '/imgs/images/piraseligman.png',
     skills: ['Growth', 'Innovation', 'Design'],
-  },
-  {
-    box: 'KRB 140',
-    username: 'andresmontoya.eth',
-    image: '/imgs/images/andresmontoya.jpeg',
-    skills: ['Javascript', 'UX', 'Frontend'],
   },
 ];
 
@@ -88,7 +88,9 @@ export const Home = () => {
                   text="Reserve your Profile"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
-                  onClick={() => {}}
+                  onClick={() => {
+                    window.open('https://d3x2s82dzfa.typeform.com/to/O9opkxQT');
+                  }}
                 />
               </div>
               <div className="main-line-button">
@@ -239,7 +241,9 @@ export const Home = () => {
                   text="Reserve your DAO/Company Profile"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
-                  onClick={() => {}}
+                  onClick={() => {
+                    window.open('https://d3x2s82dzfa.typeform.com/to/B63Gz2v0');
+                  }}
                 />
               </div>
             </div>
@@ -322,12 +326,12 @@ export const Home = () => {
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Try the Beta"
+              text="Reserve your Profile"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               hasTransparency={false}
               onClick={() => {
-                window.open('https://testnet.krebit.id');
+                window.open('https://d3x2s82dzfa.typeform.com/to/O9opkxQT');
               }}
             />
           </div>

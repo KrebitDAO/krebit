@@ -28,17 +28,15 @@ export const NavBar = () => {
           {isMenuOpen ? <Close /> : <Menu />}
         </div>
         <div className="menu-bar">
-          <Link
-            href="https://discord.gg/y7sMYVjxrd"
-            rel="noopener noreferrer"
-          >
-            <a target="_blank" className="menu-bar-item">Discord</a>
+          <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
+            <a target="_blank" className="menu-bar-item">
+              Discord
+            </a>
           </Link>
-          <Link
-            href="https://docs.krebit.id/"            
-            rel="noopener noreferrer"
-          >
-            <a target="_blank" className="menu-bar-item">Docs</a>
+          <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
+            <a target="_blank" className="menu-bar-item">
+              Docs
+            </a>
           </Link>
           <Link href="#hire">
             <a className="menu-bar-item">Recruiters</a>
@@ -49,21 +47,24 @@ export const NavBar = () => {
               text="Try the Beta"
               primaryColor="cyan"
               secondaryColor="rose"
-              onClick={() => {window.open('https://testnet.krebit.id')}}
+              onClick={() => {
+                window.open('https://testnet.krebit.id');
+              }}
             />
           </div>
         </div>
       </div>
       <div className="menu-content">
-        <Link
-          href="https://discord.gg/y7sMYVjxrd"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <a className="menu-content-item">Discord</a>
+        <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
+          <a target="_blank" className="menu-bar-item">
+            Discord
+          </a>
         </Link>
-        <a className="menu-content-item">Blog</a>
-        <a className="menu-content-item">Docs</a>
+        <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
+          <a target="_blank" className="menu-bar-item">
+            Docs
+          </a>
+        </Link>
         <Link href="#hire">
           <a className="menu-content-item" onClick={handleCloseMenu}>
             Recruiters
@@ -75,7 +76,9 @@ export const NavBar = () => {
             text="Try the Beta"
             primaryColor="rose"
             secondaryColor="blueRibbon"
-            onClick={() => {window.open('https://testnet.krebit.id')}}
+            onClick={() => {
+              window.open('https://testnet.krebit.id');
+            }}
           />
         </div>
       </div>
