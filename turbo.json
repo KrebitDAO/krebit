@@ -13,9 +13,10 @@
     "start": {},
     "clean": {
       "cache": false
+    },
+    "export": {
+      "dependsOn": ["^build"]
     }
   },
-  "globalDependencies": [
-    ".env"
-  ]
+  "globalDependencies": [".env"]
 }
