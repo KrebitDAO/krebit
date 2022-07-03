@@ -34,11 +34,11 @@ export const NavBar = () => {
           </a>
           <a className="menu-bar-item">Blog</a>
           <a className="menu-bar-item">Docs</a>
-          <a className="menu-bar-item">Recruiters</a>
-          <a className="menu-bar-item">Verifiers</a>
+          <a className="menu-bar-item" href="#hire">Recruiters</a>
+          <a className="menu-bar-item">Credential Issuers</a>
           <div className="menu-bar-button">
             <Button
-              text="Connect wallet"
+              text="Try the Beta"
               primaryColor="cyan"
               secondaryColor="rose"
               onClick={() => {}}
@@ -57,8 +57,8 @@ export const NavBar = () => {
         </a>
         <a className="menu-content-item">Blog</a>
         <a className="menu-content-item">Docs</a>
-        <a className="menu-content-item">Recruiters</a>
-        <a className="menu-content-item">Verifiers</a>
+        <a className="menu-content-item" href="#hire">Recruiters</a>
+        <a className="menu-content-item">Credential Issuers</a>
         <div className="menu-content-button">
           <Button
             text="Connect wallet"

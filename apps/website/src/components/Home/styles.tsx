@@ -392,12 +392,21 @@ export const Wrapper = styled.div<Props>`
         }
       }
 
+      .private-button {
+        width: 211px;
+        height: 59px;
+        @media (min-width: ${theme.screens.lg}) {
+          width: 211px;
+          height: 58px;
+        }
+      }
+
       .private-image-first {
-        background-image: url('/imgs/images/istockphoto-1342108979-612x612-cut.jpg');
+        background-image: url('/imgs/images/trust.jpg');
       }
 
       .private-image-second {
-        background-image: url('/imgs/images/trust.jpg');
+        background-image: url('/imgs/images/reputation.jpg');
       }
 
       .private-content {

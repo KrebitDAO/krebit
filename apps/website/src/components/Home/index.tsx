@@ -68,33 +68,35 @@ export const Home = () => {
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
-              Connecting the best Talent through portable Reputation
+            Professionals: build and claim your lifetime profile
             </h1>
             <p className="main-description">
-              Own a professional profile that recruiters can trust with
-              verifiable-credentials.
             </p>
+            <ul>
+              <li>Get verified once, reuse it a billion times.</li>
+              <li>We help you build it, you own it.</li>
+              <li>Say goodbye to job applications and interviews.</li>
+              </ul>
             <div className="main-buttons">
               <div className="main-button">
                 <Button
-                  text="Get Verified"
+                  text="Reserve your Profile"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
                   onClick={() => {}}
                 />
               </div>
               <div className="main-line-button">
-                <Play />
-                <p className="main-line-button-text">Watch video</p>
+                <p className="main-line-button-text"><a href="#web3">Web3 Ready</a></p>
               </div>
             </div>
           </div>
           <div className="main-content-image"></div>
         </div>
-        <div className="decentralized">
+        <div id="hire" className="decentralized">
           <Fade bottom>
             <h2 className="decentralized-title">
-              Your professional Reputation verified once, reused everywhere
+            Recruiters: Instant Hiring is Here!
             </h2>
           </Fade>
           <Fade bottom>
@@ -181,14 +183,85 @@ export const Home = () => {
             <div className="private-image private-image-first"></div>
             <div className="private-content">
               <p className="private-content-title">
-                Consolidate and own your Identity and Reputation
+              Smooth access to pre-vetted talent certified by trusted issuers
+              </p>
+                
+              <PrivateOptionQuestion isExtended={isExtended === 3}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(3)}
+                >
+                  <p className="questions-option-title">One click skill matching</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                Contact pre-vetted candidates.
+                </p>
+              </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 4}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(4)}
+                >
+                  <p className="questions-option-title">Reach out to undiscovered gems</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                Discover candidates you might be ignoring/missing.
+                </p>
+              </PrivateOptionQuestion>
+              <PrivateOptionQuestion isExtended={isExtended === 5}>
+                <div
+                  className="questions-option-header"
+                  onClick={() => handleExtended(5)}
+                >
+                  <p className="questions-option-title">Get rid of bias in your hiring process</p>
+                  <Arrow />
+                </div>
+                <p className="questions-option-description">
+                  
+                Hire
+                  pseudonymous talent based on pre-vetted merit.
+                </p>
+              </PrivateOptionQuestion>
+              <div className="private-button">
+              <Button
+                  text="Reserve your DAO/Company Profile"
+                  primaryColor="rose"
+                  secondaryColor="blueRibbon"
+                  onClick={() => {}}
+                />
+                </div>
+            </div>
+          </div>
+        </Fade>
+        
+        <Fade bottom>
+          <div className="brands">
+            <p className="brands-title">Powered by the best Web3 Stack</p>
+            <div className="brands-images">
+            <div className="brands-images-1" />
+            <div className="brands-images-2" />
+            <div className="brands-images-3" />
+            <div className="brands-images-4" />
+            <div className="brands-images-5" />  
+            </div>
+          </div>
+        </Fade>
+        <Fade bottom>
+          <div id="web3" className="private private-different">
+            <div className="private-image private-image-second"></div>
+            <div className="private-content">
+              <p className="private-content-title">
+              Consolidate and own your Identity and Reputation
+                
               </p>
               <p className="private-content-description">
-                Today you have to build your reputation on each platform every
+              Today you have to build your reputation on each platform every
                 time. How can we unlock reputation from centralized platforms?
               </p>
-              <p className="private-content-description">
-                With Krebit you can apply to jobs with your Credentials, not
+              <p className="private-content-description"> 
+              With Krebit you can apply to jobs with your Credentials, not
                 filling endless forms.
               </p>
               <PrivateOptionQuestion isExtended={isExtended === 0}>
@@ -233,72 +306,6 @@ export const Home = () => {
             </div>
           </div>
         </Fade>
-        <Fade bottom>
-          <div className="private private-different">
-            <div className="private-image private-image-second"></div>
-            <div className="private-content">
-              <p className="private-content-title">
-                Identify and recruit the best Talent
-              </p>
-              <p className="private-content-description">
-                Recruitment is a complex, time consuming and often a frustrating
-                process if not managed properly.
-              </p>
-              <p className="private-content-description"> Krebit is best decentralized
-                platform to Verify the Reputation of Talent in Web3.
-              </p>
-              <PrivateOptionQuestion isExtended={isExtended === 3}>
-                <div
-                  className="questions-option-header"
-                  onClick={() => handleExtended(3)}
-                >
-                  <p className="questions-option-title">Effective</p>
-                  <Arrow />
-                </div>
-                <p className="questions-option-description">
-                  Discover candidates you might be ignoring/missing. Hire
-                  pseudonymous talent based on pre-vetted merit.
-                </p>
-              </PrivateOptionQuestion>
-              <PrivateOptionQuestion isExtended={isExtended === 4}>
-                <div
-                  className="questions-option-header"
-                  onClick={() => handleExtended(4)}
-                >
-                  <p className="questions-option-title">Time-Saving</p>
-                  <Arrow />
-                </div>
-                <p className="questions-option-description">
-                  Contact pre-vetted candidates.
-                </p>
-              </PrivateOptionQuestion>
-              <PrivateOptionQuestion isExtended={isExtended === 5}>
-                <div
-                  className="questions-option-header"
-                  onClick={() => handleExtended(5)}
-                >
-                  <p className="questions-option-title">Composable</p>
-                  <Arrow />
-                </div>
-                <p className="questions-option-description">
-                  Itegrate with ATS systems: "Apply to this Job with Krebit"
-                </p>
-              </PrivateOptionQuestion>
-            </div>
-          </div>
-        </Fade>
-        <Fade bottom>
-          <div className="brands">
-            <p className="brands-title">Powered by the best Web3 Stack</p>
-            <div className="brands-images">
-            <div className="brands-images-1" />
-            <div className="brands-images-2" />
-            <div className="brands-images-3" />
-            <div className="brands-images-4" />
-            <div className="brands-images-5" />  
-            </div>
-          </div>
-        </Fade>
       </Wrapper>
       <Footer>
         <div className="footer-image">
@@ -307,7 +314,7 @@ export const Home = () => {
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Connect wallet"
+              text="Try the Beta"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               hasTransparency={false}
