@@ -30,13 +30,16 @@ export const NavBar = () => {
         <div className="menu-bar">
           <Link
             href="https://discord.gg/y7sMYVjxrd"
-            target="_blank"
             rel="noopener noreferrer"
           >
-            <a className="menu-bar-item">Discord</a>
+            <a target="_blank" className="menu-bar-item">Discord</a>
           </Link>
-          <a className="menu-bar-item">Blog</a>
-          <a className="menu-bar-item">Docs</a>
+          <Link
+            href="https://docs.krebit.id/"            
+            rel="noopener noreferrer"
+          >
+            <a target="_blank" className="menu-bar-item">Docs</a>
+          </Link>
           <Link href="#hire">
             <a className="menu-bar-item">Recruiters</a>
           </Link>
@@ -46,7 +49,7 @@ export const NavBar = () => {
               text="Try the Beta"
               primaryColor="cyan"
               secondaryColor="rose"
-              onClick={() => {}}
+              onClick={() => {window.open('https://testnet.krebit.id')}}
             />
           </div>
         </div>
@@ -69,10 +72,10 @@ export const NavBar = () => {
         <a className="menu-content-item">Credential Issuers</a>
         <div className="menu-content-button">
           <Button
-            text="Connect wallet"
+            text="Try the Beta"
             primaryColor="rose"
             secondaryColor="blueRibbon"
-            onClick={() => {}}
+            onClick={() => {window.open('https://testnet.krebit.id')}}
           />
         </div>
       </div>

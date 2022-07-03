@@ -326,7 +326,9 @@ export const Home = () => {
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               hasTransparency={false}
-              onClick={() => {}}
+              onClick={() => {
+                window.open('https://testnet.krebit.id');
+              }}
             />
           </div>
         </div>
@@ -340,9 +342,30 @@ export const Home = () => {
             </p>
           </div>
           <div className="footer-content-right">
-            <a className="footer-content-right-option">Blog</a>
-            <a className="footer-content-right-option">Docs</a>
-            <a className="footer-content-right-option">DAO</a>
+            <Link
+              href="https://twitter.com/KrebitDAO"
+              rel="noopener noreferrer"
+            >
+              <a target="_blank" className="footer-content-right-option">
+                Twitter
+              </a>
+            </Link>
+            <Link
+              href="https://www.publish0x.com/Krebit"
+              rel="noopener noreferrer"
+            >
+              <a target="_blank" className="footer-content-right-option">
+                Blog
+              </a>
+            </Link>
+            <Link
+              href="https://gitcoin.co/grants/3522/krebit-web3-verifiable-credentials"
+              rel="noopener noreferrer"
+            >
+              <a target="_blank" className="footer-content-right-option">
+                Gitcoin Grant
+              </a>
+            </Link>
           </div>
         </div>
       </Footer>
