@@ -179,7 +179,7 @@ export const Wrapper = styled.div<Props>`
         .decentralized-users-sort-menu {
           grid-area: menu;
           display: grid;
-          grid-template-columns: 1fr 0.2fr;
+          grid-template-columns: 1fr 0.3fr;
           align-items: center;
           grid-gap: 10px;
 
@@ -207,6 +207,7 @@ export const Wrapper = styled.div<Props>`
 
           .decentralized-users-sort-menu-option-menu {
             display: flex;
+            justify-content: space-between;
             align-items: center;
             padding: 10px;
             border-radius: 20px;
