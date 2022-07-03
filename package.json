@@ -11,7 +11,7 @@
     "clean": "turbo run clean && rm -rf node_modules && rm -rf logs",
     "node-start": "turbo run start --filter=node --no-cache",
     "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website --parallel --no-cache",
-    "export-webpage": "dotenv -e .env -- turbo run export --filter=website"
+    "export-webpage": "turbo run export --filter=website"
   },
   "workspaces": [
     "apps/*",
