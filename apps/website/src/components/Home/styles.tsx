@@ -125,7 +125,7 @@ export const Wrapper = styled.div<Props>`
       .main-content-image {
         position: absolute;
         bottom: 0;
-        background-image: url('/imgs/images/istockphoto-1372115212-612x612.jpg');
+        background-image: url('/imgs/images/header.jpg');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -695,7 +695,7 @@ export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
 export const Footer = styled.footer`
   ${({ theme }) => css`
     .footer-image {
-      background-image: url('/imgs/images/istockphoto-1372115185-612x612.jpg');
+      background-image: url('/imgs/images/footer.jpg');
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;

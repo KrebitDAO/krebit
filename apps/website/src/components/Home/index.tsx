@@ -17,7 +17,7 @@ const BOXES = [
     box: 'KRB 180',
     username: 'fuano.eth',
     image: '/imgs/images/rare-buddies-1.png',
-    skills: ['Illustrator', 'NFT Creator', 'Developer'],
+    skills: ['Illustrator', 'NFT Creator', 'UI'],
   },
   {
     box: 'KRB 171',
@@ -29,19 +29,19 @@ const BOXES = [
     box: 'KRB 152',
     username: 'texasfr.eth',
     image: '/imgs/images/texasfr.png',
-    skills: ['Design', 'Software', 'UX'],
+    skills: ['Talent', 'Software', 'QA'],
   },
   {
     box: 'KRB 143',
     username: 'piraseligman.eth',
     image: '/imgs/images/piraseligman.png',
-    skills: ['Math', 'Teach', 'School'],
+    skills: ['Growth', 'Innovation', 'Design'],
   },
   {
     box: 'KRB 140',
     username: 'andresmontoya.eth',
-    image: '/imgs/images/user2.png',
-    skills: ['Marketing', 'Software', 'Design'],
+    image: '/imgs/images/andresmontoya.jpeg',
+    skills: ['Javascript', 'UX', 'Frontend'],
   },
 ];
 
@@ -190,7 +190,7 @@ export const Home = () => {
             <div className="private-image private-image-first"></div>
             <div className="private-content">
               <h3 className="private-content-title">
-                Smooth access to pre-vetted talent certified by trusted issuers
+                Smooth access to pre-vetted talent, certified by trusted issuers
               </h3>
               <PrivateOptionQuestion isExtended={isExtended === 0}>
                 <div
