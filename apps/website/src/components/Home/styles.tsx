@@ -52,17 +52,27 @@ export const Wrapper = styled.div<Props>`
           }
         }
 
-        .main-description {
+        .main-description-list {
           margin: 0;
           margin-top: 5px;
-          font-size: ${theme.fonts.sm};
-          color: ${theme.colors.bunting};
-          position: relative;
-          z-index: 10;
+          padding: 0;
+          padding-inline-start: 20px;
+          line-height: 1.6;
 
           @media (min-width: ${theme.screens.lg}) {
             margin-top: 24px;
-            font-size: ${theme.fonts.lg};
+          }
+
+          .main-description {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.bunting};
+            position: relative;
+            z-index: 10;
+
+            @media (min-width: ${theme.screens.lg}) {
+              font-size: ${theme.fonts.lg};
+            }
           }
         }
 
@@ -148,18 +158,18 @@ export const Wrapper = styled.div<Props>`
 
         @media (min-width: ${theme.screens.lg}) {
           margin: 0 auto;
-          margin-bottom: 150px;
+          margin-bottom: 100px;
           font-size: ${theme.fonts['6xl']};
         }
       }
 
       .decentralized-users {
         display: grid;
-        grid-template-rows: 60px auto auto;
+        grid-template-rows: repeat(3, auto);
         grid-template-areas: 'menu' 'card' 'list';
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-template-rows: 120px 1fr;
+          grid-template-rows: auto 1fr;
           grid-template-columns: 532px 495px;
           grid-template-areas: 'menu card' 'list card';
           grid-gap: 0 115px;
@@ -168,11 +178,10 @@ export const Wrapper = styled.div<Props>`
 
         .decentralized-users-sort-menu {
           grid-area: menu;
-          height: 30px;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 0.3fr;
           align-items: center;
-          justify-content: space-between;
-          align-self: flex-end;
+          grid-gap: 10px;
 
           @media (min-width: ${theme.screens.lg}) {
             margin-bottom: 33px;
@@ -185,8 +194,7 @@ export const Wrapper = styled.div<Props>`
             background-color: ${theme.colors.white};
             border: 1px solid ${theme.colors.bunting}40;
             border-radius: 20px;
-            padding: 5px 10px;
-            width: 240px;
+            padding: 10px;
 
             &:focus {
               outline: none;
@@ -194,18 +202,28 @@ export const Wrapper = styled.div<Props>`
 
             @media (min-width: ${theme.screens.lg}) {
               padding: 10px 15px;
-              width: 340px;
             }
           }
 
-          .decentralized-users-sort-menu-option {
+          .decentralized-users-sort-menu-option-menu {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid ${theme.colors.bunting}40;
+            background-color: ${theme.colors.white};
+            cursor: pointer;
 
-            .decentralized-users-sort-menu-option-title {
+            @media (min-width: ${theme.screens.lg}) {
+              padding: 10px 15px;
+            }
+
+            .decentralized-users-sort-menu-option-menu-text {
               margin: 0;
-              margin-right: 21px;
+              margin-right: 5px;
               font-size: ${theme.fonts.sm};
+              color: ${theme.colors.bunting};
             }
 
             & > svg {
@@ -392,15 +410,6 @@ export const Wrapper = styled.div<Props>`
         }
       }
 
-      .private-button {
-        width: 211px;
-        height: 59px;
-        @media (min-width: ${theme.screens.lg}) {
-          width: 211px;
-          height: 58px;
-        }
-      }
-
       .private-image-first {
         background-image: url('/imgs/images/trust.jpg');
       }
@@ -412,6 +421,12 @@ export const Wrapper = styled.div<Props>`
       .private-content {
         grid-area: content;
         align-self: center;
+        position: relative;
+        height: 430px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 560px;
+        }
 
         .private-content-title {
           margin: 0;
@@ -435,6 +450,21 @@ export const Wrapper = styled.div<Props>`
           @media (min-width: ${theme.screens.lg}) {
             margin: 28px 0;
             font-size: ${theme.fonts.base};
+          }
+        }
+
+        .private-button {
+          width: 200px;
+          height: 58px;
+          margin: 0 auto;
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin: 0;
+            right: initial;
           }
         }
       }
@@ -548,7 +578,6 @@ export const Wrapper = styled.div<Props>`
             height: 61px;
           }
         }
-
       }
     }
   `}
@@ -675,12 +704,12 @@ export const Footer = styled.footer`
       display: grid;
       justify-content: center;
       align-content: flex-start;
-      padding-top: 3em;
-      grid-gap: 58px;
+      grid-gap: 47px;
+      padding-top: 80px;
 
       @media (min-width: ${theme.screens.lg}) {
         height: 673px;
-        grid-gap: 47px;
+        padding-top: 50px;
       }
 
       .footer-image-title {

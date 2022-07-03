@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
+import Link from 'next/link';
 
 import {
   Wrapper,
@@ -9,7 +10,7 @@ import {
   DecentralizedUsersItem,
 } from './styles';
 import { Button } from 'components/Button';
-import { Arrow, Krebit, Logo, Play } from 'components/Icons';
+import { Arrow, Krebit, Logo } from 'components/Icons';
 
 const BOXES = [
   {
@@ -68,15 +69,19 @@ export const Home = () => {
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
-            Professionals: build and claim your lifetime profile
+              Professionals: build and claim your lifetime profile
             </h1>
-            <p className="main-description">
-            </p>
-            <ul>
-              <li>Get verified once, reuse it a billion times.</li>
-              <li>We help you build it, you own it.</li>
-              <li>Say goodbye to job applications and interviews.</li>
-              </ul>
+            <ul className="main-description-list">
+              <li className="main-description">
+                Get verified once, reuse it a billion times.
+              </li>
+              <li className="main-description">
+                We help you build it, you own it.
+              </li>
+              <li className="main-description">
+                Say goodbye to job applications and interviews.
+              </li>
+            </ul>
             <div className="main-buttons">
               <div className="main-button">
                 <Button
@@ -87,7 +92,9 @@ export const Home = () => {
                 />
               </div>
               <div className="main-line-button">
-                <p className="main-line-button-text"><a href="#web3">Web3 Ready</a></p>
+                <Link href="#web3">
+                  <a className="main-line-button-text">Web3 Ready</a>
+                </Link>
               </div>
             </div>
           </div>
@@ -96,7 +103,7 @@ export const Home = () => {
         <div id="hire" className="decentralized">
           <Fade bottom>
             <h2 className="decentralized-title">
-            Recruiters: Instant Hiring is Here!
+              Recruiters: Instant Hiring is Here!
             </h2>
           </Fade>
           <Fade bottom>
@@ -106,11 +113,11 @@ export const Home = () => {
                   className="decentralized-users-sort-menu-input"
                   placeholder="Search by credential"
                 />
-                <div className="decentralized-users-sort-menu-option">
-                  <p className="decentralized-users-sort-menu-option-title">
-                    Sort by
+                <div className="decentralized-users-sort-menu-option-menu">
+                  <p className="decentralized-users-sort-menu-option-menu-text">
+                    Reputation
                   </p>
-                  <Arrow /> Reputation
+                  <Arrow />
                 </div>
               </div>
               <SwitchTransition mode="out-in">
@@ -182,69 +189,71 @@ export const Home = () => {
           <div className="private">
             <div className="private-image private-image-first"></div>
             <div className="private-content">
-              <p className="private-content-title">
-              Smooth access to pre-vetted talent certified by trusted issuers
-              </p>
-                
-              <PrivateOptionQuestion isExtended={isExtended === 3}>
+              <h3 className="private-content-title">
+                Smooth access to pre-vetted talent certified by trusted issuers
+              </h3>
+              <PrivateOptionQuestion isExtended={isExtended === 0}>
                 <div
                   className="questions-option-header"
-                  onClick={() => handleExtended(3)}
+                  onClick={() => handleExtended(0)}
                 >
-                  <p className="questions-option-title">One click skill matching</p>
+                  <p className="questions-option-title">
+                    One click skill matching
+                  </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                Contact pre-vetted candidates.
+                  Contact pre-vetted candidates.
                 </p>
               </PrivateOptionQuestion>
-              <PrivateOptionQuestion isExtended={isExtended === 4}>
+              <PrivateOptionQuestion isExtended={isExtended === 1}>
                 <div
                   className="questions-option-header"
-                  onClick={() => handleExtended(4)}
+                  onClick={() => handleExtended(1)}
                 >
-                  <p className="questions-option-title">Reach out to undiscovered gems</p>
+                  <p className="questions-option-title">
+                    Reach out to undiscovered gems
+                  </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                Discover candidates you might be ignoring/missing.
+                  Discover candidates you might be ignoring/missing.
                 </p>
               </PrivateOptionQuestion>
-              <PrivateOptionQuestion isExtended={isExtended === 5}>
+              <PrivateOptionQuestion isExtended={isExtended === 2}>
                 <div
                   className="questions-option-header"
-                  onClick={() => handleExtended(5)}
+                  onClick={() => handleExtended(2)}
                 >
-                  <p className="questions-option-title">Get rid of bias in your hiring process</p>
+                  <p className="questions-option-title">
+                    Get rid of bias in your hiring process
+                  </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  
-                Hire
-                  pseudonymous talent based on pre-vetted merit.
+                  Hire pseudonymous talent based on pre-vetted merit.
                 </p>
               </PrivateOptionQuestion>
               <div className="private-button">
-              <Button
+                <Button
                   text="Reserve your DAO/Company Profile"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
                   onClick={() => {}}
                 />
-                </div>
+              </div>
             </div>
           </div>
         </Fade>
-        
         <Fade bottom>
           <div className="brands">
             <p className="brands-title">Powered by the best Web3 Stack</p>
             <div className="brands-images">
-            <div className="brands-images-1" />
-            <div className="brands-images-2" />
-            <div className="brands-images-3" />
-            <div className="brands-images-4" />
-            <div className="brands-images-5" />  
+              <div className="brands-images-1" />
+              <div className="brands-images-2" />
+              <div className="brands-images-3" />
+              <div className="brands-images-4" />
+              <div className="brands-images-5" />
             </div>
           </div>
         </Fade>
@@ -252,22 +261,21 @@ export const Home = () => {
           <div id="web3" className="private private-different">
             <div className="private-image private-image-second"></div>
             <div className="private-content">
-              <p className="private-content-title">
-              Consolidate and own your Identity and Reputation
-                
-              </p>
+              <h3 className="private-content-title">
+                Consolidate and own your Identity and Reputation
+              </h3>
               <p className="private-content-description">
-              Today you have to build your reputation on each platform every
+                Today you have to build your reputation on each platform every
                 time. How can we unlock reputation from centralized platforms?
               </p>
-              <p className="private-content-description"> 
-              With Krebit you can apply to jobs with your Credentials, not
+              <p className="private-content-description">
+                With Krebit you can apply to jobs with your Credentials, not
                 filling endless forms.
               </p>
-              <PrivateOptionQuestion isExtended={isExtended === 0}>
+              <PrivateOptionQuestion isExtended={isExtended === 3}>
                 <div
                   className="questions-option-header"
-                  onClick={() => handleExtended(0)}
+                  onClick={() => handleExtended(3)}
                 >
                   <p className="questions-option-title">Portable</p>
                   <Arrow />
@@ -277,10 +285,10 @@ export const Home = () => {
                   reputation
                 </p>
               </PrivateOptionQuestion>
-              <PrivateOptionQuestion isExtended={isExtended === 1}>
+              <PrivateOptionQuestion isExtended={isExtended === 4}>
                 <div
                   className="questions-option-header"
-                  onClick={() => handleExtended(1)}
+                  onClick={() => handleExtended(4)}
                 >
                   <p className="questions-option-title">Privacy-Preserving</p>
                   <Arrow />
@@ -290,10 +298,10 @@ export const Home = () => {
                   life.
                 </p>
               </PrivateOptionQuestion>
-              <PrivateOptionQuestion isExtended={isExtended === 2}>
+              <PrivateOptionQuestion isExtended={isExtended === 5}>
                 <div
                   className="questions-option-header"
-                  onClick={() => handleExtended(2)}
+                  onClick={() => handleExtended(5)}
                 >
                   <p className="questions-option-title">Decentralized</p>
                   <Arrow />
