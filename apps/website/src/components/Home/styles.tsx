@@ -136,6 +136,7 @@ export const Wrapper = styled.div<Props>`
         height: 377px;
 
         @media (min-width: ${theme.screens.lg}) {
+          display: block;
           position: initial;
           height: 100%;
           width: 100%;
