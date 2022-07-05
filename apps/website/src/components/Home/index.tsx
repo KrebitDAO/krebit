@@ -11,6 +11,7 @@ import {
 } from './styles';
 import { Button } from 'components/Button';
 import { Arrow, Krebit, Logo } from 'components/Icons';
+import { useWindowSize } from 'hooks';
 
 const BOXES = [
   {
@@ -48,6 +49,8 @@ const BOXES = [
 export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(0);
+  const windowSize = useWindowSize();
+  const isHigher = windowSize.height >= 750;
 
   const handleExtended = (index: number | undefined) => {
     if (isExtended === undefined || isExtended !== index) {
@@ -59,13 +62,20 @@ export const Home = () => {
     }
   };
 
+  const handleScrollToID = (id: string) => {
+    document.getElementById(id).scrollIntoView();
+  };
+
   const handleCurrentUser = (index: number = 0) => {
     setCurrentUser(index);
   };
 
   return (
     <>
-      <Wrapper currentDecentralizedCardImage={BOXES[currentUser].image}>
+      <Wrapper
+        currentDecentralizedCardImage={BOXES[currentUser].image}
+        isHigher={isHigher}
+      >
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
@@ -101,6 +111,13 @@ export const Home = () => {
             </div>
           </div>
           <div className="main-content-image"></div>
+          <div
+            className="main-content-explore"
+            onClick={() => handleScrollToID('hire')}
+          >
+            <p className="main-content-explore-text">Explore more</p>
+            <Arrow />
+          </div>
         </div>
         <div id="hire" className="decentralized">
           <Fade bottom>

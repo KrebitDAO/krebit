@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 interface Props {
   currentDecentralizedCardImage: string;
+  isHigher: boolean;
 }
 
 interface DecentralizedUsersItemProps {
@@ -14,13 +15,14 @@ interface PrivateOptionQuestionProps {
 }
 
 export const Wrapper = styled.div<Props>`
-  ${({ theme, currentDecentralizedCardImage }) => css`
+  ${({ theme, currentDecentralizedCardImage, isHigher }) => css`
     max-width: 1474px;
     margin: 0 auto;
 
     .main {
       min-height: 100vh;
       height: 100%;
+      position: relative;
 
       @media (min-width: ${theme.screens.lg}) {
         display: grid;
@@ -54,7 +56,7 @@ export const Wrapper = styled.div<Props>`
 
         .main-description-list {
           margin: 0;
-          margin-top: 5px;
+          margin-top: 20px;
           padding: 0;
           padding-inline-start: 20px;
           line-height: 1.6;
@@ -123,6 +125,7 @@ export const Wrapper = styled.div<Props>`
       }
 
       .main-content-image {
+        display: ${isHigher ? 'block' : 'none'};
         position: absolute;
         bottom: 0;
         background-image: url('/imgs/images/header.jpg');
@@ -136,6 +139,33 @@ export const Wrapper = styled.div<Props>`
           position: initial;
           height: 100%;
           width: 100%;
+        }
+      }
+
+      .main-content-explore {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        bottom: 30px;
+        left: 0;
+        right: 0;
+
+        @media (min-width: ${theme.screens.lg}) {
+          display: none;
+        }
+
+        .main-content-explore-text {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${isHigher ? theme.colors.white : theme.colors.bunting};
+          margin-right: 5px;
+        }
+
+        & > svg {
+          width: 20px;
+          height: 20px;
+          fill: ${isHigher ? theme.colors.white : theme.colors.bunting};
         }
       }
     }
@@ -421,7 +451,6 @@ export const Wrapper = styled.div<Props>`
       .private-content {
         grid-area: content;
         align-self: center;
-        position: relative;
         height: 430px;
 
         @media (min-width: ${theme.screens.lg}) {
@@ -457,14 +486,11 @@ export const Wrapper = styled.div<Props>`
           width: 200px;
           height: 58px;
           margin: 0 auto;
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 0;
+          margin-top: 30px;
 
           @media (min-width: ${theme.screens.lg}) {
             margin: 0;
-            right: initial;
+            margin-top: 30px;
           }
         }
       }

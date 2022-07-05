@@ -16,6 +16,10 @@ export const NavBar = () => {
     setIsMenuOpen(false);
   };
 
+  const handleOnClick = () => {
+    window.open('https://testnet.krebit.id');
+  };
+
   return (
     <Wrapper isMenuOpen={isMenuOpen}>
       <div className="header">
@@ -54,9 +58,7 @@ export const NavBar = () => {
               text="Try the Beta"
               primaryColor="cyan"
               secondaryColor="rose"
-              onClick={() => {
-                window.open('https://testnet.krebit.id');
-              }}
+              onClick={handleOnClick}
             />
           </div>
         </div>
@@ -90,9 +92,7 @@ export const NavBar = () => {
             text="Try the Beta"
             primaryColor="rose"
             secondaryColor="blueRibbon"
-            onClick={() => {
-              window.open('https://testnet.krebit.id');
-            }}
+            onClick={handleOnClick}
           />
         </div>
       </div>
