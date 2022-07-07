@@ -364,10 +364,7 @@ export const Home = () => {
             </p>
           </div>
           <div className="footer-content-right">
-            <Link
-              href="https://twitter.com/KrebitDAO"
-              rel="noopener noreferrer"
-            >
+            <Link href="https://twitter.com/KrebitID" rel="noopener noreferrer">
               <a target="_blank" className="footer-content-right-option">
                 Twitter
               </a>
