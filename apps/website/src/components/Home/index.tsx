@@ -89,7 +89,7 @@ export const Home = () => {
                 We help you build it, you own it.
               </li>
               <li className="main-description">
-                Say goodbye to job applications and interviews.
+                Say goodbye to job applications and background checks.
               </li>
             </ul>
             <div className="main-buttons">
@@ -343,7 +343,7 @@ export const Home = () => {
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Reserve your Profile"
+              text="Reserve your Reputation Passport"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               hasTransparency={false}
