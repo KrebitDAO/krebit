@@ -79,7 +79,7 @@ export const Home = () => {
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
-              Professionals: build and claim your lifetime profile
+              Professionals: build and claim your <i>Reputation Passport</i>
             </h1>
             <ul className="main-description-list">
               <li className="main-description">
@@ -95,7 +95,7 @@ export const Home = () => {
             <div className="main-buttons">
               <div className="main-button">
                 <Button
-                  text="Reserve your Profile"
+                  text="Reserve your Reputation Passport"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
                   onClick={() => {
@@ -255,7 +255,7 @@ export const Home = () => {
               </PrivateOptionQuestion>
               <div className="private-button">
                 <Button
-                  text="Reserve your DAO/Company Profile"
+                  text="Reserve your Recruiter Profile"
                   primaryColor="rose"
                   secondaryColor="blueRibbon"
                   onClick={() => {
