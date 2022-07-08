@@ -12,14 +12,14 @@ const App = props => {
     <>
       {globalStyles}
       <Head>
-        <title>Krebit - Portable Reputation for Better Job Matching</title>
+        <title>Krebit - your Reputation Passport for Better Job Matching</title>
         <meta
           name="description"
           content="Krebit connects the best Web3 talent trough portable Reputation. Professionals: build and claim your lifetime profile. Recruiters: Smooth access to pre-vetted talent, certified by trusted issuers"
         />
         <meta
           property="og:title"
-          content="Krebit - Portable Reputation for Better Job Matching"
+          content="Krebit - your Reputation Passport for Better Job Matching"
         />
         <meta property="og:type" content="website" />
         <meta
