@@ -1,6 +1,6 @@
 {
   "name": "krebit",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "private": true,
@@ -10,6 +10,7 @@
     "dev": "dotenv -e .env -- turbo run dev --parallel --no-cache",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf logs",
     "node-dev": "dotenv -e .env -- turbo run start --filter=node --no-cache",
+    "node-api": "dotenv -e .env -- turbo run dev --filter=node --no-cache",
     "node-start": "turbo run start --filter=node --no-cache"
   },
   "workspaces": [
@@ -30,5 +31,8 @@
   "devDependencies": {
     "dotenv-cli": "^5.1.0",
     "turbo": "^1.2.9"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.23.1"
   }
 }

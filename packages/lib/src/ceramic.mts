@@ -1,8 +1,6 @@
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import { getResolver as get3IDResolver } from '@ceramicnetwork/3id-did-resolver';
-import { getResolver as getKeyResolver } from 'key-did-resolver';
-import { ThreeIdConnect, EthereumAuthProvider } from '@3id/connect';
-import { ThreeIdProvider } from '@3id/did-provider';
+import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
+import { DIDSession } from '@glazed/did-session';
 import { DataModel } from '@glazed/datamodel';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { hash } from '@stablelib/sha256';
@@ -19,20 +17,14 @@ const authenticateClientDID = async (
   ethProvider: any,
   client: CeramicClient
 ) => {
-  const threeIdConnect = new ThreeIdConnect();
   const authProvider = new EthereumAuthProvider(
     ethProvider?.provider || ethProvider,
     address
   );
 
-  await threeIdConnect.connect(authProvider);
-  const provider = threeIdConnect.getDidProvider();
-
-  const did = new DID({
-    provider,
-    resolver: get3IDResolver(client),
-  });
-  await did.authenticate();
+  const session = new DIDSession({ authProvider });
+  const did = await session.authorize({ domain: 'krebit.id' });
+  console.log('did:', did.id);
   await client.setDID(did);
 
   // Creating model and store
@@ -58,29 +50,13 @@ const authenticateServerDID = async (
     ethProvider?.provider || ethProvider,
     address
   );
-  const authId = (await authProvider.accountId()).toString();
-  console.log('authProvider id: ', authId);
+  const session = new DIDSession({ authProvider });
+  const did = await session.authorize({ domain: 'krebit.id' });
 
-  const authSecretSigned = await authProvider.authenticate(authSecretMsg);
-  const authSecret = hash(fromString(authSecretSigned.slice(2)));
-
-  const threeID = await ThreeIdProvider.create({
-    authId,
-    authSecret,
-    getPermission: () => Promise.resolve([]),
-    ceramic: client,
-  });
-  const did = new DID({
-    provider: threeID.getDidProvider(),
-    resolver: {
-      ...get3IDResolver(client),
-      ...getKeyResolver(),
-    },
-  });
-  await did.authenticate();
+  console.log('did:', did);
   console.log('did:', did.id);
 
-  await client.setDID(did);
+  client.setDID(did);
 
   console.log('Setting Ceramic DataStore...');
 

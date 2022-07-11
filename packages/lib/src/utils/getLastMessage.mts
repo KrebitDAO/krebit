@@ -68,6 +68,7 @@ export const getLastMessage = async (
 
     return messages;
   } catch (error) {
+    console.dir(error, { depth: null });
     console.error('Failure retrieving messages:', error);
 
     return [];
