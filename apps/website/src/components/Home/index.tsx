@@ -268,7 +268,7 @@ export const Home = () => {
         </Fade>
         <Fade bottom>
           <div className="brands">
-            <p className="brands-title">Powered by the best Web3 Stack</p>
+            <p className="brands-title">Powered by the best Web3 stack</p>
             <div className="brands-images">
               <div className="brands-images-1" />
               <div className="brands-images-2" />
@@ -303,7 +303,7 @@ export const Home = () => {
                 </div>
                 <p className="questions-option-description">
                   Give access to dApps that want to check your existing
-                  reputation
+                  reputation.
                 </p>
               </PrivateOptionQuestion>
               <PrivateOptionQuestion isExtended={isExtended === 4}>
@@ -315,7 +315,7 @@ export const Home = () => {
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Show your talent to the world, without loosing your private
+                  Show your talent to the world, without losing your private
                   life.
                 </p>
               </PrivateOptionQuestion>
@@ -359,7 +359,7 @@ export const Home = () => {
               <Logo />
             </div>
             <p className="footer-content-left-text">
-              your Reputation Passport for Better Job Matching.
+              Your Reputation Passport for Better Job Matching.
               <br />© {new Date().getFullYear()} Krebit, All rights reserved.
             </p>
           </div>

@@ -37,7 +37,7 @@ export const Wrapper = styled.div<Props>`
         position: relative;
         z-index: 10;
 
-        @media (min-width: ${theme.screens.xl}) {
+        @media (min-width: ${theme.screens['2xl']}) {
           padding: 0;
         }
 
@@ -455,7 +455,7 @@ export const Wrapper = styled.div<Props>`
         height: 430px;
 
         @media (min-width: ${theme.screens.lg}) {
-          height: 560px;
+          height: 580px;
         }
 
         .private-content-title {
@@ -469,6 +469,7 @@ export const Wrapper = styled.div<Props>`
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts['6xl']};
             margin: 0;
+            margin-bottom: 20px;
           }
         }
 
