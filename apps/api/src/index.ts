@@ -17,8 +17,7 @@ router.use(cors()).use(express.urlencoded({ extended: false }));
 router
   .post('/questapp', QuestappController)
   .post('/discord', DiscordController)
-  .post('/dework', DeworkController)
-  .get('/', (request, response) => response.json({ hey: 'hola' }));
+  .post('/dework', DeworkController);
 
 app.use('/', router);
 

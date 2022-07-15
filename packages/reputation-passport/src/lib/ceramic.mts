@@ -6,13 +6,17 @@ import { DataModel } from '@glazed/datamodel';
 import { DIDDataStore } from '@glazed/did-datastore';
 
 import { datamodel } from '../schemas/index.mjs';
+import { WalletProvider } from '../utils/WalletProvider.mjs';
 
 const DID_ERROR = 'Self.id not authenticated';
 const DOMAIN = 'krebit.id';
 
 interface Props {
   address: string;
-  ethProvider: EthereumAuthProvider | ethers.providers.Web3Provider;
+  ethProvider:
+    | EthereumAuthProvider
+    | WalletProvider
+    | ethers.providers.Web3Provider;
   client: CeramicClient;
 }
 
