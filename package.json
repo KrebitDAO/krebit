@@ -8,9 +8,10 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "dotenv -e .env -- turbo run dev --parallel --no-cache",
-    "clean": "turbo run clean && rm -rf node_modules && rm -rf logs",
-    "node-start": "turbo run start --filter=node --no-cache",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "dev-api": "dotenv -e .env -- turbo run dev --filter=api --no-cache",
     "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website --parallel --no-cache",
+    "dev-dapp": "dotenv -e .env -- turbo run dev --filter=dapp --parallel --no-cache",
     "build-webpage": "turbo run build --filter=website"
   },
   "workspaces": [
@@ -29,7 +30,7 @@
   },
   "homepage": "https://github.com/KrebitDAO/krebit#readme",
   "devDependencies": {
-    "dotenv-cli": "^5.1.0",
+    "dotenv-cli": "^6.0.0",
     "turbo": "^1.2.9"
   }
 }
