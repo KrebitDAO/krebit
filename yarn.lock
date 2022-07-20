@@ -2876,10 +2876,10 @@ lit-connect-modal@^0.1.8:
   dependencies:
     micromodal "^0.4.10"
 
-lit-js-sdk@^1.1.197:
-  version "1.1.197"
-  resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.197.tgz#75becba32db6fc0f512cbd203bef196c6779454d"
-  integrity sha512-S5W/yIOFSBVcx8wWAmJePGJGnzRGRD9x7tyPB2UdAYNusQG506gYT8dkA9OvzHOE2cvtgTMwywDJc+T2kaz6AQ==
+lit-js-sdk@^1.1.200:
+  version "1.1.200"
+  resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.200.tgz#ffaba13d65c68c943b40a3f88c872903429b477d"
+  integrity sha512-mFQOIb+ABGAUTiv2HV00LxhkbSKsg0IWwaWHsRiNZO7VuyhDFw8cwguJybA5Rk5d5Er0o+iN5vPz2HgmF7eTPQ==
   dependencies:
     "@ethersproject/bytes" "^5.5.0"
     "@ethersproject/contracts" "^5.2.0"
