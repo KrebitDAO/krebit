@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "node --experimental-json-modules dist/index.js",
+    "start": "node --experimental-specifier-resolution=node dist/index.js",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "keywords": [],

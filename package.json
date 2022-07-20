@@ -12,7 +12,9 @@
     "dev-api": "dotenv -e .env -- turbo run dev --filter=api --no-cache",
     "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website --parallel --no-cache",
     "dev-dapp": "dotenv -e .env -- turbo run dev --filter=dapp --parallel --no-cache",
-    "build-webpage": "turbo run build --filter=website"
+    "build-api": "turbo run build --filter=api",
+    "build-webpage": "turbo run build --filter=website",
+    "build-dapp": "turbo run build --filter=dapp"
   },
   "workspaces": [
     "apps/*",
