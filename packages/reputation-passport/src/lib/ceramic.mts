@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
-import { DIDSession } from '@glazed/did-session';
+import { DIDSession } from 'did-session';
 import { DataModel } from '@glazed/datamodel';
 import { DIDDataStore } from '@glazed/did-datastore';
 
@@ -24,10 +24,13 @@ const authenticateDID = async (props: Props) => {
   const { address, ethProvider, client } = props;
 
   const authProvider = new EthereumAuthProvider(ethProvider, address);
-  const session = new DIDSession({ authProvider });
 
-  const did = await session.authorize({ domain: DOMAIN });
-  await client.setDID(did);
+  const session = await DIDSession.authorize(authProvider, {
+    domain: DOMAIN,
+    resources: [`ceramic://*`]
+  });
+
+  await client.setDID(session.did);
 
   // Creating model and store
   const model = new DataModel({ ceramic: client, aliases: datamodel });

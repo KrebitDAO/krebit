@@ -25,9 +25,9 @@ const getOwnsAddressConditions = (address: string) => {
       parameters: [':userAddress'],
       returnValueTest: {
         comparator: '=',
-        value: address,
-      },
-    },
+        value: address
+      }
+    }
   ];
 };
 
@@ -67,25 +67,25 @@ export const issueCredential = async (props: Props) => {
   const credential = {
     '@context': [
       'https://www.w3.org/2018/credentials/v1',
-      'https://w3id.org/security/suites/eip712sig-2021',
+      'https://w3id.org/security/suites/eip712sig-2021'
     ],
     type: ['VerifiableCredential', claim.credentialSubject.type],
     id: claim.id,
     issuer: {
       id: idx.id,
-      ethereumAddress: wallet.address,
+      ethereumAddress: wallet.address
     },
     credentialSubject: {
       ...claim.credentialSubject,
       nbf: Math.floor(issuanceDate / 1000),
-      exp: Math.floor(expirationDate.getTime() / 1000),
+      exp: Math.floor(expirationDate.getTime() / 1000)
     },
     credentialSchema: {
       id: 'https://github.com/KrebitDAO/eip712-vc',
-      type: 'Eip712SchemaValidator2021',
+      type: 'Eip712SchemaValidator2021'
     },
     issuanceDate: new Date(issuanceDate).toISOString(),
-    expirationDate: claim.expirationDate,
+    expirationDate: claim.expirationDate
   };
 
   const eip712credential = eip712VC.getEIP712Credential(credential);
@@ -106,7 +106,7 @@ export const issueCredential = async (props: Props) => {
 
   const w3Credential = {
     ...credential,
-    proof: verifiableCredential.proof,
+    proof: verifiableCredential.proof
   };
 
   console.log('W3C Verifiable Credential: ', w3Credential);
@@ -122,7 +122,7 @@ export const issueCredential = async (props: Props) => {
         schema: idx.model.getSchemaURL('VerifiableCredential'),
         family: 'krebit',
         controllers: [idx.id],
-        tags: credential.type,
+        tags: credential.type
       }
     );
     console.log('Created stream: ', attestationDoc.id.toUrl());
@@ -139,12 +139,12 @@ export const issueCredential = async (props: Props) => {
           current.push(attestationDoc.id.toUrl());
 
           result = await idx.merge('issuedCredentials', {
-            issued: current,
+            issued: current
           });
         }
       } else {
         result = await idx.set('issuedCredentials', {
-          issued: [attestationDoc.id.toUrl()],
+          issued: [attestationDoc.id.toUrl()]
         });
       }
     }
@@ -152,12 +152,14 @@ export const issueCredential = async (props: Props) => {
     if (result) {
       return {
         issuedCredential: w3Credential,
-        issuedCredentialId: attestationDoc.id.toUrl(),
+        issuedCredentialId: attestationDoc.id.toUrl()
       };
     }
   } catch (error) {
     console.error('issueCredential failure:', error);
-
-    return null;
+    return {
+      issuedCredential: w3Credential,
+      issuedCredentialId: null
+    };
   }
 };
