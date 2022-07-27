@@ -7,11 +7,17 @@
   "packageManager": "yarn@1.22.18",
   "scripts": {
     "build": "turbo run build",
-    "dev": "dotenv -e .env -- turbo run dev --parallel --no-cache",
-    "clean": "turbo run clean && rm -rf node_modules && rm -rf logs",
-    "node-start": "turbo run start --filter=node --no-cache",
-    "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website --parallel --no-cache",
-    "build-webpage": "turbo run build --filter=website"
+    "dev": "dotenv -e .env -- turbo run dev",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "dev-api": "dotenv -e .env -- turbo run dev --filter=api",
+    "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website",
+    "dev-dapp": "dotenv -e .env -- turbo run dev --filter=dapp",
+    "build-api": "turbo run build --filter=api",
+    "build-webpage": "turbo run build --filter=website",
+    "build-dapp": "turbo run build --filter=dapp",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "reputation-passport-publish": "turbo run build --filter=reputation-passport && changeset publish"
   },
   "workspaces": [
     "apps/*",
@@ -29,7 +35,8 @@
   },
   "homepage": "https://github.com/KrebitDAO/krebit#readme",
   "devDependencies": {
-    "dotenv-cli": "^5.1.0",
+    "@changesets/cli": "^2.24.1",
+    "dotenv-cli": "^6.0.0",
     "turbo": "^1.2.9"
   }
 }

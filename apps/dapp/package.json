@@ -1,29 +1,29 @@
 {
-  "name": "dapp",
+  "name": "@krebitdao/dapp",
   "version": "0.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "next": "^12.1.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "lib": "*"
-  },
   "devDependencies": {
-    "@types/node": "^17.0.35",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.4",
+    "@types/node": "^18.0.0",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
     "next-transpile-modules": "^9.0.0",
     "tsconfig": "*",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@krebitdao/reputation-passport": "*",
+    "next": "^12.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
