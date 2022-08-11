@@ -7,23 +7,28 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf out"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@krebitdao/tsconfig": "*",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
     "next-transpile-modules": "^9.0.0",
-    "tsconfig": "*",
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@3id/connect": "^0.4.1",
+    "@krebitdao/eip712-vc": "^0.3.4",
     "@krebitdao/reputation-passport": "*",
+    "ethers": "^5.6.9",
+    "lit-js-sdk": "^1.1.207",
     "next": "^12.1.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "siwe": "^1.1.6"
   }
 }

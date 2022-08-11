@@ -1,7 +1,7 @@
 const withTM = require('next-transpile-modules')([
-  '@krebitdao/reputation-passport',
+  '@krebitdao/reputation-passport'
 ]);
 
 module.exports = withTM({
-  reactStrictMode: true,
+  reactStrictMode: true
 });

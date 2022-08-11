@@ -1,22 +1,20 @@
 import 'isomorphic-fetch';
 
-import { config } from '../config/index.mjs';
-
 interface Props {
   tokenType: string;
   accessToken: string;
 }
 
-const { DISCORD_URL } = config;
+const { SERVER_DISCORD_URL } = process.env;
 
 export const getDiscordUser = async (props: Props) => {
   const { tokenType, accessToken } = props;
 
   try {
-    const response = await fetch(DISCORD_URL, {
+    const response = await fetch(SERVER_DISCORD_URL, {
       headers: {
-        authorization: `${tokenType} ${accessToken}`,
-      },
+        authorization: `${tokenType} ${accessToken}`
+      }
     }).then(result => result.json());
 
     return response;

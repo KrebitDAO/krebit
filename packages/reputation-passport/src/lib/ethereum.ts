@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 
-import { config } from '../config/index.mjs';
-import { WalletProvider } from '../utils/index.mjs';
-import { krbToken } from '../schemas/index.mjs';
+import { config } from '../config';
+import { WalletProvider } from '../utils';
+import { krbToken } from '../schemas';
 
 const { NETWORK_PROVIDER, NETWORK } = config;
 
@@ -19,9 +19,9 @@ const getProvider = async () => {
           {
             chainId: `0x${Number(krbToken[NETWORK].domain.chainId).toString(
               16
-            )}`,
-          },
-        ],
+            )}`
+          }
+        ]
       });
     } catch (switchError) {
       if (switchError.code === 4902) {
@@ -38,11 +38,11 @@ const getProvider = async () => {
                 nativeCurrency: {
                   name: krbToken[NETWORK].token,
                   symbol: krbToken[NETWORK].token,
-                  decimals: 18,
+                  decimals: 18
                 },
-                blockExplorerUrls: [krbToken[NETWORK].blockUrl],
-              },
-            ],
+                blockExplorerUrls: [krbToken[NETWORK].blockUrl]
+              }
+            ]
           });
         } catch (addError) {
           console.error('Error adding network: ', addError);

@@ -5,8 +5,7 @@ const { SERVER_ETHEREUM_SEED, SERVER_NETWORK } = process.env;
 
 export const connect = async () => {
   try {
-    const ethProvider =
-      (await lib.ethereum.getProvider()) as utils.WalletProvider;
+    const ethProvider = (await lib.ethereum.getProvider()) as utils.WalletProvider;
 
     // Create wallet from ethereum seed
     let wallet: ethers.Wallet;
@@ -35,6 +34,7 @@ export const connect = async () => {
         throw new Error('Contract not found');
       }
 
+      /* 
       // Get current KRB balance
       // We need at least krbContract.minBalanceToIssue()
       const krbBalance = await krbContract.balanceOf(wallet.address);
@@ -48,7 +48,7 @@ export const connect = async () => {
 
       if (krbBalance < minBalanceToIssue) {
         throw new Error('Not enough KRB balance to Issue');
-      }
+      } */
 
       return { wallet, ethProvider };
     }
