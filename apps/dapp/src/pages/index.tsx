@@ -1,4 +1,4 @@
-import { core, lib, utils } from '@krebitdao/reputation-passport';
+import krebit from '@krebitdao/reputation-passport';
 import React, { useEffect } from 'react';
 
 const IndexPage = () => {
@@ -9,10 +9,10 @@ const IndexPage = () => {
         method: 'eth_requestAccounts'
       });
       const address = addresses[0];
-      const ethProvider = (await lib.ethereum.getProvider()) as utils.WalletProvider;
+      const ethProvider = (await krebit.lib.ethereum.getProvider()) as any;
 
-      const krebit = new core.Krebit();
-      const data = await krebit.connect(ethereum, ethProvider, address);
+      const Issuer = new krebit.core.Krebit();
+      const data = await Issuer.connect(ethereum, ethProvider, address);
 
       console.log(data);
     };

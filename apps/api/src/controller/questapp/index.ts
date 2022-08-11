@@ -1,8 +1,7 @@
 // TODO: Validate if address deserves the badge
 
 import express from 'express';
-import { core } from '@krebitdao/reputation-passport';
-
+import krebit from '@krebitdao/reputation-passport';
 import { connect } from '../../utils';
 
 const {
@@ -87,8 +86,8 @@ export const QuestappController = async (
     );
     console.log('**Decrypted: ', decrypted);
 */
-    const krebit = new core.Krebit();
-    const did = await krebit.connect(wallet, ethProvider, wallet.address);
+    const Issuer = new krebit.core.Krebit();
+    const did = await Issuer.connect(wallet, ethProvider, wallet.address);
 
     /*
     const questBadgeSchema = {
@@ -133,17 +132,17 @@ export const QuestappController = async (
     console.log('questBadgeSchema:', await krebit.getTypeSchema('questBadge'));
     */
 
-    console.log('DID authenticated:', await krebit.isConnected());
+    console.log('DID authenticated:', await Issuer.isConnected());
 
     // Issue Verifiable credential (needs signer)
-    const issuedCredential = await krebit.issue(claim, 'questBadge');
+    const issuedCredential = await Issuer.issue(claim, 'questBadge');
 
     console.log(
       'Verifying signature:',
-      await krebit.checkCredentialSignature(issuedCredential)
+      await Issuer.checkCredentialSignature(issuedCredential)
     );
 
-    const decrypted = await krebit.decryptClaim(issuedCredential);
+    const decrypted = await Issuer.decryptClaim(issuedCredential);
 
     console.log('Decrypted:', decrypted);
 

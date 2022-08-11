@@ -131,4 +131,9 @@ const authProvider = async (props: ProviderProps) => {
   throw new Error('Provider not found');
 };
 
-export { publicIDX, authDIDSession, auth3IDProvider, authProvider };
+export const ceramic = {
+  publicIDX,
+  authDIDSession,
+  auth3IDProvider,
+  authProvider
+};

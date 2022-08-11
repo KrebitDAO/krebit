@@ -3,4 +3,11 @@ import * as utils from './utils';
 import * as schemas from './schemas';
 import * as core from './core';
 
-export { lib, utils, schemas, core };
+const krebit = {
+  lib,
+  utils,
+  schemas,
+  core
+};
+
+export default krebit;

@@ -112,7 +112,7 @@ const erc20BalanceQuery = async (address: string) => {
   return response.data.erc20Balance;
 };
 
-export {
+export const graph = {
   client,
   verifiableCredentialsQuery,
   verifiableCredentialQuery,

@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import { lib, utils } from '@krebitdao/reputation-passport';
+import krebit from '@krebitdao/reputation-passport';
 
 import { connect, getDiscordUser } from '../../utils';
 
@@ -46,7 +46,7 @@ export const DiscordController = async (
     ) {
       // Log in with wallet to Ceramic DID
       console.log('Authenticating with Self.Id...');
-      const idx = await lib.ceramic.authProvider({
+      const idx = await krebit.lib.ceramic.authProvider({
         address: wallet.address,
         ethProvider,
         client: ceramicClient
@@ -86,7 +86,11 @@ export const DiscordController = async (
       if (discord.id === value.id) {
         // Issue Verifiable credential
         console.log('Valid discord:', discord);
-        const result = await utils.issueCredential({ wallet, idx, claim });
+        const result = await krebit.utils.issueCredential({
+          wallet,
+          idx,
+          claim
+        });
 
         if (result) {
           return response.json(result);

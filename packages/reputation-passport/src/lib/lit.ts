@@ -50,7 +50,7 @@ const signAuthMessage = async (
 
 const client = new LitJsSdk.LitNodeClient();
 
-class Lit {
+export class Lit {
   private litNodeClient;
 
   private connect = async () => {
@@ -160,5 +160,3 @@ class Lit {
     return decryptedString;
   };
 }
-
-export default Lit;

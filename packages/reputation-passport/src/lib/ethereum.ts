@@ -70,4 +70,4 @@ const getProvider = async () => {
   }
 };
 
-export { getProvider };
+export const ethereum = { getProvider };

@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
-import { schemas, utils, lib } from '@krebitdao/reputation-passport';
+import krebit from '@krebitdao/reputation-passport';
 
 const { SERVER_ETHEREUM_SEED, SERVER_NETWORK } = process.env;
 
 export const connect = async () => {
   try {
-    const ethProvider = (await lib.ethereum.getProvider()) as utils.WalletProvider;
+    const ethProvider = (await krebit.lib.ethereum.getProvider()) as any;
 
     // Create wallet from ethereum seed
     let wallet: ethers.Wallet;
@@ -25,8 +25,8 @@ export const connect = async () => {
       ethProvider.setWallet(wallet);
 
       const krbContract = new ethers.Contract(
-        schemas.krbToken[SERVER_NETWORK].address,
-        schemas.krbToken.abi,
+        krebit.schemas.krbToken[SERVER_NETWORK].address,
+        krebit.schemas.krbToken.abi,
         ethProvider
       );
 
