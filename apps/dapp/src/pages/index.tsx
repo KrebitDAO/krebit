@@ -1,5 +1,5 @@
 import krebit from '@krebitdao/reputation-passport';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const IndexPage = () => {
   useEffect(() => {
