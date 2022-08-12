@@ -7,8 +7,11 @@ type ModelAliases = {
 export const datamodel: ModelAliases = {
   definitions: {
     encryptedContent:
-      'kjzl6cwe1jw145om2bmp3yuxqu84qpmp43stf51e73dkcvln8y35ggv61xg2vvp',
-    ed25519: 'kjzl6cwe1jw14axhhxg4jyiy7bnparnf93si4qlo4sn3g01ee9t1jqxlvh6nnvm',
+      'kjzl6cwe1jw14877ogy9v1jccegjnlba272hl2csgzrioo9oc3jjvhy3fpndvgs',
+    revokedCredentials:
+      'kjzl6cwe1jw149bn8nok71gf74amabpq4xor86v5v6catnf7bmbcdbcuk9qm0lu',
+    claimTypes:
+      'kjzl6cwe1jw14adnyrryrgbiqe8vka2lqly55zc219euskbsiyz3xsq0zkjifea',
     basicProfile:
       'kjzl6cwe1jw145cjbeko9kil8g9bxszjhyde21ob8epxuxkaon1izyqsu8wgcic',
     cryptoAccounts:
@@ -24,13 +27,15 @@ export const datamodel: ModelAliases = {
     issuedCredentials:
       'kjzl6cwe1jw149hainpftr2tssjnlf2ty154nc137ujqq329aydhsrp5252y0hx',
     heldCredentials:
-      'kjzl6cwe1jw14afevdrbxwgcw2aqk3nj0g47w8ermgde61o09o52bn6fkyq7k6i',
+      'kjzl6cwe1jw14afevdrbxwgcw2aqk3nj0g47w8ermgde61o09o52bn6fkyq7k6i'
   },
   schemas: {
     EncryptedContent:
-      'ceramic://k3y52l7qbv1frybynqigh3ds83yfzrq3qmwvgz81oh1rbd8ctliqfq1toou5vxreo',
-    ED25519:
-      'ceramic://k3y52l7qbv1frya06s47fijp0oomdzfw75tchgj59fgv4pe23jcguwracmk7hqsqo',
+      'ceramic://k3y52l7qbv1fry90gmtkide21ryk68bjuui0b7lycrnrwi436e8yqw5ct0yoiwzcw',
+    RevokedCredentials:
+      'ceramic://k3y52l7qbv1fry7o8qz84isz00kdxjw6u0z0he5bpxs2sbijwyydl0iuzeakyta80',
+    ClaimTypes:
+      'ceramic://k3y52l7qbv1fry1htct0x0p1206nf2rkjlk7agpmtcz0kspz17nhdbs83au1wkbnk',
     BasicProfile:
       'ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio',
     CryptoAccounts:
@@ -46,7 +51,7 @@ export const datamodel: ModelAliases = {
     HeldCredentials:
       'ceramic://k3y52l7qbv1fryihueadzabto4qyfkfq11knx3szfrd6yz83c5bbzsuswfyxoqfpc',
     IssuedCredentials:
-      'ceramic://k3y52l7qbv1fryp7fle8dvb02bxwugsqhjz3edlzu8n33msm8w33613fdge24aby8',
+      'ceramic://k3y52l7qbv1fryp7fle8dvb02bxwugsqhjz3edlzu8n33msm8w33613fdge24aby8'
   },
-  tiles: {},
+  tiles: {}
 };

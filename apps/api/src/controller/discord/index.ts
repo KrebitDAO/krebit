@@ -4,16 +4,16 @@
 
 import express from 'express';
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import { lib, utils } from '@krebitdao/reputation-passport';
+import krebit from '@krebitdao/reputation-passport';
 
-import { connect } from '../../utils';
+import { connect, getDiscordUser } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
   SERVER_TRUST,
   SERVER_STAKE,
   SERVER_PRICE,
-  SERVER_CERAMIC_URL,
+  SERVER_CERAMIC_URL
 } = process.env;
 
 const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
@@ -46,10 +46,10 @@ export const DiscordController = async (
     ) {
       // Log in with wallet to Ceramic DID
       console.log('Authenticating with Self.Id...');
-      const idx = await lib.ceramic.authenticateDID({
+      const idx = await krebit.lib.ceramic.authProvider({
         address: wallet.address,
         ethProvider,
-        client: ceramicClient,
+        client: ceramicClient
       });
 
       // Get evidence bearer token
@@ -60,9 +60,9 @@ export const DiscordController = async (
       console.log('evidence: ', evidence);
 
       // Connect to discord and get user ID from token
-      const discord = await utils.getDiscordUser({
+      const discord = await getDiscordUser({
         tokenType: evidence.tokenType,
-        accessToken: evidence.accessToken,
+        accessToken: evidence.accessToken
       });
 
       const expirationDate = new Date();
@@ -76,9 +76,9 @@ export const DiscordController = async (
           ...claimedCredential.credentialSubject,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
-          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18 // charged to the user for claiming KRBs
         },
-        expirationDate: new Date(expirationDate).toISOString(),
+        expirationDate: new Date(expirationDate).toISOString()
       };
       console.log('claim: ', claim);
 
@@ -86,7 +86,11 @@ export const DiscordController = async (
       if (discord.id === value.id) {
         // Issue Verifiable credential
         console.log('Valid discord:', discord);
-        const result = await utils.issueCredential({ wallet, idx, claim });
+        const result = await krebit.utils.issueCredential({
+          wallet,
+          idx,
+          claim
+        });
 
         if (result) {
           return response.json(result);

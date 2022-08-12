@@ -2,7 +2,7 @@
   "name": "@krebitdao/api",
   "version": "0.0.1",
   "description": "",
-  "main": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon",
@@ -23,11 +23,11 @@
     "siwe": "^1.1.6"
   },
   "devDependencies": {
+    "@krebitdao/tsconfig": "*",
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.36",
     "nodemon": "^2.0.19",
     "ts-node": "^10.9.1",
-    "tsconfig": "*",
     "typescript": "^4.7.2"
   }
 }

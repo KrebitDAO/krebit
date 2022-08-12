@@ -4,7 +4,7 @@ import cors from 'cors';
 import {
   DeworkController,
   DiscordController,
-  QuestappController,
+  QuestappController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -12,7 +12,7 @@ const { SERVER_PORT } = process.env;
 const app = express();
 const router = express.Router();
 
-router.use(cors()).use(express.urlencoded({ extended: false }));
+router.use(cors()).use(express.json());
 
 router
   .post('/questapp', QuestappController)

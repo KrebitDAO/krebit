@@ -1,9 +1,7 @@
 import { ethers } from 'ethers';
 
-type Wallet = { address: string } & ethers.Signer;
-
 export class WalletProvider extends ethers.providers.JsonRpcProvider {
-  _wallet: Wallet;
+  _wallet: ethers.Wallet;
 
   constructor(
     url: string | ethers.utils.ConnectionInfo,
@@ -12,7 +10,7 @@ export class WalletProvider extends ethers.providers.JsonRpcProvider {
     super(url, network);
   }
 
-  setWallet(wallet: Wallet) {
+  setWallet(wallet: ethers.Wallet) {
     this._wallet = wallet;
   }
 
@@ -32,7 +30,7 @@ export class WalletProvider extends ethers.providers.JsonRpcProvider {
 
       return signature;
     } else if (method == 'eth_accounts' || method.method == 'eth_accounts') {
-      return [this._wallet.address];
+      return [await this._wallet.getAddress()];
     } else if (method == 'eth_chainId' || method.method == 'eth_chainId') {
       params(null, { result: '0x01' });
     } else {

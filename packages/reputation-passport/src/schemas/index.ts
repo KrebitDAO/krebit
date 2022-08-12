@@ -1,4 +1,4 @@
-import { datamodel } from './datamodel.mjs';
+import { datamodel } from './datamodel';
 import encodedModel from './encodedModel.json' assert { type: 'json' };
 import idx from './idx.json' assert { type: 'json' };
 import krbToken from './krbToken.json' assert { type: 'json' };

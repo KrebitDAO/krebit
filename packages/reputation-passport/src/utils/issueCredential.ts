@@ -1,11 +1,10 @@
 import { ethers } from 'ethers';
 import { DIDDataStore } from '@glazed/did-datastore';
-import { TileDocument } from '@ceramicnetwork/stream-tile';
 import eip712VC from '@krebitdao/eip712-vc';
 
-import { config } from '../config/index.mjs';
-import { krbToken } from '../schemas/index.mjs';
-import { Lit } from '../lib/index.mjs';
+import { config } from '../config';
+import { krbToken } from '../schemas';
+import { Lit } from '../lib';
 
 const { NETWORK } = config;
 
@@ -14,22 +13,6 @@ interface Props {
   idx: DIDDataStore;
   claim: any;
 }
-
-const getOwnsAddressConditions = (address: string) => {
-  return [
-    {
-      contractAddress: '',
-      standardContractType: '',
-      chain: NETWORK,
-      method: '',
-      parameters: [':userAddress'],
-      returnValueTest: {
-        comparator: '=',
-        value: address
-      }
-    }
-  ];
-};
 
 export const issueCredential = async (props: Props) => {
   const { wallet, idx, claim } = props;
@@ -54,7 +37,7 @@ export const issueCredential = async (props: Props) => {
   if (claim.credentialSubject.encrypted === 'true') {
     let encryptedContent = await lit.encrypt(
       JSON.stringify(claim.credentialSubject.value),
-      getOwnsAddressConditions(claim.credentialSubject.ethereumAddress),
+      lit.getOwnsAddressConditions(claim.credentialSubject.ethereumAddress),
       wallet
     );
     claim.credentialSubject.value = JSON.stringify(encryptedContent);
@@ -73,7 +56,7 @@ export const issueCredential = async (props: Props) => {
     id: claim.id,
     issuer: {
       id: idx.id,
-      ethereumAddress: wallet.address
+      ethereumAddress: await wallet.getAddress()
     },
     credentialSubject: {
       ...claim.credentialSubject,
@@ -110,56 +93,5 @@ export const issueCredential = async (props: Props) => {
   };
 
   console.log('W3C Verifiable Credential: ', w3Credential);
-
-  // Upload attestation to Self.Id and Textile with Status Signed
-  try {
-    console.log('Saving signed attestation on Self.Id...');
-
-    const attestationDoc = await TileDocument.create(
-      idx.ceramic,
-      w3Credential,
-      {
-        schema: idx.model.getSchemaURL('VerifiableCredential'),
-        family: 'krebit',
-        controllers: [idx.id],
-        tags: credential.type
-      }
-    );
-    console.log('Created stream: ', attestationDoc.id.toUrl());
-
-    let result = null;
-
-    if (attestationDoc.id.toUrl()) {
-      const krbProfile = await idx.get('issuedCredentials');
-
-      if (krbProfile && krbProfile.issued && krbProfile.issued.length < 100) {
-        const current = krbProfile.issued ? krbProfile.issued : [];
-
-        if (!current.includes(attestationDoc.id.toUrl())) {
-          current.push(attestationDoc.id.toUrl());
-
-          result = await idx.merge('issuedCredentials', {
-            issued: current
-          });
-        }
-      } else {
-        result = await idx.set('issuedCredentials', {
-          issued: [attestationDoc.id.toUrl()]
-        });
-      }
-    }
-
-    if (result) {
-      return {
-        issuedCredential: w3Credential,
-        issuedCredentialId: attestationDoc.id.toUrl()
-      };
-    }
-  } catch (error) {
-    console.error('issueCredential failure:', error);
-    return {
-      issuedCredential: w3Credential,
-      issuedCredentialId: null
-    };
-  }
+  return w3Credential;
 };

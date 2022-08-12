@@ -1,12 +1,11 @@
 import { ethers } from 'ethers';
-import { schemas, utils, lib } from '@krebitdao/reputation-passport';
+import Krebit from '@krebitdao/reputation-passport';
 
 const { SERVER_ETHEREUM_SEED, SERVER_NETWORK } = process.env;
 
 export const connect = async () => {
   try {
-    const ethProvider =
-      (await lib.ethereum.getProvider()) as utils.WalletProvider;
+    const ethProvider = Krebit.lib.ethereum.getProvider();
 
     // Create wallet from ethereum seed
     let wallet: ethers.Wallet;
@@ -26,8 +25,8 @@ export const connect = async () => {
       ethProvider.setWallet(wallet);
 
       const krbContract = new ethers.Contract(
-        schemas.krbToken[SERVER_NETWORK].address,
-        schemas.krbToken.abi,
+        Krebit.schemas.krbToken[SERVER_NETWORK].address,
+        Krebit.schemas.krbToken.abi,
         ethProvider
       );
 
@@ -35,6 +34,7 @@ export const connect = async () => {
         throw new Error('Contract not found');
       }
 
+      /* 
       // Get current KRB balance
       // We need at least krbContract.minBalanceToIssue()
       const krbBalance = await krbContract.balanceOf(wallet.address);
@@ -48,7 +48,7 @@ export const connect = async () => {
 
       if (krbBalance < minBalanceToIssue) {
         throw new Error('Not enough KRB balance to Issue');
-      }
+      } */
 
       return { wallet, ethProvider };
     }

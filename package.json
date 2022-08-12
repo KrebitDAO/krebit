@@ -9,6 +9,7 @@
     "build": "turbo run build",
     "dev": "dotenv -e .env -- turbo run dev",
     "clean": "turbo run clean && rm -rf node_modules",
+    "test": "turbo run test",
     "dev-api": "dotenv -e .env -- turbo run dev --filter=api",
     "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website",
     "dev-dapp": "dotenv -e .env -- turbo run dev --filter=dapp",

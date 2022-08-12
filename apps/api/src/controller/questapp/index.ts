@@ -1,20 +1,15 @@
 // TODO: Validate if address deserves the badge
 
 import express from 'express';
-import { CeramicClient } from '@ceramicnetwork/http-client';
-import { lib, utils } from '@krebitdao/reputation-passport';
-
+import krebit from '@krebitdao/reputation-passport';
 import { connect } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
   SERVER_TRUST,
   SERVER_STAKE,
-  SERVER_PRICE,
-  SERVER_CERAMIC_URL,
+  SERVER_PRICE
 } = process.env;
-
-const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
 
 export const QuestappController = async (
   request: express.Request,
@@ -44,7 +39,7 @@ export const QuestappController = async (
       imageIPFS: 'ipfs://asdf',
       description: 'Badge for users that meet some criteria',
       skills: [{ skillId: 'participation', score: 100 }],
-      xp: '1',
+      xp: '1'
     };
 
     const expirationDate = new Date();
@@ -55,35 +50,128 @@ export const QuestappController = async (
     const claim = {
       id: 'uri://badge-id',
       credentialSubject: {
-        encrypted: 'false',
-        ethereumAddress: address,
-        id: `did:pkh:eip155:1:${address}`,
+        encrypted: 'true',
+        ethereumAddress: wallet.address,
+        id: `did:pkh:eip155:1:${wallet.address}`,
         type: 'questBadge',
         value: badgeValue,
         typeSchema: 'https://github.com/KrebitDAO/schemas/questBadge',
         trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
         stake: parseInt(SERVER_STAKE, 10), // In KRB
-        price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+        price: parseInt(SERVER_PRICE, 10) * 10 ** 18 // charged to the user for claiming KRBs
       },
-      expirationDate: new Date(expirationDate).toISOString(),
+      expirationDate: new Date(expirationDate).toISOString()
     };
     console.log('claim: ', claim);
 
     // Log in with wallet to Ceramic DID
-    console.log('Authenticating with Self.Id...');
-    const idx = await lib.ceramic.authenticateDID({
-      address: wallet.address,
-      ethProvider,
-      client: ceramicClient,
-    });
+    console.log('Connecting to DID...');
 
-    // Issue Verifiable credential
-    const result = await utils.issueCredential({ wallet, idx, claim });
+    /*
+    const lit = new lib.Lit();
+    const accessControlConditions = lit.getOwnsAddressConditions(
+      wallet.address
+    );
+    const encrypted = await lit.encrypt(
+      'cool',
+      accessControlConditions,
+      wallet
+    );
+    console.log('**Encrypted: ', encrypted);
+    const decrypted = await lit.decrypt(
+      encrypted.encryptedString,
+      encrypted.encryptedSymmetricKey,
+      encrypted.accessControlConditions,
+      wallet
+    );
+    console.log('**Decrypted: ', decrypted);
+*/
+    const Issuer = new krebit.core.Krebit();
+    const did = await Issuer.connect(wallet, ethProvider, wallet.address);
 
-    if (result) {
-      return response.json(result);
+    /*
+    const questBadgeSchema = {
+      type: 'object',
+      properties: {
+        communityId: { type: 'integer' },
+        name: { type: 'string' },
+        imageIPFS: { type: 'string' },
+        description: { type: 'string' },
+        skills: {
+          type: 'array',
+          properties: {
+            skillId: { type: 'string' },
+            score: { type: 'integer' }
+          }
+        },
+        xp: { type: 'integer' }
+      },
+      required: ['communityId', 'name'],
+      additionalProperties: false
+    };
+    console.log(
+      'add type:',
+      await krebit.setTypeSchema('questBadge', questBadgeSchema)
+    );
+    const fullNameSchema = {
+      type: 'object',
+      properties: {
+        fullName: { type: 'string' },
+        first: { type: 'string' },
+        middle: { type: 'string' },
+        last: { type: 'string' }
+      },
+      required: ['fullName'],
+      additionalProperties: false
+    };
+    console.log(
+      'add type:',
+      await krebit.setTypeSchema('fullName', fullNameSchema)
+    );
+    console.log('typeSchemas:', await krebit.getTypeSchema());
+    console.log('questBadgeSchema:', await krebit.getTypeSchema('questBadge'));
+    */
+
+    console.log('DID authenticated:', await Issuer.isConnected());
+
+    // Issue Verifiable credential (needs signer)
+    const issuedCredential = await Issuer.issue(claim, 'questBadge');
+
+    console.log(
+      'Verifying signature:',
+      await Issuer.checkCredentialSignature(issuedCredential)
+    );
+
+    const decrypted = await Issuer.decryptClaim(issuedCredential);
+
+    console.log('Decrypted:', decrypted);
+
+    /*
+    //Optional: saveIssued
+    const passport = new core.Passport();
+    await passport.connect(ethProvider, wallet.address);
+    const addedCredentialId = await passport.addVerifiableCredential(
+      issuedCredential
+    );
+    
+    //const issuedCredentials = await passport.getIssued();
+    //console.log('issuedCredentials:', issuedCredentials);
+    /*const result = await passport.removeIssued(
+      'ceramic://kjzl6cwe1jw14af60zi1kmyyg5togxsggje7rvs2hdk9cckl49dzr76y36n3j9z'
+    );
+    console.log('Removed previous:', result);
+*/
+    if (true) {
+      return response.json({
+        //issuedCredential,
+        decrypted
+        //addedCredentialId
+        //issuedCredentialId
+        //result
+      });
     }
   } catch (err) {
+    console.log('err:', err);
     throw new Error(err);
   }
 };

@@ -1,20 +1,19 @@
 import 'isomorphic-fetch';
 
-import { config } from '../config/index.mjs';
-
 interface Props {
   address: string;
 }
 
-const { DEWORK_URL } = config;
+const { SERVER_DEWORK_URL } = process.env;
 
 export const getDeworkUser = async (props: Props) => {
   const { address } = props;
 
   try {
-    const response = await fetch(`${DEWORK_URL}/${address}`).then(result =>
-      result.json()
-    );
+    const response = await fetch(
+      `${SERVER_DEWORK_URL}/${address}`
+    ).then(result => result.json());
+
     return response;
   } catch (error) {
     console.error(error);

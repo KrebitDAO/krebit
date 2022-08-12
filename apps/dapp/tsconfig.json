@@ -1,9 +1,9 @@
 {
-  "extends": "../../packages/tsconfig/nextjs.json",
+  "extends": "@krebitdao/tsconfig/nextjs.json",
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "outDir": "./dist",
+    "outDir": "./out",
     "rootDir": "./src",
     "baseUrl": "src"
   }
