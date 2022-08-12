@@ -11,6 +11,10 @@
       "cache": false,
       "parallel": true
     },
+    "test": {
+      "cache": false,
+      "parallel": true
+    },
     "start": {},
     "clean": {
       "cache": false

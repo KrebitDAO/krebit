@@ -6,11 +6,7 @@ import { krbToken } from '../schemas';
 
 const { NETWORK_PROVIDER, NETWORK } = config;
 
-const getProvider = async () => {
-  if (!global.window) {
-    return new WalletProvider(NETWORK_PROVIDER, NETWORK);
-  }
-
+const getWeb3Provider = async () => {
   if ((window as any).ethereum) {
     try {
       await (window as any).ethereum.request({
@@ -70,4 +66,11 @@ const getProvider = async () => {
   }
 };
 
-export const ethereum = { getProvider };
+const getProvider = () => {
+  return new WalletProvider(NETWORK_PROVIDER, NETWORK);
+};
+
+export const ethereum = {
+  getProvider,
+  getWeb3Provider
+};

@@ -56,7 +56,7 @@ export const issueCredential = async (props: Props) => {
     id: claim.id,
     issuer: {
       id: idx.id,
-      ethereumAddress: wallet.address
+      ethereumAddress: await wallet.getAddress()
     },
     credentialSubject: {
       ...claim.credentialSubject,

@@ -12,14 +12,14 @@ export const AUTH_SIGNATURE_BODY =
 const { NETWORK: CHAIN, PUBLIC_URL } = config;
 
 const signAuthMessage = async (
-  wallet: ethers.Wallet,
+  wallet: ethers.Signer,
   resources: Array<any> = []
 ) => {
   const now = new Date().toISOString();
   const statement = AUTH_SIGNATURE_BODY.replace('{{timestamp}}', now);
   const message = {
     domain: PUBLIC_URL,
-    address: wallet.address,
+    address: await wallet.getAddress(),
     statement,
     uri: PUBLIC_URL,
     version: '1',
@@ -77,7 +77,7 @@ export class Lit {
   public encrypt = async (
     message: String,
     accessControlConditions: Array<Object>,
-    wallet: ethers.Wallet
+    wallet: ethers.Signer
   ) => {
     if (!this.litNodeClient) {
       await this.connect();
@@ -112,7 +112,7 @@ export class Lit {
   public updateConditions = async (
     encryptedSymmetricKey: string,
     newAccessControlConditions: Array<Object>,
-    wallet: ethers.Wallet
+    wallet: ethers.Signer
   ) => {
     if (!this.litNodeClient) {
       await this.connect();
@@ -137,7 +137,7 @@ export class Lit {
     encryptedString: string,
     encryptedSymmetricKey: string,
     accessControlConditions: Array<Object>,
-    wallet: ethers.Wallet
+    wallet: ethers.Signer
   ): Promise<string> => {
     if (!this.litNodeClient) {
       await this.connect();

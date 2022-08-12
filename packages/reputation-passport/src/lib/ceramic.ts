@@ -16,7 +16,6 @@ import { fromString } from 'uint8arrays/from-string';
 import { hash } from '@stablelib/sha256';
 
 import { datamodel } from '../schemas';
-import { WalletProvider } from '../utils';
 
 const DID_ERROR = 'DID session not authenticated';
 const DOMAIN = 'krebit.id';
@@ -27,11 +26,7 @@ interface PublicIDXProps {
 
 interface AuthProviderProps {
   address: string;
-  ethProvider:
-    | EthereumAuthProvider
-    | WalletProvider
-    | ethers.providers.Web3Provider
-    | ethers.providers.JsonRpcProvider;
+  ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
   client: CeramicClient;
 }
 

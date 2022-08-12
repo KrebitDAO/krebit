@@ -3,30 +3,22 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import eip712VC from '@krebitdao/eip712-vc';
-import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
 
 import { ceramic, graph } from '../lib';
 import { config } from '../config';
-import { WalletProvider } from '../utils';
 
 const { CERAMIC_URL } = config;
-
-type EthProvider =
-  | EthereumAuthProvider
-  | WalletProvider
-  | ethers.providers.Web3Provider
-  | ethers.providers.JsonRpcProvider;
 
 export class Passport {
   ceramic: CeramicClient;
   idx: DIDDataStore;
   did: string;
   address: string;
-  ethProvider: EthProvider;
+  ethProvider: ethers.providers.Provider;
 
   constructor() {}
 
-  async connect(ethProvider: EthProvider, address: string) {
+  async connect(ethProvider: ethers.providers.Provider, address: string) {
     const ceramicClient = new CeramicClient(CERAMIC_URL);
     this.idx = await ceramic.authProvider({
       address: address,

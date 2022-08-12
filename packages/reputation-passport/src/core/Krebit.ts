@@ -4,18 +4,11 @@ import { DIDDataStore } from '@glazed/did-datastore';
 import eip712VC from '@krebitdao/eip712-vc';
 
 import { ceramic, graph, Lit } from '../lib';
-import { issueCredential, WalletProvider } from '../utils';
+import { issueCredential } from '../utils';
 import { krbToken } from '../schemas';
 import { config } from '../config';
-import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
 
 const { CERAMIC_URL, NETWORK } = config;
-
-type EthProvider =
-  | EthereumAuthProvider
-  | WalletProvider
-  | ethers.providers.Web3Provider
-  | ethers.providers.JsonRpcProvider;
 
 const getEIP712credential = (stamp: any) =>
   ({
@@ -33,16 +26,18 @@ export class Krebit {
   address: string;
   did: string;
   krbContract: any;
-  wallet: ethers.Wallet;
-  ethProvider: EthProvider;
+  wallet: ethers.Signer;
+  ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
 
   constructor() {}
 
   async connect(
-    wallet: ethers.Wallet,
-    ethProvider: EthProvider,
+    wallet: ethers.Signer,
+    ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider,
     address: string
   ) {
+    if (this.isConnected()) return this.did;
+
     const ceramicClient = new CeramicClient(CERAMIC_URL);
     this.idx = await ceramic.authProvider({
       provider: '3id',
@@ -139,7 +134,11 @@ export class Krebit {
     if (!this.isConnected()) throw new Error('Not connected');
 
     // check the types of the claim before issuing
-    return issueCredential({ wallet: this.wallet, idx: this.idx, claim });
+    return issueCredential({
+      wallet: this.wallet as ethers.Wallet,
+      idx: this.idx,
+      claim
+    });
   };
 
   /* TODO
