@@ -13,7 +13,7 @@
     "dev": "tsc -w",
     "build": "tsc",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "test": "jest test"
+    "test": "jest --verbose"
   },
   "keywords": [],
   "author": "",
@@ -53,15 +53,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "jest": {
-    "extensionsToTreatAsEsm": [
-      ".ts"
-    ],
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    },
-    "transform": { "^.+\\.ts?$": "ts-jest" },
-    "coveragePathIgnorePatterns": ["node_modules", "<rootDir>/node_modules/"]
   }
 }

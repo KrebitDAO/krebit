@@ -3,7 +3,7 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import eip712VC from '@krebitdao/eip712-vc';
 
-import { ceramic, graph, Lit } from '../lib';
+import { ceramic, graph, litProvider } from '../lib';
 import { issueCredential } from '../utils';
 import { krbToken } from '../schemas';
 import { config } from '../config';
@@ -36,8 +36,6 @@ export class Krebit {
     ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider,
     address: string
   ) {
-    if (this.isConnected()) return this.did;
-
     const ceramicClient = new CeramicClient(CERAMIC_URL);
     this.idx = await ceramic.authProvider({
       provider: '3id',
@@ -111,8 +109,8 @@ export class Krebit {
 
   // checks the signature
   decryptClaim = async (w3cCredential: eip712VC.W3CCredential) => {
-    const lit = new Lit();
     const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+    const lit = await litProvider();
 
     return await lit.decrypt(
       encrypted.encryptedString,
