@@ -69,9 +69,6 @@ const auth3IDProvider = async (props: AuthProviderProps) => {
 
   const authProvider = new EthereumAuthProvider(ethProvider, address);
   const authId = (await authProvider.accountId()).toString();
-
-  console.log(authId);
-
   const authSecretMsg = 'Allow this account to control your identity';
   const authSecretSigned = await authProvider.authenticate(authSecretMsg);
   const authSecret = hash(fromString(authSecretSigned.slice(2)));

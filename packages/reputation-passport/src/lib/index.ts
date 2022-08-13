@@ -1,6 +1,6 @@
 import { ceramic } from './ceramic';
 import { ethereum } from './ethereum';
 import { graph } from './graph';
-import { Lit } from './lit';
+import { litProvider } from './lit';
 
-export { ceramic, ethereum, graph, Lit };
+export { ceramic, ethereum, graph, litProvider };

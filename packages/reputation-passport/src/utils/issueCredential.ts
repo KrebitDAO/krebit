@@ -4,7 +4,7 @@ import eip712VC from '@krebitdao/eip712-vc';
 
 import { config } from '../config';
 import { krbToken } from '../schemas';
-import { Lit } from '../lib';
+import { litProvider } from '../lib';
 
 const { NETWORK } = config;
 
@@ -32,7 +32,7 @@ export const issueCredential = async (props: Props) => {
     throw new Error('No expiration date defined');
   }
 
-  const lit = new Lit();
+  const lit = await litProvider();
 
   if (claim.credentialSubject.encrypted === 'true') {
     let encryptedContent = await lit.encrypt(
