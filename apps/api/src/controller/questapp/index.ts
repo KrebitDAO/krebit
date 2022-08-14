@@ -1,7 +1,9 @@
 // TODO: Validate if address deserves the badge
 
 import express from 'express';
+import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
+
 import { connect } from '../../utils';
 
 const {
@@ -86,7 +88,15 @@ export const QuestappController = async (
     );
     console.log('**Decrypted: ', decrypted);
 */
-    const Issuer = new krebit.core.Krebit();
+    const client = new LitJsSdk.LitNodeClient();
+    const Issuer = new krebit.core.Krebit({
+      providers: {
+        lit: {
+          sdk: LitJsSdk,
+          client: client
+        }
+      }
+    });
     const did = await Issuer.connect(wallet, ethProvider, wallet.address);
 
     /*

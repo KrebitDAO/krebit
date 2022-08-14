@@ -3,12 +3,10 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import eip712VC from '@krebitdao/eip712-vc';
 
-import { ceramic, graph, litProvider } from '../lib';
+import { ceramic, graph, Lit } from '../lib';
 import { issueCredential } from '../utils';
 import { krbToken } from '../schemas';
-import { config } from '../config';
-
-const { CERAMIC_URL, NETWORK } = config;
+import { config, IConfigProps } from '../config';
 
 const getEIP712credential = (stamp: any) =>
   ({
@@ -21,22 +19,28 @@ const getEIP712credential = (stamp: any) =>
   } as eip712VC.EIP712VerifiableCredential);
 
 export class Krebit {
-  ceramic: CeramicClient;
-  idx: DIDDataStore;
-  address: string;
-  did: string;
-  krbContract: any;
-  wallet: ethers.Signer;
-  ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
+  public ceramic: CeramicClient;
+  public idx: DIDDataStore;
+  public address: string;
+  public did: string;
+  public krbContract: any;
+  public wallet: ethers.Signer;
+  public ethProvider:
+    | ethers.providers.Provider
+    | ethers.providers.ExternalProvider;
+  private currentConfig: IConfigProps;
 
-  constructor() {}
+  constructor(props?: IConfigProps) {
+    const currentConfig = config.update(props);
+    this.currentConfig = currentConfig;
+  }
 
   async connect(
     wallet: ethers.Signer,
     ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider,
     address: string
   ) {
-    const ceramicClient = new CeramicClient(CERAMIC_URL);
+    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.idx = await ceramic.authProvider({
       provider: '3id',
       address,
@@ -49,7 +53,7 @@ export class Krebit {
     this.did = this.idx.id;
     this.wallet = wallet;
     this.krbContract = new ethers.Contract(
-      krbToken[NETWORK].address,
+      krbToken[this.currentConfig.network].address,
       krbToken.abi,
       wallet
     );
@@ -110,7 +114,7 @@ export class Krebit {
   // checks the signature
   decryptClaim = async (w3cCredential: eip712VC.W3CCredential) => {
     const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-    const lit = await litProvider();
+    const lit = new Lit();
 
     return await lit.decrypt(
       encrypted.encryptedString,

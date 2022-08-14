@@ -1,7 +1,6 @@
 import 'isomorphic-fetch';
 
 import { krbToken } from '../schemas';
-import { config } from '../config';
 import {
   verifiableCredentials,
   verifiableCredential,
@@ -11,6 +10,7 @@ import {
   erc20Balance,
   erc20Balances
 } from '../queries';
+import { config } from '../config';
 
 interface ClientProps {
   query: string;
@@ -28,10 +28,12 @@ interface GetProps {
   id: string;
 }
 
+const currentConfig = config.get();
+
 const client = async (props: ClientProps) => {
   const { query, variables } = props;
 
-  const response = await fetch(config.GRAPH_URL, {
+  const response = await fetch(currentConfig.graphUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -101,7 +103,7 @@ const erc20BalancesQuery = async (props: ListProps) => {
 };
 
 const erc20BalanceQuery = async (address: string) => {
-  const contract = krbToken[config.NETWORK].address;
+  const contract = krbToken[currentConfig.network].address;
   const id = contract.toLowerCase() + '/' + address.toLowerCase();
 
   const response = await client({

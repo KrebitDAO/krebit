@@ -5,21 +5,23 @@ import { TileDocument } from '@ceramicnetwork/stream-tile';
 import eip712VC from '@krebitdao/eip712-vc';
 
 import { ceramic, graph } from '../lib';
-import { config } from '../config';
-
-const { CERAMIC_URL } = config;
+import { config, IConfigProps } from '../config';
 
 export class Passport {
-  ceramic: CeramicClient;
-  idx: DIDDataStore;
-  did: string;
-  address: string;
-  ethProvider: ethers.providers.Provider;
+  public ceramic: CeramicClient;
+  public idx: DIDDataStore;
+  public did: string;
+  public address: string;
+  public ethProvider: ethers.providers.Provider;
+  private currentConfig: IConfigProps;
 
-  constructor() {}
+  constructor(props?: IConfigProps) {
+    const currentConfig = config.update(props);
+    this.currentConfig = currentConfig;
+  }
 
   async connect(ethProvider: ethers.providers.Provider, address: string) {
-    const ceramicClient = new CeramicClient(CERAMIC_URL);
+    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.idx = await ceramic.authProvider({
       address: address,
       ethProvider,
@@ -46,9 +48,9 @@ export class Passport {
   read(address: string, did: string) {
     this.did = did;
     this.address = address;
-    //TODO get did from address with resolver
+    // TODO get did from address with resolver
 
-    const ceramicClient = new CeramicClient(CERAMIC_URL);
+    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.idx = ceramic.publicIDX({
       client: ceramicClient
     });

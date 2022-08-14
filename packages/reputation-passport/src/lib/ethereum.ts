@@ -1,10 +1,10 @@
 import { ethers } from 'ethers';
 
-import { config } from '../config';
 import { WalletProvider } from '../utils';
 import { krbToken } from '../schemas';
+import { config } from '../config';
 
-const { NETWORK_PROVIDER, NETWORK } = config;
+const currentConfig = config.get();
 
 const getWeb3Provider = async () => {
   if ((window as any).ethereum) {
@@ -13,9 +13,9 @@ const getWeb3Provider = async () => {
         method: 'wallet_switchEthereumChain',
         params: [
           {
-            chainId: `0x${Number(krbToken[NETWORK].domain.chainId).toString(
-              16
-            )}`
+            chainId: `0x${Number(
+              krbToken[currentConfig.network].domain.chainId
+            ).toString(16)}`
           }
         ]
       });
@@ -26,17 +26,17 @@ const getWeb3Provider = async () => {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: `0x${Number(krbToken[NETWORK].domain.chainId).toString(
-                  16
-                )}`,
-                rpcUrls: [NETWORK_PROVIDER],
-                chainName: krbToken[NETWORK].name,
+                chainId: `0x${Number(
+                  krbToken[currentConfig.network].domain.chainId
+                ).toString(16)}`,
+                rpcUrls: [currentConfig.infuraUrl],
+                chainName: krbToken[currentConfig.network].name,
                 nativeCurrency: {
-                  name: krbToken[NETWORK].token,
-                  symbol: krbToken[NETWORK].token,
+                  name: krbToken[currentConfig.network].token,
+                  symbol: krbToken[currentConfig.network].token,
                   decimals: 18
                 },
-                blockExplorerUrls: [krbToken[NETWORK].blockUrl]
+                blockExplorerUrls: [krbToken[currentConfig.network].blockUrl]
               }
             ]
           });
@@ -49,13 +49,15 @@ const getWeb3Provider = async () => {
     } finally {
       const provider = new ethers.providers.Web3Provider(
         (window as any).ethereum,
-        NETWORK
+        currentConfig.network
       );
 
       (window as any).ethereum.on('chainChanged', (newNetwork: string) => {
         if (
           newNetwork !=
-          `0x${Number(krbToken[NETWORK].domain.chainId).toString(16)}`
+          `0x${Number(krbToken[currentConfig.network].domain.chainId).toString(
+            16
+          )}`
         ) {
           window.location.reload();
         }
@@ -67,7 +69,7 @@ const getWeb3Provider = async () => {
 };
 
 const getProvider = () => {
-  return new WalletProvider(NETWORK_PROVIDER, NETWORK);
+  return new WalletProvider(currentConfig.infuraUrl, currentConfig.network);
 };
 
 export const ethereum = {

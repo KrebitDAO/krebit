@@ -1,28 +1,31 @@
 import { ethers } from 'ethers';
 import siwe from 'siwe';
 
-import { config } from '../config';
 import { krbToken } from '../schemas';
 import { base64 } from '../utils';
+import { config, IConfigProps } from '../config';
+
+interface ISignAuthMessageProps {
+  wallet: ethers.Signer;
+  resources?: Array<any>;
+  config: IConfigProps;
+}
 
 export const AUTH_SIGNATURE_BODY =
   'I am creating an account to use Lit Protocol at {{timestamp}}';
 
-const { NETWORK: CHAIN, PUBLIC_URL } = config;
+const signAuthMessage = async (props: ISignAuthMessageProps) => {
+  const { wallet, resources = [], config } = props;
 
-const signAuthMessage = async (
-  wallet: ethers.Signer,
-  resources: Array<any> = []
-) => {
   const now = new Date().toISOString();
   const statement = AUTH_SIGNATURE_BODY.replace('{{timestamp}}', now);
   const message = {
-    domain: PUBLIC_URL,
+    domain: config.publicUrl,
     address: await wallet.getAddress(),
     statement,
-    uri: PUBLIC_URL,
+    uri: config.publicUrl,
     version: '1',
-    chainId: Number(krbToken[CHAIN].domain.chainId)
+    chainId: Number(krbToken[config.network].domain.chainId)
   };
 
   if (resources && resources.length > 0) {
@@ -49,15 +52,18 @@ const signAuthMessage = async (
 
 export class Lit {
   private litSdk;
-  private litClient;
+  private litNodeClient;
+  private currentConfig: IConfigProps;
 
-  constructor(sdk, client) {
-    this.litSdk = sdk;
-    this.litClient = client;
+  constructor() {
+    const currentConfig = config.get();
+    this.currentConfig = currentConfig;
   }
 
   private connect = async () => {
-    await this.litClient.connect();
+    this.litSdk = this.currentConfig.providers.lit.sdk;
+    this.litNodeClient = this.currentConfig.providers.lit.client;
+    await this.litNodeClient.connect();
   };
 
   public getOwnsAddressConditions = (address: string) => {
@@ -65,7 +71,7 @@ export class Lit {
       {
         contractAddress: '',
         standardContractType: '',
-        chain: CHAIN,
+        chain: this.currentConfig.network,
         method: '',
         parameters: [':userAddress'],
         returnValueTest: {
@@ -81,22 +87,25 @@ export class Lit {
     accessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ) => {
-    if (!this.litClient) {
+    if (!this.litNodeClient) {
       await this.connect();
     }
 
-    const authSig = await signAuthMessage(wallet);
+    const authSig = await signAuthMessage({
+      wallet,
+      config: this.currentConfig
+    });
 
     const { encryptedString, symmetricKey } = await this.litSdk.encryptString(
       message
     );
 
     const encryptedStringBase64 = await base64.blobToBase64(encryptedString);
-    const encryptedSymmetricKey = await this.litClient.saveEncryptionKey({
+    const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
       accessControlConditions,
       symmetricKey,
       authSig,
-      chain: CHAIN,
+      chain: this.currentConfig.network,
       permanant: false
     });
 
@@ -107,7 +116,7 @@ export class Lit {
         'base16'
       ),
       accessControlConditions: accessControlConditions,
-      chain: CHAIN
+      chain: this.currentConfig.network
     };
   };
 
@@ -116,19 +125,24 @@ export class Lit {
     newAccessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ) => {
-    if (!this.litClient) {
+    if (!this.litNodeClient) {
       await this.connect();
     }
 
-    const authSig = await signAuthMessage(wallet);
-
-    const newEncryptedSymmetricKey = await this.litClient.saveEncryptionKey({
-      accessControlConditions: newAccessControlConditions,
-      encryptedSymmetricKey: base64.decodeb64(encryptedSymmetricKey),
-      authSig,
-      chain: CHAIN,
-      permanant: false
+    const authSig = await signAuthMessage({
+      wallet,
+      config: this.currentConfig
     });
+
+    const newEncryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey(
+      {
+        accessControlConditions: newAccessControlConditions,
+        encryptedSymmetricKey: base64.decodeb64(encryptedSymmetricKey),
+        authSig,
+        chain: this.currentConfig.network,
+        permanant: false
+      }
+    );
 
     return this.litSdk.uint8arrayToString(newEncryptedSymmetricKey, 'base16');
   };
@@ -139,17 +153,20 @@ export class Lit {
     accessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ): Promise<string> => {
-    if (!this.litClient) {
+    if (!this.litNodeClient) {
       await this.connect();
     }
 
-    const authSig = await signAuthMessage(wallet);
+    const authSig = await signAuthMessage({
+      wallet,
+      config: this.currentConfig
+    });
 
-    const decryptedSymmKey = await this.litClient.getEncryptionKey({
+    const decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
       accessControlConditions,
       toDecrypt: encryptedSymmetricKey,
       authSig,
-      chain: CHAIN
+      chain: this.currentConfig.network
     });
 
     const decryptedString = await this.litSdk.decryptString(
@@ -160,18 +177,3 @@ export class Lit {
     return decryptedString;
   };
 }
-
-export const litProvider = async () => {
-  let litSdk;
-
-  if (typeof process !== 'undefined') {
-    litSdk = await import('lit-js-sdk/build/index.node.js');
-  } else {
-    litSdk = await import('lit-js-sdk');
-  }
-
-  const litClient = new litSdk.default.LitNodeClient();
-  await litClient.connect();
-
-  return new Lit(litSdk.default, litClient);
-};
