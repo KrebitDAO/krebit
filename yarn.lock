@@ -4789,7 +4789,7 @@ lit-connect-modal@^0.1.8:
   dependencies:
     micromodal "^0.4.10"
 
-lit-js-sdk@^1.1.200:
+lit-js-sdk@^1.1.207:
   version "1.1.211"
   resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.211.tgz#fd1dde36d623ee6e0676a81d2c87821a471a0d33"
   integrity sha512-Jy5/KmlglfHHRGiP4/FoVfwTpaqWVRQHLoQiCNM6mHJ/GxPUWAdePm+oCta67PfG2jX2emp0FUUndqSM9156zA==
