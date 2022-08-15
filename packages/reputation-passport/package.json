@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "@krebitdao/eip712-vc": "^0.3.4",
+    "@krebitdao/eip712-vc": "0.0.1",
     "ethers": "^5.6.9",
     "lit-js-sdk": "^1.1.207",
     "siwe": "^1.1.6"
@@ -38,7 +38,7 @@
     "siwe": "^1.1.6"
   },
   "devDependencies": {
-    "@krebitdao/eip712-vc": "^0.3.4",
+    "@krebitdao/eip712-vc": "*",
     "@krebitdao/tsconfig": "*",
     "@types/jest": "^28.1.6",
     "@types/node": "^17.0.34",
