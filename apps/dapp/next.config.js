@@ -1,5 +1,6 @@
 const withTM = require('next-transpile-modules')([
-  '@krebitdao/reputation-passport'
+  '@krebitdao/reputation-passport',
+  '@krebitdao/eip712-vc'
 ]);
 
 module.exports = withTM({

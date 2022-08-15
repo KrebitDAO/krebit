@@ -2,12 +2,7 @@ import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
-import {
-  W3CCredential,
-  EIP712VerifiableCredential,
-  getEIP712Credential,
-  getKrebitCredentialTypes
-} from '@krebitdao/eip712-vc';
+import { W3CCredential } from '@krebitdao/eip712-vc';
 
 import { ceramic, graph } from '../lib';
 import { config, IConfigProps } from '../config';
