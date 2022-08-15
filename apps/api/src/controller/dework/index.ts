@@ -33,7 +33,7 @@ export const DeworkController = async (
 
     // Log in with wallet to Ceramic DID
     console.log('Authenticating with Self.Id...');
-    const idx = await krebit.lib.ceramic.authProvider({
+    const idx = await krebit.lib.ceramic.authDIDSession({
       address: wallet.address,
       ethProvider,
       client: ceramicClient

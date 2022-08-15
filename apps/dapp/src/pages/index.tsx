@@ -26,7 +26,8 @@ const IndexPage = () => {
           }
         }
       });
-      const data = await Issuer.connect(wallet, ethProvider.provider, address);
+      const did = await Issuer.connect(wallet, ethProvider.provider, address);
+      console.log(did);
 
       const questBadgeSchema = {
         type: 'object',
@@ -51,6 +52,8 @@ const IndexPage = () => {
         'add type:',
         await Issuer.setTypeSchema('questBadge', questBadgeSchema)
       );
+
+      console.log('Types:', await Issuer.getTypeSchema());
 
       console.log('Verifying questapp for address: ', address);
       console.log('Valid quest found in community: ', 1);
@@ -79,7 +82,7 @@ const IndexPage = () => {
           typeSchema: 'https://github.com/KrebitDAO/schemas/questBadge',
           trust: 1, // How much we trust the evidence to sign this?
           stake: 1, // In KRB
-          price: 1 * 10 ** 18 // charged to the user for claiming KRBs
+          price: 0 * 10 ** 18 // charged to the user for claiming KRBs
         },
         expirationDate: new Date(expirationDate).toISOString()
       };
@@ -87,12 +90,12 @@ const IndexPage = () => {
 
       const issuedCredential = await Issuer.issue(claim, 'questBadge');
 
+      console.log('issuedCredential: ', issuedCredential);
+
       console.log(
         'Verifying signature:',
         await Issuer.checkCredentialSignature(issuedCredential)
       );
-
-      console.log(data);
     };
 
     getData();

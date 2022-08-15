@@ -98,7 +98,7 @@ export const QuestappController = async (
       }
     });
     const did = await Issuer.connect(wallet, ethProvider, wallet.address);
-
+    console.log('DID:', did);
     /*
     const questBadgeSchema = {
       type: 'object',

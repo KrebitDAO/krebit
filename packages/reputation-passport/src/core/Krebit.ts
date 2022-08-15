@@ -1,7 +1,12 @@
 import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
-import eip712VC from '@krebitdao/eip712-vc';
+import {
+  W3CCredential,
+  EIP712VerifiableCredential,
+  getEIP712Credential,
+  getKrebitCredentialTypes
+} from '@krebitdao/eip712-vc';
 
 import { ceramic, graph, Lit } from '../lib';
 import { issueCredential } from '../utils';
@@ -16,7 +21,7 @@ const getEIP712credential = (stamp: any) =>
       ...stamp.credentialSubject,
       id: stamp.credentialSubjectDID
     }
-  } as eip712VC.EIP712VerifiableCredential);
+  } as EIP712VerifiableCredential);
 
 export class Krebit {
   public ceramic: CeramicClient;
@@ -41,8 +46,7 @@ export class Krebit {
     address: string
   ) {
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.idx = await ceramic.authProvider({
-      provider: '3id',
+    this.idx = await ceramic.authDIDSession({
       address,
       ethProvider,
       client: ceramicClient
@@ -75,7 +79,7 @@ export class Krebit {
       content = content ? content : {};
       content[type] = schema;
 
-      return await this.idx.set('claimTypes', content);
+      return (await this.idx.set('claimTypes', content)).toUrl();
     } catch (err) {
       throw new Error(err);
     }
@@ -98,9 +102,9 @@ export class Krebit {
   };
 
   // claimedCredentials from ceramic
-  checkCredentialSignature = async (w3cCredential: eip712VC.W3CCredential) => {
-    const eip712credential = eip712VC.getEIP712Credential(w3cCredential);
-    const krebitTypes = eip712VC.getKrebitCredentialTypes();
+  checkCredentialSignature = async (w3cCredential: W3CCredential) => {
+    const eip712credential = getEIP712Credential(w3cCredential);
+    const krebitTypes = getKrebitCredentialTypes();
     const signer = ethers.utils.verifyTypedData(
       w3cCredential.proof.eip712.domain,
       krebitTypes,
@@ -112,7 +116,7 @@ export class Krebit {
   };
 
   // checks the signature
-  decryptClaim = async (w3cCredential: eip712VC.W3CCredential) => {
+  decryptClaim = async (w3cCredential: W3CCredential) => {
     const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
     const lit = new Lit();
 
@@ -158,10 +162,10 @@ export class Krebit {
 
   // Stamp
   // on-chain  (claim KRB reputation)
-  stampCredential = async (w3cCredential: eip712VC.W3CCredential) => {
+  stampCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = eip712VC.getEIP712Credential(w3cCredential);
+    const eip712credential = getEIP712Credential(w3cCredential);
     const tx = await this.krbContract.registerVC(
       eip712credential,
       w3cCredential.proof.proofValue,
@@ -174,10 +178,10 @@ export class Krebit {
     return tx.hash;
   };
 
-  stampCost = async (w3cCredential: eip712VC.W3CCredential) => {
+  stampCost = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = eip712VC.getEIP712Credential(w3cCredential);
+    const eip712credential = getEIP712Credential(w3cCredential);
 
     // Estimate cost
     const cost = ethers.utils.parseUnits(

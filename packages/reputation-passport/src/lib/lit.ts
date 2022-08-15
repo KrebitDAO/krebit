@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import siwe from 'siwe';
+import { SiweMessage } from 'siwe';
 
 import { krbToken } from '../schemas';
 import { base64 } from '../utils';
@@ -32,7 +32,7 @@ const signAuthMessage = async (props: ISignAuthMessageProps) => {
     message['resources'] = resources;
   }
 
-  const siweMessage = new siwe.SiweMessage(message);
+  const siweMessage = new SiweMessage(message);
 
   const messageToSign = siweMessage.prepareMessage();
 

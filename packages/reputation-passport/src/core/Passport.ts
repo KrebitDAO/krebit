@@ -2,7 +2,12 @@ import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
-import eip712VC from '@krebitdao/eip712-vc';
+import {
+  W3CCredential,
+  EIP712VerifiableCredential,
+  getEIP712Credential,
+  getKrebitCredentialTypes
+} from '@krebitdao/eip712-vc';
 
 import { ceramic, graph } from '../lib';
 import { config, IConfigProps } from '../config';
@@ -22,7 +27,7 @@ export class Passport {
 
   async connect(ethProvider: ethers.providers.Provider, address: string) {
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.idx = await ceramic.authProvider({
+    this.idx = await ceramic.authDIDSession({
       address: address,
       ethProvider,
       client: ceramicClient
@@ -70,7 +75,7 @@ export class Passport {
   };
 
   // claimedCredentials from ceramic
-  addVerifiableCredential = async (w3cCredential: eip712VC.W3CCredential) => {
+  addVerifiableCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     console.log('Saving VerifiableCredentialn on Ceramic...');
@@ -87,13 +92,13 @@ export class Passport {
   // claimedCredentials from ceramic
   getVerifiableCredential = async (credentialId: any) => {
     const stream = await TileDocument.load(this.idx.ceramic, credentialId);
-    return stream.content as eip712VC.W3CCredential;
+    return stream.content as W3CCredential;
   };
 
   // claimedCredentials from ceramic
   checkCredentialStatus = async (credentialId: any) => {
     console.log('Checking VerifiableCredentialn from Ceramic...');
-    const w3cCredential: eip712VC.W3CCredential = await this.getVerifiableCredential(
+    const w3cCredential: W3CCredential = await this.getVerifiableCredential(
       credentialId
     );
     let result = null;
@@ -123,7 +128,7 @@ export class Passport {
   // claimedCredentials from ceramic
   updateVerifiableCredential = async (
     credentialId: string,
-    w3cCredential: eip712VC.W3CCredential
+    w3cCredential: W3CCredential
   ) => {
     if (!this.isConnected()) throw new Error('Not connected');
     console.log('Saving VerifiableCredentialn on Ceramic...');
@@ -139,7 +144,7 @@ export class Passport {
   };
 
   // issuedCredentials in ceramic
-  addIssued = async (w3cCredential: eip712VC.W3CCredential) => {
+  addIssued = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     // Upload attestation to Ceramic
@@ -270,7 +275,7 @@ export class Passport {
   };
 
   // claimedCredentials from ceramic
-  addClaim = async (w3cCredential: eip712VC.W3CCredential) => {
+  addClaim = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     // Upload attestation to Ceramic

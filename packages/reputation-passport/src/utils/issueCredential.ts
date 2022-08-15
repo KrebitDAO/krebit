@@ -1,6 +1,10 @@
 import { ethers } from 'ethers';
 import { DIDDataStore } from '@glazed/did-datastore';
-import eip712VC from '@krebitdao/eip712-vc';
+import {
+  EIP712VC,
+  getEIP712Credential,
+  getKrebitCredentialTypes
+} from '@krebitdao/eip712-vc';
 
 import { krbToken } from '../schemas';
 import { Lit } from '../lib';
@@ -71,12 +75,10 @@ export const issueCredential = async (props: Props) => {
     expirationDate: claim.expirationDate
   };
 
-  const eip712credential = eip712VC.getEIP712Credential(credential);
+  const eip712credential = getEIP712Credential(credential);
 
-  const krebitTypes = eip712VC.getKrebitCredentialTypes();
-  const eip712_vc = new eip712VC.EIP712VC(
-    krbToken[currentConfig.network].domain
-  );
+  const krebitTypes = getKrebitCredentialTypes();
+  const eip712_vc = new EIP712VC(krbToken[currentConfig.network].domain);
   const verifiableCredential = await eip712_vc.createEIP712VerifiableCredential(
     eip712credential,
     krebitTypes,
