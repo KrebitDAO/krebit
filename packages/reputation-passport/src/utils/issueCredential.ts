@@ -2,17 +2,17 @@ import { ethers } from 'ethers';
 import { DIDDataStore } from '@glazed/did-datastore';
 import eip712VC from '@krebitdao/eip712-vc';
 
-import { config } from '../config';
 import { krbToken } from '../schemas';
-import { litProvider } from '../lib';
-
-const { NETWORK } = config;
+import { Lit } from '../lib';
+import { config } from '../config';
 
 interface Props {
   wallet: ethers.Wallet;
   idx: DIDDataStore;
   claim: any;
 }
+
+const currentConfig = config.get();
 
 export const issueCredential = async (props: Props) => {
   const { wallet, idx, claim } = props;
@@ -32,7 +32,7 @@ export const issueCredential = async (props: Props) => {
     throw new Error('No expiration date defined');
   }
 
-  const lit = await litProvider();
+  const lit = new Lit();
 
   if (claim.credentialSubject.encrypted === 'true') {
     let encryptedContent = await lit.encrypt(
@@ -74,13 +74,15 @@ export const issueCredential = async (props: Props) => {
   const eip712credential = eip712VC.getEIP712Credential(credential);
 
   const krebitTypes = eip712VC.getKrebitCredentialTypes();
-  const eip712_vc = new eip712VC.EIP712VC(krbToken[NETWORK].domain);
+  const eip712_vc = new eip712VC.EIP712VC(
+    krbToken[currentConfig.network].domain
+  );
   const verifiableCredential = await eip712_vc.createEIP712VerifiableCredential(
     eip712credential,
     krebitTypes,
     async () => {
       return await wallet._signTypedData(
-        krbToken[NETWORK].domain,
+        krbToken[currentConfig.network].domain,
         krebitTypes,
         eip712credential
       );
