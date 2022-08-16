@@ -18,31 +18,26 @@
       "verifyingContract": "0x3F01060d9c5ddC855B5DD1db5aE70204D37e3E7E"
     }
   },
-  "rinkeby": {
+  "mumbai": {
     "contractName": "Krebit",
-    "symbol": "rKRB",
-    "token": "RIN",
-    "name": "Rinkeby Test Network",
-    "address": "0xDB13a2Df867495da84764c55d0E82Ded180F7F6d",
-    "block": 10284642,
-    "implementation": "0xf88A02dd1A30A25DB029278F9665aD8308FC698E",
-    "network": "rinkeby",
-    "blockUrl": "https://rinkeby.etherscan.io",
-    "txUrl": "https://rinkeby.etherscan.io/tx/",
-    "addressUrl": "https://rinkeby.etherscan.io/address/",
+    "symbol": "KRB",
+    "token": "MATIC",
+    "name": "Polygon",
+    "address": "0xee524d0b396C8F9BcfD7Ac336d17aa0397a32CbE",
+    "block": 27536289,
+    "implementation": "0x1415A447855eA7beCFA257bBF1FbB385F5d16071",
+    "network": "mumbai",
+    "blockUrl": "https://mumbai.polygonscan.com/",
+    "txUrl": "https://mumbai.polygonscan.com/tx/",
+    "addressUrl": "https://mumbai.polygonscan.com/address/",
     "domain": {
       "name": "Krebit",
       "version": "0.1",
-      "chainId": 4,
-      "verifyingContract": "0xDB13a2Df867495da84764c55d0E82Ded180F7F6d"
+      "chainId": 80001,
+      "verifyingContract": "0xee524d0b396C8F9BcfD7Ac336d17aa0397a32CbE"
     }
   },
   "abi": [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
     {
       "anonymous": false,
       "inputs": [
@@ -105,9 +100,9 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "uuid",
-          "type": "bytes32"
+          "type": "uint256"
         },
         {
           "indexed": false,
@@ -124,15 +119,15 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "uuid",
-          "type": "bytes32"
+          "type": "uint256"
         },
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "disputedBy",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "name": "Disputed",
@@ -143,9 +138,9 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "uuid",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "name": "Expired",
@@ -156,9 +151,22 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint8",
+          "name": "version",
+          "type": "uint8"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "uuid",
-          "type": "bytes32"
+          "type": "uint256"
         },
         {
           "components": [
@@ -311,9 +319,9 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "uuid",
-          "type": "bytes32"
+          "type": "uint256"
         },
         {
           "indexed": false,
@@ -430,9 +438,9 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "uuid",
-          "type": "bytes32"
+          "type": "uint256"
         },
         {
           "indexed": false,
@@ -1474,9 +1482,9 @@
       "name": "getUuid",
       "outputs": [
         {
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "stateMutability": "pure",
@@ -1691,10 +1699,58 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "version",
+          "type": "string"
+        }
+      ],
       "name": "initialize",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "forwarder",
+          "type": "address"
+        }
+      ],
+      "name": "isTrustedForwarder",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maxPriceToIssue",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -1840,6 +1896,19 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proxiableUUID",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
         }
       ],
       "stateMutability": "view",
@@ -1995,9 +2064,9 @@
     {
       "inputs": [
         {
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "name": "registry",
@@ -2008,9 +2077,9 @@
           "type": "uint8"
         },
         {
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "disputedBy",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -2414,7 +2483,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "recipient",
+          "name": "to",
           "type": "address"
         },
         {
@@ -2438,12 +2507,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "sender",
+          "name": "from",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "recipient",
+          "name": "to",
           "type": "address"
         },
         {
@@ -2499,6 +2568,11 @@
         },
         {
           "internalType": "uint256",
+          "name": "newMaxPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
           "name": "newMinStake",
           "type": "uint256"
         },
@@ -2506,6 +2580,11 @@
           "internalType": "uint256",
           "name": "newMaxStake",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "trustedForwarder",
+          "type": "address"
         }
       ],
       "name": "updateParameters",

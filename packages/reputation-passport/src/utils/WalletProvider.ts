@@ -1,13 +1,16 @@
 import { ethers } from 'ethers';
+import { krbToken } from '../schemas';
 
 export class WalletProvider extends ethers.providers.JsonRpcProvider {
   _wallet: ethers.Wallet;
+  networkish: ethers.providers.Networkish;
 
   constructor(
     url: string | ethers.utils.ConnectionInfo,
     network: ethers.providers.Networkish
   ) {
-    super(url, network);
+    super(url);
+    this.networkish = network;
   }
 
   setWallet(wallet: ethers.Wallet) {
@@ -32,7 +35,11 @@ export class WalletProvider extends ethers.providers.JsonRpcProvider {
     } else if (method == 'eth_accounts' || method.method == 'eth_accounts') {
       return [await this._wallet.getAddress()];
     } else if (method == 'eth_chainId' || method.method == 'eth_chainId') {
-      params(null, { result: '0x01' });
+      params(null, {
+        result: `0x${Number(
+          krbToken[this.networkish.toString()].domain.chainId
+        ).toString(16)}`
+      });
     } else {
       if (method.method && typeof params === 'function') {
         params(null, await super.send(method.method, method.params));

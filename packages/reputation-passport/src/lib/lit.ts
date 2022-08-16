@@ -61,8 +61,8 @@ export class Lit {
   }
 
   private connect = async () => {
-    this.litSdk = this.currentConfig.providers.lit.sdk;
-    this.litNodeClient = this.currentConfig.providers.lit.client;
+    this.litSdk = this.currentConfig.litSdk;
+    this.litNodeClient = new this.litSdk.LitNodeClient();
     await this.litNodeClient.connect();
   };
 

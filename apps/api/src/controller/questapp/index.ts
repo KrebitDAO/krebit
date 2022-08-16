@@ -88,14 +88,9 @@ export const QuestappController = async (
     );
     console.log('**Decrypted: ', decrypted);
 */
-    const client = new LitJsSdk.LitNodeClient();
+
     const Issuer = new krebit.core.Krebit({
-      providers: {
-        lit: {
-          sdk: LitJsSdk,
-          client: client
-        }
-      }
+      litSdk: LitJsSdk
     });
     const did = await Issuer.connect(wallet, ethProvider, wallet.address);
     console.log('DID:', did);

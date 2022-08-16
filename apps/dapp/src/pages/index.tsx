@@ -15,14 +15,11 @@ const IndexPage = () => {
     const ethProvider = await krebit.lib.ethereum.getWeb3Provider();
     const wallet = ethProvider.getSigner();
 
-    const client = new LitJsSdk.LitNodeClient();
     const Issuer = new krebit.core.Krebit({
-      providers: {
-        lit: {
-          sdk: LitJsSdk,
-          client: client
-        }
-      }
+      network: 'xdai',
+      rpcUrl: 'https://rpc.gnosischain.com/',
+      graphUrl: 'https://api.thegraph.com/subgraphs/name/krebit/xkrb-token-v01',
+      litSdk: LitJsSdk
     });
     const did = await Issuer.connect(wallet, ethProvider.provider, address);
     console.log(did);

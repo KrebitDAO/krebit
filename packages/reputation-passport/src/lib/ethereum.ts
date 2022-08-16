@@ -29,7 +29,7 @@ const getWeb3Provider = async () => {
                 chainId: `0x${Number(
                   krbToken[currentConfig.network].domain.chainId
                 ).toString(16)}`,
-                rpcUrls: [currentConfig.infuraUrl],
+                rpcUrls: [currentConfig.rpcUrl],
                 chainName: krbToken[currentConfig.network].name,
                 nativeCurrency: {
                   name: krbToken[currentConfig.network].token,
@@ -48,8 +48,7 @@ const getWeb3Provider = async () => {
       console.error('Error switching network: ', switchError);
     } finally {
       const provider = new ethers.providers.Web3Provider(
-        (window as any).ethereum,
-        currentConfig.network
+        (window as any).ethereum
       );
 
       (window as any).ethereum.on('chainChanged', (newNetwork: string) => {
@@ -69,7 +68,7 @@ const getWeb3Provider = async () => {
 };
 
 const getProvider = () => {
-  return new WalletProvider(currentConfig.infuraUrl, currentConfig.network);
+  return new WalletProvider(currentConfig.rpcUrl, currentConfig.network);
 };
 
 export const ethereum = {
