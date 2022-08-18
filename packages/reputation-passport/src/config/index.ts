@@ -5,6 +5,7 @@ export interface IConfigProps {
   ceramicUrl?: string;
   publicUrl?: string;
   litSdk?: any;
+  biconomyKey?: string;
 }
 
 const initialConfig = {
@@ -13,7 +14,8 @@ const initialConfig = {
     'https://rpc-mumbai.maticvigil.com/v1/5de1e8fc6cabc2e7782450d3a1a2135b2710c50c',
   graphUrl: 'https://api.thegraph.com/subgraphs/name/krebit/krb-mumbai-v01',
   ceramicUrl: 'https://ceramic-clay.3boxlabs.com',
-  publicUrl: 'https://testnet.krebit.id'
+  publicUrl: 'https://testnet.krebit.id',
+  biconomyKey: 'XtWAXxY1v.afcf7601-39b1-4e0d-b930-1c00581e36f1'
 };
 
 const isNode =

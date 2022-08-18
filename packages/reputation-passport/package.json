@@ -25,17 +25,18 @@
     "siwe": "^1.1.6"
   },
   "dependencies": {
+    "@biconomy/mexa": "2.0.35",
     "@ceramicnetwork/blockchain-utils-linking": "^2.0.8",
     "@ceramicnetwork/http-client": "^2.3.1",
     "@ceramicnetwork/stream-tile": "^2.4.0",
     "@glazed/datamodel": "^0.3.1",
     "@glazed/did-datastore": "^0.3.2",
-    "key-did-provider-ed25519": "^2.0.1",
-    "key-did-resolver": "^2.0.5",
     "did-session": "^0.1.1",
     "isomorphic-fetch": "^3.0.0",
-    "uint8arrays": "^3.0.0",
-    "siwe": "^1.1.6"
+    "key-did-provider-ed25519": "^2.0.1",
+    "key-did-resolver": "^2.0.5",
+    "siwe": "^1.1.6",
+    "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
     "@krebitdao/eip712-vc": "*",

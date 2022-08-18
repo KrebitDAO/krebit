@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import {
@@ -12,6 +12,10 @@ import { ceramic, graph, Lit } from '../lib';
 import { issueCredential } from '../utils';
 import { krbToken } from '../schemas';
 import { config, IConfigProps } from '../config';
+
+// For meta-transactions (gassless)
+import { Biconomy } from '@biconomy/mexa';
+import { resolve } from 'path';
 
 const getEIP712credential = (stamp: any) =>
   ({
@@ -195,6 +199,56 @@ export class Krebit {
   stampCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
+    const balance = await this.wallet.getBalance();
+    console.log('balance: ', balance);
+    if (balance > ethers.constants.Zero) {
+      return await this.stamp(w3cCredential);
+    } else {
+      // Pass connected wallet provider under walletProvider field
+      let biconomy = new Biconomy(
+        this.ethProvider as ethers.providers.ExternalProvider,
+        {
+          apiKey: this.currentConfig.biconomyKey,
+          debug: true,
+          walletProvider: this.ethProvider,
+          strictMode: false
+        }
+      );
+
+      return await new Promise(resolve =>
+        biconomy.onEvent(biconomy.READY, async () => {
+          const provider = biconomy.getEthersProvider();
+
+          // Initialize your dapp here like getting user accounts etc
+          const metaContract = new ethers.Contract(
+            krbToken[this.currentConfig.network].address,
+            krbToken.abi,
+            biconomy.getSignerByAddress(this.address)
+          );
+
+          const eip712credential = getEIP712Credential(w3cCredential);
+
+          let { data } = await metaContract.populateTransaction.registerVC(
+            eip712credential,
+            w3cCredential.proof.proofValue
+          );
+          let txParams = {
+            data: data,
+            to: krbToken[this.currentConfig.network].address,
+            from: this.address,
+            signatureType: 'EIP712_SIGN'
+          };
+          const tx = await provider.send('eth_sendTransaction', [txParams]);
+          resolve(tx);
+        })
+      );
+    }
+  };
+
+  // Stamp
+  // on-chain  (claim KRB reputation)
+  stamp = async (w3cCredential: W3CCredential) => {
+    if (!this.isConnected()) throw new Error('Not connected');
     const eip712credential = getEIP712Credential(w3cCredential);
     const tx = await this.krbContract.registerVC(
       eip712credential,
