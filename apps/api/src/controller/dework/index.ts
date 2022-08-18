@@ -60,7 +60,7 @@ export const DeworkController = async (
             credentialSubject: {
               encrypted: 'false',
               ethereumAddress: address,
-              id: `did:pkh:eip155:1:${address}`,
+              id: `did:pkh:eip155:80001:${address}`,
               type: 'workExperience',
               value: {
                 ...task,

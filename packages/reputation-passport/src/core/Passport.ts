@@ -12,7 +12,9 @@ export class Passport {
   public idx: DIDDataStore;
   public did: string;
   public address: string;
-  public ethProvider: ethers.providers.Provider;
+  public ethProvider:
+    | ethers.providers.Provider
+    | ethers.providers.ExternalProvider;
   private currentConfig: IConfigProps;
 
   constructor(props?: IConfigProps) {
@@ -20,10 +22,13 @@ export class Passport {
     this.currentConfig = currentConfig;
   }
 
-  async connect(ethProvider: ethers.providers.Provider, address: string) {
+  async connect(
+    ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider,
+    address: string
+  ) {
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.idx = await ceramic.authDIDSession({
-      address: address,
+      address,
       ethProvider,
       client: ceramicClient
     });

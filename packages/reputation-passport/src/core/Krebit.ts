@@ -136,14 +136,19 @@ export class Krebit {
 
   // sign
   // returns w3cCredential
-  issue = async (claim: any, typeShema: string) => {
+  issue = async (
+    claim: any,
+    typeShema: string,
+    encrypted?: 'hash' | 'lit' | 'plain'
+  ) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     // check the types of the claim before issuing
     return issueCredential({
       wallet: this.wallet as ethers.Wallet,
       idx: this.idx,
-      claim
+      claim,
+      encrypted
     });
   };
 

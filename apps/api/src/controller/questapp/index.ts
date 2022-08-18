@@ -54,7 +54,7 @@ export const QuestappController = async (
       credentialSubject: {
         encrypted: 'true',
         ethereumAddress: wallet.address,
-        id: `did:pkh:eip155:1:${wallet.address}`,
+        id: `did:pkh:eip155:80001:${wallet.address}`,
         type: 'questBadge',
         value: badgeValue,
         typeSchema: 'https://github.com/KrebitDAO/schemas/questBadge',

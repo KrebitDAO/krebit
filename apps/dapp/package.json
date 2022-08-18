@@ -23,10 +23,12 @@
   "dependencies": {
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
+    "broadcast-channel": "^4.14.0",
     "ethers": "^5.6.9",
     "lit-js-sdk": "^1.1.207",
     "next": "^12.1.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "ts-debounce": "^4.0.0"
   }
 }
