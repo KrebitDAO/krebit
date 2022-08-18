@@ -34,7 +34,6 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
 
       const passport = new ReputationPassport.core.Passport({
         network: 'mumbai',
-        wallet: information.wallet,
         ethProvider: information.ethProvider,
         address: information.address,
         litSdk: LitJsSdk
@@ -102,7 +101,6 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
 
       const passport = new ReputationPassport.core.Passport({
         network: 'mumbai',
-        wallet: information.wallet,
         ethProvider: information.ethProvider,
         address: information.address,
         litSdk: LitJsSdk
