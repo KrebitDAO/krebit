@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
+import { DIDSession } from 'did-session';
 import {
   W3CCredential,
   EIP712VerifiableCredential,
@@ -12,6 +13,12 @@ import { ceramic, graph, Lit } from '../lib';
 import { issueCredential } from '../utils';
 import { krbToken } from '../schemas';
 import { config, IConfigProps } from '../config';
+
+interface IProps extends IConfigProps {
+  wallet: ethers.Signer;
+  ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
+  address: string;
+}
 
 const getEIP712credential = (stamp: any) =>
   ({
@@ -35,38 +42,48 @@ export class Krebit {
     | ethers.providers.ExternalProvider;
   private currentConfig: IConfigProps;
 
-  constructor(props?: IConfigProps) {
+  constructor(props?: IProps) {
     const currentConfig = config.update(props);
     this.currentConfig = currentConfig;
-  }
 
-  async connect(
-    wallet: ethers.Signer,
-    ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider,
-    address: string
-  ) {
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.idx = await ceramic.authDIDSession({
-      address,
-      ethProvider,
-      client: ceramicClient
-    });
-    this.address = address;
-    this.ethProvider = ethProvider;
+    this.address = props.address;
+    this.ethProvider = props.ethProvider;
     this.ceramic = ceramicClient;
-    this.did = this.idx.id;
-    this.wallet = wallet;
+    this.wallet = props.wallet;
     this.krbContract = new ethers.Contract(
       krbToken[this.currentConfig.network].address,
       krbToken.abi,
-      wallet
+      props.wallet
     );
-
-    return this.did;
   }
 
+  connect = async () => {
+    this.idx = await ceramic.authDIDSession({
+      client: this.ceramic,
+      address: this.address,
+      ethProvider: this.ethProvider
+    });
+    this.did = this.idx.id;
+
+    return this.did;
+  };
+
   isConnected = async () => {
-    return this.idx.authenticated;
+    const currentSession = localStorage.getItem(
+      'krebit.reputation-passport.session'
+    );
+
+    if (!currentSession) return false;
+
+    const session = await DIDSession.fromSession(currentSession);
+
+    if (session.hasSession && session.isExpired) return false;
+
+    this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
+    this.did = this.idx.id;
+
+    return session;
   };
 
   // add to my issuer ceramic

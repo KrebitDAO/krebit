@@ -17,9 +17,10 @@ interface PublicIDXProps {
 }
 
 interface AuthProviderProps {
-  address: string;
-  ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
   client: CeramicClient;
+  address?: string;
+  ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
+  session?: DIDSession | undefined;
 }
 
 const publicIDX = (props: PublicIDXProps) => {
@@ -32,14 +33,25 @@ const publicIDX = (props: PublicIDXProps) => {
 };
 
 const authDIDSession = async (props: AuthProviderProps) => {
-  const { address, ethProvider, client } = props;
+  const { client, address, ethProvider, session } = props;
+  let currentSession: DIDSession = session;
 
-  const authProvider = new EthereumAuthProvider(ethProvider, address);
-  const session = await DIDSession.authorize(authProvider, {
-    resources: [`ceramic://*`],
-    domain: DOMAIN
-  });
-  const did = session.did;
+  if (!currentSession) {
+    const authProvider = new EthereumAuthProvider(ethProvider, address);
+    const newSession = await DIDSession.authorize(authProvider, {
+      resources: [`ceramic://*`],
+      domain: DOMAIN
+    });
+
+    localStorage.setItem(
+      'krebit.reputation-passport.session',
+      newSession.serialize()
+    );
+
+    currentSession = newSession;
+  }
+
+  const did = currentSession.did;
   await client.setDID(did);
 
   // Creating model and store
