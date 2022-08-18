@@ -52,6 +52,8 @@ declare module '@emotion/react' {
       haiti: string;
       heliotrope: string;
       tangaro: string;
+      tango: string;
+      periwinkle: string;
     };
     shadows: {
       smallest: string;

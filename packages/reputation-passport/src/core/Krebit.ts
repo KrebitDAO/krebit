@@ -42,7 +42,10 @@ export class Krebit {
 
   async connect(
     wallet: ethers.Signer,
-    ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider,
+    ethProvider:
+      | ethers.providers.Provider
+      | ethers.providers.ExternalProvider
+      | ethers.providers.Web3Provider,
     address: string
   ) {
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);

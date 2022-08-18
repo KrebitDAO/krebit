@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import Link from 'next/link';
@@ -11,7 +11,9 @@ import {
 } from './styles';
 import { Button } from 'components/Button';
 import { Arrow, Krebit, Logo } from 'components/Icons';
+import { ConnectWallet } from 'components/ConnectWallet';
 import { useWindowSize } from 'hooks';
+import { GeneralContext } from 'context';
 
 const BOXES = [
   {
@@ -49,6 +51,9 @@ const BOXES = [
 export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(0);
+  const {
+    walletModal: { handleOpenConnectWallet, openConnectWallet }
+  } = useContext(GeneralContext);
   const windowSize = useWindowSize();
   const isHigher = windowSize.height >= 750;
 
@@ -72,6 +77,10 @@ export const Home = () => {
 
   return (
     <>
+      <ConnectWallet
+        isOpen={openConnectWallet}
+        onClose={handleOpenConnectWallet}
+      />
       <Wrapper
         currentDecentralizedCardImage={BOXES[currentUser].image}
         isHigher={isHigher}
@@ -92,7 +101,7 @@ export const Home = () => {
             </p>
             <div className="main-buttons">
               <div className="main-button">
-                <Button text="Try it now" onClick={() => {}} />
+                <Button text="Try it now" onClick={handleOpenConnectWallet} />
               </div>
               <div className="main-line-button">
                 <Link href="#web3">

@@ -1,11 +1,13 @@
 import { ThemeProvider } from '@emotion/react';
+import { AppProps } from 'next/app';
 import Head from 'next/head';
 
 import { theme } from 'theme';
 import { globalStyles } from 'global-styles';
 import { NavBar } from 'components';
+import { GeneralProvider } from 'context';
 
-const App = props => {
+const App = (props: AppProps) => {
   const { Component, pageProps } = props;
 
   return (
@@ -36,8 +38,12 @@ const App = props => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <ThemeProvider theme={theme}>
-        <NavBar />
-        <Component {...pageProps} />
+        <GeneralProvider>
+          <>
+            <NavBar />
+            <Component {...pageProps} />
+          </>
+        </GeneralProvider>
       </ThemeProvider>
     </>
   );

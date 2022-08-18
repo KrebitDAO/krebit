@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Link from 'next/link';
 
 import { Wrapper } from './styles';
 import { Menu, Close, Logo } from 'components/Icons';
 import { Button } from 'components/Button';
+import { GeneralContext } from 'context';
 
 export const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {
+    walletModal: { handleOpenConnectWallet }
+  } = useContext(GeneralContext);
 
   const handleMenuOpen = () => {
     setIsMenuOpen(prevState => !prevState);
@@ -14,10 +18,6 @@ export const NavBar = () => {
 
   const handleCloseMenu = () => {
     setIsMenuOpen(false);
-  };
-
-  const handleOnClick = () => {
-    window.open('https://testnet.krebit.id');
   };
 
   return (
@@ -54,7 +54,7 @@ export const NavBar = () => {
             </a>
           </Link>
           <div className="menu-bar-button">
-            <Button text="Try it now" onClick={handleOnClick} />
+            <Button text="Try it now" onClick={handleOpenConnectWallet} />
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export const NavBar = () => {
           </a>
         </Link>
         <div className="menu-content-button">
-          <Button text="Try the Beta" onClick={handleOnClick} />
+          <Button text="Try the Beta" onClick={handleOpenConnectWallet} />
         </div>
       </div>
     </Wrapper>

@@ -2,16 +2,18 @@ import { Theme } from '@emotion/react';
 
 export const theme: Theme = {
   colors: {
-    bunting: '#161844',
+    bunting: '#0F1837',
     rose: '#FF0087',
     blueRibbon: '#043CFC',
-    white: 'white',
+    white: '#FFFFFF',
     transparent: 'transparent',
     cyan: '#00FFFE',
     wildSand: '#F5F5F5',
     haiti: '#101033',
     heliotrope: '#B673FB',
-    tangaro: '#020D2C'
+    tangaro: '#020D2C',
+    tango: '#E57714',
+    periwinkle: '#C3D1FF'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',
