@@ -17,15 +17,13 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
     auth: { connect }
   } = useContext(GeneralContext);
 
-  if (!isOpen) return;
-
   const handlerConnect = async (type: string) => {
     setStatus('pending');
 
-    const result = await connect(type);
-
-    console.log(result);
+    await connect(type);
   };
+
+  if (!isOpen) return;
 
   return (
     <Wrapper status={status}>

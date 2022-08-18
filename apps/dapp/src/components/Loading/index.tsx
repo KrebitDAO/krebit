@@ -12,9 +12,9 @@ export const Loading = () => {
               cy="50"
               r="45"
               stroke="#043CFC"
-              stroke-width="10"
+              strokeWidth="10"
               fill="none"
-              stoke-linecap="sqare"
+              strokeLinecap="square"
             />
           </svg>
         </div>

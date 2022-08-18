@@ -1,8 +1,9 @@
-import { FunctionComponent, createContext, useState } from 'react';
+import { FunctionComponent, createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import LitJsSdk from 'lit-js-sdk';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import ReputationPassport from '@krebitdao/reputation-passport';
+import { Passport } from '@krebitdao/reputation-passport/dist/core';
 
 interface Props {
   children: JSX.Element;
@@ -13,6 +14,44 @@ export const GeneralContext = createContext(undefined);
 export const GeneralProvider: FunctionComponent<Props> = props => {
   const { children } = props;
   const [openConnectWallet, setOpenConnectWallet] = useState(false);
+  const [status, setStatus] = useState('idle');
+  const [passport, setPassport] = useState<Passport>();
+
+  useEffect(() => {
+    const isAuthenticated = async () => {
+      setStatus('pending');
+
+      const currentType = localStorage.getItem(
+        'krebit.reputation-passport.type'
+      );
+
+      if (!currentType) {
+        setStatus('rejected');
+        return;
+      }
+
+      const information = await getWalletInformation(currentType);
+
+      const passport = new ReputationPassport.core.Passport({
+        network: 'mumbai',
+        wallet: information.wallet,
+        ethProvider: information.ethProvider,
+        address: information.address,
+        litSdk: LitJsSdk
+      });
+      const isConnected = await passport.isConnected();
+
+      if (!isConnected) {
+        setStatus('rejected');
+        return;
+      }
+
+      setPassport(passport);
+      setStatus('resolved');
+    };
+
+    isAuthenticated();
+  }, []);
 
   const handleOpenConnectWallet = () => {
     setOpenConnectWallet(prevState => !prevState);
@@ -26,11 +65,11 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
         method: 'eth_requestAccounts'
       });
       const address = addresses[0];
-      const ethProvider = await ReputationPassport.lib.ethereum.getWeb3Provider();
-      const wallet = ethProvider.getSigner();
+      const provider = await ReputationPassport.lib.ethereum.getWeb3Provider();
+      const wallet = provider.getSigner();
 
       return {
-        ethProvider,
+        ethProvider: provider.provider,
         address,
         wallet
       };
@@ -47,7 +86,7 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
       const address = await wallet.getAddress();
 
       return {
-        ethProvider: provider,
+        ethProvider: provider.provider,
         address,
         wallet
       };
@@ -55,16 +94,28 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
   };
 
   const connect = async (type: string) => {
-    const information = await getWalletInformation(type);
+    setStatus('pending');
 
-    const Issuer = new ReputationPassport.core.Krebit({});
-    const connection = await Issuer.connect(
-      information.wallet,
-      information.ethProvider,
-      information.address
-    );
+    try {
+      const information = await getWalletInformation(type);
+      localStorage.setItem('krebit.reputation-passport.type', type);
 
-    return connection;
+      const passport = new ReputationPassport.core.Passport({
+        network: 'mumbai',
+        wallet: information.wallet,
+        ethProvider: information.ethProvider,
+        address: information.address,
+        litSdk: LitJsSdk
+      });
+      const connection = await passport.connect();
+
+      if (connection) {
+        setPassport(passport);
+        setStatus('resolved');
+      }
+    } catch (error) {
+      setStatus('rejected');
+    }
   };
 
   return (
@@ -75,7 +126,11 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
           openConnectWallet
         },
         auth: {
-          connect
+          connect,
+          isAuthenticated: status === 'resolved'
+        },
+        reputationPassport: {
+          passport
         }
       }}
     >

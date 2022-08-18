@@ -2,41 +2,63 @@ import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
+import { DIDSession } from 'did-session';
 import { W3CCredential } from '@krebitdao/eip712-vc';
 
 import { ceramic, graph } from '../lib';
 import { config, IConfigProps } from '../config';
+
+interface IProps extends IConfigProps {
+  ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
+  address?: string;
+}
 
 export class Passport {
   public ceramic: CeramicClient;
   public idx: DIDDataStore;
   public did: string;
   public address: string;
-  public ethProvider: ethers.providers.Provider;
+  public ethProvider:
+    | ethers.providers.Provider
+    | ethers.providers.ExternalProvider;
   private currentConfig: IConfigProps;
 
-  constructor(props?: IConfigProps) {
+  constructor(props?: IProps) {
     const currentConfig = config.update(props);
     this.currentConfig = currentConfig;
+
+    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
+    this.ceramic = ceramicClient;
+    this.address = props?.address;
+    this.ethProvider = props?.ethProvider;
   }
 
-  async connect(ethProvider: ethers.providers.Provider, address: string) {
-    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
+  async connect() {
     this.idx = await ceramic.authDIDSession({
-      address: address,
-      ethProvider,
-      client: ceramicClient
+      client: this.ceramic,
+      address: this.address,
+      ethProvider: this.ethProvider
     });
-    this.address = address;
-    this.ethProvider = ethProvider;
-    this.ceramic = ceramicClient;
     this.did = this.idx.id;
 
     return this.did;
   }
 
   isConnected = async () => {
-    return this.idx.authenticated;
+    const currentSession = localStorage.getItem(
+      'krebit.reputation-passport.session'
+    );
+
+    if (!currentSession) return false;
+
+    const session = await DIDSession.fromSession(currentSession);
+
+    if (session.hasSession && session.isExpired) return false;
+
+    this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
+    this.did = this.idx.id;
+
+    return session;
   };
 
   getReputation = async () => {

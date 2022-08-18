@@ -1,7 +1,8 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import {
   Wrapper,
@@ -52,10 +53,23 @@ export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(0);
   const {
-    walletModal: { handleOpenConnectWallet, openConnectWallet }
+    walletModal: { handleOpenConnectWallet, openConnectWallet },
+    auth: { isAuthenticated },
+    reputationPassport: { passport }
   } = useContext(GeneralContext);
+  const { push } = useRouter();
   const windowSize = useWindowSize();
   const isHigher = windowSize.height >= 750;
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const getProfile = async () => {
+      push(`/${passport.did}`);
+    };
+
+    getProfile();
+  }, [isAuthenticated]);
 
   const handleExtended = (index: number | undefined) => {
     if (isExtended === undefined || isExtended !== index) {
