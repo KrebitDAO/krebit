@@ -52,7 +52,6 @@ export const QuestappController = async (
     const claim = {
       id: 'uri://badge-id',
       credentialSubject: {
-        encrypted: 'true',
         ethereumAddress: wallet.address,
         id: `did:pkh:eip155:80001:${wallet.address}`,
         type: 'questBadge',
@@ -140,7 +139,7 @@ export const QuestappController = async (
     console.log('DID authenticated:', await Issuer.isConnected());
 
     // Issue Verifiable credential (needs signer)
-    const issuedCredential = await Issuer.issue(claim, 'questBadge');
+    const issuedCredential = await Issuer.issue(claim, 'questBadge', 'lit');
 
     console.log(
       'Verifying signature:',

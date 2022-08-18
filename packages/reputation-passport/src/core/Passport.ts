@@ -74,6 +74,18 @@ export class Passport {
     }
   };
 
+  // basiProfile from ceramic
+  updateProfile = async (profile: any) => {
+    try {
+      const content = await this.idx.set('basicProfile', profile);
+      if (content) {
+        return content;
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
   // claimedCredentials from ceramic
   addVerifiableCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');

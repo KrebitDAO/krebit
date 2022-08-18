@@ -23,6 +23,12 @@ const getEIP712credential = (stamp: any) =>
     }
   } as EIP712VerifiableCredential);
 
+interface IssuerProps {
+  first?: number;
+  type?: string;
+  maxPrice?: string;
+}
+
 export class Krebit {
   public ceramic: CeramicClient;
   public idx: DIDDataStore;
@@ -117,6 +123,7 @@ export class Krebit {
 
   // checks the signature
   decryptClaim = async (w3cCredential: W3CCredential) => {
+    if (!this.isConnected()) throw new Error('Not connected');
     const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
     const lit = new Lit();
 
@@ -132,6 +139,24 @@ export class Krebit {
   verifyClaim = async (claim, verification: any) => {
     //TODO if you have permission to decrypt the claim, you can compare it's hash to the verifiable credential
     return true;
+  };
+
+  // get IssuerCredential from subgraph
+  getIssuers = async (props: IssuerProps) => {
+    const { first, type, maxPrice } = props;
+    //Get verifications from subgraph
+    let where = {};
+    where['credentialStatus'] = 'Issued';
+    //where['issuerDID'] = process.env.KREBIT_DID;
+    if (type) where['_type'] = `["VerifiableCredential","Issuer", "${type}"]`;
+
+    //Get verifications from subgraph
+    return await graph.verifiableCredentialsQuery({
+      first: first ? first : 100,
+      orderBy: 'issuanceDate',
+      orderDirection: 'desc',
+      where: where
+    });
   };
 
   // sign
