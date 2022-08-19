@@ -1,3 +1,5 @@
+import { Layout } from 'components/Layout';
+
 export const Username = () => {
-  return <h1>hey!</h1>;
+  return <Layout>hey</Layout>;
 };

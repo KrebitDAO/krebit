@@ -13,7 +13,8 @@ export const theme: Theme = {
     heliotrope: '#B673FB',
     tangaro: '#020D2C',
     tango: '#E57714',
-    periwinkle: '#C3D1FF'
+    periwinkle: '#C3D1FF',
+    gray: '#B7BAC3'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

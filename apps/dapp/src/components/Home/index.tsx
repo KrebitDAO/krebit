@@ -12,6 +12,7 @@ import {
 } from './styles';
 import { Button } from 'components/Button';
 import { Arrow, Krebit, Logo } from 'components/Icons';
+import { NavBar } from 'components/NavBar';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
@@ -95,6 +96,7 @@ export const Home = () => {
         isOpen={openConnectWallet}
         onClose={handleOpenConnectWallet}
       />
+      <NavBar />
       <Wrapper
         currentDecentralizedCardImage={BOXES[currentUser].image}
         isHigher={isHigher}
