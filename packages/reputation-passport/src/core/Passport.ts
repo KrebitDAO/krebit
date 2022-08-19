@@ -4,6 +4,7 @@ import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import { DIDSession } from 'did-session';
 import { W3CCredential } from '@krebitdao/eip712-vc';
+import localStore from 'store2';
 
 import { ceramic, graph } from '../lib';
 import { config, IConfigProps } from '../config';
@@ -45,9 +46,7 @@ export class Passport {
   }
 
   isConnected = async () => {
-    const currentSession = localStorage.getItem(
-      'krebit.reputation-passport.session'
-    );
+    const currentSession = localStore.get('krebit.reputation-passport.session');
 
     if (!currentSession) return false;
 

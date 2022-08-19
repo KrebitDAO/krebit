@@ -8,6 +8,7 @@ import {
   getEIP712Credential,
   getKrebitCredentialTypes
 } from '@krebitdao/eip712-vc';
+import localStore from 'store2';
 
 import { ceramic, graph, Lit } from '../lib';
 import { issueCredential } from '../utils';
@@ -70,9 +71,7 @@ export class Krebit {
   };
 
   isConnected = async () => {
-    const currentSession = localStorage.getItem(
-      'krebit.reputation-passport.session'
-    );
+    const currentSession = localStore.get('krebit.reputation-passport.session');
 
     if (!currentSession) return false;
 

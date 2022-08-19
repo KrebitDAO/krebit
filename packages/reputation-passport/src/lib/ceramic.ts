@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DataModel } from '@glazed/datamodel';
 import { DIDDataStore } from '@glazed/did-datastore';
+import localStore from 'store2';
 
 // DID-session
 import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
@@ -43,7 +44,7 @@ const authDIDSession = async (props: AuthProviderProps) => {
       domain: DOMAIN
     });
 
-    localStorage.setItem(
+    localStore.set(
       'krebit.reputation-passport.session',
       newSession.serialize()
     );
