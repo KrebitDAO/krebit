@@ -53,8 +53,7 @@ export class Krebit {
     | ethers.providers.ExternalProvider;
   private currentConfig: IConfigProps;
 
-  constructor(props?: 
-  ) {
+  constructor(props?: IProps) {
     const currentConfig = config.update(props);
     this.currentConfig = currentConfig;
 
@@ -93,7 +92,7 @@ export class Krebit {
     this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
     this.did = this.idx.id;
 
-    return session;
+    return this.idx.authenticated;
   };
 
   // add to my issuer ceramic

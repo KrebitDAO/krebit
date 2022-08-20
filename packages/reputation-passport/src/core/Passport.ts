@@ -56,7 +56,7 @@ export class Passport {
     this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
     this.did = this.idx.id;
 
-    return session;
+    return this.idx.authenticated;
   };
 
   getReputation = async () => {

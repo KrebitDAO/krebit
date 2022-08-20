@@ -132,6 +132,8 @@ const IndexPage = () => {
     if (e.target === 'discord') {
       console.log('Saving Stamp', { type: 'discord', proof: e.data });
 
+      // Step 1-A:  Get credential from Issuer based on claim:
+
       //Get discord user
       const discordUser = await getDiscordUser(e.data);
 
@@ -143,16 +145,19 @@ const IndexPage = () => {
       console.log('claim: ', claim);
 
       const Issuer = new krebit.core.Krebit({
+        wallet,
+        ethProvider: ethProvider.provider,
+        address,
         litSdk: LitJsSdk
       });
 
-      const did = await Issuer.connect(wallet, ethProvider.provider, address);
+      const did = await Issuer.connect();
       console.log(did);
 
       const claimedCredential = await Issuer.issue(claim, 'digitalProperty');
       console.log('claimedCredential: ', claimedCredential);
 
-      //Send self-signed credential to the Issuer for verification
+      // Step 1-B: Send self-signed credential to the Issuer for verification
 
       const issuedCredential = await getDiscordCredential({
         verifyUrl: 'http://localhost:4000/discord',
@@ -161,21 +166,29 @@ const IndexPage = () => {
 
       console.log('issuedCredential: ', issuedCredential);
 
-      //Get the verifiable credential, and save it to the passport
+      // Step 1-C: Get the verifiable credential, and save it to the passport
+      if (issuedCredential) {
+        /*
+        const passport = new krebit.core.Passport({
+          ethProvider: ethProvider.provider,
+          address
+        });
+        await passport.connect();
+        const addedCredentialId = await passport.addVerifiableCredential(
+          issuedCredential
+        );
+        console.log('addedCredentialId: ', addedCredentialId);
+        console.log(
+          'addCredential:',
+          await passport.addCredential(addedCredentialId)
+        );
+*/
 
-      const passport = new krebit.core.Passport();
-      await passport.connect(ethProvider.provider, address);
-      const addedCredentialId = await passport.addVerifiableCredential(
-        issuedCredential
-      );
-      console.log('addedCredentialId: ', addedCredentialId);
-      console.log(
-        'addCredential:',
-        await passport.addCredential(addedCredentialId)
-      );
+        // Step 2: Register credential on chaim (stamp)
 
-      const stampTx = await Issuer.stampCredential(issuedCredential);
-      console.log('stampTx: ', stampTx);
+        const stampTx = await Issuer.stampCredential(issuedCredential);
+        console.log('stampTx: ', stampTx);
+      }
     }
   }
 
@@ -209,8 +222,22 @@ const IndexPage = () => {
 
   return (
     <>
-      <h1 onClick={() => handleFetchDiscordOAuth()}>Claim Discord</h1> <br />
-      <h1 onClick={() => getStamps()}>Get Stamps</h1>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <h1 onClick={() => handleFetchDiscordOAuth()} style={{ color: 'white' }}>
+        Claim Discord
+      </h1>{' '}
+      <br />
+      <h1 onClick={() => getStamps()} style={{ color: 'white' }}>
+        Get Stamps
+      </h1>
     </>
   );
 };
