@@ -5,7 +5,7 @@ interface Props {
   claimedCredential: any;
 }
 
-export const getDiscordCredential = async (props: Props) => {
+export const getCredential = async (props: Props) => {
   const { verifyUrl, claimedCredential } = props;
 
   try {

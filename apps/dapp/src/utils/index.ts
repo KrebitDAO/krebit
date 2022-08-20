@@ -1,12 +1,6 @@
 import { connect, connectWeb3 } from './connect';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
-import { getDiscordCredential } from './getDiscordCredential';
+import { getCredential } from './getCredential';
 
-export {
-  connect,
-  connectWeb3,
-  getDeworkUser,
-  getDiscordUser,
-  getDiscordCredential
-};
+export { connect, connectWeb3, getDeworkUser, getDiscordUser, getCredential };
