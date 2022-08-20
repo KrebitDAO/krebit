@@ -89,9 +89,12 @@ export const QuestappController = async (
 */
 
     const Issuer = new krebit.core.Krebit({
+      wallet,
+      ethProvider,
+      address: wallet.address,
       litSdk: LitJsSdk
     });
-    const did = await Issuer.connect(wallet, ethProvider, wallet.address);
+    const did = await Issuer.connect();
     console.log('DID:', did);
     /*
     const questBadgeSchema = {

@@ -36,6 +36,7 @@
     "key-did-provider-ed25519": "^2.0.1",
     "key-did-resolver": "^2.0.5",
     "siwe": "^1.1.6",
+    "store2": "^2.14.2",
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
