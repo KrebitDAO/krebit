@@ -11,7 +11,7 @@ export const theme: Theme = {
     wildSand: '#F5F5F5',
     haiti: '#101033',
     heliotrope: '#B673FB',
-    tangaro: '#020D2C',
+    blueCharcoal: '#00071c',
     tango: '#E57714',
     periwinkle: '#C3D1FF',
     gray: '#B7BAC3',

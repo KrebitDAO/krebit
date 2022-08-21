@@ -48,7 +48,7 @@ export const Wrapper = styled.button<Props>`
           top: 1px;
           bottom: 1px;
           border-radius: 29px;
-          background-color: ${theme.colors.tangaro};
+          background-color: ${theme.colors.blueCharcoal};
           z-index: -1;
         }
       `}

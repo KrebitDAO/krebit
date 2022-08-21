@@ -39,7 +39,7 @@ export const globalStyles = (
         margin: 0;
         padding: 0;
         overflow-x: hidden;
-        background-color: #020d2c;
+        background-color: #00071c;
       }
 
       h1,
