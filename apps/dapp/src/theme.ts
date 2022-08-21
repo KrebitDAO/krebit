@@ -14,7 +14,8 @@ export const theme: Theme = {
     tangaro: '#020D2C',
     tango: '#E57714',
     periwinkle: '#C3D1FF',
-    gray: '#B7BAC3'
+    gray: '#B7BAC3',
+    alto: '#D9D9D9'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

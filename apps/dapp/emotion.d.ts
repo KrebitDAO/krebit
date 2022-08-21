@@ -55,6 +55,7 @@ declare module '@emotion/react' {
       tango: string;
       periwinkle: string;
       gray: string;
+      alto: string;
     };
     shadows: {
       smallest: string;

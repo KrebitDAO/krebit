@@ -29,7 +29,7 @@ export const MenuMobile = styled.div`
     }
 
     .photo {
-      border: 1px solid ${theme.colors.white};
+      border: 2px solid ${theme.colors.white};
       border-radius: 9999px;
       width: 30px;
       height: 30px;
@@ -81,6 +81,7 @@ export const NavBarDesktop = styled.div`
       backdrop-filter: blur(40px);
       border-radius: 15px;
       position: fixed;
+      top: 20px;
       left: 0;
       z-index: 10;
       margin-left: 16px;
@@ -112,7 +113,7 @@ export const NavBarDesktop = styled.div`
           width: 34px;
           height: 34px;
           border-radius: 9999px;
-          border: 1px solid ${theme.colors.white};
+          border: 2px solid ${theme.colors.white};
 
           img {
             border-radius: 9999px;
