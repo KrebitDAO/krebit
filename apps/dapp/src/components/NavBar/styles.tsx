@@ -14,7 +14,7 @@ export const Wrapper = styled.nav<Props>`
     right: 0;
     z-index: 20;
     background-color: ${isMenuOpen
-      ? theme.colors.tangaro
+      ? theme.colors.blueCharcoal
       : theme.colors.transparent};
 
     @media (min-width: ${theme.screens.lg}) {

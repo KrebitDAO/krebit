@@ -4,5 +4,30 @@ import { Play } from './Play';
 import { Arrow } from './Arrow';
 import { Krebit } from './Krebit';
 import { Logo } from './Logo';
+import { Home } from './Home';
+import { Explore } from './Explore';
+import { Send } from './Send';
+import { Bell } from './Bell';
+import { Discord } from './Discord';
+import { Email } from './Email';
+import { Linkedin } from './Linkedin';
+import { Phone } from './Phone';
+import { Twitter } from './Twitter';
 
-export { Close, Menu, Play, Arrow, Krebit, Logo };
+export {
+  Close,
+  Menu,
+  Play,
+  Arrow,
+  Krebit,
+  Logo,
+  Home,
+  Explore,
+  Send,
+  Bell,
+  Discord,
+  Email,
+  Linkedin,
+  Phone,
+  Twitter
+};

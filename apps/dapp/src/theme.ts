@@ -11,9 +11,13 @@ export const theme: Theme = {
     wildSand: '#F5F5F5',
     haiti: '#101033',
     heliotrope: '#B673FB',
-    tangaro: '#020D2C',
+    blueCharcoal: '#00071c',
     tango: '#E57714',
-    periwinkle: '#C3D1FF'
+    periwinkle: '#C3D1FF',
+    gray: '#B7BAC3',
+    alto: '#D9D9D9',
+    scorpion: '#5f5f5f',
+    brightGray: '#3A4154'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

@@ -1,10 +1,9 @@
 import { ThemeProvider } from '@emotion/react';
-import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { AppProps } from 'next/app';
 
 import { theme } from 'theme';
 import { globalStyles } from 'global-styles';
-import { NavBar } from 'components';
 import { GeneralProvider } from 'context';
 
 const App = (props: AppProps) => {
@@ -39,10 +38,7 @@ const App = (props: AppProps) => {
       </Head>
       <ThemeProvider theme={theme}>
         <GeneralProvider>
-          <>
-            <NavBar />
-            <Component {...pageProps} />
-          </>
+          <Component {...pageProps} />
         </GeneralProvider>
       </ThemeProvider>
     </>

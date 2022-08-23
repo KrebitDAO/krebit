@@ -51,9 +51,13 @@ declare module '@emotion/react' {
       wildSand: string;
       haiti: string;
       heliotrope: string;
-      tangaro: string;
+      blueCharcoal: string;
       tango: string;
       periwinkle: string;
+      gray: string;
+      alto: string;
+      scorpion: string;
+      brightGray: string;
     };
     shadows: {
       smallest: string;
