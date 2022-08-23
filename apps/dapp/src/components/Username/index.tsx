@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import Image from 'next/image';
 
 import {
@@ -19,6 +19,8 @@ import {
 } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
+import { InlineDropdown } from 'components/InlineDropdown';
+import { ToolTip } from 'components/ToolTip';
 
 const PERSONHOOD_CREDENTIALS = [
   {
@@ -51,7 +53,45 @@ const MOCK_SKILLS = [
   'C++ pro'
 ];
 
+const MOCK_ITEMS = [
+  {
+    title: 'Online Courses',
+    onClick: () => {}
+  },
+  {
+    title: 'Online Courses',
+    onClick: () => {}
+  },
+  {
+    title: 'Online Courses',
+    onClick: () => {}
+  }
+];
+
 export const Username = () => {
+  const [isEducationFilterOpen, setIsEducationFilterOpen] = useState(false);
+  const [isWorkFilterOpen, setIsWorkFilterOpen] = useState(false);
+  const [
+    currentPersonhoodToolTipActive,
+    setCurrentPersonhoodToolTipActive
+  ] = useState<number | undefined>(undefined);
+
+  const handleEducationFilterOpen = () => {
+    setIsEducationFilterOpen(prevState => !prevState);
+  };
+
+  const handleWorkFilterOpen = () => {
+    setIsWorkFilterOpen(prevState => !prevState);
+  };
+
+  const handleCurrentPersonhoodToolTipActive = (index: number) => {
+    setCurrentPersonhoodToolTipActive(index);
+  };
+
+  const handleCurrentPersonhoodToolTipHide = () => {
+    setCurrentPersonhoodToolTipActive(undefined);
+  };
+
   return (
     <Layout>
       <Wrapper>
@@ -93,16 +133,33 @@ export const Username = () => {
             <PersonhoodCredential>
               <div className="person-header">
                 <p className="person-header-text">Personhood Credentials</p>
-                <p className="person-header-text">Verify</p>
+                <p className="person-header-verify">Verify</p>
               </div>
               <div className="person-box">
                 {PERSONHOOD_CREDENTIALS.map((item, index) => (
                   <Fragment key={index}>
                     <div className="person-box-item">
-                      <div className="person-box-item-icon">{item.icon}</div>
+                      <div className="person-box-icon">{item.icon}</div>
                       <p className="person-box-item-text">{item.text}</p>
-                      <div className="person-box-item-icon">
-                        <Krebit />
+                      <div
+                        className="person-box-item-tooltip"
+                        onMouseOver={() =>
+                          handleCurrentPersonhoodToolTipActive(index + 1)
+                        }
+                        onMouseOut={handleCurrentPersonhoodToolTipHide}
+                      >
+                        <div
+                          className={`person-box-icon person-box-item-icon ${
+                            index === 0 ? 'person-box-item-icon-is-active' : ''
+                          }`}
+                        >
+                          <Krebit />
+                        </div>
+                        {currentPersonhoodToolTipActive === index + 1 && (
+                          <div className="person-box-item-tooltip-box">
+                            <ToolTip message="This personhood credential has not been verified" />
+                          </div>
+                        )}
                       </div>
                     </div>
                     {index !== PERSONHOOD_CREDENTIALS.length - 1 && (
@@ -129,7 +186,19 @@ export const Username = () => {
             <EducationCredentials>
               <div className="education-header">
                 <p className="education-header-text">Education credentials</p>
-                <p className="education-header-text">Filter</p>
+                <div className="education-header-filter">
+                  <p
+                    className="education-header-filter-text"
+                    onClick={handleEducationFilterOpen}
+                  >
+                    Filter
+                  </p>
+                  {isEducationFilterOpen && (
+                    <div className="education-header-filter-content">
+                      <InlineDropdown items={MOCK_ITEMS} />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="education-cards">
                 {new Array(2).fill(0).map((_, index) => (
@@ -166,7 +235,19 @@ export const Username = () => {
             <WorkCredential>
               <div className="work-header">
                 <p className="work-header-text">Work credentials</p>
-                <p className="work-header-text">Filter</p>
+                <div className="work-header-filter">
+                  <p
+                    className="work-header-filter-text"
+                    onClick={handleWorkFilterOpen}
+                  >
+                    Filter
+                  </p>
+                  {isWorkFilterOpen && (
+                    <div className="work-header-filter-content">
+                      <InlineDropdown items={MOCK_ITEMS} />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="work-cards">
                 {new Array(2).fill(0).map((_, index) => (

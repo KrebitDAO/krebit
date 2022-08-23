@@ -57,6 +57,7 @@ declare module '@emotion/react' {
       gray: string;
       alto: string;
       scorpion: string;
+      brightGray: string;
     };
     shadows: {
       smallest: string;

@@ -16,7 +16,8 @@ export const theme: Theme = {
     periwinkle: '#C3D1FF',
     gray: '#B7BAC3',
     alto: '#D9D9D9',
-    scorpion: '#5f5f5f'
+    scorpion: '#5f5f5f',
+    brightGray: '#3A4154'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',
