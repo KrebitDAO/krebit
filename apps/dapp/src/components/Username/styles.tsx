@@ -139,6 +139,12 @@ export const Wrapper = styled.div`
         }
       }
     }
+
+    .content-container {
+      padding: 0 20px;
+      margin-top: 28px;
+      margin-bottom: 120px;
+    }
   `}
 `;
 
@@ -155,6 +161,188 @@ export const Background = styled.div<IBackgrounProps>`
     @media (min-width: ${theme.screens.lg}) {
       height: 273px;
       border-radius: 25px;
+    }
+  `}
+`;
+
+export const PersonhoodCredential = styled.div`
+  ${({ theme }) => css`
+    .person-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+
+      .person-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.base};
+        color: ${theme.colors.white};
+      }
+    }
+
+    .person-box {
+      background-color: ${theme.colors.white}0D;
+      border: 1px solid ${theme.colors.scorpion}80;
+      border-radius: 15px;
+      padding: 16px 20px;
+    }
+
+    .person-box-item {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 26px auto 22px;
+
+      .person-box-item-icon {
+        width: 26px;
+        height: 26px;
+
+        & > svg {
+          width: 26px;
+          height: 26px;
+        }
+      }
+
+      .person-box-item-text {
+        margin: 0;
+        margin-left: 14px;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+      }
+    }
+
+    .person-box-item-hr {
+      width: 100%;
+      border: 1px solid ${theme.colors.gray}33;
+    }
+  `}
+`;
+
+export const Skills = styled.div`
+  ${({ theme }) => css`
+    margin-top: 36px;
+
+    .skills-header {
+      margin-bottom: 10px;
+
+      .skills-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.base};
+        color: ${theme.colors.white};
+      }
+    }
+
+    .skills-box {
+      background-color: ${theme.colors.white}0D;
+      border: 1px solid ${theme.colors.scorpion}80;
+      border-radius: 15px;
+      padding: 28px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      grid-gap: 8px;
+    }
+
+    .skills-box-item {
+      border: 1px solid ${theme.colors.white}80;
+      border-radius: 20px;
+      padding: 4px 14px;
+      width: fit-content;
+
+      .skills-box-item-text {
+        margin: 0;
+        font-size: ${theme.fonts.xs};
+        color: ${theme.colors.white}80;
+      }
+    }
+  `}
+`;
+
+export const EducationCredentials = styled.div`
+  ${({ theme }) => css`
+    margin-top: 36px;
+
+    .education-header {
+      margin-bottom: 10px;
+
+      .education-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.base};
+        color: ${theme.colors.white};
+      }
+    }
+
+    .education-card {
+      width: 100%;
+      background-color: ${theme.colors.white}0D;
+      border: 1px solid ${theme.colors.scorpion}80;
+      border-radius: 15px;
+      padding: 20px;
+      display: grid;
+      grid-template-areas: 'information top-icon' 'dates bottom-icon';
+      grid-gap: 35px 0;
+
+      .education-card-information {
+        .education-card-information-title {
+          margin: 0;
+          font-size: ${theme.fonts.lg};
+          color: ${theme.colors.white};
+        }
+
+        .education-card-information-company {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white}B3;
+        }
+      }
+
+      .education-card-top-icon {
+        width: 24px;
+        height: 24px;
+        justify-self: flex-end;
+
+        & > svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .education-card-dates {
+        display: flex;
+        grid-gap: 14px;
+
+        .education-card-date {
+          .education-card-date-title {
+            margin: 0;
+            font-size: ${theme.fonts.xs};
+            color: ${theme.colors.white}B3;
+          }
+
+          .education-card-date-text {
+            margin: 0;
+            font-size: ${theme.fonts.xs};
+            color: ${theme.colors.white};
+          }
+        }
+      }
+
+      .education-card-bottom-icon {
+        width: 81px;
+        height: 31px;
+        justify-self: flex-end;
+        align-self: flex-end;
+
+        img {
+          width: 81px;
+          height: 31px;
+        }
+      }
+    }
+
+    .education-view-more {
+      margin: 0;
+      margin-top: 20px;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.white};
+      text-decoration: underline;
+      text-align: center;
     }
   `}
 `;

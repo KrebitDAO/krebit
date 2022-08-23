@@ -15,7 +15,8 @@ export const theme: Theme = {
     tango: '#E57714',
     periwinkle: '#C3D1FF',
     gray: '#B7BAC3',
-    alto: '#D9D9D9'
+    alto: '#D9D9D9',
+    scorpion: '#5f5f5f'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',
