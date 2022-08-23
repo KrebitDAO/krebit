@@ -1,5 +1,3 @@
-import { ReactElement, ReactNode } from 'react';
-import { NextPage } from 'next';
 import { ThemeProvider } from '@emotion/react';
 import Head from 'next/head';
 import { AppProps } from 'next/app';
@@ -8,17 +6,7 @@ import { theme } from 'theme';
 import { globalStyles } from 'global-styles';
 import { GeneralProvider } from 'context';
 
-export type NextPageWithLayout = NextPage & {
-  PageLayout?: (
-    page: ReactElement
-  ) => ReactNode & { children: ReactElement & ReactNode };
-};
-
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
-};
-
-const App = (props: AppPropsWithLayout) => {
+const App = (props: AppProps) => {
   const { Component, pageProps } = props;
 
   return (
