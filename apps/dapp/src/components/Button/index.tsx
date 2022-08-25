@@ -8,6 +8,7 @@ interface Props {
   styleType?: 'background' | 'border';
   primaryColor?: string;
   secondaryColor?: string;
+  borderBackgroundColor?: string;
 }
 
 export const Button: FunctionComponent<Props> = props => {
@@ -16,7 +17,8 @@ export const Button: FunctionComponent<Props> = props => {
     onClick,
     styleType = 'background',
     primaryColor = 'heliotrope',
-    secondaryColor = 'cyan'
+    secondaryColor = 'cyan',
+    borderBackgroundColor = 'blueCharcoal'
   } = props;
 
   return (
@@ -24,6 +26,7 @@ export const Button: FunctionComponent<Props> = props => {
       styleType={styleType}
       primaryColor={primaryColor}
       secondaryColor={secondaryColor}
+      borderBackgroundColor={borderBackgroundColor}
       onClick={onClick}
     >
       {text}

@@ -6,18 +6,29 @@ interface Props {
   styleType: string;
   primaryColor: string;
   secondaryColor: string;
+  borderBackgroundColor: string;
 }
 
 export const Wrapper = styled.button<Props>`
-  ${({ theme, styleType, primaryColor, secondaryColor }) => css`
+  ${({
+    theme,
+    styleType,
+    primaryColor,
+    secondaryColor,
+    borderBackgroundColor
+  }) => css`
     border: none;
     outline: none;
     width: 100%;
     height: 100%;
     border-radius: 29px;
     font-family: 'HelveticaNowDisplay-Medium';
-    font-size: ${theme.fonts.base};
+    font-size: ${theme.fonts.sm};
     cursor: pointer;
+
+    @media (min-width: ${theme.screens.lg}) {
+      font-size: ${theme.fonts.base};
+    }
 
     ${styleType === 'background' &&
       css`
@@ -48,7 +59,7 @@ export const Wrapper = styled.button<Props>`
           top: 1px;
           bottom: 1px;
           border-radius: 29px;
-          background-color: ${theme.colors.blueCharcoal};
+          background-color: ${theme.colors[borderBackgroundColor]};
           z-index: -1;
         }
       `}

@@ -9,41 +9,13 @@ import {
   WorkCredential,
   Wrapper
 } from './styles';
-import {
-  Discord,
-  Email,
-  Krebit,
-  Linkedin,
-  Phone,
-  Twitter
-} from 'components/Icons';
+import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { ToolTip } from 'components/ToolTip';
-
-const PERSONHOOD_CREDENTIALS = [
-  {
-    text: 'Discord',
-    icon: <Discord />
-  },
-  {
-    text: 'Twitter',
-    icon: <Twitter />
-  },
-  {
-    text: 'LinkedIn',
-    icon: <Linkedin />
-  },
-  {
-    text: 'Contact',
-    icon: <Email />
-  },
-  {
-    text: 'Phone',
-    icon: <Phone />
-  }
-];
+import { VerifyCredential } from 'components/VerifyCredential';
+import { constants } from 'utils';
 
 const MOCK_SKILLS = [
   'PHP expert',
@@ -75,6 +47,7 @@ export const Username = () => {
     currentPersonhoodToolTipActive,
     setCurrentPersonhoodToolTipActive
   ] = useState<number | undefined>(undefined);
+  const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
 
   const handleEducationFilterOpen = () => {
     setIsEducationFilterOpen(prevState => !prevState);
@@ -92,8 +65,15 @@ export const Username = () => {
     setCurrentPersonhoodToolTipActive(undefined);
   };
 
+  const handleIsVerifyCredentialOpen = () => {
+    setIsVerifyCredentialOpen(prevState => !prevState);
+  };
+
   return (
     <Layout>
+      {isVerifyCredentialOpen && (
+        <VerifyCredential onClose={handleIsVerifyCredentialOpen} />
+      )}
       <Wrapper>
         <div className="profile-container">
           <Background image="/imgs/images/trust.jpg" />
@@ -133,10 +113,15 @@ export const Username = () => {
             <PersonhoodCredential>
               <div className="person-header">
                 <p className="person-header-text">Personhood Credentials</p>
-                <p className="person-header-verify">Verify</p>
+                <p
+                  className="person-header-verify"
+                  onClick={handleIsVerifyCredentialOpen}
+                >
+                  Verify
+                </p>
               </div>
               <div className="person-box">
-                {PERSONHOOD_CREDENTIALS.map((item, index) => (
+                {constants.PERSONHOOD_CREDENTIALS.map((item, index) => (
                   <Fragment key={index}>
                     <div className="person-box-item">
                       <div className="person-box-icon">{item.icon}</div>
@@ -162,7 +147,7 @@ export const Username = () => {
                         )}
                       </div>
                     </div>
-                    {index !== PERSONHOOD_CREDENTIALS.length - 1 && (
+                    {index !== constants.PERSONHOOD_CREDENTIALS.length - 1 && (
                       <hr className="person-box-item-hr" />
                     )}
                   </Fragment>

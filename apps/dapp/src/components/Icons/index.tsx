@@ -13,6 +13,7 @@ import { Email } from './Email';
 import { Linkedin } from './Linkedin';
 import { Phone } from './Phone';
 import { Twitter } from './Twitter';
+import { ArrowForward } from './ArrowForward';
 
 export {
   Close,
@@ -29,5 +30,6 @@ export {
   Email,
   Linkedin,
   Phone,
-  Twitter
+  Twitter,
+  ArrowForward
 };
