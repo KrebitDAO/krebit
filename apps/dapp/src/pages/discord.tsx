@@ -3,22 +3,16 @@ import { useEffect } from 'react';
 import krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 
-import { connectWeb3, getDiscordUser, getCredential } from '../utils';
+import {
+  connectWeb3,
+  generateUID,
+  getDiscordUser,
+  getCredential
+} from '../utils';
 
 import { debounce } from 'ts-debounce';
 import { BroadcastChannel } from 'broadcast-channel';
 import { ethers } from 'ethers';
-
-function generateUID(length: number) {
-  return window
-    .btoa(
-      Array.from(window.crypto.getRandomValues(new Uint8Array(length * 2)))
-        .map(b => String.fromCharCode(b))
-        .join('')
-    )
-    .replace(/[+/]/g, '')
-    .substring(0, length);
-}
 
 const IndexPage = () => {
   if (typeof window !== 'undefined') {
@@ -93,11 +87,6 @@ const IndexPage = () => {
       protocol: 'https',
       host: 'discord.com',
       id: payload.id,
-      skills: [
-        { skillId: 'social', score: 100 },
-        { skillId: 'discord', score: 100 },
-        { skillId: 'personhood', score: 100 }
-      ],
       proofs
     };
 
@@ -108,17 +97,11 @@ const IndexPage = () => {
 
     return {
       id: proofs.state,
-      credentialSubject: {
-        ethereumAddress: address,
-        id: `did:pkh:eip155:80001:${address}`,
-        type: 'digitalProperty',
-        value: claimValue,
-        typeSchema:
-          'did:pkh:eip155:80001:krebit.eth/typeSchemas/digitalProperty',
-        trust: 1, // How much we trust the evidence to sign this?
-        stake: 0, // In KRB
-        price: 0 // charged to the user for claiming KRBs
-      },
+      ethereumAddress: address,
+      type: 'digitalProperty',
+      typeSchema: 'digitalProperty',
+      tags: ['discord', 'social', 'personhood'],
+      value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
   };
@@ -154,8 +137,10 @@ const IndexPage = () => {
       const did = await Issuer.connect();
       console.log(did);
 
-      const claimedCredential = await Issuer.issue(claim, 'digitalProperty');
+      const claimedCredential = await Issuer.issue(claim);
       console.log('claimedCredential: ', claimedCredential);
+      //Optional: save claimedCredential (ask the user if they want to)
+      //await passport.addClaimed(claimedCredential)
 
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
@@ -168,21 +153,15 @@ const IndexPage = () => {
 
       // Step 1-C: Get the verifiable credential, and save it to the passport
       if (issuedCredential) {
-        /*
         const passport = new krebit.core.Passport({
           ethProvider: ethProvider.provider,
           address
         });
         await passport.connect();
-        const addedCredentialId = await passport.addVerifiableCredential(
+        const addedCredentialId = await passport.addCredential(
           issuedCredential
         );
         console.log('addedCredentialId: ', addedCredentialId);
-        console.log(
-          'addCredential:',
-          await passport.addCredential(addedCredentialId)
-        );
-*/
 
         // Step 2: Register credential on chaim (stamp)
 
@@ -192,6 +171,7 @@ const IndexPage = () => {
     }
   }
 
+  // THIS IS WHAT WE NEED TO getData() in Username:
   async function getStamps(): Promise<void> {
     //connect Ethereum wallet
     const { address, wallet, ethProvider } = await connectWeb3();

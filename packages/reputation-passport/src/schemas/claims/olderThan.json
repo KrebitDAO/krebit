@@ -1,0 +1,11 @@
+{
+  "title": "olderThan",
+  "type": "object",
+  "properties": {
+    "years": { "type": "string" },
+    "months": { "type": "string" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["years"],
+  "additionalProperties": false
+}

@@ -3,6 +3,7 @@ import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getCredential } from './getCredential';
 import { getVeriffSession } from './getVeriffSession';
+import { generateUID } from './generateUID';
 
 export {
   connect,
@@ -10,5 +11,6 @@ export {
   getDeworkUser,
   getDiscordUser,
   getCredential,
-  getVeriffSession
+  getVeriffSession,
+  generateUID
 };

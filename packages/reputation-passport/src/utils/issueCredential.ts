@@ -14,12 +14,26 @@ import { config } from '../config';
 // --- Crypto lib for hashing
 import { createHash } from 'crypto';
 import { base64 } from 'ethers/lib/utils';
+import { type } from 'os';
 
-interface Props {
+export interface ClaimProps {
+  id: string;
+  value: any;
+  type: string;
+  typeSchema: string;
+  ethereumAddress: string;
+  expirationDate: string;
+  tags?: string[];
+  trust?: number;
+  stake?: number;
+  price?: number;
+  encrypt?: 'hash' | 'lit' | 'plain';
+}
+
+interface IssueProps {
   wallet: ethers.Wallet;
   idx: DIDDataStore;
-  claim: any;
-  encrypted?: 'hash' | 'lit' | 'plain';
+  claim: ClaimProps;
 }
 
 const currentConfig = config.get();
@@ -37,8 +51,8 @@ const arrayToObject = (arr: string[][]): { [k: string]: string } => {
   return arr.reduce((o, key) => ({ ...o, [key[0]]: key[1] }), {});
 };
 
-export const issueCredential = async (props: Props) => {
-  const { wallet, idx, claim, encrypted } = props;
+export const issueCredential = async (props: IssueProps) => {
+  const { wallet, idx, claim } = props;
 
   if (!wallet) {
     throw new Error('Wallet not defined');
@@ -57,8 +71,8 @@ export const issueCredential = async (props: Props) => {
 
   const lit = new Lit();
 
-  if (typeof claim.credentialSubject.value === 'object') {
-    if (encrypted == 'hash') {
+  if (typeof claim.value === 'object') {
+    if (claim.encrypt == 'hash') {
       // Generate a hash like SHA256(DID+PII), where PII is the (deterministic) JSON representation
       // of the PII object after transforming it to an array of the form [[key:string, value:string], ...]
       // with the elements sorted by key
@@ -66,26 +80,22 @@ export const issueCredential = async (props: Props) => {
       const hash = base64.encode(
         createHash('sha256')
           .update(idx.id, 'utf-8')
-          .update(
-            JSON.stringify(objToSortedArray(claim.credentialSubject.value))
-          )
+          .update(JSON.stringify(objToSortedArray(claim.value)))
           .digest()
       );
-      claim.credentialSubject.value = hash;
-      claim.credentialSubject.encrypted = 'hash';
-    } else if (encrypted == 'lit') {
+      claim['value'] = hash;
+      claim['encrypted'] = 'hash';
+    } else if (claim.encrypt == 'lit') {
       let encryptedContent = await lit.encrypt(
-        JSON.stringify(claim.credentialSubject.value),
-        lit.getOwnsAddressConditions(claim.credentialSubject.ethereumAddress),
+        JSON.stringify(claim.value),
+        lit.getOwnsAddressConditions(claim.ethereumAddress),
         wallet
       );
-      claim.credentialSubject.value = JSON.stringify(encryptedContent);
-      claim.credentialSubject.encrypted = 'lit';
+      claim['value'] = JSON.stringify(encryptedContent);
+      claim['encrypted'] = 'lit';
     } else {
-      claim.credentialSubject.value = JSON.stringify(
-        claim.credentialSubject.value
-      );
-      claim.credentialSubject.encrypted = 'plain';
+      claim['value'] = JSON.stringify(claim.value);
+      claim['encrypted'] = 'none';
     }
   }
 
@@ -94,14 +104,20 @@ export const issueCredential = async (props: Props) => {
       'https://www.w3.org/2018/credentials/v1',
       'https://w3id.org/security/suites/eip712sig-2021'
     ],
-    type: ['VerifiableCredential', claim.credentialSubject.type],
+    type: ['VerifiableCredential'].concat(claim.type, ...claim.tags),
     id: claim.id,
     issuer: {
       id: idx.id,
       ethereumAddress: await wallet.getAddress()
     },
     credentialSubject: {
-      ...claim.credentialSubject,
+      ...claim,
+      id: `did:pkh:eip155:${krbToken[currentConfig.network].domain.chainId}:${
+        claim.ethereumAddress
+      }`,
+      trust: claim.trust ? claim.trust : 1, // How much we trust the evidence to sign this?
+      stake: claim.stake ? claim.stake : 0, // In KRB
+      price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
       nbf: Math.floor(issuanceDate / 1000),
       exp: Math.floor(expirationDate.getTime() / 1000)
     },

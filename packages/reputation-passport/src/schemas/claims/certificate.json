@@ -1,0 +1,22 @@
+{
+  "title": "certificate",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "imageIPFS": { "type": "string" },
+    "entity": { "type": "string" },
+    "issuanceDate": { "type": "string" },
+    "expirationDate": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "properties": {
+        "skillId": { "type": "string" },
+        "score": { "type": "integer" }
+      }
+    },
+    "proofs": { "type": "object" }
+  },
+  "required": ["name", "entity", "issuanceDate", "expirationDate"],
+  "additionalProperties": true
+}

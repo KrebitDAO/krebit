@@ -3,21 +3,15 @@ import { useEffect, useState } from 'react';
 import krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 
-import { connectWeb3, getCredential, getVeriffSession } from '../utils';
+import {
+  connectWeb3,
+  generateUID,
+  getCredential,
+  getVeriffSession
+} from '../utils';
 
 import { debounce } from 'ts-debounce';
 import { BroadcastChannel } from 'broadcast-channel';
-
-function generateUID(length: number) {
-  return window
-    .btoa(
-      Array.from(window.crypto.getRandomValues(new Uint8Array(length * 2)))
-        .map(b => String.fromCharCode(b))
-        .join('')
-    )
-    .replace(/[+/]/g, '')
-    .substring(0, length);
-}
 
 const claimValue = {
   person: {
@@ -98,18 +92,13 @@ const IndexPage = () => {
 
     return {
       id: payload.id,
-      credentialSubject: {
-        ethereumAddress: address,
-        id: `did:pkh:eip155:80001:${address}`,
-        type: 'legalName',
-        value: {
-          ...claimValue,
-          proofs: veriffSession
-        },
-        typeSchema: 'did:pkh:eip155:80001:krebit.eth/typeSchemas/legalName',
-        trust: 1, // How much we trust the evidence to sign this?
-        stake: 0, // In KRB
-        price: 0 // charged to the user for claiming KRBs
+      ethereumAddress: address,
+      type: 'legalName',
+      typeSchema: 'ceramic://...',
+      tags: ['veriff', 'fullName', 'kyc', 'personhood'],
+      value: {
+        ...claimValue,
+        proofs: veriffSession
       },
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -146,8 +135,10 @@ const IndexPage = () => {
       console.log(did);
 
       //TODO: in this case, we can encrypt for the issuer too
-      const claimedCredential = await Issuer.issue(claim, 'legalName', 'plain');
+      const claimedCredential = await Issuer.issue(claim);
       console.log('claimedCredential: ', claimedCredential);
+      //Optional: save claimedCredential (ask the user if they want to)
+      //await passport.addClaimed(claimedCredential)
 
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
@@ -160,21 +151,15 @@ const IndexPage = () => {
 
       // Step 1-C: Get the verifiable credential, and save it to the passport
       if (issuedCredential) {
-        /*
         const passport = new krebit.core.Passport({
           ethProvider: ethProvider.provider,
           address
         });
         await passport.connect();
-        const addedCredentialId = await passport.addVerifiableCredential(
+        const addedCredentialId = await passport.addCredential(
           issuedCredential
         );
         console.log('addedCredentialId: ', addedCredentialId);
-        console.log(
-          'addCredential:',
-          await passport.addCredential(addedCredentialId)
-        );
-*/
 
         // Step 2: Register credential on chaim (stamp)
 

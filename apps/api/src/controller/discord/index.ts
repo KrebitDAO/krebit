@@ -35,8 +35,8 @@ export const DiscordController = async (
     const Issuer = new krebit.core.Krebit({
       wallet,
       ethProvider,
-      address: wallet.address,
-      litSdk: LitJsSdk
+      address: wallet.address
+      //litSdk: LitJsSdk
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
@@ -50,8 +50,8 @@ export const DiscordController = async (
     // TODO: Check if the claim already has verifications by me
     // TODO: Check if the proofValue of the sent VC is OK
     console.log(
-      'checkCredentialSignature: ',
-      await Issuer.checkCredentialSignature(claimedCredential)
+      'checkCredential: ',
+      await Issuer.checkCredential(claimedCredential)
     );
 
     // If claim is digitalProperty "Discord"
@@ -75,13 +75,12 @@ export const DiscordController = async (
       console.log('expirationDate: ', expirationDate);
 
       const claim = {
-        ...claimedCredential,
-        credentialSubject: {
-          ...claimedCredential.credentialSubject,
-          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
-          stake: parseInt(SERVER_STAKE, 10), // In KRB
-          price: parseInt(SERVER_PRICE, 10) * 10 ** 18 // charged to the user for claiming KRBs
-        },
+        id: claimedCredential.id,
+        ...claimedCredential.credentialSubject,
+        tags: claimedCredential.type.slice(1),
+        trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+        stake: parseInt(SERVER_STAKE, 10), // In KRB
+        price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
         expirationDate: new Date(expirationDate).toISOString()
       };
       console.log('claim: ', claim);
@@ -91,7 +90,7 @@ export const DiscordController = async (
         // Issue Verifiable credential
         console.log('Valid discord:', discord);
 
-        const issuedCredential = await Issuer.issue(claim, 'digitalProperty');
+        const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
 
         if (issuedCredential) {

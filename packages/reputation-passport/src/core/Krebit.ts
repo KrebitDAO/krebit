@@ -1,6 +1,7 @@
-import { ethers, providers } from 'ethers';
+import { ethers } from 'ethers';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
+import { TileDocument } from '@ceramicnetwork/stream-tile';
 import { DIDSession } from 'did-session';
 import {
   W3CCredential,
@@ -11,7 +12,7 @@ import {
 import localStore from 'store2';
 
 import { ceramic, graph, Lit } from '../lib';
-import { issueCredential } from '../utils';
+import { issueCredential, ClaimProps } from '../utils';
 import { krbToken } from '../schemas';
 import { config, IConfigProps } from '../config';
 
@@ -96,14 +97,22 @@ export class Krebit {
   };
 
   // add to my issuer ceramic
-  setTypeSchema = async (type: string, schema: any) => {
+  setTypeSchema = async (type: string, schema: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    // Upload attestation to Ceramic
+    console.log('Saving typeSchema on Ceramic...');
+
+    const stream = await TileDocument.create(this.idx.ceramic, schema, {
+      family: 'krebit',
+      controllers: [this.idx.id],
+      tags: ['typeSchema', type]
+    });
+    const schemaUrl = stream.id.toUrl();
+
     try {
       let content = await this.idx.get('claimTypes');
       content = content ? content : {};
-      content[type] = schema;
+      content[type] = schemaUrl;
 
       return (await this.idx.set('claimTypes', content)).toUrl();
     } catch (err) {
@@ -111,9 +120,9 @@ export class Krebit {
     }
   };
 
-  getTypeSchema = async (type?: string) => {
+  getTypeSchema = async (type?: string, did?: string) => {
     try {
-      const content = await this.idx.get('claimTypes', this.did);
+      const content = await this.idx.get('claimTypes', did ? did : this.did);
 
       if (content) {
         if (type) {
@@ -127,8 +136,14 @@ export class Krebit {
     }
   };
 
-  // claimedCredentials from ceramic
-  checkCredentialSignature = async (w3cCredential: W3CCredential) => {
+  checkCredential = async (w3cCredential: W3CCredential) => {
+    return (
+      !this.isCredentialExpired(w3cCredential) &&
+      this.validCredentialSignature(w3cCredential)
+    );
+  };
+
+  validCredentialSignature = async (w3cCredential: W3CCredential) => {
     const eip712credential = getEIP712Credential(w3cCredential);
     const krebitTypes = getKrebitCredentialTypes();
     const signer = ethers.utils.verifyTypedData(
@@ -137,22 +152,32 @@ export class Krebit {
       eip712credential,
       w3cCredential.proof.proofValue
     );
-
     return signer == w3cCredential.issuer.ethereumAddress;
+  };
+
+  isCredentialExpired = async (w3cCredential: W3CCredential) => {
+    const now = new Date();
+    if (w3cCredential.expirationDate < now.toISOString()) {
+      return false;
+    } else {
+      return true;
+    }
   };
 
   // checks the signature
   decryptClaim = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
-    const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-    const lit = new Lit();
+    if (w3cCredential.credentialSubject.encrypted === 'lit') {
+      const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+      const lit = new Lit();
 
-    return await lit.decrypt(
-      encrypted.encryptedString,
-      encrypted.encryptedSymmetricKey,
-      encrypted.accessControlConditions,
-      this.wallet
-    );
+      return await lit.decrypt(
+        encrypted.encryptedString,
+        encrypted.encryptedSymmetricKey,
+        encrypted.accessControlConditions,
+        this.wallet
+      );
+    }
   };
 
   // Check if the plain claimed value matches the encrypted/hashed credential value
@@ -169,7 +194,7 @@ export class Krebit {
     let where = {};
     where['credentialStatus'] = 'Issued';
     //where['issuerDID'] = process.env.KREBIT_DID;
-    if (type) where['_type'] = `["VerifiableCredential","Issuer", "${type}"]`;
+    if (type) where['_type'] = `["VerifiableCredential","issuer", "${type}"]`;
 
     //Get verifications from subgraph
     return await graph.verifiableCredentialsQuery({
@@ -182,27 +207,17 @@ export class Krebit {
 
   // sign
   // returns w3cCredential
-  issue = async (
-    claim: any,
-    typeShema: string,
-    encrypted?: 'hash' | 'lit' | 'plain'
-  ) => {
+  issue = async (claim: ClaimProps) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    // check the types of the claim before issuing
-    return issueCredential({
+    // TODO: check the types of the claim before issuing
+
+    return await issueCredential({
       wallet: this.wallet as ethers.Wallet,
       idx: this.idx,
-      claim,
-      encrypted
+      claim
     });
   };
-
-  /* TODO
-  batchIssue = async (addresses[], dids[], claims[], types[]) => {
-    return true;
-  };
-  */
 
   // Delegate power to another issuer for a dynamic list of users
   /* TODO

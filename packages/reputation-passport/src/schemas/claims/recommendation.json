@@ -1,0 +1,20 @@
+{
+  "title": "recommendation",
+  "type": "object",
+  "properties": {
+    "description": { "type": "string" },
+    "entity": { "type": "string" },
+    "startDate": { "type": "string" },
+    "endDate": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "properties": {
+        "skillId": { "type": "string" },
+        "score": { "type": "integer" }
+      }
+    },
+    "proofs": { "type": "object" }
+  },
+  "required": ["description", "entity"],
+  "additionalProperties": true
+}

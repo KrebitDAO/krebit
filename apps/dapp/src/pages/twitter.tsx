@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 
-import { connectWeb3, getCredential } from '../utils';
+import { connectWeb3, generateUID, getCredential } from '../utils';
 
 import { debounce } from 'ts-debounce';
 import { BroadcastChannel } from 'broadcast-channel';
@@ -17,17 +17,6 @@ const authClient = new auth.OAuth2User({
   callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
   scopes: ['tweet.read', 'users.read']
 });
-
-function generateUID(length: number) {
-  return window
-    .btoa(
-      Array.from(window.crypto.getRandomValues(new Uint8Array(length * 2)))
-        .map(b => String.fromCharCode(b))
-        .join('')
-    )
-    .replace(/[+/]/g, '')
-    .substring(0, length);
-}
 
 const IndexPage = () => {
   if (typeof window !== 'undefined') {
@@ -114,17 +103,11 @@ const IndexPage = () => {
 
     return {
       id: proofs.state,
-      credentialSubject: {
-        ethereumAddress: address,
-        id: `did:pkh:eip155:80001:${address}`,
-        type: 'digitalProperty',
-        value: claimValue,
-        typeSchema:
-          'did:pkh:eip155:80001:krebit.eth/typeSchemas/digitalProperty',
-        trust: 1, // How much we trust the evidence to sign this?
-        stake: 0, // In KRB
-        price: 0 // charged to the user for claiming KRBs
-      },
+      ethereumAddress: address,
+      type: 'digitalProperty',
+      typeSchema: 'ceramic://...',
+      tags: ['twitter', 'social', 'personhood'],
+      value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
   };
@@ -157,8 +140,10 @@ const IndexPage = () => {
       const did = await Issuer.connect();
       console.log(did);
 
-      const claimedCredential = await Issuer.issue(claim, 'digitalProperty');
+      const claimedCredential = await Issuer.issue(claim);
       console.log('claimedCredential: ', claimedCredential);
+      //Optional: save claimedCredential (ask the user if they want to)
+      //await passport.addClaimed(claimedCredential)
 
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
@@ -167,6 +152,7 @@ const IndexPage = () => {
         claimedCredential
       });
 
+      // TODO: Array of credentials
       console.log('issuedCredential: ', issuedCredential);
 
       // Step 1-C: Get the verifiable credential, and save it to the passport
@@ -176,17 +162,12 @@ const IndexPage = () => {
           address
         });
         await passport.connect();
-        const addedCredentialId = await passport.addVerifiableCredential(
+        const addedCredentialId = await passport.addCredential(
           issuedCredential
         );
         console.log('addedCredentialId: ', addedCredentialId);
-        console.log(
-          'addCredential:',
-          await passport.addCredential(addedCredentialId)
-        );
 
-        // Step 2: Register credential on chaim (stamp)
-
+        // Step 2: Register credential on-chain (stamp) - optional
         const stampTx = await Issuer.stampCredential(issuedCredential);
         console.log('stampTx: ', stampTx);
       }

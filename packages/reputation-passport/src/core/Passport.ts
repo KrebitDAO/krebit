@@ -396,21 +396,22 @@ export class Passport {
   };
 
   // heldCredentials in ceramic
-  addCredential = async (verificationId: string) => {
+  addCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     // Upload attestation to Ceramic
     try {
+      const vcId = await this.addVerifiableCredential(w3cCredential);
       let result = null;
 
-      if (verificationId) {
+      if (vcId) {
         const content = await this.idx.get('heldCredentials');
 
         if (content && content.held) {
           const current = content.held ? content.held : [];
 
-          if (!current.includes(verificationId)) {
-            current.push(verificationId);
+          if (!current.includes(vcId)) {
+            current.push(vcId);
 
             result = await this.idx.merge('heldCredentials', {
               held: current
@@ -418,13 +419,13 @@ export class Passport {
           }
         } else {
           result = await this.idx.set('heldCredentials', {
-            held: [verificationId]
+            held: [vcId]
           });
         }
       }
 
       if (result) {
-        return verificationId;
+        return vcId;
       }
     } catch (err) {
       throw new Error(err);

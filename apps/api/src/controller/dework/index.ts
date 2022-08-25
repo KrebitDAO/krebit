@@ -32,12 +32,13 @@ export const DeworkController = async (
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
-    console.log('Authenticating with Self.Id...');
-    const idx = await krebit.lib.ceramic.authDIDSession({
-      address: wallet.address,
+    const Issuer = new krebit.core.Krebit({
+      wallet,
       ethProvider,
-      client: ceramicClient
+      address: wallet.address
     });
+    const did = await Issuer.connect();
+    console.log('DID:', did);
 
     // Connect to dework and get reputation from address
     const dework = await getDeworkUser({ address });
@@ -57,33 +58,28 @@ export const DeworkController = async (
         if (task.rewards && task.rewards.length > 0) {
           let claim = {
             id: task.permalink,
-            credentialSubject: {
-              encrypted: 'false',
-              ethereumAddress: address,
-              id: `did:pkh:eip155:80001:${address}`,
-              type: 'workExperience',
-              value: {
-                ...task,
-                issuingEntity: 'Dework',
-                startDate: 'null',
-                endDate: task.date,
-                evidence: 'https://api.deworkxyz.com/v1/reputation/' + address
-              },
-              typeSchema: 'https://github.com/KrebitDAO/schemas/workExperience',
-              trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
-              stake: parseInt(SERVER_STAKE, 10), // In KRB
-              price: parseInt(SERVER_PRICE, 10) * 10 ** 18 // charged to the user for claiming KRBs
+            ethereumAddress: address,
+            type: 'workExperience',
+            typeSchema: 'https://github.com/KrebitDAO/schemas/workExperience',
+            tags: ['dework', 'task', 'community'],
+            value: {
+              ...task,
+              issuingEntity: 'Dework',
+              startDate: 'null',
+              endDate: task.date,
+              evidence: 'https://api.deworkxyz.com/v1/reputation/' + address
             },
+            trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+            stake: parseInt(SERVER_STAKE, 10), // In KRB
+            price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+
             expirationDate: new Date(expirationDate).toISOString()
           };
 
-          const result = await krebit.utils.issueCredential({
-            wallet,
-            idx,
-            claim
-          });
+          const issuedCredential = await Issuer.issue(claim);
+          console.log('issuedCredential: ', issuedCredential);
 
-          if (result) return result;
+          if (issuedCredential) return issuedCredential;
         }
       })
     );
