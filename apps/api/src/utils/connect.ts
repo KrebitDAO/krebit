@@ -34,7 +34,6 @@ export const connect = async () => {
         throw new Error('Contract not found');
       }
 
-      /* 
       // Get current KRB balance
       // We need at least krbContract.minBalanceToIssue()
       const krbBalance = await krbContract.balanceOf(wallet.address);
@@ -48,7 +47,7 @@ export const connect = async () => {
 
       if (krbBalance < minBalanceToIssue) {
         throw new Error('Not enough KRB balance to Issue');
-      } */
+      }
 
       return { wallet, ethProvider };
     }

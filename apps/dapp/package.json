@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 127.0.0.1",
     "build": "next build && next export",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf out"
@@ -26,12 +26,15 @@
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
     "@walletconnect/web3-provider": "^1.8.0",
+    "broadcast-channel": "^4.14.0",
     "ethers": "^5.6.9",
     "lit-js-sdk": "^1.1.207",
     "next": "^12.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-reveal": "^1.2.2",
-    "react-transition-group": "^4.4.5"
+    "react-transition-group": "^4.4.5",
+    "ts-debounce": "^4.0.0",
+    "twitter-api-sdk": "^1.1.0"
   }
 }

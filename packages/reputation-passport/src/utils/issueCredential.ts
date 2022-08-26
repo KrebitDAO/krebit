@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+
 import { DIDDataStore } from '@glazed/did-datastore';
 import {
   EIP712VC,
@@ -10,15 +11,47 @@ import { krbToken } from '../schemas';
 import { Lit } from '../lib';
 import { config } from '../config';
 
-interface Props {
+// --- Crypto lib for hashing
+import { createHash } from 'crypto';
+import { base64 } from 'ethers/lib/utils';
+import { type } from 'os';
+
+export interface ClaimProps {
+  id: string;
+  value: any;
+  type: string;
+  typeSchema: string;
+  ethereumAddress: string;
+  expirationDate: string;
+  tags?: string[];
+  trust?: number;
+  stake?: number;
+  price?: number;
+  encrypt?: 'hash' | 'lit' | 'plain';
+}
+
+interface IssueProps {
   wallet: ethers.Wallet;
   idx: DIDDataStore;
-  claim: any;
+  claim: ClaimProps;
 }
 
 const currentConfig = config.get();
 
-export const issueCredential = async (props: Props) => {
+// utility to create an ordered array of the given input (of the form [[key:string, value:string], ...])
+const objToSortedArray = (obj: { [k: string]: string }): string[][] => {
+  const keys: string[] = Object.keys(obj).sort();
+  return keys.reduce((out: string[][], key: string) => {
+    out.push([key, obj[key]]);
+    return out;
+  }, [] as string[][]);
+};
+
+const arrayToObject = (arr: string[][]): { [k: string]: string } => {
+  return arr.reduce((o, key) => ({ ...o, [key[0]]: key[1] }), {});
+};
+
+export const issueCredential = async (props: IssueProps) => {
   const { wallet, idx, claim } = props;
 
   if (!wallet) {
@@ -38,17 +71,32 @@ export const issueCredential = async (props: Props) => {
 
   const lit = new Lit();
 
-  if (claim.credentialSubject.encrypted === 'true') {
-    let encryptedContent = await lit.encrypt(
-      JSON.stringify(claim.credentialSubject.value),
-      lit.getOwnsAddressConditions(claim.credentialSubject.ethereumAddress),
-      wallet
-    );
-    claim.credentialSubject.value = JSON.stringify(encryptedContent);
-  } else {
-    claim.credentialSubject.value = JSON.stringify(
-      claim.credentialSubject.value
-    );
+  if (typeof claim.value === 'object') {
+    if (claim.encrypt == 'hash') {
+      // Generate a hash like SHA256(DID+PII), where PII is the (deterministic) JSON representation
+      // of the PII object after transforming it to an array of the form [[key:string, value:string], ...]
+      // with the elements sorted by key
+      // This hash can be used to de-duplicate provider verifications without revealing PII
+      const hash = base64.encode(
+        createHash('sha256')
+          .update(idx.id, 'utf-8')
+          .update(JSON.stringify(objToSortedArray(claim.value)))
+          .digest()
+      );
+      claim['value'] = hash;
+      claim['encrypted'] = 'hash';
+    } else if (claim.encrypt == 'lit') {
+      let encryptedContent = await lit.encrypt(
+        JSON.stringify(claim.value),
+        lit.getOwnsAddressConditions(claim.ethereumAddress),
+        wallet
+      );
+      claim['value'] = JSON.stringify(encryptedContent);
+      claim['encrypted'] = 'lit';
+    } else {
+      claim['value'] = JSON.stringify(claim.value);
+      claim['encrypted'] = 'none';
+    }
   }
 
   const credential = {
@@ -56,14 +104,20 @@ export const issueCredential = async (props: Props) => {
       'https://www.w3.org/2018/credentials/v1',
       'https://w3id.org/security/suites/eip712sig-2021'
     ],
-    type: ['VerifiableCredential', claim.credentialSubject.type],
+    type: ['VerifiableCredential'].concat(claim.type, ...claim.tags),
     id: claim.id,
     issuer: {
       id: idx.id,
       ethereumAddress: await wallet.getAddress()
     },
     credentialSubject: {
-      ...claim.credentialSubject,
+      ...claim,
+      id: `did:pkh:eip155:${krbToken[currentConfig.network].domain.chainId}:${
+        claim.ethereumAddress
+      }`,
+      trust: claim.trust ? claim.trust : 1, // How much we trust the evidence to sign this?
+      stake: claim.stake ? claim.stake : 0, // In KRB
+      price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
       nbf: Math.floor(issuanceDate / 1000),
       exp: Math.floor(expirationDate.getTime() / 1000)
     },

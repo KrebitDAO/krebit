@@ -1,7 +1,6 @@
 import { datamodel } from './datamodel';
 import encodedModel from './encodedModel.json' assert { type: 'json' };
-import idx from './idx.json' assert { type: 'json' };
 import krbToken from './krbToken.json' assert { type: 'json' };
-import texttile from './textile.json' assert { type: 'json' };
+import * as claims from './claims';
 
-export { datamodel, encodedModel, idx, krbToken, texttile };
+export { datamodel, encodedModel, krbToken, claims};

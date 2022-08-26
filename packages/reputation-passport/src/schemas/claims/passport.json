@@ -1,0 +1,13 @@
+{
+  "title": "passport",
+  "type": "object",
+  "properties": {
+    "country": { "type": "string" },
+    "number": { "type": "string" },
+    "issuanceDate": { "type": "string" },
+    "expirationDate": { "type": "string" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["country", "number"],
+  "additionalProperties": false
+}

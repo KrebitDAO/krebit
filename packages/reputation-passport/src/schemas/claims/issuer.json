@@ -1,0 +1,17 @@
+{
+  "title": "issuer",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "ethereumAddress": { "type": "string" },
+    "entity": { "type": "string" },
+    "description": { "type": "string" },
+    "imageIPFS": { "type": "string" },
+    "verificationUrl": { "type": "string" },
+    "credentialType": { "type": "string" },
+    "credentialSubjectListUrl": { "type": "string" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["id", "entity", "credentialType"],
+  "additionalProperties": true
+}

@@ -1,0 +1,12 @@
+{
+  "title": "phoneNumber",
+  "type": "object",
+  "properties": {
+    "country": { "type": "string" },
+    "countryPrefix": { "type": "string" },
+    "number": { "type": "string" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["countryPrefix", "number"],
+  "additionalProperties": false
+}

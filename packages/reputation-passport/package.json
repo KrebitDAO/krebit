@@ -25,6 +25,7 @@
     "siwe": "^1.1.6"
   },
   "dependencies": {
+    "@biconomy/mexa": "2.0.35",
     "@ceramicnetwork/blockchain-utils-linking": "^2.0.8",
     "@ceramicnetwork/http-client": "^2.3.1",
     "@ceramicnetwork/stream-tile": "^2.4.0",

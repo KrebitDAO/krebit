@@ -1,0 +1,16 @@
+{
+  "title": "digitalProperty",
+  "type": "object",
+  "properties": {
+    "protocol": { "type": "string" },
+    "host": { "type": "string" },
+    "id": { "type": "string" },
+    "username": { "type": "string" },
+    "startDate": { "type": "string" },
+    "followers": { "type": "string" },
+    "posts": { "type": "string" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["protocol", "host", "id"],
+  "additionalProperties": true
+}

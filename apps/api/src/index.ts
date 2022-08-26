@@ -4,7 +4,9 @@ import cors from 'cors';
 import {
   DeworkController,
   DiscordController,
-  QuestappController
+  QuestappController,
+  TwitterController,
+  VeriffController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -17,7 +19,9 @@ router.use(cors()).use(express.json());
 router
   .post('/questapp', QuestappController)
   .post('/discord', DiscordController)
-  .post('/dework', DeworkController);
+  .post('/dework', DeworkController)
+  .post('/twitter', TwitterController)
+  .post('/veriff', VeriffController);
 
 app.use('/', router);
 

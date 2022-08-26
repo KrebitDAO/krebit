@@ -1,5 +1,13 @@
 import { QuestappController } from './questapp';
 import { DiscordController } from './discord';
 import { DeworkController } from './dework';
+import { TwitterController } from './twitter';
+import { VeriffController } from './veriff';
 
-export { QuestappController, DiscordController, DeworkController };
+export {
+  QuestappController,
+  DiscordController,
+  DeworkController,
+  TwitterController,
+  VeriffController
+};

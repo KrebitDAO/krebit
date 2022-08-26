@@ -1,0 +1,25 @@
+{
+  "title": "badge",
+  "type": "object",
+  "properties": {
+    "entity": { "type": "integer" },
+    "parentCredential": { "type": "string" },
+    "onBehalveOfIssuer": { "type": "string" },
+    "name": { "type": "string" },
+    "role": { "type": "string" },
+    "level": { "type": "string" },
+    "imageIPFS": { "type": "string" },
+    "description": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "properties": {
+        "skillId": { "type": "string" },
+        "score": { "type": "integer" }
+      }
+    },
+    "xp": { "type": "integer" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["entity", "name"],
+  "additionalProperties": false
+}

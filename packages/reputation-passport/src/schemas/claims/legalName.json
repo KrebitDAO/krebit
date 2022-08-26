@@ -1,0 +1,13 @@
+{
+  "title": "legalName",
+  "type": "object",
+  "properties": {
+    "fullName": { "type": "string" },
+    "first": { "type": "string" },
+    "middle": { "type": "string" },
+    "last": { "type": "string" },
+    "proofs": { "type": "object" }
+  },
+  "required": ["fullName"],
+  "additionalProperties": false
+}

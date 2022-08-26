@@ -1,0 +1,24 @@
+{
+  "title": "workExperience",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "entity": { "type": "string" },
+    "city": { "type": "string" },
+    "employmentType": { "type": "string" },
+    "imageIPFS": { "type": "string" },
+    "description": { "type": "string" },
+    "startDate": { "type": "string" },
+    "endDate": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "properties": {
+        "skillId": { "type": "string" },
+        "score": { "type": "integer" }
+      }
+    },
+    "proofs": { "type": "object" }
+  },
+  "required": ["title", "entity", "startDate", "endDate"],
+  "additionalProperties": true
+}

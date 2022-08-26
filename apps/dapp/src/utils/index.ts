@@ -1,15 +1,16 @@
-import { connect } from './connect';
+import { connect, connectWeb3 } from './connect';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
-import { getTwitterUser } from './getTwitterUser';
-import { getVeriffDecision } from './getVeriffDecision';
+import { getCredential } from './getCredential';
+import { getVeriffSession } from './getVeriffSession';
 import { generateUID } from './generateUID';
 
 export {
   connect,
+  connectWeb3,
   getDeworkUser,
   getDiscordUser,
-  getTwitterUser,
-  getVeriffDecision,
+  getCredential,
+  getVeriffSession,
   generateUID
 };
