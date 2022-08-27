@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.ts",
+  "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build && next export",
