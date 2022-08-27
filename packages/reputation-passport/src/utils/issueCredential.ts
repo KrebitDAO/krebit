@@ -18,6 +18,7 @@ export interface ClaimProps {
   type: string;
   typeSchema: string;
   ethereumAddress: string;
+  did?: string;
   expirationDate: string;
   tags?: string[];
   trust?: number;
@@ -108,9 +109,11 @@ export const issueCredential = async (props: IssueProps) => {
     },
     credentialSubject: {
       ...claim,
-      id: `did:pkh:eip155:${krbToken[currentConfig.network].domain.chainId}:${
-        claim.ethereumAddress
-      }`,
+      id: claim.did
+        ? claim.did
+        : `did:pkh:eip155:${krbToken[currentConfig.network].domain.chainId}:${
+            claim.ethereumAddress
+          }`,
       trust: claim.trust ? claim.trust : 1, // How much we trust the evidence to sign this?
       stake: claim.stake ? claim.stake : 0, // In KRB
       price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs

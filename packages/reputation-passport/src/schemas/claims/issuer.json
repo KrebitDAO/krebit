@@ -10,6 +10,8 @@
     "verificationUrl": { "type": "string" },
     "credentialType": { "type": "string" },
     "credentialSubjectListUrl": { "type": "string" },
+    "price": { "type": "string" },
+    "expirationPolicy": { "type": "string" },
     "proofs": { "type": "object" }
   },
   "required": ["id", "entity", "credentialType"],

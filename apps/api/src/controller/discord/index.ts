@@ -77,6 +77,7 @@ export const DiscordController = async (
       const claim = {
         id: claimedCredential.id,
         ...claimedCredential.credentialSubject,
+        did: `did:pkh:eip155:1:${claimedCredential.credentialSubject.ethereumAddress}`,
         tags: claimedCredential.type.slice(1),
         trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
         stake: parseInt(SERVER_STAKE, 10), // In KRB

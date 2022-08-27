@@ -79,6 +79,7 @@ export const QuestappController = async (
     const claim = {
       id: `quest-${generateUID(10)}`,
       ethereumAddress: wallet.address,
+      did: `did:pkh:eip155:1:${wallet.address}`,
       type: 'questBadge',
       value: badgeValue,
       tags: ['quest', 'badge', 'community'],
