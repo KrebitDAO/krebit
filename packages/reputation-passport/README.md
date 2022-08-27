@@ -1,47 +1,34 @@
-import { Issuer as krebit, ReputationPassport} from "@krebitdao/reputation-passport";
+# reputation-passport
 
-I. As an issuer of reputation credentials I want:
+# <img src="../../krebit-icon.png" alt="Krebit" height="40px" align="left"> Krebit Reputation Passport SDK
 
-- authenticateDID(ceramic, wallet, ethProvider)
-- krebit.addTypeSchema(type, schema)
-- typeShema = krebit.getTypeShema(type)
-- krebit.verifyCredential(address | did, claimedCredential) -> checks the signature
-- verification = krebit.issue(address | did, claim, typeShema) //sign
-- verifications [] = krebit.batchIssue (addresses[] | dids[], claims[], types[]) //batch sign
-- krebit.revoke(verification)
-- krebit.suspend(verification)
-- krebit.expire(verification)
-- verifications [] = krebit.getIssued()
-- {delegateCredential , listId } = krebit.delegate(issuerAddress | issuerDid, addresses[] | dids[]) //Delegate power to another issuer for a dynamic list of users
+[![Docs](https://img.shields.io/badge/docs-%F0%9F%93%84-blue)](https://docs.krebit.id)
 
-II. As a user I want:
+This repository hosts the [Krebit] Reputation Passport tools, based on [W3C Ethereum EIP712 Signature 2021 Draft].
 
-- authenticateDID(ceramic, wallet, ethProvider)
-- passport = getPassport(address | did)
+[krebit]: http://krebit.id
+[w3c ethereum eip712 signature 2021 draft]: https://w3c-ccg.github.io/ethereum-eip712-signature-2021-spec
 
-- claimedCredential = krebit.issue(passport, claim, typeShema) // self-signed claim
-- passport.saveClaim(claimedCredential) // claimedCredentials in ceramic
-- claimedCredentials[] = passport.getClaims(type) // claimedCredentials from ceramic
-- credentials[] = passport.getCredentials() // heldCredentials from ceramic
+It provides functions for creating Solidity compatible Veriiable-Credentials that can be used in contracts like [krebit-contracts].
 
-- verifications[] = passport.getVerifications(type | filter) // registeredCredentials from subgraph
-- passport.saveCredential(verification) // heldCredentials in ceramic
-- verificationId = passport.registerVerification(verification) // on-chain (claim KRB reputation)
-- passport.checkStatus(verification) //from subgraph : revoked, expired, suspended, disputed
-- passport.getNFT(verificationId) // on-chain (claim NFT for the verificationId)
+[krebit-contracts]: https://github.com/KrebitDAO/krb-contracts
 
-III. As a checker of _public_ reputation credentials I want:
+## Overview
 
-- // no need to authenticate
-- getPassport(address | did)
-- credentials[] = passport.getCredentials() // heldCredentials from ceramic
-- krebit.verifyCredential(address | did, claimedCredential) -> checks the signature
-- verifications[] = passport.getVerifications(type | filter) // registeredCredentials from subgraph
-- passport.checkStatus(verification) //from subgraph : revoked, expired, suspended, disputed
+### Installation
 
-IV. As a checker of _private_ reputation credentials I want:
+```console
+$ npm install -s @krebitdao/reputation-passport
+```
 
-- authenticateDID(ceramic, wallet, ethProvider)
-- passport.verifyClaim(verification, claim) -> to get access to private data
+## Learn More
 
-verification == stamp
+The guides in the [docs site](http://docs.krebit.co) will teach about different concepts of the Krebit Protocol.
+
+## Contribute
+
+Krebit Protocol exists thanks to its contributors. There are many ways you can participate and help build public goods. Check out the [Krebit Gitcoin Grants](https://gitcoin.co/grants/3522/krebit)!
+
+## License
+
+Krebit Reputation Passport is released under the [ISC License](LICENSE).
