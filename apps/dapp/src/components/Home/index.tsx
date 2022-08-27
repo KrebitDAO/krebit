@@ -56,7 +56,7 @@ export const Home = () => {
   const {
     walletModal: { handleOpenConnectWallet, openConnectWallet },
     auth: { isAuthenticated },
-    reputationPassport: { passport }
+    walletInformation: { passport }
   } = useContext(GeneralContext);
   const { push } = useRouter();
   const windowSize = useWindowSize();

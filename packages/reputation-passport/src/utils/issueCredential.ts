@@ -1,5 +1,6 @@
+import { createHash } from 'crypto';
 import { ethers } from 'ethers';
-
+import { base64 } from 'ethers/lib/utils';
 import { DIDDataStore } from '@glazed/did-datastore';
 import {
   EIP712VC,
@@ -10,11 +11,6 @@ import {
 import { krbToken } from '../schemas';
 import { Lit } from '../lib';
 import { config } from '../config';
-
-// --- Crypto lib for hashing
-import { createHash } from 'crypto';
-import { base64 } from 'ethers/lib/utils';
-import { type } from 'os';
 
 export interface ClaimProps {
   id: string;

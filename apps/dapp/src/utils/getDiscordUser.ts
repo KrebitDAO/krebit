@@ -5,13 +5,13 @@ interface Props {
   accessToken: string;
 }
 
-const { NEXT_SERVER_DISCORD_URL } = process.env;
+const { NEXT_PUBLIC_DISCORD_URL } = process.env;
 
 export const getDiscordUser = async (props: Props) => {
   const { tokenType, accessToken } = props;
 
   try {
-    const response = await fetch('https://discord.com/api/users/@me', {
+    const response = await fetch(NEXT_PUBLIC_DISCORD_URL, {
       headers: {
         authorization: `${tokenType} ${accessToken}`
       }

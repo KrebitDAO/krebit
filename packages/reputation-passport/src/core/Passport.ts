@@ -130,27 +130,32 @@ export class Passport {
       credentialId
     );
     let result = null;
+
     const issuedList = await this.idx.get(
       'issuedCredentials',
       w3cCredential.issuer.id
     );
-
     if (issuedList && issuedList.issued) {
       const issued = issuedList.issued ? issuedList.issued : [];
+
       if (!issued.includes(credentialId)) {
         result = 'Issued';
       }
     }
+
     const revokedList = await this.idx.get(
       'revokedCredentials',
       w3cCredential.issuer.id
     );
     if (revokedList && revokedList.issued) {
       const revoked = revokedList.revoked ? revokedList.revoked : [];
+
       if (!revoked.includes(credentialId)) {
         result = 'Revoked';
       }
     }
+
+    return result;
   };
 
   // claimedCredentials from ceramic
