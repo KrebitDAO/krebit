@@ -18,6 +18,7 @@
     "build-dapp": "turbo run build --filter=dapp",
     "changeset": "changeset",
     "version-packages": "changeset version",
+    "eip712-vc-publish": "turbo run build --filter=eip712-vc && changeset publish",
     "reputation-passport-publish": "turbo run build --filter=reputation-passport && changeset publish"
   },
   "workspaces": [

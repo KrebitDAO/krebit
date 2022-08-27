@@ -10,7 +10,6 @@
   "ignore": [
     "@krebitdao/api",
     "@krebitdao/dapp",
-    "@krebitdao/website",
-    "@krebitdao/tsconfig"
+    "@krebitdao/website"
   ]
 }
