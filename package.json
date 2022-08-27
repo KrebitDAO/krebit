@@ -28,8 +28,12 @@
     "type": "git",
     "url": "git+https://github.com/KrebitDAO/krebit.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ethereum",
+    "EIP712",
+    "verifiable-credentials"
+  ],
+  "author": "Krebit <contact@krebit.co>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/KrebitDAO/krebit/issues"
