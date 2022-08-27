@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { Wrapper } from './styles';
+import { BoxStep } from './boxStep';
 import { ArrowForward, Close } from 'components/Icons';
 import { Button } from 'components/Button';
+import { DiscordProvider } from 'components/Providers';
 import { constants } from 'utils';
+import { GeneralContext } from 'context';
 
 interface IProps {
   onClose: () => void;
@@ -20,6 +23,9 @@ export const VerifyCredential = (props: IProps) => {
   const { onClose } = props;
   const [viewStatus, setViewStatus] = useState<IViewStatusProps>('init');
   const [currentVerify, setCurrentVerify] = useState<ICurrentVerifyProps>();
+  const {
+    walletInformation: { ethProvider, address, wallet }
+  } = useContext(GeneralContext);
 
   const handleViewStatus = (status: IViewStatusProps) => {
     setViewStatus(status);
@@ -83,7 +89,32 @@ export const VerifyCredential = (props: IProps) => {
         )}
         {viewStatus === 'steps' && (
           <div className="verify-credential-box-steps">
-            {constants.VERIFY_CREDENTIAL_STEPS[currentVerify.id].map(
+            {currentVerify?.id === 'discord' && (
+              <DiscordProvider
+                ethProvider={ethProvider}
+                wallet={wallet}
+                address={address}
+                component={({ handleFetchOAuth }) => (
+                  <>
+                    <BoxStep
+                      title="Step 1"
+                      description="Step 1 for Discord verification"
+                      form={{
+                        button: {
+                          text: 'Verify',
+                          onClick: handleFetchOAuth
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 2"
+                      description="Step 2 for Discord verification"
+                    />
+                  </>
+                )}
+              />
+            )}
+            {/* {constants.VERIFY_CREDENTIAL_STEPS[currentVerify.id].map(
               (item, index) => (
                 <div className="verify-credential-box-step" key={index}>
                   <div className="verify-credential-box-step-content">
@@ -117,7 +148,7 @@ export const VerifyCredential = (props: IProps) => {
                   )}
                 </div>
               )
-            )}
+            )} */}
           </div>
         )}
       </div>

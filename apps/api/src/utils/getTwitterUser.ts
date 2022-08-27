@@ -27,8 +27,8 @@ export const getTwitterUser = async (
     // retrieve user's auth bearer token to authenticate client
     await client.requestAccessToken(code);
     const twitterClient = new Client(client);
-    // return information about the (authenticated) requesting user
 
+    // return information about the (authenticated) requesting user
     const myUser = await twitterClient.users.findMyUser();
     return { ...myUser.data };
   } catch (err) {

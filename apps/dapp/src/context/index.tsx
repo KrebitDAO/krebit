@@ -2,20 +2,29 @@ import { FunctionComponent, createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import LitJsSdk from 'lit-js-sdk';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import ReputationPassport from '@krebitdao/reputation-passport';
+import Krebit from '@krebitdao/reputation-passport';
 import { Passport } from '@krebitdao/reputation-passport/dist/core';
 
-interface Props {
+interface IProps {
   children: JSX.Element;
+}
+
+export interface IWalletInformation {
+  ethProvider: ethers.providers.ExternalProvider;
+  address: string;
+  wallet: ethers.providers.JsonRpcSigner;
 }
 
 export const GeneralContext = createContext(undefined);
 
-export const GeneralProvider: FunctionComponent<Props> = props => {
+export const GeneralProvider: FunctionComponent<IProps> = props => {
   const { children } = props;
   const [openConnectWallet, setOpenConnectWallet] = useState(false);
   const [status, setStatus] = useState('idle');
   const [passport, setPassport] = useState<Passport>();
+  const [walletInformation, setWalletInformation] = useState<
+    IWalletInformation | undefined
+  >();
 
   useEffect(() => {
     const isAuthenticated = async () => {
@@ -31,8 +40,9 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
       }
 
       const information = await getWalletInformation(currentType);
+      setWalletInformation(information);
 
-      const passport = new ReputationPassport.core.Passport({
+      const passport = new Krebit.core.Passport({
         network: 'mumbai',
         ethProvider: information.ethProvider,
         address: information.address,
@@ -64,7 +74,7 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
         method: 'eth_requestAccounts'
       });
       const address = addresses[0];
-      const provider = await ReputationPassport.lib.ethereum.getWeb3Provider();
+      const provider = await Krebit.lib.ethereum.getWeb3Provider();
       const wallet = provider.getSigner();
 
       return {
@@ -97,9 +107,10 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
 
     try {
       const information = await getWalletInformation(type);
+      setWalletInformation(information);
       localStorage.setItem('krebit.reputation-passport.type', type);
 
-      const passport = new ReputationPassport.core.Passport({
+      const passport = new Krebit.core.Passport({
         network: 'mumbai',
         ethProvider: information.ethProvider,
         address: information.address,
@@ -127,7 +138,8 @@ export const GeneralProvider: FunctionComponent<Props> = props => {
           connect,
           isAuthenticated: status === 'resolved'
         },
-        reputationPassport: {
+        walletInformation: {
+          ...walletInformation,
           passport
         }
       }}

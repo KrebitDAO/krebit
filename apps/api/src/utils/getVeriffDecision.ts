@@ -8,7 +8,7 @@ const {
   SERVER_VERIFF_PRIVATE_KEY
 } = process.env;
 
-function generateHmacSignature(payload: any) {
+const generateHmacSignature = (payload: any) => {
   if (payload.constructor === Object) {
     payload = JSON.stringify(payload);
   }
@@ -24,7 +24,7 @@ function generateHmacSignature(payload: any) {
     .toLowerCase();
 
   return signature.toLowerCase();
-}
+};
 
 export const getVeriffDecision = async (veriffId: string): Promise<any> => {
   try {
@@ -39,7 +39,9 @@ export const getVeriffDecision = async (veriffId: string): Promise<any> => {
         }
       }
     ).then(result => result.json());
+
     if (response.status == 'fail') throw new Error(response.message);
+
     return response.verification;
   } catch (error) {
     console.error(error);

@@ -3,6 +3,7 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import { DIDSession } from 'did-session';
+import { Biconomy } from '@biconomy/mexa';
 import {
   W3CCredential,
   EIP712VerifiableCredential,
@@ -16,14 +17,16 @@ import { issueCredential, ClaimProps } from '../utils';
 import { krbToken } from '../schemas';
 import { config, IConfigProps } from '../config';
 
-// For meta-transactions (gassless)
-import { Biconomy } from '@biconomy/mexa';
-import { resolve } from 'path';
-
 interface IProps extends IConfigProps {
   wallet: ethers.Signer;
   ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
   address: string;
+}
+
+interface IssuerProps {
+  first?: number;
+  type?: string;
+  maxPrice?: string;
 }
 
 const getEIP712credential = (stamp: any) =>
@@ -35,12 +38,6 @@ const getEIP712credential = (stamp: any) =>
       id: stamp.credentialSubjectDID
     }
   } as EIP712VerifiableCredential);
-
-interface IssuerProps {
-  first?: number;
-  type?: string;
-  maxPrice?: string;
-}
 
 export class Krebit {
   public ceramic: CeramicClient;
@@ -281,6 +278,7 @@ export class Krebit {
   // on-chain  (claim KRB reputation)
   stamp = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
+
     const eip712credential = getEIP712Credential(w3cCredential);
     const tx = await this.krbContract.registerVC(
       eip712credential,
