@@ -199,35 +199,40 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
   };
 
   const handleStampCredential = async () => {
-    const session = window.localStorage.getItem(
-      'krebit.reputation-passport.session'
-    );
-    const currentSession = JSON.parse(session);
+    try {
+      const session = window.localStorage.getItem(
+        'krebit.reputation-passport.session'
+      );
+      const currentSession = JSON.parse(session);
 
-    const passport = new Krebit.core.Passport({
-      ethProvider: ethProvider,
-      address
-    });
-    passport.read(address, `did:pkh:eip155:80001:${address}`);
+      const passport = new Krebit.core.Passport({
+        ethProvider: ethProvider,
+        address
+      });
+      passport.read(address, `did:pkh:eip155:80001:${address}`);
 
-    const credentials = await passport.getCredentials();
-    const getLatestDiscordCredential = credentials
-      .filter(credential => credential.type.includes('discord'))
-      .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-      .at(-1);
+      const credentials = await passport.getCredentials();
+      const getLatestDiscordCredential = credentials
+        .filter(credential => credential.type.includes('discord'))
+        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+        .at(-1);
 
-    const Issuer = new Krebit.core.Krebit({
-      wallet,
-      ethProvider,
-      address,
-      litSdk: LitJsSdk
-    });
-    await Issuer.connect(currentSession);
+      const Issuer = new Krebit.core.Krebit({
+        wallet,
+        ethProvider,
+        address,
+        litSdk: LitJsSdk
+      });
+      await Issuer.connect(currentSession);
 
-    const stampTx = await Issuer.stampCredential(getLatestDiscordCredential);
-    console.log('stampTx: ', stampTx);
+      const stampTx = await Issuer.stampCredential(getLatestDiscordCredential);
+      console.log('stampTx: ', stampTx);
 
-    setCurrentStepsCompleted(prevState => ({ ...prevState, step2: true }));
+      setStatus('resolved');
+      setCurrentStepsCompleted(prevState => ({ ...prevState, step2: true }));
+    } catch (error) {
+      setStatus('rejected');
+    }
   };
 
   return component({
