@@ -141,7 +141,7 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
         const session = window.localStorage.getItem(
           'krebit.reputation-passport.session'
         );
-        const currentSession = JSON.parse(session);
+        const currentSession = session ? JSON.parse(session) : null;
 
         // Step 1-A:  Get credential from Issuer based on claim:
 
