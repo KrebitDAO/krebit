@@ -179,12 +179,13 @@ export class Krebit {
     }
   };
 
+  /*
   // Check if the plain claimed value matches the encrypted/hashed credential value
   // to get access to private data
   verifyClaim = async (claim: any, w3cCredential: W3CCredential) => {
     //TODO if you have permission to decrypt the claim, you can compare it's hash to the verifiable credential
     return true;
-  };
+  };*/
 
   // get IssuerCredential from subgraph
   getIssuers = async (props: IssuerProps) => {
