@@ -10,7 +10,8 @@ const {
   SERVER_TRUST,
   SERVER_STAKE,
   SERVER_PRICE,
-  SERVER_CERAMIC_URL
+  SERVER_CERAMIC_URL,
+  SERVER_NETWORK
 } = process.env;
 
 const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
@@ -49,10 +50,7 @@ export const DiscordController = async (
     // TODO: check self-signature
     // TODO: Check if the claim already has verifications by me
     // TODO: Check if the proofValue of the sent VC is OK
-    console.log(
-      'checkCredential: ',
-      await Issuer.checkCredential(claimedCredential)
-    );
+    console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
     // If claim is digitalProperty "Discord"
     if (
@@ -77,7 +75,7 @@ export const DiscordController = async (
       const claim = {
         id: claimedCredential.id,
         ...claimedCredential.credentialSubject,
-        did: `did:pkh:eip155:1:${claimedCredential.credentialSubject.ethereumAddress}`,
+        did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK].domain.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
         tags: claimedCredential.type.slice(1),
         trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
         stake: parseInt(SERVER_STAKE, 10), // In KRB

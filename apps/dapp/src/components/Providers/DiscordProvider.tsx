@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactElement, useEffect } from 'react';
+import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { debounce } from 'ts-debounce';
 import { BroadcastChannel } from 'broadcast-channel';
 import Krebit from '@krebitdao/reputation-passport';
@@ -8,22 +8,39 @@ import {
   generateUID,
   getCredential,
   getDiscordUser,
-  openOAuthUrl
+  openOAuthUrl,
+  sortByDate
 } from 'utils';
 import { IWalletInformation } from 'context';
 
+interface IStepsCompleted {
+  step1: boolean;
+  step2: boolean;
+}
+
 interface IComponentProps {
   handleFetchOAuth: () => void;
+  handleStampCredential: () => void;
+  currentStepsCompleted: IStepsCompleted;
+  status?: string;
 }
 
 interface IProps extends IWalletInformation {
   component: (props: IComponentProps) => ReactElement;
+  stepsCompleted?: IStepsCompleted;
 }
 
 const DEFAULT_DISCORD_NODE = 'http://localhost:4000/discord';
 
 export const DiscordProvider: FunctionComponent<IProps> = props => {
-  const { ethProvider, address, wallet, component } = props;
+  const { ethProvider, address, wallet, component, stepsCompleted } = props;
+  const [status, setStatus] = useState('idle');
+  const [currentStepsCompleted, setCurrentStepsCompleted] = useState(
+    stepsCompleted || {
+      step1: false,
+      step2: false
+    }
+  );
 
   useEffect(() => {
     if (!window) return;
@@ -114,58 +131,109 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
     target: string;
     data: { accessToken: string; tokenType: string; state: string };
   }) => {
-    // when receiving discord oauth response from a spawned child run fetchVerifiableCredential
-    if (e.target === 'discord') {
-      console.log('Saving Stamp', { type: 'discord', proof: e.data });
+    setStatus('pending');
 
-      // Step 1-A:  Get credential from Issuer based on claim:
+    try {
+      // when receiving discord oauth response from a spawned child run fetchVerifiableCredential
+      if (e.target === 'discord') {
+        console.log('Saving Stamp', { type: 'discord', proof: e.data });
 
-      //Get discord user
-      const discordUser = await getDiscordUser(e.data);
-
-      //Issue self-signed credential claiming the discord
-      const claim = await getClaim(address, discordUser, e.data);
-      console.log('claim: ', claim);
-
-      const Issuer = new Krebit.core.Krebit({
-        wallet,
-        ethProvider,
-        address,
-        litSdk: LitJsSdk
-      });
-
-      const claimedCredential = await Issuer.issue(claim);
-      console.log('claimedCredential: ', claimedCredential);
-      // Optional: save claimedCredential (ask the user if they want to)
-      // await passport.addClaimed(claimedCredential)
-
-      // Step 1-B: Send self-signed credential to the Issuer for verification
-
-      const issuedCredential = await getCredential({
-        verifyUrl: DEFAULT_DISCORD_NODE,
-        claimedCredential
-      });
-
-      console.log('issuedCredential: ', issuedCredential);
-
-      // Step 1-C: Get the verifiable credential, and save it to the passport
-      if (issuedCredential) {
-        const passport = new Krebit.core.Passport({
-          ethProvider: ethProvider,
-          address
-        });
-        const addedCredentialId = await passport.addCredential(
-          issuedCredential
+        const session = window.localStorage.getItem(
+          'krebit.reputation-passport.session'
         );
-        console.log('addedCredentialId: ', addedCredentialId);
+        const currentSession = JSON.parse(session);
 
-        // Step 2: Register credential on chaim (stamp)
+        // Step 1-A:  Get credential from Issuer based on claim:
 
-        /* const stampTx = await Issuer.stampCredential(issuedCredential);
-        console.log('stampTx: ', stampTx); */
+        //Get discord user
+        const discordUser = await getDiscordUser(e.data);
+
+        //Issue self-signed credential claiming the discord
+        const claim = await getClaim(address, discordUser, e.data);
+        console.log('claim: ', claim);
+
+        const Issuer = new Krebit.core.Krebit({
+          wallet,
+          ethProvider,
+          address,
+          litSdk: LitJsSdk
+        });
+        await Issuer.connect(currentSession);
+
+        const claimedCredential = await Issuer.issue(claim);
+        console.log('claimedCredential: ', claimedCredential);
+        // Optional: save claimedCredential (ask the user if they want to)
+        // await passport.addClaimed(claimedCredential)
+
+        // Step 1-B: Send self-signed credential to the Issuer for verification
+
+        const issuedCredential = await getCredential({
+          verifyUrl: DEFAULT_DISCORD_NODE,
+          claimedCredential
+        });
+
+        console.log('issuedCredential: ', issuedCredential);
+
+        // Step 1-C: Get the verifiable credential, and save it to the passport
+        if (issuedCredential) {
+          const passport = new Krebit.core.Passport({
+            ethProvider: ethProvider,
+            address
+          });
+          await passport.connect(currentSession);
+          const addedCredentialId = await passport.addCredential(
+            issuedCredential
+          );
+          console.log('addedCredentialId: ', addedCredentialId);
+
+          setStatus('resolved');
+          setCurrentStepsCompleted(prevState => ({
+            ...prevState,
+            step1: true
+          }));
+        }
       }
+    } catch (error) {
+      setStatus('rejected');
     }
   };
 
-  return component({ handleFetchOAuth });
+  const handleStampCredential = async () => {
+    const session = window.localStorage.getItem(
+      'krebit.reputation-passport.session'
+    );
+    const currentSession = JSON.parse(session);
+
+    const passport = new Krebit.core.Passport({
+      ethProvider: ethProvider,
+      address
+    });
+    passport.read(address, `did:pkh:eip155:80001:${address}`);
+
+    const credentials = await passport.getCredentials();
+    const getLatestDiscordCredential = credentials
+      .filter(credential => credential.type.includes('discord'))
+      .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+      .at(-1);
+
+    const Issuer = new Krebit.core.Krebit({
+      wallet,
+      ethProvider,
+      address,
+      litSdk: LitJsSdk
+    });
+    await Issuer.connect(currentSession);
+
+    const stampTx = await Issuer.stampCredential(getLatestDiscordCredential);
+    console.log('stampTx: ', stampTx);
+
+    setCurrentStepsCompleted(prevState => ({ ...prevState, step2: true }));
+  };
+
+  return component({
+    handleFetchOAuth,
+    handleStampCredential,
+    currentStepsCompleted,
+    status
+  });
 };

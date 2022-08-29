@@ -36,10 +36,6 @@ export const VerifyCredential = (props: IProps) => {
     handleViewStatus('steps');
   };
 
-  const handleStepValidation = (id: string) => {
-    console.log(id);
-  };
-
   return (
     <Wrapper>
       <div className="verify-credential-box">
@@ -94,7 +90,13 @@ export const VerifyCredential = (props: IProps) => {
                 ethProvider={ethProvider}
                 wallet={wallet}
                 address={address}
-                component={({ handleFetchOAuth }) => (
+                stepsCompleted={{ step1: false, step2: false }}
+                component={({
+                  handleFetchOAuth,
+                  handleStampCredential,
+                  currentStepsCompleted,
+                  status
+                }) => (
                   <>
                     <BoxStep
                       title="Step 1"
@@ -102,53 +104,34 @@ export const VerifyCredential = (props: IProps) => {
                       form={{
                         button: {
                           text: 'Verify',
-                          onClick: handleFetchOAuth
+                          onClick:
+                            status === 'pending' || currentStepsCompleted.step1
+                              ? undefined
+                              : handleFetchOAuth,
+                          idDisabled:
+                            status === 'pending' || currentStepsCompleted.step1
                         }
                       }}
                     />
                     <BoxStep
                       title="Step 2"
                       description="Step 2 for Discord verification"
+                      form={{
+                        button: {
+                          text: 'Stamp',
+                          onClick:
+                            status === 'pending' || currentStepsCompleted.step2
+                              ? undefined
+                              : handleStampCredential,
+                          idDisabled:
+                            status === 'pending' || currentStepsCompleted.step2
+                        }
+                      }}
                     />
                   </>
                 )}
               />
             )}
-            {/* {constants.VERIFY_CREDENTIAL_STEPS[currentVerify.id].map(
-              (item, index) => (
-                <div className="verify-credential-box-step" key={index}>
-                  <div className="verify-credential-box-step-content">
-                    <p className="verify-credential-box-step-content-title">
-                      {item.title}
-                    </p>
-                    <p className="verify-credential-box-step-content-description">
-                      {item.description}
-                    </p>
-                  </div>
-                  {item.form?.buttonText && (
-                    <div className="verify-credential-box-step-button">
-                      <Button
-                        text={item.form.buttonText}
-                        onClick={() => handleStepValidation(item.id)}
-                        styleType="border"
-                        borderBackgroundColor="bunting"
-                      />
-                    </div>
-                  )}
-                  {item.form?.input && (
-                    <div className="verify-credential-box-step-input">
-                      <input
-                        name={item.form.input.name}
-                        placeholder={item.form.input.placeholder}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        spellCheck="false"
-                      />
-                    </div>
-                  )}
-                </div>
-              )
-            )} */}
           </div>
         )}
       </div>

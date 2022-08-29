@@ -199,12 +199,17 @@ export const Wrapper = styled.div`
               font-size: ${theme.fonts.base};
               padding: 0 20px;
 
-              @media (min-width: ${theme.screens.lg}) {
-                width: 250px;
-              }
-
               &:focus {
                 outline: none;
+              }
+
+              &:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+              }
+
+              @media (min-width: ${theme.screens.lg}) {
+                width: 250px;
               }
             }
           }
