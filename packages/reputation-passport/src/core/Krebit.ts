@@ -109,7 +109,7 @@ export class Krebit {
   };
 
   // add to my issuer ceramic
-  setTypeSchema = async (type: string, schema: string) => {
+  setTypeSchema = async (type: string, schema: any) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     console.log('Saving typeSchema on Ceramic...');
@@ -126,7 +126,8 @@ export class Krebit {
       content = content ? content : {};
       content[type] = schemaUrl;
 
-      return (await this.idx.set('claimTypes', content)).toUrl();
+      await this.idx.set('claimTypes', content);
+      return schemaUrl;
     } catch (err) {
       throw new Error(err);
     }

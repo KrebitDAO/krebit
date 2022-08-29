@@ -5,6 +5,7 @@ import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, generateUID } from '../../utils';
+import { passport } from '@krebitdao/reputation-passport/dist/schemas/claims';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -22,19 +23,12 @@ export const QuestappController = async (
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.address) {
-      throw new Error(`No address in body`);
+    if (!request?.body?.claimedCredential) {
+      throw new Error(`No claimedCredential in body`);
     }
 
-    if (!request?.body?.communityId) {
-      throw new Error(`No communityId in body`);
-    }
-
-    const { address, communityId } = request.body;
+    const delegateCredential = request.body.claimedCredential;
     const { wallet, ethProvider } = await connect();
-
-    console.log('Verifying questapp for address: ', address);
-    console.log('Valid quest found in community: ', communityId);
 
     // Log in with wallet to Ceramic DID
     console.log('Connecting to DID...');
@@ -48,27 +42,43 @@ export const QuestappController = async (
     const did = await Issuer.connect();
     console.log('DID:', did);
 
-    /*
-    const badgeSchema = krebit.schemas.claims.badge;
+    // TODO: check self-signature
+    // TODO: Check if the claim already has verifications by me
+    // TODO: Check if the proofValue of the sent VC is OK
     console.log(
-      'add type:',
-      await Issuer.setTypeSchema('questBadge', badgeSchema)
+      'checkCredential: ',
+      await Issuer.checkCredential(delegateCredential)
     );
 
-    console.log('typeSchemas:', await Issuer.getTypeSchema());
-    console.log('questBadgeSchema:', await Issuer.getTypeSchema('questBadge'));
+    console.log(
+      'Claiming badge credential on behalve of parent credential: ',
+      delegateCredential
+    );
+    //Save the delegation credential to our passport
+    const passport = new krebit.core.Passport({
+      ethProvider: ethProvider,
+      address: wallet.address
+    });
+    await passport.connect();
+    const delegateCredentialUrl = await passport.addCredential(
+      delegateCredential
+    );
+    console.log('delegateCredentialUrl: ', delegateCredentialUrl);
 
-    console.log('DID authenticated:', await Issuer.isConnected());
-
-*/
+    const delegateCredentialValue = JSON.parse(
+      delegateCredential.credentialSubject.value
+    );
+    console.log('delegateCredentialValue: ', delegateCredentialValue);
 
     const badgeValue = {
-      communityId,
-      name: 'Community Badge Name',
+      entity: 'Krebit DAO',
+      name: 'Community member of the month',
       imageIpfs: 'ipfs://asdf',
-      description: 'Badge for users that meet some criteria',
+      description: 'Badge for users that meet some awesome criteria',
       skills: [{ skillId: 'participation', score: 100 }],
-      xp: '1'
+      xp: '1',
+      onBehalveOfIssuer: delegateCredential.issuer.id,
+      parentCredential: delegateCredentialUrl
     };
 
     const expirationDate = new Date();
@@ -78,55 +88,21 @@ export const QuestappController = async (
 
     const claim = {
       id: `quest-${generateUID(10)}`,
-      ethereumAddress: wallet.address,
-      did: `did:pkh:eip155:1:${wallet.address}`,
-      type: 'questBadge',
+      ethereumAddress: '0xd6eeF6A4ceB9270776d6b388cFaBA62f5Bc3357f',
+      //did: `did:pkh:eip155:1:0xd6eeF6A4ceB9270776d6b388cFaBA62f5Bc3357f`,
+      type: delegateCredentialValue.credentialType,
       value: badgeValue,
-      tags: ['quest', 'badge', 'community'],
-      typeSchema: 'https://github.com/KrebitDAO/schemas/questBadge',
-      trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
-      stake: parseInt(SERVER_STAKE, 10), // In KRB
-      price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit'
+      tags: ['quest', 'krebit', 'community'],
+      typeSchema: delegateCredentialValue.credentialSchema,
+      expirationDate: new Date(expirationDate).toISOString()
     };
     console.log('claim: ', claim);
 
     // Issue Verifiable credential (needs signer)
     const issuedCredential = await Issuer.issue(claim);
 
-    console.log(
-      'Verifying signature:',
-      await Issuer.checkCredential(issuedCredential)
-    );
-
-    const decrypted = await Issuer.decryptClaim(issuedCredential);
-
-    console.log('Decrypted:', decrypted);
-
-    /*
-    //Optional: saveIssued
-    const passport = new core.Passport();
-    await passport.connect(ethProvider, wallet.address);
-    const addedCredentialId = await passport.addVerifiableCredential(
-      issuedCredential
-    );
-    
-    //const issuedCredentials = await passport.getIssued();
-    //console.log('issuedCredentials:', issuedCredentials);
-    /*const result = await passport.removeIssued(
-      'ceramic://kjzl6cwe1jw14af60zi1kmyyg5togxsggje7rvs2hdk9cckl49dzr76y36n3j9z'
-    );
-    console.log('Removed previous:', result);
-*/
-    if (true) {
-      return response.json({
-        //issuedCredential,
-        decrypted
-        //addedCredentialId
-        //issuedCredentialId
-        //result
-      });
+    if (issuedCredential) {
+      return response.json(issuedCredential);
     }
   } catch (err) {
     console.log('err:', err);

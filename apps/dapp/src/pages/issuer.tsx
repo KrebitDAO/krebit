@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
 
 import { connectWeb3, generateUID, getCredential } from '../utils';
 
@@ -25,6 +24,70 @@ const IndexPage = () => {
 
   async function handleDelegateIssuer() {
     console.log('Requesting Delegated Issuer stamp', { type: 'issuer' });
+
+    // Step 1-A: Self-sign delegation credential
+
+    //connect Ethereum wallet
+    const { address, wallet, ethProvider } = await connectWeb3();
+
+    const Issuer = new krebit.core.Krebit({
+      wallet,
+      ethProvider: ethProvider.provider,
+      address
+    });
+
+    const did = await Issuer.connect();
+    console.log(did);
+
+    const badgeSchema = krebit.schemas.claims.badge;
+    const badgeSchemaUrl = await Issuer.setTypeSchema(
+      'questBadge',
+      badgeSchema
+    );
+
+    const claimValue = {
+      did: 'did:pkh:eip155:80001:0x661f52d8d111eccf62872bddb2e70c12d8b4b860',
+      ethereumAddress: '0x661f52d8d111eccf62872bddb2e70c12d8b4b860',
+      entity: 'Krebit',
+      description: 'Delegating Quest node for badge Credentials',
+      verificationUrl: 'http://localhost:4000/quest',
+      credentialType: 'questBadge',
+      credentialSchema: badgeSchemaUrl
+    };
+
+    //Issue self-signed credential claiming the veriff
+    const claim = await getClaim(claimValue);
+    console.log('claim: ', claim);
+    const delegationCredential = await Issuer.issue(claim);
+    console.log('delegationCredential: ', delegationCredential);
+
+    //Optional: save claimedCredential (ask the user if they want to)
+    //await passport.addClaimed(claimedCredential)
+
+    // Step 1-B: Send self-signed credential to the Issuer for verification
+
+    const issuedCredential = await getCredential({
+      verifyUrl: 'http://localhost:4000/questapp',
+      claimedCredential: delegationCredential
+    });
+
+    console.log('issuedCredential: ', issuedCredential);
+
+    // Step 1-C: Get the verifiable credential, and save it to the passport
+    if (issuedCredential) {
+      const passport = new krebit.core.Passport({
+        ethProvider: ethProvider.provider,
+        address
+      });
+      await passport.connect();
+      const addedCredentialId = await passport.addCredential(issuedCredential);
+      console.log('addedCredentialId: ', addedCredentialId);
+
+      // Step 2: Register credential on chaim (stamp)
+
+      const stampTx = await Issuer.stampCredential(issuedCredential);
+      console.log('stampTx: ', stampTx);
+    }
   }
 
   async function handleBecomeIssuer() {
@@ -38,8 +101,7 @@ const IndexPage = () => {
     const Issuer = new krebit.core.Krebit({
       wallet,
       ethProvider: ethProvider.provider,
-      address,
-      litSdk: LitJsSdk
+      address
     });
 
     const did = await Issuer.connect();
