@@ -65,7 +65,7 @@ export const QuestappController = async (
     const badgeValue = {
       communityId,
       name: 'Community Badge Name',
-      imageIPFS: 'ipfs://asdf',
+      imageIpfs: 'ipfs://asdf',
       description: 'Badge for users that meet some criteria',
       skills: [{ skillId: 'participation', score: 100 }],
       xp: '1'

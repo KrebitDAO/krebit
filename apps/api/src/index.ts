@@ -6,7 +6,8 @@ import {
   DiscordController,
   QuestappController,
   TwitterController,
-  VeriffController
+  VeriffController,
+  IssuerController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -21,7 +22,8 @@ router
   .post('/discord', DiscordController)
   .post('/dework', DeworkController)
   .post('/twitter', TwitterController)
-  .post('/veriff', VeriffController);
+  .post('/veriff', VeriffController)
+  .post('/issuer', IssuerController);
 
 app.use('/', router);
 

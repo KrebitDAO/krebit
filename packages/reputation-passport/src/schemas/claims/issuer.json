@@ -2,18 +2,19 @@
   "title": "issuer",
   "type": "object",
   "properties": {
-    "id": { "type": "string" },
+    "did": { "type": "string" },
     "ethereumAddress": { "type": "string" },
     "entity": { "type": "string" },
     "description": { "type": "string" },
-    "imageIPFS": { "type": "string" },
+    "imageIpfs": { "type": "string" },
     "verificationUrl": { "type": "string" },
     "credentialType": { "type": "string" },
+    "credentialSchema": { "type": "string" },
     "credentialSubjectListUrl": { "type": "string" },
-    "price": { "type": "string" },
+    "price": { "type": "number" },
     "expirationPolicy": { "type": "string" },
     "proofs": { "type": "object" }
   },
-  "required": ["id", "entity", "credentialType"],
+  "required": ["did", "entity", "credentialType"],
   "additionalProperties": true
 }

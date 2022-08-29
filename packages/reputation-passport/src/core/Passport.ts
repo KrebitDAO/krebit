@@ -14,6 +14,12 @@ interface IProps extends IConfigProps {
   address?: string;
 }
 
+interface StampsProps {
+  first?: number;
+  type?: string;
+  claimId?: string;
+}
+
 export class Passport {
   public ceramic: CeramicClient;
   public idx: DIDDataStore;
@@ -155,6 +161,11 @@ export class Passport {
       }
     }
 
+    const now = new Date();
+    if (w3cCredential.expirationDate >= now.toISOString()) {
+      result = 'Expired';
+    }
+
     return result;
   };
 
@@ -179,6 +190,10 @@ export class Passport {
   // issuedCredentials in ceramic
   addIssued = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
+
+    if (w3cCredential.issuer.ethereumAddress != this.address)
+      throw new Error('Not by this address');
+    if (w3cCredential.issuer.id != this.did) throw new Error('Not by this did');
 
     // Upload attestation to Ceramic
     try {
@@ -311,6 +326,11 @@ export class Passport {
   addClaim = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
+    if (w3cCredential.credentialSubject.ethereumAddress != this.address)
+      throw new Error('Not for this address');
+    if (w3cCredential.credentialSubject.id != this.did)
+      throw new Error('Not for this did');
+
     // Upload attestation to Ceramic
     try {
       let result = null;
@@ -404,6 +424,11 @@ export class Passport {
   addCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
+    if (w3cCredential.credentialSubject.ethereumAddress != this.address)
+      throw new Error('Not for this address');
+    if (w3cCredential.credentialSubject.id != this.did)
+      throw new Error('Not for this did');
+
     // Upload attestation to Ceramic
     try {
       const vcId = await this.addVerifiableCredential(w3cCredential);
@@ -496,18 +521,19 @@ export class Passport {
   };
 
   // registeredCredentials from subgraph
-  getStamps = async (first: number = 100, type: string, claimId: string) => {
+  getStamps = async (props: StampsProps) => {
+    const { first, type, claimId } = props;
     const where = {
       credentialSubjectDID: this.did,
       credentialSubjectAddress: this.address
     };
 
-    if (type) where['_type'] = `["VerifiableCredential","${type}"]`;
+    if (type) where['_type_contains_nocase'] = type;
     if (claimId) where['claimId'] = claimId;
 
     //Get verifications from subgraph
     return await graph.verifiableCredentialsQuery({
-      first,
+      first: first ? first : 10,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',
       where

@@ -3,11 +3,13 @@ import { DiscordController } from './discord';
 import { DeworkController } from './dework';
 import { TwitterController } from './twitter';
 import { VeriffController } from './veriff';
+import { IssuerController } from './issuer';
 
 export {
   QuestappController,
   DiscordController,
   DeworkController,
   TwitterController,
-  VeriffController
+  VeriffController,
+  IssuerController
 };

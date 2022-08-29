@@ -26,7 +26,12 @@ interface IProps extends IConfigProps {
 interface IssuerProps {
   first?: number;
   type?: string;
-  maxPrice?: string;
+}
+
+interface StampsProps {
+  first?: number;
+  type?: string;
+  claimId?: string;
 }
 
 const getEIP712credential = (stamp: any) =>
@@ -133,14 +138,15 @@ export class Krebit {
     }
   };
 
-  checkCredential = async (w3cCredential: W3CCredential) => {
-    return (
-      !this.isCredentialExpired(w3cCredential) &&
-      this.validCredentialSignature(w3cCredential)
-    );
+  checkCredential = (w3cCredential: W3CCredential) => {
+    const expired = this.isCredentialExpired(w3cCredential);
+    console.debug('expired: ', expired);
+    const validSignature = this.validCredentialSignature(w3cCredential);
+    console.debug('validSignature: ', validSignature);
+    return !expired && validSignature;
   };
 
-  validCredentialSignature = async (w3cCredential: W3CCredential) => {
+  validCredentialSignature = (w3cCredential: W3CCredential) => {
     const eip712credential = getEIP712Credential(w3cCredential);
     const krebitTypes = getKrebitCredentialTypes();
     const signer = ethers.utils.verifyTypedData(
@@ -152,13 +158,9 @@ export class Krebit {
     return signer == w3cCredential.issuer.ethereumAddress;
   };
 
-  isCredentialExpired = async (w3cCredential: W3CCredential) => {
+  isCredentialExpired = (w3cCredential: W3CCredential) => {
     const now = new Date();
-    if (w3cCredential.expirationDate < now.toISOString()) {
-      return false;
-    } else {
-      return true;
-    }
+    return now.toISOString() >= w3cCredential.expirationDate;
   };
 
   // checks the signature
@@ -177,21 +179,22 @@ export class Krebit {
     }
   };
 
+  /*
   // Check if the plain claimed value matches the encrypted/hashed credential value
   // to get access to private data
   verifyClaim = async (claim: any, w3cCredential: W3CCredential) => {
     //TODO if you have permission to decrypt the claim, you can compare it's hash to the verifiable credential
     return true;
-  };
+  };*/
 
   // get IssuerCredential from subgraph
   getIssuers = async (props: IssuerProps) => {
-    const { first, type, maxPrice } = props;
+    const { first, type } = props;
     //Get verifications from subgraph
     let where = {};
     where['credentialStatus'] = 'Issued';
     //where['issuerDID'] = process.env.KREBIT_DID;
-    if (type) where['_type'] = `["VerifiableCredential","issuer", "${type}"]`;
+    if (type) where['_type'] = `["VerifiableCredential","issuer","${type}"]`;
 
     //Get verifications from subgraph
     return await graph.verifiableCredentialsQuery({
@@ -324,7 +327,8 @@ export class Krebit {
 
   // registered eip712credentials from subgraph
   // getVerifications = async (type, filter) => {
-  getStamps = async (first: number = 100, type: string, claimId: string) => {
+  getStamps = async (props: StampsProps) => {
+    const { first, type, claimId } = props;
     // Get verifications from subgraph
     let where = {};
 
@@ -333,7 +337,7 @@ export class Krebit {
 
     //Get verifications from subgraph
     return await graph.verifiableCredentialsQuery({
-      first,
+      first: first ? first : 100,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',
       where
