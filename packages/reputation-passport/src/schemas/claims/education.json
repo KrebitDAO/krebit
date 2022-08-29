@@ -5,7 +5,7 @@
     "name": { "type": "string" },
     "level": { "type": "string" },
     "description": { "type": "string" },
-    "imageIPFS": { "type": "string" },
+    "imageIpfs": { "type": "string" },
     "entity": { "type": "string" },
     "issuanceDate": { "type": "string" },
     "hours": { "type": "string" },

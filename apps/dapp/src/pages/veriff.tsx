@@ -181,7 +181,7 @@ const IndexPage = () => {
     const reputation = await passport.getReputation();
     console.log('reputation: ', reputation);
 
-    const stamps = await passport.getStamps(10, 'digitalProperty', null);
+    const stamps = await passport.getStamps({ first: 10, type: 'legalName' });
     console.log('stamps: ', stamps);
   }
 

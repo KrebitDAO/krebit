@@ -6,7 +6,7 @@
     "entity": { "type": "string" },
     "city": { "type": "string" },
     "employmentType": { "type": "string" },
-    "imageIPFS": { "type": "string" },
+    "imageIpfs": { "type": "string" },
     "description": { "type": "string" },
     "startDate": { "type": "string" },
     "endDate": { "type": "string" },

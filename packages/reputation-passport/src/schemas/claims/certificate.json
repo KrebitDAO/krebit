@@ -4,7 +4,7 @@
   "properties": {
     "name": { "type": "string" },
     "description": { "type": "string" },
-    "imageIPFS": { "type": "string" },
+    "imageIpfs": { "type": "string" },
     "entity": { "type": "string" },
     "issuanceDate": { "type": "string" },
     "expirationDate": { "type": "string" },

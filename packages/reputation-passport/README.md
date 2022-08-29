@@ -113,7 +113,7 @@ const getClaim = async (toAddress: string) => {
   const badgeValue = {
     communityId: 'My Community',
     name: 'Community Badge Name',
-    imageIPFS: 'ipfs://asdf',
+    imageIpfs: 'ipfs://asdf',
     description: 'Badge for users that meet some criteria',
     skills: [{ skillId: 'participation', score: 100 }],
     xp: '1'
