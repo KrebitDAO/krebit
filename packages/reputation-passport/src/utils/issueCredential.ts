@@ -115,7 +115,7 @@ export const issueCredential = async (props: IssueProps) => {
             claim.ethereumAddress
           }`,
       trust: claim.trust ? claim.trust : 1, // How much we trust the evidence to sign this?
-      stake: claim.stake ? claim.stake : 0, // In KRB
+      stake: claim.stake ? claim.stake : 1, // In KRB
       price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
       nbf: Math.floor(issuanceDate / 1000),
       exp: Math.floor(expirationDate.getTime() / 1000)

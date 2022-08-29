@@ -191,9 +191,13 @@ export class Passport {
   addIssued = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    if (w3cCredential.issuer.ethereumAddress != this.address)
+    if (
+      w3cCredential.issuer.ethereumAddress.toLowerCase() !=
+      this.address.toLowerCase()
+    )
       throw new Error('Not by this address');
-    if (w3cCredential.issuer.id != this.did) throw new Error('Not by this did');
+    if (w3cCredential.issuer.id.toLowerCase() != this.did.toLowerCase())
+      throw new Error('Not by this did');
 
     // Upload attestation to Ceramic
     try {
@@ -326,9 +330,14 @@ export class Passport {
   addClaim = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    if (w3cCredential.credentialSubject.ethereumAddress != this.address)
+    if (
+      w3cCredential.credentialSubject.ethereumAddress.toLowerCase() !=
+      this.address.toLowerCase()
+    )
       throw new Error('Not for this address');
-    if (w3cCredential.credentialSubject.id != this.did)
+    if (
+      w3cCredential.credentialSubject.id.toLowerCase() != this.did.toLowerCase()
+    )
       throw new Error('Not for this did');
 
     // Upload attestation to Ceramic
@@ -424,9 +433,14 @@ export class Passport {
   addCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    if (w3cCredential.credentialSubject.ethereumAddress != this.address)
+    if (
+      w3cCredential.credentialSubject.ethereumAddress.toLowerCase() !=
+      this.address.toLowerCase()
+    )
       throw new Error('Not for this address');
-    if (w3cCredential.credentialSubject.id != this.did)
+    if (
+      w3cCredential.credentialSubject.id.toLowerCase() != this.did.toLowerCase()
+    )
       throw new Error('Not for this did');
 
     // Upload attestation to Ceramic
