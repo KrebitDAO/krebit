@@ -4,7 +4,7 @@ import { Wrapper } from './styles';
 import { BoxStep } from './boxStep';
 import { ArrowForward, Close } from 'components/Icons';
 import { Button } from 'components/Button';
-import { DiscordProvider } from 'components/Providers';
+import { DiscordProvider, TwitterProvider } from 'components/Providers';
 import { constants } from 'utils';
 import { GeneralContext } from 'context';
 
@@ -116,6 +116,53 @@ export const VerifyCredential = (props: IProps) => {
                     <BoxStep
                       title="Step 2"
                       description="Step 2 for Discord verification"
+                      form={{
+                        button: {
+                          text: 'Stamp',
+                          onClick:
+                            status === 'pending' || currentStepsCompleted.step2
+                              ? undefined
+                              : handleStampCredential,
+                          idDisabled:
+                            status === 'pending' || currentStepsCompleted.step2
+                        }
+                      }}
+                    />
+                  </>
+                )}
+              />
+            )}
+            {currentVerify?.id === 'twitter' && (
+              <TwitterProvider
+                ethProvider={ethProvider}
+                wallet={wallet}
+                address={address}
+                stepsCompleted={{ step1: false, step2: false }}
+                component={({
+                  handleFetchOAuth,
+                  handleStampCredential,
+                  currentStepsCompleted,
+                  status
+                }) => (
+                  <>
+                    <BoxStep
+                      title="Step 1"
+                      description="Step 1 for Twitter verification"
+                      form={{
+                        button: {
+                          text: 'Verify',
+                          onClick:
+                            status === 'pending' || currentStepsCompleted.step1
+                              ? undefined
+                              : handleFetchOAuth,
+                          idDisabled:
+                            status === 'pending' || currentStepsCompleted.step1
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 2"
+                      description="Step 2 for Twitter verification"
                       form={{
                         button: {
                           text: 'Stamp',
