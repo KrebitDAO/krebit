@@ -6,6 +6,7 @@ import { getCredential } from './getCredential';
 import { getVeriffSession } from './getVeriffSession';
 import { generateUID } from './generateUID';
 import { openOAuthUrl } from './openOAuthUrl';
+import { sortByDate } from './sortByDate';
 
 export {
   constants,
@@ -16,5 +17,6 @@ export {
   getCredential,
   getVeriffSession,
   generateUID,
-  openOAuthUrl
+  openOAuthUrl,
+  sortByDate
 };

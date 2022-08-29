@@ -39,16 +39,26 @@ export class Passport {
     this.ethProvider = props?.ethProvider;
   }
 
-  async connect() {
-    this.idx = await ceramic.authDIDSession({
-      client: this.ceramic,
-      address: this.address,
-      ethProvider: this.ethProvider
-    });
+  connect = async (currentSession?: string) => {
+    if (currentSession) {
+      const session = await DIDSession.fromSession(currentSession);
+
+      this.idx = await ceramic.authDIDSession({
+        client: this.ceramic,
+        session
+      });
+    } else {
+      this.idx = await ceramic.authDIDSession({
+        client: this.ceramic,
+        address: this.address,
+        ethProvider: this.ethProvider
+      });
+    }
+
     this.did = this.idx.id;
 
     return this.did;
-  }
+  };
 
   isConnected = async () => {
     const currentSession = localStore.get('krebit.reputation-passport.session');

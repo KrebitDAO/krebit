@@ -8,10 +8,12 @@ interface IProps {
     button: {
       text: string;
       onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+      idDisabled?: boolean;
     };
     input?: {
       name: string;
       placeholder: string;
+      idDisabled?: boolean;
     };
   };
 }
@@ -34,6 +36,7 @@ export const BoxStep = (props: IProps) => {
             onClick={form.button.onClick}
             styleType="border"
             borderBackgroundColor="bunting"
+            isDisabled={form.button.idDisabled}
           />
         </div>
       )}
@@ -45,6 +48,7 @@ export const BoxStep = (props: IProps) => {
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
+            disabled={form.button.idDisabled}
           />
         </div>
       )}

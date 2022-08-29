@@ -9,6 +9,7 @@ interface Props {
   primaryColor?: string;
   secondaryColor?: string;
   borderBackgroundColor?: string;
+  isDisabled?: boolean;
 }
 
 export const Button: FunctionComponent<Props> = props => {
@@ -18,7 +19,8 @@ export const Button: FunctionComponent<Props> = props => {
     styleType = 'background',
     primaryColor = 'heliotrope',
     secondaryColor = 'cyan',
-    borderBackgroundColor = 'blueCharcoal'
+    borderBackgroundColor = 'blueCharcoal',
+    isDisabled = false
   } = props;
 
   return (
@@ -28,6 +30,7 @@ export const Button: FunctionComponent<Props> = props => {
       secondaryColor={secondaryColor}
       borderBackgroundColor={borderBackgroundColor}
       onClick={onClick}
+      disabled={isDisabled}
     >
       {text}
     </Wrapper>

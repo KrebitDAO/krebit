@@ -26,6 +26,11 @@ export const Wrapper = styled.button<Props>`
     font-size: ${theme.fonts.sm};
     cursor: pointer;
 
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     @media (min-width: ${theme.screens.lg}) {
       font-size: ${theme.fonts.base};
     }
