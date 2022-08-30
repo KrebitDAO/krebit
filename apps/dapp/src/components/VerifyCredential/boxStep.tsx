@@ -1,19 +1,21 @@
-import { MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
 import { Button } from 'components/Button';
 
 interface IProps {
   title: string;
   description: string;
   form?: {
-    button: {
+    button?: {
       text: string;
       onClick: (event: MouseEvent<HTMLButtonElement>) => void;
-      idDisabled?: boolean;
+      isDisabled?: boolean;
     };
     input?: {
       name: string;
       placeholder: string;
-      idDisabled?: boolean;
+      value: string | number;
+      onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+      isDisabled?: boolean;
     };
   };
 }
@@ -36,7 +38,7 @@ export const BoxStep = (props: IProps) => {
             onClick={form.button.onClick}
             styleType="border"
             borderBackgroundColor="bunting"
-            isDisabled={form.button.idDisabled}
+            isDisabled={form.button.isDisabled}
           />
         </div>
       )}
@@ -45,10 +47,12 @@ export const BoxStep = (props: IProps) => {
           <input
             name={form.input.name}
             placeholder={form.input.placeholder}
+            disabled={form.input.isDisabled}
+            value={form.input.value}
+            onChange={form.input.onChange}
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
-            disabled={form.button.idDisabled}
           />
         </div>
       )}

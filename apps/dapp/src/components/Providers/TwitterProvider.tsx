@@ -141,6 +141,8 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
         );
         const currentSession = JSON.parse(session);
 
+        if (!currentSession) return;
+
         // Step 1-A:  Get credential from Issuer based on claim:
 
         //Issue self-signed credential claiming the Twitter
