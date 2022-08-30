@@ -18,7 +18,7 @@
       }
     },
     "description": { "type": "string" },
-    "imageIpfs": { "type": "string" },
+    "imageUrl": { "type": "string" },
     "vendorUrl": { "type": "string" },
     "deliverableType": { "type": "string" },
     "deliverableDescription": { "type": "string" },

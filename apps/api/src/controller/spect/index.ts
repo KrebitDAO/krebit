@@ -2,7 +2,7 @@ import express from 'express';
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getDeworkUser } from '../../utils';
+import { connect, getSpectUser } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -12,7 +12,7 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
-export const DeworkController = async (
+export const SpectController = async (
   request: express.Request,
   response: express.Response
 ) => {
@@ -33,45 +33,50 @@ export const DeworkController = async (
     const Issuer = new krebit.core.Krebit({
       wallet,
       ethProvider,
-      address: wallet.address,
-      ceramicUrl: SERVER_CERAMIC_URL
+      address: wallet.address
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
 
-    // Connect to dework and get reputation from address
-    const dework = await getDeworkUser({ address });
-    console.log('Importing from Dework:', dework.address);
+    // Connect to spect and get reputation from address
+    const spect = await getSpectUser({ address });
+    console.log('Importing from Spect:', spect);
 
     const expirationDate = new Date();
     const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
     console.log('expirationDate: ', expirationDate);
 
-    if (!dework.tasks || dework.tasks.length === 0) {
-      throw new Error('Missing tasks');
+    if (!spect.assignedClosedCards || spect.assignedClosedCards.length === 0) {
+      throw new Error('Missing completed tasks');
     }
 
     const result = await Promise.all(
-      await dework.tasks.map(async task => {
-        if (task.rewards && task.rewards.length > 0) {
+      await spect.assignedClosedCards.map(async task => {
+        if (spect.cardDetails[task] && spect.cardDetails[task].status.paid) {
           let claim = {
-            id: task.permalink,
+            id: spect.cardDetails[task].id,
             ethereumAddress: address,
             type: 'workExperience',
-            typeSchema: 'https://github.com/KrebitDAO/schemas/workExperience',
-            tags: ['dework', 'task', 'community'],
+            typeSchema: 'ceramic://workExperience',
+            tags: ['spect', 'task', 'circle', 'community'],
             value: {
-              ...task,
-              issuingEntity: 'Dework',
-              startDate: 'null',
-              endDate: task.date,
-              evidence: 'https://api.deworkxyz.com/v1/reputation/' + address
+              title: spect.cardDetails[task].title,
+              entity: spect.cardDetails[task].circle.name,
+              imageUrl: spect.cardDetails[task].circle.avatar,
+              skills: [{ skillId: 'participation', score: 100 }],
+              startDate: '',
+              endDate: spect.cardDetails[task].circle.deadline
+                ? spect.cardDetails[task].circle.deadline
+                : '',
+              proofs: {
+                url: `https://circles.spect.network/${spect.cardDetails[task].circle.slug}/${spect.cardDetails[task].project.slug}/${spect.cardDetails[task].slug}`,
+                apiUrl: 'https://api.spect.network/user/' + address
+              }
             },
             trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
             stake: parseInt(SERVER_STAKE, 10), // In KRB
             price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-
             expirationDate: new Date(expirationDate).toISOString()
           };
 

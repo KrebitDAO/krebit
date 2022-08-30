@@ -4,6 +4,7 @@ import { getDiscordUser } from './getDiscordUser';
 import { getTwitterUser } from './getTwitterUser';
 import { getVeriffDecision } from './getVeriffDecision';
 import { generateUID } from './generateUID';
+import { getSpectUser } from './getSpectUser';
 
 export {
   connect,
@@ -11,5 +12,6 @@ export {
   getDiscordUser,
   getTwitterUser,
   getVeriffDecision,
-  generateUID
+  generateUID,
+  getSpectUser
 };

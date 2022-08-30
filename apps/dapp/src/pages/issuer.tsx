@@ -26,7 +26,6 @@ const IndexPage = () => {
     console.log('Requesting Delegated Issuer stamp', { type: 'issuer' });
 
     // Step 1-A: Self-sign delegation credential
-
     //connect Ethereum wallet
     const { address, wallet, ethProvider } = await connectWeb3();
 
@@ -112,7 +111,7 @@ const IndexPage = () => {
       ethereumAddress: address,
       entity: 'Krebit',
       description: 'Krebit verification node for Twitter Credentials',
-      imageIpfs: 'ipfs://twitter-logo.png',
+      imageUrl: 'ipfs://twitter-logo.png',
       verificationUrl: 'http://127.0.0.1:3000/twitter',
       credentialType: 'twitter',
       credentialSchema: 'ceramic://twitter',
@@ -162,8 +161,8 @@ const IndexPage = () => {
     passport.read(address, `did:pkh:eip155:80001:${address}`);
     const profile = await passport.getProfile();
     console.log('profile: ', profile);
-    const credentials = await passport.getCredentials();
-    console.log('credentials: ', credentials);
+    const credentials = await passport.getCredentials('questBadge');
+    console.log('badge credentials: ', credentials);
     const reputation = await passport.getReputation();
     console.log('reputation: ', reputation);
 

@@ -4,6 +4,7 @@ import { DeworkController } from './dework';
 import { TwitterController } from './twitter';
 import { VeriffController } from './veriff';
 import { IssuerController } from './issuer';
+import { SpectController } from './spect';
 
 export {
   QuestappController,
@@ -11,5 +12,6 @@ export {
   DeworkController,
   TwitterController,
   VeriffController,
-  IssuerController
+  IssuerController,
+  SpectController
 };

@@ -51,7 +51,7 @@ export const QuestappController = async (
     );
 
     console.log(
-      'Claiming badge credential on behalve of parent credential: ',
+      'Issuing badge credential on behalf of parent credential: ',
       delegateCredential
     );
     //Save the delegation credential to our passport
@@ -73,7 +73,7 @@ export const QuestappController = async (
     const badgeValue = {
       entity: 'Krebit DAO',
       name: 'Community member of the month',
-      imageIpfs: 'ipfs://asdf',
+      imageUrl: 'ipfs://asdf',
       description: 'Badge for users that meet some awesome criteria',
       skills: [{ skillId: 'participation', score: 100 }],
       xp: '1',

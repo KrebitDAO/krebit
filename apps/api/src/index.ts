@@ -7,7 +7,8 @@ import {
   QuestappController,
   TwitterController,
   VeriffController,
-  IssuerController
+  IssuerController,
+  SpectController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -23,7 +24,8 @@ router
   .post('/dework', DeworkController)
   .post('/twitter', TwitterController)
   .post('/veriff', VeriffController)
-  .post('/issuer', IssuerController);
+  .post('/issuer', IssuerController)
+  .post('/spect', SpectController);
 
 app.use('/', router);
 

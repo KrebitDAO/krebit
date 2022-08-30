@@ -114,7 +114,7 @@ export const issueCredential = async (props: IssueProps) => {
         : `did:pkh:eip155:${krbToken[currentConfig.network].domain.chainId}:${
             claim.ethereumAddress
           }`,
-      trust: claim.trust ? claim.trust : 1, // How much we trust the evidence to sign this?
+      trust: claim.trust ? claim.trust : 100, // How much we trust the evidence to sign this?
       stake: claim.stake ? claim.stake : 1, // In KRB
       price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
       nbf: Math.floor(issuanceDate / 1000),
