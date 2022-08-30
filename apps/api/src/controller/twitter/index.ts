@@ -20,7 +20,8 @@ const {
   SERVER_TRUST,
   SERVER_STAKE,
   SERVER_PRICE,
-  SERVER_CERAMIC_URL
+  SERVER_CERAMIC_URL,
+  SERVER_NETWORK
 } = process.env;
 
 const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
@@ -96,7 +97,7 @@ export const TwitterController = async (
         const claim = {
           id: claimedCredential.id,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:1:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK].domain.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(1),
