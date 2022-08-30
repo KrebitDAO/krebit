@@ -12,8 +12,8 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Twitter />
   },
   {
-    id: 'linkedin',
-    text: 'LinkedIn',
+    id: 'veriff',
+    text: 'Veriff',
     icon: <Linkedin />
   },
   {

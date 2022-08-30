@@ -4,7 +4,11 @@ import { Wrapper } from './styles';
 import { BoxStep } from './boxStep';
 import { ArrowForward, Close } from 'components/Icons';
 import { Button } from 'components/Button';
-import { DiscordProvider, TwitterProvider } from 'components/Providers';
+import {
+  DiscordProvider,
+  TwitterProvider,
+  VeriffProvider
+} from 'components/Providers';
 import { constants } from 'utils';
 import { GeneralContext } from 'context';
 
@@ -108,7 +112,7 @@ export const VerifyCredential = (props: IProps) => {
                             status === 'pending' || currentStepsCompleted.step1
                               ? undefined
                               : handleFetchOAuth,
-                          idDisabled:
+                          isDisabled:
                             status === 'pending' || currentStepsCompleted.step1
                         }
                       }}
@@ -123,7 +127,7 @@ export const VerifyCredential = (props: IProps) => {
                             status === 'pending' || currentStepsCompleted.step2
                               ? undefined
                               : handleStampCredential,
-                          idDisabled:
+                          isDisabled:
                             status === 'pending' || currentStepsCompleted.step2
                         }
                       }}
@@ -155,7 +159,7 @@ export const VerifyCredential = (props: IProps) => {
                             status === 'pending' || currentStepsCompleted.step1
                               ? undefined
                               : handleFetchOAuth,
-                          idDisabled:
+                          isDisabled:
                             status === 'pending' || currentStepsCompleted.step1
                         }
                       }}
@@ -170,8 +174,91 @@ export const VerifyCredential = (props: IProps) => {
                             status === 'pending' || currentStepsCompleted.step2
                               ? undefined
                               : handleStampCredential,
-                          idDisabled:
+                          isDisabled:
                             status === 'pending' || currentStepsCompleted.step2
+                        }
+                      }}
+                    />
+                  </>
+                )}
+              />
+            )}
+            {currentVerify?.id === 'veriff' && (
+              <VeriffProvider
+                ethProvider={ethProvider}
+                wallet={wallet}
+                address={address}
+                stepsCompleted={{ step3: false, step4: false }}
+                component={({
+                  handleFetchOAuth,
+                  handleStampCredential,
+                  handleClaimValues,
+                  claimValues,
+                  currentStepsCompleted,
+                  status
+                }) => (
+                  <>
+                    <BoxStep
+                      title="Step 1"
+                      description="Enter you first name"
+                      form={{
+                        input: {
+                          name: 'firstName',
+                          placeholder: 'Enter you first name',
+                          value: claimValues.firstName,
+                          onChange: handleClaimValues
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 2"
+                      description="Enter you last name"
+                      form={{
+                        input: {
+                          name: 'lastName',
+                          placeholder: 'Enter you last name',
+                          value: claimValues.lastName,
+                          onChange: handleClaimValues
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 3"
+                      description="Step 3 for Veriff verification"
+                      form={{
+                        button: {
+                          text: 'Verify',
+                          onClick:
+                            status === 'pending' ||
+                            currentStepsCompleted.step3 ||
+                            !claimValues.firstName ||
+                            !claimValues.lastName
+                              ? undefined
+                              : handleFetchOAuth,
+                          isDisabled:
+                            status === 'pending' ||
+                            currentStepsCompleted.step3 ||
+                            !claimValues.firstName ||
+                            !claimValues.lastName
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 4"
+                      description="Step 4 for Veriff verification"
+                      form={{
+                        button: {
+                          text: 'Stamp',
+                          onClick:
+                            status === 'pending' ||
+                            currentStepsCompleted.step4 ||
+                            !claimValues.firstName || !claimValues.lastName
+                              ? undefined
+                              : handleStampCredential,
+                          isDisabled:
+                            status === 'pending' ||
+                            currentStepsCompleted.step4 ||
+                            !claimValues.firstName || !claimValues.lastName
                         }
                       }}
                     />

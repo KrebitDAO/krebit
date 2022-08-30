@@ -1,4 +1,5 @@
 import { DiscordProvider } from './DiscordProvider';
 import { TwitterProvider } from './TwitterProvider';
+import { VeriffProvider } from './VeriffProvider';
 
-export { DiscordProvider, TwitterProvider };
+export { DiscordProvider, TwitterProvider, VeriffProvider };
