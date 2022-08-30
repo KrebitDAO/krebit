@@ -6,7 +6,6 @@ import LitJsSdk from 'lit-js-sdk';
 import { auth } from 'twitter-api-sdk';
 
 import { generateUID, getCredential, openOAuthUrl, sortByDate } from 'utils';
-
 import { IWalletInformation } from 'context';
 
 interface IStepsCompleted {
