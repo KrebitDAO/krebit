@@ -1,6 +1,10 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+interface IBoxStepWrapperProps {
+  hasInputs: boolean;
+}
+
 export const Wrapper = styled.div`
   ${({ theme }) => css`
     position: fixed;
@@ -136,84 +140,94 @@ export const Wrapper = styled.div`
       .verify-credential-box-steps {
         display: grid;
         grid-gap: 20px;
+      }
+    }
+  `}
+`;
 
-        .verify-credential-box-step {
-          width: 100%;
-          padding: 20px;
-          border-radius: 15px;
-          border: 1px solid ${theme.colors.white}4D;
+export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
+  ${({ theme, hasInputs }) => css`
+    width: 100%;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid ${theme.colors.white}4D;
 
-          @media (min-width: ${theme.screens.lg}) {
-            padding: 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
+    @media (min-width: ${theme.screens.lg}) {
+      padding: 22px;
 
-          .verify-credential-box-step-content {
-            .verify-credential-box-step-content-title {
-              margin: 0;
-              font-size: ${theme.fonts.base};
-              color: ${theme.colors.white}B3;
+      ${!hasInputs &&
+        css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        `}
+    }
 
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.xl};
-              }
-            }
+    .verify-credential-box-step-content {
+      .verify-credential-box-step-content-title {
+        margin: 0;
+        font-size: ${theme.fonts.base};
+        color: ${theme.colors.white}B3;
 
-            .verify-credential-box-step-content-description {
-              margin: 0;
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.white}B3;
-
-              @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts.base};
-              }
-            }
-          }
-
-          .verify-credential-box-step-button {
-            width: 85px;
-            height: 38px;
-            margin-top: 24px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              margin: 0;
-            }
-          }
-
-          .verify-credential-box-step-input {
-            margin-top: 24px;
-
-            @media (min-width: ${theme.screens.lg}) {
-              margin: 0;
-            }
-
-            & > input {
-              width: 100%;
-              height: 38px;
-              border: 1px solid ${theme.colors.white}B3;
-              border-radius: 4px;
-              background-color: ${theme.colors.transparent};
-              color: ${theme.colors.white}B3;
-              font-size: ${theme.fonts.base};
-              padding: 0 20px;
-
-              &:focus {
-                outline: none;
-              }
-
-              &:disabled {
-                opacity: 0.7;
-                cursor: not-allowed;
-              }
-
-              @media (min-width: ${theme.screens.lg}) {
-                width: 250px;
-              }
-            }
-          }
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.xl};
         }
+      }
+
+      .verify-credential-box-step-content-description {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white}B3;
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.base};
+        }
+      }
+    }
+
+    .verify-credential-box-step-inputs {
+      display: grid;
+      grid-gap: 24px;
+      margin-top: 24px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        margin: 24px 0;
+        grid-template-columns: repeat(2, auto);
+      }
+
+      .verify-credential-box-step-input {
+        width: 100%;
+        height: 38px;
+        border: 1px solid ${theme.colors.white}B3;
+        border-radius: 4px;
+        background-color: ${theme.colors.transparent};
+        color: ${theme.colors.white}B3;
+        font-size: ${theme.fonts.base};
+        padding: 0 20px;
+
+        &:focus {
+          outline: none;
+        }
+
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .verify-credential-box-step-button {
+      width: 85px;
+      height: 38px;
+      margin-top: 24px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        margin: 0;
+
+        ${hasInputs &&
+          css`
+            float: right;
+          `}
       }
     }
   `}

@@ -24,8 +24,8 @@ interface IClaimValues {
 }
 
 interface IStepsCompleted {
-  step3: boolean;
-  step4: boolean;
+  step1: boolean;
+  step2: boolean;
 }
 
 interface IComponentProps {
@@ -54,8 +54,8 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
   const [status, setStatus] = useState('idle');
   const [currentStepsCompleted, setCurrentStepsCompleted] = useState(
     stepsCompleted || {
-      step3: false,
-      step4: false
+      step1: false,
+      step2: false
     }
   );
 

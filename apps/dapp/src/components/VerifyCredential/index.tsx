@@ -124,11 +124,15 @@ export const VerifyCredential = (props: IProps) => {
                         button: {
                           text: 'Stamp',
                           onClick:
-                            status === 'pending' || currentStepsCompleted.step2
+                            status === 'pending' ||
+                            !currentStepsCompleted.step1 ||
+                            currentStepsCompleted.step2
                               ? undefined
                               : handleStampCredential,
                           isDisabled:
-                            status === 'pending' || currentStepsCompleted.step2
+                            status === 'pending' ||
+                            !currentStepsCompleted.step1 ||
+                            currentStepsCompleted.step2
                         }
                       }}
                     />
@@ -171,11 +175,15 @@ export const VerifyCredential = (props: IProps) => {
                         button: {
                           text: 'Stamp',
                           onClick:
-                            status === 'pending' || currentStepsCompleted.step2
+                            status === 'pending' ||
+                            !currentStepsCompleted.step1 ||
+                            currentStepsCompleted.step2
                               ? undefined
                               : handleStampCredential,
                           isDisabled:
-                            status === 'pending' || currentStepsCompleted.step2
+                            status === 'pending' ||
+                            !currentStepsCompleted.step1 ||
+                            currentStepsCompleted.step2
                         }
                       }}
                     />
@@ -188,7 +196,7 @@ export const VerifyCredential = (props: IProps) => {
                 ethProvider={ethProvider}
                 wallet={wallet}
                 address={address}
-                stepsCompleted={{ step3: false, step4: false }}
+                stepsCompleted={{ step1: false, step2: false }}
                 component={({
                   handleFetchOAuth,
                   handleStampCredential,
@@ -200,65 +208,55 @@ export const VerifyCredential = (props: IProps) => {
                   <>
                     <BoxStep
                       title="Step 1"
-                      description="Enter you first name"
+                      description="Enter your information"
                       form={{
-                        input: {
-                          name: 'firstName',
-                          placeholder: 'Enter you first name',
-                          value: claimValues.firstName,
-                          onChange: handleClaimValues
-                        }
-                      }}
-                    />
-                    <BoxStep
-                      title="Step 2"
-                      description="Enter you last name"
-                      form={{
-                        input: {
-                          name: 'lastName',
-                          placeholder: 'Enter you last name',
-                          value: claimValues.lastName,
-                          onChange: handleClaimValues
-                        }
-                      }}
-                    />
-                    <BoxStep
-                      title="Step 3"
-                      description="Step 3 for Veriff verification"
-                      form={{
+                        inputs: [
+                          {
+                            name: 'firstName',
+                            placeholder: 'Enter you first name',
+                            value: claimValues.firstName,
+                            onChange: handleClaimValues
+                          },
+                          {
+                            name: 'lastName',
+                            placeholder: 'Enter you last name',
+                            value: claimValues.lastName,
+                            onChange: handleClaimValues
+                          }
+                        ],
                         button: {
                           text: 'Verify',
                           onClick:
                             status === 'pending' ||
-                            currentStepsCompleted.step3 ||
+                            currentStepsCompleted.step1 ||
                             !claimValues.firstName ||
                             !claimValues.lastName
                               ? undefined
                               : handleFetchOAuth,
                           isDisabled:
                             status === 'pending' ||
-                            currentStepsCompleted.step3 ||
+                            currentStepsCompleted.step1 ||
                             !claimValues.firstName ||
                             !claimValues.lastName
                         }
                       }}
                     />
                     <BoxStep
-                      title="Step 4"
-                      description="Step 4 for Veriff verification"
+                      title="Step 2"
+                      description="Step 2 to stamp verification"
                       form={{
                         button: {
                           text: 'Stamp',
                           onClick:
                             status === 'pending' ||
-                            currentStepsCompleted.step4 ||
-                            !claimValues.firstName || !claimValues.lastName
+                            !currentStepsCompleted.step1 ||
+                            currentStepsCompleted.step2
                               ? undefined
                               : handleStampCredential,
                           isDisabled:
                             status === 'pending' ||
-                            currentStepsCompleted.step4 ||
-                            !claimValues.firstName || !claimValues.lastName
+                            !currentStepsCompleted.step1 ||
+                            currentStepsCompleted.step2
                         }
                       }}
                     />
