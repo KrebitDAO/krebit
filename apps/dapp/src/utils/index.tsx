@@ -1,5 +1,4 @@
 import { constants } from './constants';
-import { connect, connectWeb3 } from './connect';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getCredential } from './getCredential';
@@ -7,16 +6,18 @@ import { getVeriffSession } from './getVeriffSession';
 import { generateUID } from './generateUID';
 import { openOAuthUrl } from './openOAuthUrl';
 import { sortByDate } from './sortByDate';
+import { getWalletInformation } from './getWalletInformation';
+import { isValid } from './isValid';
 
 export {
   constants,
-  connect,
-  connectWeb3,
   getDeworkUser,
   getDiscordUser,
   getCredential,
   getVeriffSession,
   generateUID,
   openOAuthUrl,
-  sortByDate
+  sortByDate,
+  getWalletInformation,
+  isValid
 };

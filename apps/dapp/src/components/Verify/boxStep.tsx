@@ -12,6 +12,7 @@ interface IProps {
       placeholder: string;
       value: string | number;
       onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+      type?: string;
       isDisabled?: boolean;
     }[];
     button?: {
@@ -27,18 +28,17 @@ export const BoxStep = (props: IProps) => {
 
   return (
     <BoxStepWrapper hasInputs={!!form?.inputs}>
-      <div className="verify-credential-box-step-content">
-        <p className="verify-credential-box-step-content-title">{title}</p>
-        <p className="verify-credential-box-step-content-description">
-          {description}
-        </p>
+      <div className="verify-box-step-content">
+        <p className="verify-box-step-content-title">{title}</p>
+        <p className="verify-box-step-content-description">{description}</p>
       </div>
       {form?.inputs && (
-        <div className="verify-credential-box-step-inputs">
+        <div className="verify-box-step-inputs">
           {form.inputs.map((input, index) => (
             <input
               key={index}
-              className="verify-credential-box-step-input"
+              className="verify-box-step-input"
+              type={input.type || 'text'}
               name={input.name}
               placeholder={input.placeholder}
               disabled={input.isDisabled}
@@ -52,7 +52,7 @@ export const BoxStep = (props: IProps) => {
         </div>
       )}
       {form?.button && (
-        <div className="verify-credential-box-step-button">
+        <div className="verify-box-step-button">
           <Button
             text={form.button.text}
             onClick={form.button.onClick}

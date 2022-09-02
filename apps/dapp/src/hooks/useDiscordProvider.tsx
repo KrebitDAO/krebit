@@ -1,91 +1,39 @@
-import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { debounce } from 'ts-debounce';
-import { BroadcastChannel } from 'broadcast-channel';
+import { useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
+import { debounce } from 'ts-debounce';
 
 import {
   generateUID,
   getCredential,
   getDiscordUser,
   openOAuthUrl,
-  sortByDate
+  sortByDate,
+  getWalletInformation
 } from 'utils';
-import { IWalletInformation } from 'context';
-
-interface IStepsCompleted {
-  step1: boolean;
-  step2: boolean;
-}
-
-interface IComponentProps {
-  handleFetchOAuth: () => void;
-  handleStampCredential: () => void;
-  currentStepsCompleted: IStepsCompleted;
-  status?: string;
-}
-
-interface IProps extends IWalletInformation {
-  component: (props: IComponentProps) => ReactElement;
-  stepsCompleted?: IStepsCompleted;
-}
 
 const DEFAULT_DISCORD_NODE = 'http://localhost:4000/discord';
 
-export const DiscordProvider: FunctionComponent<IProps> = props => {
-  const { ethProvider, address, wallet, component, stepsCompleted } = props;
+export const useDiscordProvider = () => {
   const [status, setStatus] = useState('idle');
-  const [currentStepsCompleted, setCurrentStepsCompleted] = useState(
-    stepsCompleted || {
-      step1: false,
-      step2: false
-    }
-  );
 
   useEffect(() => {
     if (!window) return;
 
-    const queryString = new URLSearchParams(window?.location?.hash);
-
-    const [queryError, queryState, accessToken, tokenType] = [
-      queryString.get('error'),
-      queryString.get('state'),
-      queryString.get('access_token'),
-      queryString.get('#token_type')
-    ];
-
-    // if Discord oauth then submit message to other windows and close self
-    if (
-      (queryError || accessToken) &&
-      queryState &&
-      /^discord-.*/.test(queryState)
-    ) {
-      // shared message channel between windows (on the same domain)
-      const channel = new BroadcastChannel('discord_oauth_channel');
-
-      // only continue with the process if a code is returned
-      if (accessToken) {
-        channel.postMessage({
-          target: 'discord',
-          data: { accessToken, tokenType, state: queryState }
-        });
-      }
-
-      // always close the redirected window
-      window.close();
-    }
-  }, []);
-
-  // attach and destroy a BroadcastChannel to handle the message
-  useEffect(() => {
-    if (!window) return;
-
-    // open the channel
     const channel = new BroadcastChannel('discord_oauth_channel');
-    // event handler will listen for messages from the child (debounced to avoid multiple submissions)
-    channel.onmessage = debounce(listenForRedirect, 300);
+
+    const handler = async (msg: MessageEvent) => {
+      const asyncFunction = async () =>
+        await listenForRedirect(msg?.data?.data);
+      const process = debounce(asyncFunction, 300);
+
+      return await process();
+    };
+
+    channel.addEventListener('message', handler);
 
     return () => {
+      channel.removeEventListener('message', handler);
       channel.close();
     };
   }, []);
@@ -138,12 +86,13 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
       if (e.target === 'discord') {
         console.log('Saving Stamp', { type: 'discord', proof: e.data });
 
-        const session = window.localStorage.getItem(
-          'krebit.reputation-passport.session'
-        );
+        const session = window.localStorage.getItem('ceramic-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
+
+        const currentType = localStorage.getItem('auth-type');
+        const walletInformation = await getWalletInformation(currentType);
 
         // Step 1-A:  Get credential from Issuer based on claim:
 
@@ -151,13 +100,15 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
         const discordUser = await getDiscordUser(e.data);
 
         //Issue self-signed credential claiming the discord
-        const claim = await getClaim(address, discordUser, e.data);
+        const claim = await getClaim(
+          walletInformation.address,
+          discordUser,
+          e.data
+        );
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
-          wallet,
-          ethProvider,
-          address,
+          ...walletInformation,
           litSdk: LitJsSdk
         });
         await Issuer.connect(currentSession);
@@ -179,8 +130,7 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
         // Step 1-C: Get the verifiable credential, and save it to the passport
         if (issuedCredential) {
           const passport = new Krebit.core.Passport({
-            ethProvider,
-            address
+            ...walletInformation
           });
           await passport.connect(currentSession);
           const addedCredentialId = await passport.addCredential(
@@ -189,10 +139,6 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
           console.log('addedCredentialId: ', addedCredentialId);
 
           setStatus('resolved');
-          setCurrentStepsCompleted(prevState => ({
-            ...prevState,
-            step1: true
-          }));
         }
       }
     } catch (error) {
@@ -204,16 +150,23 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
     try {
       setStatus('pending');
 
-      const session = window.localStorage.getItem(
-        'krebit.reputation-passport.session'
-      );
+      const session = window.localStorage.getItem('ceramic-session');
       const currentSession = JSON.parse(session);
 
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
       const passport = new Krebit.core.Passport({
-        ethProvider: ethProvider,
-        address
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address
       });
-      passport.read(address, `did:pkh:eip155:80001:${address}`);
+      passport.read(
+        walletInformation.address,
+        `did:pkh:eip155:${
+          Krebit.schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK].domain
+            .chainId
+        }:${walletInformation.address}`
+      );
 
       const credentials = await passport.getCredentials();
       const getLatestDiscordCredential = credentials
@@ -222,9 +175,7 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
         .at(-1);
 
       const Issuer = new Krebit.core.Krebit({
-        wallet,
-        ethProvider,
-        address,
+        ...walletInformation,
         litSdk: LitJsSdk
       });
       await Issuer.connect(currentSession);
@@ -233,16 +184,10 @@ export const DiscordProvider: FunctionComponent<IProps> = props => {
       console.log('stampTx: ', stampTx);
 
       setStatus('resolved');
-      setCurrentStepsCompleted(prevState => ({ ...prevState, step2: true }));
     } catch (error) {
       setStatus('rejected');
     }
   };
 
-  return component({
-    handleFetchOAuth,
-    handleStampCredential,
-    currentStepsCompleted,
-    status
-  });
+  return { listenForRedirect, handleFetchOAuth, handleStampCredential, status };
 };

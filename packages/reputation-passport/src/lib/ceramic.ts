@@ -44,10 +44,7 @@ const authDIDSession = async (props: AuthProviderProps) => {
       domain: DOMAIN
     });
 
-    localStore.set(
-      'krebit.reputation-passport.session',
-      newSession.serialize()
-    );
+    localStore.set('ceramic-session', newSession.serialize());
 
     currentSession = newSession;
   }

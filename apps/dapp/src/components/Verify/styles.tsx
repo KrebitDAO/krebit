@@ -20,7 +20,7 @@ export const Wrapper = styled.div`
     align-items: center;
     justify-content: center;
 
-    .verify-credential-box {
+    .verify-box {
       background-color: ${theme.colors.bunting};
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
@@ -33,16 +33,16 @@ export const Wrapper = styled.div`
         padding: 36px 30px;
       }
 
-      .verify-credential-box-header {
+      .verify-box-header {
         display: flex;
         justify-content: space-between;
         margin-bottom: 37px;
 
-        .verify-credential-box-header-content {
+        .verify-box-header-content {
           display: flex;
           align-items: center;
 
-          .verify-credential-box-header-content-icon {
+          .verify-box-header-content-icon {
             width: 24px;
             height: 24px;
             margin-right: 8px;
@@ -56,7 +56,7 @@ export const Wrapper = styled.div`
             }
           }
 
-          .verify-credential-box-header-content-title {
+          .verify-box-header-content-title {
             margin: 0;
             font-size: ${theme.fonts.lg};
             color: ${theme.colors.white};
@@ -64,7 +64,7 @@ export const Wrapper = styled.div`
           }
         }
 
-        .verify-credential-box-header-close {
+        .verify-box-header-close {
           width: 24px;
           height: 24px;
           cursor: pointer;
@@ -77,7 +77,7 @@ export const Wrapper = styled.div`
         }
       }
 
-      .verify-credential-box-list {
+      .verify-box-list {
         display: grid;
         grid-gap: 20px;
 
@@ -85,15 +85,15 @@ export const Wrapper = styled.div`
           grid-gap: 28px;
         }
 
-        .verify-credential-box-item {
+        .verify-box-item {
           display: flex;
           justify-content: space-between;
 
-          .verify-credential-box-item-content {
+          .verify-box-item-content {
             display: flex;
             align-items: center;
 
-            .verify-credential-box-item-content-icon {
+            .verify-box-item-content-icon {
               width: 24px;
               height: 24px;
               margin-right: 6px;
@@ -115,7 +115,7 @@ export const Wrapper = styled.div`
               }
             }
 
-            .verify-credential-box-item-content-text {
+            .verify-box-item-content-text {
               margin: 0;
               font-size: ${theme.fonts.base};
               color: ${theme.colors.white}CC;
@@ -126,7 +126,7 @@ export const Wrapper = styled.div`
             }
           }
 
-          .verify-credential-box-item-button {
+          .verify-box-item-button {
             width: 65px;
             height: 38px;
 
@@ -137,7 +137,7 @@ export const Wrapper = styled.div`
         }
       }
 
-      .verify-credential-box-steps {
+      .verify-box-steps {
         display: grid;
         grid-gap: 20px;
       }
@@ -163,8 +163,8 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
         `}
     }
 
-    .verify-credential-box-step-content {
-      .verify-credential-box-step-content-title {
+    .verify-box-step-content {
+      .verify-box-step-content-title {
         margin: 0;
         font-size: ${theme.fonts.base};
         color: ${theme.colors.white}B3;
@@ -174,7 +174,7 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
         }
       }
 
-      .verify-credential-box-step-content-description {
+      .verify-box-step-content-description {
         margin: 0;
         font-size: ${theme.fonts.sm};
         color: ${theme.colors.white}B3;
@@ -185,7 +185,7 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
       }
     }
 
-    .verify-credential-box-step-inputs {
+    .verify-box-step-inputs {
       display: grid;
       grid-gap: 24px;
       margin-top: 24px;
@@ -195,7 +195,7 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
         grid-template-columns: repeat(2, auto);
       }
 
-      .verify-credential-box-step-input {
+      .verify-box-step-input {
         width: 100%;
         height: 38px;
         border: 1px solid ${theme.colors.white}B3;
@@ -216,7 +216,7 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
       }
     }
 
-    .verify-credential-box-step-button {
+    .verify-box-step-button {
       width: 85px;
       height: 38px;
       margin-top: 24px;

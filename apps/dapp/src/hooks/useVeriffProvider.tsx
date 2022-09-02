@@ -1,12 +1,4 @@
-import {
-  ChangeEvent,
-  FunctionComponent,
-  ReactElement,
-  useEffect,
-  useState
-} from 'react';
-import { debounce } from 'ts-debounce';
-import { BroadcastChannel } from 'broadcast-channel';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 
@@ -14,86 +6,48 @@ import {
   getCredential,
   openOAuthUrl,
   getVeriffSession,
-  sortByDate
+  sortByDate,
+  getWalletInformation
 } from 'utils';
-import { IWalletInformation } from 'context';
+import { debounce } from 'ts-debounce';
 
 interface IClaimValues {
   firstName: string;
   lastName: string;
 }
 
-interface IStepsCompleted {
-  step1: boolean;
-  step2: boolean;
-}
-
-interface IComponentProps {
-  handleFetchOAuth: () => void;
-  handleStampCredential: () => void;
-  handleClaimValues: (event: ChangeEvent<HTMLInputElement>) => void;
-  claimValues: IClaimValues;
-  currentStepsCompleted: IStepsCompleted;
-  status?: string;
-}
-
-interface IProps extends IWalletInformation {
-  component: (props: IComponentProps) => ReactElement;
-  stepsCompleted?: IStepsCompleted;
-}
-
 const DEFAULT_VERIFF_NODE = 'http://localhost:4000/veriff';
 
-export const VeriffProvider: FunctionComponent<IProps> = props => {
-  const { ethProvider, address, wallet, component, stepsCompleted } = props;
+export const useVeriffProvider = () => {
   const [veriffSession, setVeriffSession] = useState({});
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     firstName: '',
     lastName: ''
   });
   const [status, setStatus] = useState('idle');
-  const [currentStepsCompleted, setCurrentStepsCompleted] = useState(
-    stepsCompleted || {
-      step1: false,
-      step2: false
-    }
-  );
 
   useEffect(() => {
     if (!window) return;
 
-    const queryString = new URLSearchParams(window?.location?.search);
-    const queryState = queryString.get('status');
-
-    // if Veriff oauth then submit message to other windows and close self
-    if (queryState && queryState == 'submitted') {
-      // shared message channel between windows (on the same domain)
-      const channel = new BroadcastChannel('veriff_oauth_channel');
-      // only continue with the process if a code is returned
-
-      channel.postMessage({
-        target: 'veriff',
-        data: { state: queryState }
-      });
-
-      // always close the redirected window
-      window.close();
-    }
-  }, []);
-
-  // attach and destroy a BroadcastChannel to handle the message
-  useEffect(() => {
-    // open the channel
     const channel = new BroadcastChannel('veriff_oauth_channel');
-    // event handler will listen for messages from the child (debounced to avoid multiple submissions)
-    channel.onmessage = debounce(listenForRedirect, 300);
+
+    const handler = async (msg: MessageEvent) => {
+      const asyncFunction = async () =>
+        await listenForRedirect(msg?.data?.data);
+      const process = debounce(asyncFunction, 300);
+
+      return await process();
+    };
+
+    channel.addEventListener('message', handler);
 
     return () => {
+      channel.removeEventListener('message', handler);
       channel.close();
     };
   }, []);
 
-  const handleFetchOAuth = async () => {
+  const handleFetchOAuth = async (address: string) => {
     const veriff = await getVeriffSession({
       verification: {
         person: {
@@ -144,23 +98,26 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
       if (e.target === 'veriff') {
         console.log('Saving Stamp', { type: 'veriff', proof: e.data });
 
-        const session = window.localStorage.getItem(
-          'krebit.reputation-passport.session'
-        );
+        const session = window.localStorage.getItem('ceramic-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
 
+        const currentType = localStorage.getItem('auth-type');
+        const walletInformation = await getWalletInformation(currentType);
+
         // Step 1-A:  Get credential from Issuer based on claim:
 
         // Issue self-signed credential claiming the veriff
-        const claim = await getClaim(address, veriffSession, e.data);
+        const claim = await getClaim(
+          walletInformation.address,
+          veriffSession,
+          e.data
+        );
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
-          wallet,
-          ethProvider,
-          address,
+          ...walletInformation,
           litSdk: LitJsSdk
         });
         await Issuer.connect(currentSession);
@@ -183,8 +140,7 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
         // Step 1-C: Get the verifiable credential, and save it to the passport
         if (issuedCredential) {
           const passport = new Krebit.core.Passport({
-            ethProvider,
-            address
+            ...walletInformation
           });
           await passport.connect(currentSession);
           const addedCredentialId = await passport.addCredential(
@@ -193,10 +149,6 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
           console.log('addedCredentialId: ', addedCredentialId);
 
           setStatus('resolved');
-          setCurrentStepsCompleted(prevState => ({
-            ...prevState,
-            step1: true
-          }));
         }
       }
     } catch (error) {
@@ -208,16 +160,22 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
     try {
       setStatus('pending');
 
-      const session = window.localStorage.getItem(
-        'krebit.reputation-passport.session'
-      );
+      const session = window.localStorage.getItem('ceramic-session');
       const currentSession = JSON.parse(session);
 
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
       const passport = new Krebit.core.Passport({
-        ethProvider: ethProvider,
-        address
+        ...walletInformation
       });
-      passport.read(address, `did:pkh:eip155:80001:${address}`);
+      passport.read(
+        walletInformation.address,
+        `did:pkh:eip155:${
+          Krebit.schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK].domain
+            .chainId
+        }:${walletInformation.address}`
+      );
 
       const credentials = await passport.getCredentials();
       const getLatestVeriffCredential = credentials
@@ -226,9 +184,7 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
         .at(-1);
 
       const Issuer = new Krebit.core.Krebit({
-        wallet,
-        ethProvider,
-        address,
+        ...walletInformation,
         litSdk: LitJsSdk
       });
       await Issuer.connect(currentSession);
@@ -237,7 +193,6 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
       console.log('stampTx: ', stampTx);
 
       setStatus('resolved');
-      setCurrentStepsCompleted(prevState => ({ ...prevState, step2: true }));
     } catch (error) {
       setStatus('rejected');
     }
@@ -252,12 +207,12 @@ export const VeriffProvider: FunctionComponent<IProps> = props => {
     }));
   };
 
-  return component({
+  return {
+    listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
     handleClaimValues,
     claimValues,
-    currentStepsCompleted,
     status
-  });
+  };
 };

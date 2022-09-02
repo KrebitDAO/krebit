@@ -1,29 +1,16 @@
-import { FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { debounce } from 'ts-debounce';
-import { BroadcastChannel } from 'broadcast-channel';
+import { useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 import { auth } from 'twitter-api-sdk';
+import { debounce } from 'ts-debounce';
 
-import { generateUID, getCredential, openOAuthUrl, sortByDate } from 'utils';
-import { IWalletInformation } from 'context';
-
-interface IStepsCompleted {
-  step1: boolean;
-  step2: boolean;
-}
-
-interface IComponentProps {
-  handleFetchOAuth: () => void;
-  handleStampCredential: () => void;
-  currentStepsCompleted: IStepsCompleted;
-  status?: string;
-}
-
-interface IProps extends IWalletInformation {
-  component: (props: IComponentProps) => ReactElement;
-  stepsCompleted?: IStepsCompleted;
-}
+import {
+  generateUID,
+  getCredential,
+  getWalletInformation,
+  openOAuthUrl,
+  sortByDate
+} from 'utils';
 
 const DEFAULT_TWITTER_NODE = 'http://localhost:4000/twitter';
 const authClient = new auth.OAuth2User({
@@ -32,64 +19,31 @@ const authClient = new auth.OAuth2User({
   scopes: ['tweet.read', 'users.read']
 });
 
-export const TwitterProvider: FunctionComponent<IProps> = props => {
-  const { ethProvider, address, wallet, component, stepsCompleted } = props;
+export const useTwitterProvider = () => {
   const [status, setStatus] = useState('idle');
-  const [currentStepsCompleted, setCurrentStepsCompleted] = useState(
-    stepsCompleted || {
-      step1: false,
-      step2: false
-    }
-  );
 
   useEffect(() => {
     if (!window) return;
 
-    const queryString = new URLSearchParams(window?.location?.search);
-
-    const [queryError, queryState, queryCode] = [
-      queryString.get('error'),
-      queryString.get('state'),
-      queryString.get('code')
-    ];
-
-    // if Twitter oauth then submit message to other windows and close self
-    if (
-      (queryError || queryCode) &&
-      queryState &&
-      /^twitter-.*/.test(queryState)
-    ) {
-      // shared message channel between windows (on the same domain)
-      const channel = new BroadcastChannel('twitter_oauth_channel');
-
-      // only continue with the process if a code is returned
-      if (queryCode) {
-        channel.postMessage({
-          target: 'twitter',
-          data: { code: queryCode, state: queryState }
-        });
-      }
-
-      // always close the redirected window
-      window.close();
-    }
-  }, []);
-
-  // attach and destroy a BroadcastChannel to handle the message
-  useEffect(() => {
-    if (!window) return;
-
-    // open the channel
     const channel = new BroadcastChannel('twitter_oauth_channel');
-    // event handler will listen for messages from the child (debounced to avoid multiple submissions)
-    channel.onmessage = debounce(listenForRedirect, 300);
+
+    const handler = async (msg: MessageEvent) => {
+      const asyncFunction = async () =>
+        await listenForRedirect(msg?.data?.data);
+      const process = debounce(asyncFunction, 300);
+
+      return await process();
+    };
+
+    channel.addEventListener('message', handler);
 
     return () => {
+      channel.removeEventListener('message', handler);
       channel.close();
     };
   }, []);
 
-  const handleFetchOAuth = () => {
+  const handleFetchOAuth = (address: string) => {
     const authUrl = authClient.generateAuthURL({
       state: `twitter-${generateUID(10)}`,
       code_challenge: address,
@@ -136,23 +90,22 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
       if (e.target === 'twitter') {
         console.log('Saving Stamp', { type: 'twitter', proof: e.data });
 
-        const session = window.localStorage.getItem(
-          'krebit.reputation-passport.session'
-        );
+        const session = window.localStorage.getItem('ceramic-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
 
+        const currentType = localStorage.getItem('auth-type');
+        const walletInformation = await getWalletInformation(currentType);
+
         // Step 1-A:  Get credential from Issuer based on claim:
 
         //Issue self-signed credential claiming the Twitter
-        const claim = await getClaim(address, e.data);
+        const claim = await getClaim(walletInformation.address, e.data);
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
-          wallet,
-          ethProvider,
-          address,
+          ...walletInformation,
           litSdk: LitJsSdk
         });
 
@@ -176,8 +129,7 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
         // Step 1-C: Get the verifiable credential, and save it to the passport
         if (issuedCredential) {
           const passport = new Krebit.core.Passport({
-            ethProvider,
-            address
+            ...walletInformation
           });
           await passport.connect(currentSession);
           const addedCredentialId = await passport.addCredential(
@@ -186,10 +138,6 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
           console.log('addedCredentialId: ', addedCredentialId);
 
           setStatus('resolved');
-          setCurrentStepsCompleted(prevState => ({
-            ...prevState,
-            step1: true
-          }));
         }
       }
     } catch (error) {
@@ -201,16 +149,22 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
     try {
       setStatus('pending');
 
-      const session = window.localStorage.getItem(
-        'krebit.reputation-passport.session'
-      );
+      const session = window.localStorage.getItem('ceramic-session');
       const currentSession = JSON.parse(session);
 
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
       const passport = new Krebit.core.Passport({
-        ethProvider: ethProvider,
-        address
+        ...walletInformation
       });
-      passport.read(address, `did:pkh:eip155:80001:${address}`);
+      passport.read(
+        walletInformation.address,
+        `did:pkh:eip155:${
+          Krebit.schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK].domain
+            .chainId
+        }:${walletInformation.address}`
+      );
 
       const credentials = await passport.getCredentials();
       const getLatestTwitterCredential = credentials
@@ -219,9 +173,7 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
         .at(-1);
 
       const Issuer = new Krebit.core.Krebit({
-        wallet,
-        ethProvider,
-        address,
+        ...walletInformation,
         litSdk: LitJsSdk
       });
       await Issuer.connect(currentSession);
@@ -230,16 +182,15 @@ export const TwitterProvider: FunctionComponent<IProps> = props => {
       console.log('stampTx: ', stampTx);
 
       setStatus('resolved');
-      setCurrentStepsCompleted(prevState => ({ ...prevState, step2: true }));
     } catch (error) {
       setStatus('rejected');
     }
   };
 
-  return component({
+  return {
+    listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
-    currentStepsCompleted,
     status
-  });
+  };
 };
