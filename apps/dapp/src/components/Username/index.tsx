@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
@@ -15,7 +15,6 @@ import { VerifyPersonhoodCredential } from './VerifyPersonhoodCredential';
 import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
-import { InlineDropdown } from 'components/InlineDropdown';
 import { ToolTip } from 'components/ToolTip';
 import { constants, sortByDate, isValid } from 'utils';
 import { GeneralContext } from 'context';
@@ -29,24 +28,34 @@ const MOCK_SKILLS = [
   'C++ pro'
 ];
 
-const MOCK_ITEMS = [
-  {
-    title: 'Online Courses',
-    onClick: () => {}
-  },
-  {
-    title: 'Online Courses',
-    onClick: () => {}
-  },
-  {
-    title: 'Online Courses',
-    onClick: () => {}
-  }
-];
+interface IProfile {
+  pfp: string;
+  username: string;
+  description: string;
+  did: string;
+  reputation: string | number;
+  countFollowers: number;
+  countFollowing: number;
+  personhood: {
+    discord: {
+      length: number;
+      credential: Object;
+      stamp: Object;
+    };
+    twitter: {
+      length: number;
+      credential: Object;
+      stamp: Object;
+    };
+    veriff: {
+      length: number;
+      credential: Object;
+      stamp: Object;
+    };
+  };
+}
 
 export const Username = () => {
-  const [isEducationFilterOpen, setIsEducationFilterOpen] = useState(false);
-  const [isWorkFilterOpen, setIsWorkFilterOpen] = useState(false);
   const [
     currentPersonhoodToolTipActive,
     setCurrentPersonhoodToolTipActive
@@ -56,9 +65,10 @@ export const Username = () => {
     setIsVerifyPersonhoodCredentialOpen
   ] = useState(false);
   const [status, setStatus] = useState('idle');
+  const [profile, setProfile] = useState<IProfile | undefined>();
   const { query } = useRouter();
   const {
-    profileInformation,
+    auth,
     walletInformation: { publicPassport, orbis }
   } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
@@ -84,7 +94,7 @@ export const Username = () => {
 
         publicPassport.read(address, did);
 
-        let currentProfile = {};
+        let currentProfile: IProfile;
 
         const profile = await publicPassport.getProfile();
         const reputation = await publicPassport.getReputation();
@@ -92,6 +102,7 @@ export const Username = () => {
         if (profile) {
           currentProfile = {
             ...profile,
+            did,
             reputation: reputation || 0,
             countFollowers: 0,
             countFollowing: 0
@@ -102,6 +113,7 @@ export const Username = () => {
           if (orbisProfile?.data?.did) {
             currentProfile = {
               ...orbisProfile?.data?.details?.profile,
+              did: orbisProfile?.data?.did,
               reputation: reputation || 0,
               countFollowers: orbisProfile?.data?.count_followers || 0,
               countFollowing: orbisProfile?.data?.count_following || 0
@@ -118,10 +130,14 @@ export const Username = () => {
         const twitterCredentials = await publicPassport.getCredentials(
           'twitter'
         );
+        const veriffCredentials = await publicPassport.getCredentials('veriff');
         const latestDiscordCredential = discordCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
         const latestTwitterCredential = twitterCredentials
+          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+          .at(-1);
+        const latestVeriffCredential = veriffCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
 
@@ -129,27 +145,37 @@ export const Username = () => {
           type: 'digitalProperty'
         });
         const latestDiscordStamp = stamps.find(
-          stamp => stamp.claimId === latestDiscordCredential.id
+          stamp => stamp.claimId === latestDiscordCredential?.id
         );
         const latestTwitterStamp = stamps.find(
-          stamp => stamp.claimId === latestTwitterCredential.id
+          stamp => stamp.claimId === latestTwitterCredential?.id
+        );
+        const latestVeriffStamp = stamps.find(
+          stamp => stamp.claimId === latestVeriffCredential?.id
         );
 
         currentProfile = {
           ...currentProfile,
           personhood: {
             discord: {
+              length: discordCredentials?.length || 0,
               credential: latestDiscordCredential,
               stamp: latestDiscordStamp
             },
             twitter: {
+              length: twitterCredentials?.length || 0,
               credential: latestTwitterCredential,
               stamp: latestTwitterStamp
+            },
+            veriff: {
+              length: veriffCredentials?.length || 0,
+              credential: latestVeriffCredential,
+              stamp: latestVeriffStamp
             }
           }
         };
 
-        profileInformation.handleSetProfile(currentProfile);
+        setProfile(currentProfile);
         setStatus('resolved');
       } catch (error) {
         console.error(error);
@@ -160,21 +186,21 @@ export const Username = () => {
     getProfile();
   }, [publicPassport, query.id]);
 
-  const handleEducationFilterOpen = () => {
-    setIsEducationFilterOpen(prevState => !prevState);
-  };
-
-  const handleWorkFilterOpen = () => {
-    setIsWorkFilterOpen(prevState => !prevState);
-  };
-
   const handleCurrentPersonhoodToolTipActive = (index: number) => {
     setCurrentPersonhoodToolTipActive(index);
   };
+  const handleCurrentPersonhoodToolTipActiveCallback = useCallback(
+    handleCurrentPersonhoodToolTipActive,
+    [currentPersonhoodToolTipActive]
+  );
 
   const handleCurrentPersonhoodToolTipHide = () => {
     setCurrentPersonhoodToolTipActive(undefined);
   };
+  const handleCurrentPersonhoodToolTipHideActiveCallback = useCallback(
+    handleCurrentPersonhoodToolTipHide,
+    [currentPersonhoodToolTipActive]
+  );
 
   const handleIsVerifyPersonhoodCredentialOpen = () => {
     setIsVerifyPersonhoodCredentialOpen(prevState => !prevState);
@@ -184,13 +210,13 @@ export const Username = () => {
     return <Error statusCode={404} />;
   }
 
-  console.log(profileInformation.profile);
+  console.log(profile);
 
   return (
     <Layout>
       {isVerifyPersonhoodCredentialOpen && (
         <VerifyPersonhoodCredential
-          currentPersonhood={profileInformation.profile.personhood}
+          currentPersonhood={profile?.personhood}
           onClose={handleIsVerifyPersonhoodCredentialOpen}
         />
       )}
@@ -202,39 +228,44 @@ export const Username = () => {
             <Background image="/imgs/images/trust.jpg" />
             <div className="profile">
               <div className="profile-photo">
-                <Image src={profileInformation.profile.pfp} layout="fill" />
+                <Image
+                  src={profile.pfp || '/imgs/logos/Krebit.svg'}
+                  layout="fill"
+                />
               </div>
               <div className="profile-info">
                 <div className="profile-info-naming">
                   <span className="profile-info-name">andresmontoya.eth</span>{' '}
                   <span className="profile-info-token">
-                    rkRB {profileInformation.profile.reputation}
+                    rkRB {profile.reputation}
                   </span>
                 </div>
                 <div className="profile-info-follow">
                   <span className="profile-info-followers">
-                    {profileInformation.profile.countFollowers}{' '}
+                    {profile.countFollowers}{' '}
                     <span className="profile-info-followers-text">
                       Followers
                     </span>
                   </span>
                   <span className="profile-info-follow-dot"></span>
                   <span className="profile-info-followers">
-                    {profileInformation.profile.countFollowing}{' '}
+                    {profile.countFollowing}{' '}
                     <span className="profile-info-followers-text">
                       Following
                     </span>
                   </span>
                 </div>
               </div>
-              <div className="profile-buttons">
-                <Button text="Follow" onClick={() => {}} />
-                <Button
-                  text="Send Message"
-                  onClick={() => {}}
-                  styleType="border"
-                />
-              </div>
+              {query.id !== auth?.did && (
+                <div className="profile-buttons">
+                  <Button text="Follow" onClick={() => {}} />
+                  <Button
+                    text="Send Message"
+                    onClick={() => {}}
+                    styleType="border"
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="content-container">
@@ -242,12 +273,14 @@ export const Username = () => {
               <PersonhoodCredential>
                 <div className="person-header">
                   <p className="person-header-text">Personhood Credentials</p>
-                  <p
-                    className="person-header-verify"
-                    onClick={handleIsVerifyPersonhoodCredentialOpen}
-                  >
-                    Verify
-                  </p>
+                  {query.id === auth?.did && (
+                    <p
+                      className="person-header-verify"
+                      onClick={handleIsVerifyPersonhoodCredentialOpen}
+                    >
+                      Verify
+                    </p>
+                  )}
                 </div>
                 <div className="person-box">
                   {constants.PERSONHOOD_CREDENTIALS.map((item, index) => (
@@ -258,16 +291,18 @@ export const Username = () => {
                         <div
                           className="person-box-item-tooltip"
                           onMouseOver={() =>
-                            handleCurrentPersonhoodToolTipActive(index + 1)
+                            handleCurrentPersonhoodToolTipActiveCallback(
+                              index + 1
+                            )
                           }
-                          onMouseOut={handleCurrentPersonhoodToolTipHide}
+                          onMouseOut={
+                            handleCurrentPersonhoodToolTipHideActiveCallback
+                          }
                         >
                           <div
                             className={`person-box-icon person-box-item-icon ${
-                              profileInformation.profile.personhood[item.id]
-                                ?.credential &&
-                              profileInformation.profile.personhood[item.id]
-                                ?.stamp
+                              profile.personhood[item.id]?.credential &&
+                              profile.personhood[item.id]?.stamp
                                 ? 'person-box-item-icon-is-active'
                                 : ''
                             }`}
@@ -276,7 +311,11 @@ export const Username = () => {
                           </div>
                           {currentPersonhoodToolTipActive === index + 1 && (
                             <div className="person-box-item-tooltip-box">
-                              <ToolTip message="This personhood credential has not been verified" />
+                              <ToolTip
+                                message={`This personhood credential has ${profile
+                                  .personhood[item.id]?.length ||
+                                  0} credentials`}
+                              />
                             </div>
                           )}
                         </div>
@@ -306,19 +345,11 @@ export const Username = () => {
               <EducationCredentials>
                 <div className="education-header">
                   <p className="education-header-text">Education credentials</p>
-                  <div className="education-header-filter">
-                    <p
-                      className="education-header-filter-text"
-                      onClick={handleEducationFilterOpen}
-                    >
-                      Filter
+                  {query.id === auth?.did && (
+                    <p className="education-header-verify" onClick={() => {}}>
+                      Verify
                     </p>
-                    {isEducationFilterOpen && (
-                      <div className="education-header-filter-content">
-                        <InlineDropdown items={MOCK_ITEMS} />
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
                 <div className="education-cards">
                   {new Array(2).fill(0).map((_, index) => (
@@ -355,19 +386,11 @@ export const Username = () => {
               <WorkCredential>
                 <div className="work-header">
                   <p className="work-header-text">Work credentials</p>
-                  <div className="work-header-filter">
-                    <p
-                      className="work-header-filter-text"
-                      onClick={handleWorkFilterOpen}
-                    >
-                      Filter
+                  {query.id === auth?.did && (
+                    <p className="work-header-verify" onClick={() => {}}>
+                      Verify
                     </p>
-                    {isWorkFilterOpen && (
-                      <div className="work-header-filter-content">
-                        <InlineDropdown items={MOCK_ITEMS} />
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
                 <div className="work-cards">
                   {new Array(2).fill(0).map((_, index) => (

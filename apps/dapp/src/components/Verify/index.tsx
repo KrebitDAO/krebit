@@ -8,6 +8,10 @@ interface IInitialListProps {
   id: string;
   text: string;
   icon: ReactNode;
+  action?: {
+    text?: string;
+    onClick?: () => void;
+  };
 }
 type IViewStatusProps = 'init' | 'steps';
 type ICurrentVerifyProps = {
@@ -76,12 +80,21 @@ export const Verify = (props: IProps) => {
                   <p className="verify-box-item-content-text">{item.text}</p>
                 </div>
                 <div className="verify-box-item-button">
-                  <Button
-                    text="Verify"
-                    onClick={() => handleCurrentVerify(item)}
-                    styleType="border"
-                    borderBackgroundColor="bunting"
-                  />
+                  {item.action ? (
+                    <Button
+                      text={item.action.text}
+                      onClick={item.action.onClick}
+                      styleType="border"
+                      borderBackgroundColor="bunting"
+                    />
+                  ) : (
+                    <Button
+                      text="Verify"
+                      onClick={() => handleCurrentVerify(item)}
+                      styleType="border"
+                      borderBackgroundColor="bunting"
+                    />
+                  )}
                 </div>
               </div>
             ))}

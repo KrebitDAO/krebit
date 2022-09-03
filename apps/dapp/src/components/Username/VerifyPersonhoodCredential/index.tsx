@@ -35,9 +35,32 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
   const twitterProvider = useTwitterProvider();
   const veriffProvider = useVeriffProvider();
 
+  const getInitialList = () => {
+    if (!currentPersonhood) return [];
+
+    return constants.PERSONHOOD_CREDENTIALS.map(personhood => {
+      const values = currentPersonhood[personhood.id];
+
+      if (values) {
+        return {
+          ...personhood,
+          action:
+            values.credential && values.stamp
+              ? {
+                  text: 'Check in',
+                  onClick: () => {}
+                }
+              : undefined
+        };
+      }
+
+      return personhood;
+    });
+  };
+
   return (
     <Verify
-      initialList={constants.PERSONHOOD_CREDENTIALS}
+      initialList={getInitialList()}
       onClose={onClose}
       component={({ currentVerify }) => (
         <>

@@ -121,7 +121,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         },
         auth: {
           connect,
-          isAuthenticated: status === 'resolved'
+          isAuthenticated: status === 'resolved',
+          did: passport?.did
         },
         walletInformation: {
           ...walletInformation,
