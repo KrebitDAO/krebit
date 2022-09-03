@@ -7,7 +7,8 @@ import { Button } from 'components/Button';
 import {
   DiscordProvider,
   TwitterProvider,
-  VeriffProvider
+  VeriffProvider,
+  PhoneProvider
 } from 'components/Providers';
 import { constants } from 'utils';
 import { GeneralContext } from 'context';
@@ -252,13 +253,122 @@ export const VerifyCredential = (props: IProps) => {
                           onClick:
                             status === 'pending' ||
                             currentStepsCompleted.step4 ||
-                            !claimValues.firstName || !claimValues.lastName
+                            !claimValues.firstName ||
+                            !claimValues.lastName
                               ? undefined
                               : handleStampCredential,
                           isDisabled:
                             status === 'pending' ||
                             currentStepsCompleted.step4 ||
-                            !claimValues.firstName || !claimValues.lastName
+                            !claimValues.firstName ||
+                            !claimValues.lastName
+                        }
+                      }}
+                    />
+                  </>
+                )}
+              />
+            )}
+            {currentVerify?.id === 'phone' && (
+              <PhoneProvider
+                ethProvider={ethProvider}
+                wallet={wallet}
+                address={address}
+                stepsCompleted={{ step3: false, step4: false }}
+                component={({
+                  handleStartVerification,
+                  handleGetCredential,
+                  handleStampCredential,
+                  handleClaimValues,
+                  claimValues,
+                  currentStepsCompleted,
+                  status
+                }) => (
+                  <>
+                    <BoxStep
+                      title="Step 1 - A"
+                      description="Enter you phone's country code"
+                      form={{
+                        input: {
+                          name: 'countryCode',
+                          placeholder: '+',
+                          value: claimValues.countryCode,
+                          onChange: handleClaimValues
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 1 - B"
+                      description="Enter you phone number"
+                      form={{
+                        input: {
+                          name: 'number',
+                          placeholder: 'Enter phone number',
+                          value: claimValues.number,
+                          onChange: handleClaimValues
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 1 - C"
+                      description="Get phone number credential verified via Twilio"
+                      form={{
+                        button: {
+                          text: 'Verify',
+                          onClick:
+                            status === 'pending' ||
+                            currentStepsCompleted.step3 ||
+                            !claimValues.countryCode ||
+                            !claimValues.number
+                              ? undefined
+                              : handleStartVerification,
+                          isDisabled:
+                            status === 'pending' ||
+                            currentStepsCompleted.step3 ||
+                            !claimValues.countryCode ||
+                            !claimValues.number
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 2"
+                      description="Only after you complete the Twilio verification"
+                      form={{
+                        button: {
+                          text: 'Check Verification',
+                          onClick:
+                            status === 'pending' ||
+                            currentStepsCompleted.step4 ||
+                            !claimValues.countryCode ||
+                            !claimValues.number
+                              ? undefined
+                              : handleGetCredential,
+                          isDisabled:
+                            status === 'pending' ||
+                            currentStepsCompleted.step4 ||
+                            !claimValues.countryCode ||
+                            !claimValues.number
+                        }
+                      }}
+                    />
+                    <BoxStep
+                      title="Step 3"
+                      description="Stamp on-chain"
+                      form={{
+                        button: {
+                          text: 'Stamp',
+                          onClick:
+                            status === 'pending' ||
+                            currentStepsCompleted.step4 ||
+                            !claimValues.countryCode ||
+                            !claimValues.number
+                              ? undefined
+                              : handleStampCredential,
+                          isDisabled:
+                            status === 'pending' ||
+                            currentStepsCompleted.step4 ||
+                            !claimValues.countryCode ||
+                            !claimValues.number
                         }
                       }}
                     />

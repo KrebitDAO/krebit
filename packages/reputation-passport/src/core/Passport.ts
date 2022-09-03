@@ -243,22 +243,22 @@ export class Passport {
   };
 
   // issuedCredentials in ceramic
-  revokeCredential = async (verificationId: string) => {
+  revokeCredential = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     // Upload attestation to Ceramic
     try {
-      await this.removeIssued(verificationId);
+      await this.removeIssued(vcId);
       let result = null;
 
-      if (verificationId) {
+      if (vcId) {
         const content = await this.idx.get('revokedCredentials');
 
         if (content && content.revoked) {
           const current = content.revoked ? content.revoked : [];
           console.log('current:', current);
-          if (!current.includes(verificationId)) {
-            current.push(verificationId);
+          if (!current.includes(vcId)) {
+            current.push(vcId);
             console.log('current push:', current);
             result = await this.idx.merge('revokedCredentials', {
               revoked: current
@@ -266,13 +266,13 @@ export class Passport {
           }
         } else {
           result = await this.idx.set('revokedCredentials', {
-            revoked: [verificationId]
+            revoked: [vcId]
           });
         }
       }
 
       if (result) {
-        return verificationId;
+        return vcId;
       }
     } catch (err) {
       throw new Error(err);
@@ -280,7 +280,7 @@ export class Passport {
   };
 
   //remove from issuedCredentials in ceramic
-  removeIssued = async (verificationId: string) => {
+  removeIssued = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
@@ -290,8 +290,8 @@ export class Passport {
       if (content && content.issued) {
         const current = content.issued ? content.issued : [];
 
-        if (current.includes(verificationId)) {
-          current.splice(current.indexOf(verificationId), 2);
+        if (current.includes(vcId)) {
+          current.splice(current.indexOf(vcId), 2);
           result = await this.idx.merge('issuedCredentials', {
             issued: current
           });
@@ -322,7 +322,10 @@ export class Passport {
             if (vcStream) {
               if (type) {
                 if (vcStream.content.type.includes(type))
-                  return vcStream.content;
+                  return {
+                    ...vcStream.content,
+                    vcId: vcId
+                  };
               } else {
                 return vcStream.content;
               }
@@ -384,7 +387,7 @@ export class Passport {
   };
 
   // claimedCredentials from ceramic
-  removeClaim = async (verificationId: string) => {
+  removeClaim = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
@@ -394,8 +397,8 @@ export class Passport {
       if (content && content.claimed) {
         const current = content.claimed ? content.claimed : [];
 
-        if (current.includes(verificationId)) {
-          current.splice(current.indexOf(verificationId), 2);
+        if (current.includes(vcId)) {
+          current.splice(current.indexOf(vcId), 2);
           result = await this.idx.merge('claimedCredentials', {
             claimed: current
           });
@@ -425,7 +428,10 @@ export class Passport {
             if (vcStream) {
               if (type) {
                 if (vcStream.content.type.includes(type))
-                  return vcStream.content;
+                  return {
+                    ...vcStream.content,
+                    vcId: vcId
+                  };
               } else {
                 return vcStream.content;
               }
@@ -487,7 +493,7 @@ export class Passport {
   };
 
   // heldCredentials in ceramic
-  removeCredential = async (verificationId: string) => {
+  removeCredential = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
@@ -497,8 +503,8 @@ export class Passport {
       if (content && content.held) {
         const current = content.held ? content.held : [];
 
-        if (current.includes(verificationId)) {
-          current.splice(current.indexOf(verificationId), 2);
+        if (current.includes(vcId)) {
+          current.splice(current.indexOf(vcId), 2);
           result = await this.idx.merge('heldCredentials', {
             held: current
           });
@@ -529,7 +535,10 @@ export class Passport {
             if (vcStream) {
               if (type) {
                 if (vcStream.content.type.includes(type))
-                  return vcStream.content;
+                  return {
+                    ...vcStream.content,
+                    vcId: vcId
+                  };
               } else {
                 return vcStream.content;
               }

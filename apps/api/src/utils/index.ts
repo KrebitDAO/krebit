@@ -5,6 +5,7 @@ import { getTwitterUser } from './getTwitterUser';
 import { getVeriffDecision } from './getVeriffDecision';
 import { generateUID } from './generateUID';
 import { getSpectUser } from './getSpectUser';
+import { startPhoneVerification, checkPhoneVerification } from './twilio';
 
 export {
   connect,
@@ -13,5 +14,7 @@ export {
   getTwitterUser,
   getVeriffDecision,
   generateUID,
-  getSpectUser
+  getSpectUser,
+  startPhoneVerification,
+  checkPhoneVerification
 };

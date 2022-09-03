@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 import { ethers } from 'ethers';
 import { base64 } from 'ethers/lib/utils';
 import { DIDDataStore } from '@glazed/did-datastore';
+import { TileDocument } from '@ceramicnetwork/stream-tile';
 import {
   EIP712VC,
   getEIP712Credential,
@@ -25,6 +26,7 @@ export interface ClaimProps {
   stake?: number;
   price?: number;
   encrypt?: 'hash' | 'lit' | 'plain';
+  shareEncryptedWith?: string;
 }
 
 interface IssueProps {
@@ -59,7 +61,10 @@ export const issueCredential = async (props: IssueProps) => {
     throw new Error('IDX not defined');
   }
 
-  const issuanceDate = Date.now() - 1000 * 60 * 60 * 12;
+  const issuerAddres: string = await wallet.getAddress();
+
+  // 5 min ago (there is a delay on the blockchain time)
+  const issuanceDate = Date.now() - 1000 * 60 * 5;
   const expirationDate = new Date(claim?.expirationDate);
 
   if (!expirationDate) {
@@ -83,18 +88,34 @@ export const issueCredential = async (props: IssueProps) => {
       claim['value'] = hash;
       claim['encrypted'] = 'hash';
     } else if (claim.encrypt == 'lit') {
+      let accessControlConditions = lit.getOwnsAddressCondition(
+        claim.ethereumAddress
+      );
+      if (claim.shareEncryptedWith) {
+        accessControlConditions = accessControlConditions.concat(
+          lit.getShareWithCondition(claim.shareEncryptedWith)
+        );
+      }
       let encryptedContent = await lit.encrypt(
         JSON.stringify(claim.value),
-        lit.getOwnsAddressConditions(claim.ethereumAddress),
+        accessControlConditions,
         wallet
       );
-      claim['value'] = JSON.stringify(encryptedContent);
+      const stream = await TileDocument.create(
+        idx.ceramic,
+        accessControlConditions
+      );
+      claim['value'] = JSON.stringify({
+        ...encryptedContent,
+        accessControlConditions: stream.id.toUrl()
+      });
       claim['encrypted'] = 'lit';
     } else {
       claim['value'] = JSON.stringify(claim.value);
       claim['encrypted'] = 'none';
     }
   }
+  delete claim.encrypt;
 
   const credential = {
     '@context': [
@@ -105,7 +126,7 @@ export const issueCredential = async (props: IssueProps) => {
     id: claim.id,
     issuer: {
       id: idx.id,
-      ethereumAddress: await wallet.getAddress()
+      ethereumAddress: issuerAddres
     },
     credentialSubject: {
       ...claim,
@@ -127,9 +148,9 @@ export const issueCredential = async (props: IssueProps) => {
     issuanceDate: new Date(issuanceDate).toISOString(),
     expirationDate: claim.expirationDate
   };
-
+  console.log('Credential: ', credential);
   const eip712credential = getEIP712Credential(credential);
-
+  console.log('eip712credential: ', eip712credential);
   const krebitTypes = getKrebitCredentialTypes();
   const eip712_vc = new EIP712VC(krbToken[currentConfig.network].domain);
   const verifiableCredential = await eip712_vc.createEIP712VerifiableCredential(

@@ -5,6 +5,7 @@ import { TwitterController } from './twitter';
 import { VeriffController } from './veriff';
 import { IssuerController } from './issuer';
 import { SpectController } from './spect';
+import { PhoneController } from './phone';
 
 export {
   QuestappController,
@@ -13,5 +14,6 @@ export {
   TwitterController,
   VeriffController,
   IssuerController,
-  SpectController
+  SpectController,
+  PhoneController
 };
