@@ -167,6 +167,10 @@ export const Wrapper = styled.div`
   `}
 `;
 
+export const LoadingWrapper = styled.div`
+  margin-top: 20px;
+`;
+
 export const Background = styled.div<IBackgrounProps>`
   ${({ theme, image }) => css`
     width: 100%;

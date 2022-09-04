@@ -65,6 +65,21 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
 
       if (isConnected) {
         setPassport(passport);
+
+        const profile = await passport.getProfile();
+
+        if (profile) {
+          setProfile({ ...profile, did: passport.did });
+        } else {
+          const orbisProfile = await orbis.getProfile(passport.did);
+
+          if (orbisProfile?.data?.did) {
+            setProfile({
+              ...orbisProfile?.data?.details?.profile,
+              did: passport.did
+            });
+          }
+        }
       }
 
       setStatus('resolved');
@@ -121,7 +136,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         },
         auth: {
           connect,
-          isAuthenticated: status === 'resolved',
+          isAuthenticated: status === 'resolved' && !!passport?.did,
           did: passport?.did
         },
         walletInformation: {

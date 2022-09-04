@@ -47,6 +47,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
           action:
             values.credential && values.stamp
               ? {
+                  // TODO: ADD LINK TO REDIRECT TO TRANSACTION
                   text: 'Check in',
                   onClick: () => {}
                 }

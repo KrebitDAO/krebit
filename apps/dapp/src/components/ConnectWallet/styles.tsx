@@ -15,7 +15,7 @@ export const Wrapper = styled.div<WalletProps>`
     top: 0;
     right: 0;
     left: 0;
-    z-index: 20;
+    z-index: 30;
     width: 100vw;
     height: 100vh;
     background-color: ${theme.colors.white}0D;

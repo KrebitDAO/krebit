@@ -6,6 +6,7 @@ import Error from 'next/error';
 import {
   Background,
   EducationCredentials,
+  LoadingWrapper,
   PersonhoodCredential,
   Skills,
   WorkCredential,
@@ -130,7 +131,9 @@ export const Username = () => {
         const twitterCredentials = await publicPassport.getCredentials(
           'twitter'
         );
-        const veriffCredentials = await publicPassport.getCredentials('veriff');
+        const veriffCredentials = await publicPassport.getCredentials(
+          'legalName'
+        );
         const latestDiscordCredential = discordCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
@@ -210,8 +213,6 @@ export const Username = () => {
     return <Error statusCode={404} />;
   }
 
-  console.log(profile);
-
   return (
     <Layout>
       {isVerifyPersonhoodCredentialOpen && (
@@ -221,7 +222,9 @@ export const Username = () => {
         />
       )}
       {isLoading ? (
-        <Loading />
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
       ) : (
         <Wrapper>
           <div className="profile-container">
