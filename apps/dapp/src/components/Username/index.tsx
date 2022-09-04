@@ -238,7 +238,7 @@ export const Username = () => {
               </div>
               <div className="profile-info">
                 <div className="profile-info-naming">
-                  <span className="profile-info-name">andresmontoya.eth</span>{' '}
+                  <span className="profile-info-name">{profile.username}</span>{' '}
                   <span className="profile-info-token">
                     rkRB {profile.reputation}
                   </span>

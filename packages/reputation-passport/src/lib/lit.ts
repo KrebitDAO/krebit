@@ -66,8 +66,27 @@ export class Lit {
     await this.litNodeClient.connect();
   };
 
-  public getOwnsAddressConditions = (address: string) => {
+  public getOwnsAddressCondition = (address: string): Array<any> => {
     return [
+      {
+        contractAddress: '',
+        standardContractType: '',
+        chain: this.currentConfig.network,
+        method: '',
+        parameters: [':userAddress'],
+        returnValueTest: {
+          comparator: '=',
+          value: address
+        }
+      }
+    ];
+  };
+
+  public getShareWithCondition = (address: string): Array<any> => {
+    return [
+      {
+        operator: 'or'
+      },
       {
         contractAddress: '',
         standardContractType: '',
