@@ -61,7 +61,7 @@ export class Passport {
   };
 
   isConnected = async () => {
-    const currentSession = localStore.get('krebit.reputation-passport.session');
+    const currentSession = localStore.get('ceramic-session');
 
     if (!currentSession) return false;
 

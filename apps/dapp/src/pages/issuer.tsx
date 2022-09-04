@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import krebit from '@krebitdao/reputation-passport';
 
-import { connectWeb3, generateUID, getCredential } from '../utils';
+import { getWalletInformation, generateUID, getCredential } from '../utils';
 
 const IndexPage = () => {
   const getClaim = async (claimValue: any) => {
@@ -27,11 +27,13 @@ const IndexPage = () => {
 
     // Step 1-A: Self-sign delegation credential
     //connect Ethereum wallet
-    const { address, wallet, ethProvider } = await connectWeb3();
+    const { address, wallet, ethProvider } = await getWalletInformation(
+      'metamask'
+    );
 
     const Issuer = new krebit.core.Krebit({
       wallet,
-      ethProvider: ethProvider.provider,
+      ethProvider,
       address
     });
 
@@ -75,7 +77,7 @@ const IndexPage = () => {
     // Step 1-C: Get the verifiable credential, and save it to the passport
     if (issuedCredential) {
       const passport = new krebit.core.Passport({
-        ethProvider: ethProvider.provider,
+        ethProvider,
         address
       });
       await passport.connect();
@@ -95,11 +97,13 @@ const IndexPage = () => {
     // Step 1-A:  Get credential from Issuer based on claim:
 
     //connect Ethereum wallet
-    const { address, wallet, ethProvider } = await connectWeb3();
+    const { address, wallet, ethProvider } = await getWalletInformation(
+      'metamask'
+    );
 
     const Issuer = new krebit.core.Krebit({
       wallet,
-      ethProvider: ethProvider.provider,
+      ethProvider,
       address
     });
 
@@ -140,7 +144,7 @@ const IndexPage = () => {
     // Step 1-C: Get the verifiable credential, and save it to the passport
     if (issuedCredential) {
       const passport = new krebit.core.Passport({
-        ethProvider: ethProvider.provider,
+        ethProvider,
         address
       });
       await passport.connect();
@@ -156,7 +160,9 @@ const IndexPage = () => {
 
   async function getStamps(): Promise<void> {
     //connect Ethereum wallet
-    const { address, wallet, ethProvider } = await connectWeb3();
+    const { address, wallet, ethProvider } = await getWalletInformation(
+      'metamask'
+    );
     const passport = new krebit.core.Passport();
     passport.read(address, `did:pkh:eip155:80001:${address}`);
     const profile = await passport.getProfile();
@@ -172,11 +178,13 @@ const IndexPage = () => {
 
   async function getIssuers(): Promise<void> {
     //connect Ethereum wallet
-    const { address, wallet, ethProvider } = await connectWeb3();
+    const { address, wallet, ethProvider } = await getWalletInformation(
+      'metamask'
+    );
 
     const Issuer = new krebit.core.Krebit({
       wallet,
-      ethProvider: ethProvider.provider,
+      ethProvider,
       address
     });
 

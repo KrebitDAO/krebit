@@ -167,6 +167,10 @@ export const Wrapper = styled.div`
   `}
 `;
 
+export const LoadingWrapper = styled.div`
+  margin-top: 20px;
+`;
+
 export const Background = styled.div<IBackgrounProps>`
   ${({ theme, image }) => css`
     width: 100%;
@@ -325,6 +329,16 @@ export const EducationCredentials = styled.div`
         color: ${theme.colors.white};
       }
 
+      .education-header-verify {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+        background-color: ${theme.colors.brightGray};
+        border-radius: 20px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+
       .education-header-filter {
         position: relative;
 
@@ -479,6 +493,16 @@ export const WorkCredential = styled.div`
         margin: 0;
         font-size: ${theme.fonts.base};
         color: ${theme.colors.white};
+      }
+
+      .work-header-verify {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+        background-color: ${theme.colors.brightGray};
+        border-radius: 20px;
+        padding: 6px 10px;
+        cursor: pointer;
       }
 
       .work-header-filter {

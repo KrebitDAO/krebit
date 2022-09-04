@@ -20,6 +20,11 @@ export const NavBar = () => {
     setIsMenuOpen(false);
   };
 
+  const handleOpenWallet = () => {
+    handleOpenConnectWallet();
+    handleCloseMenu();
+  };
+
   return (
     <Wrapper isMenuOpen={isMenuOpen}>
       <div className="header">
@@ -33,17 +38,27 @@ export const NavBar = () => {
         </div>
         <div className="menu-bar">
           <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
-            <a target="_blank" className="menu-bar-item">
+            <a
+              target="_blank"
+              className="menu-bar-item"
+              onClick={handleCloseMenu}
+            >
               Discord
             </a>
           </Link>
           <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
-            <a target="_blank" className="menu-bar-item">
+            <a
+              target="_blank"
+              className="menu-bar-item"
+              onClick={handleCloseMenu}
+            >
               Docs
             </a>
           </Link>
           <Link href="#hire">
-            <a className="menu-bar-item">Recruiters</a>
+            <a className="menu-bar-item" onClick={handleCloseMenu}>
+              Recruiters
+            </a>
           </Link>
           <Link
             href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
@@ -54,18 +69,26 @@ export const NavBar = () => {
             </a>
           </Link>
           <div className="menu-bar-button">
-            <Button text="Try it now" onClick={handleOpenConnectWallet} />
+            <Button text="Try it now" onClick={handleOpenWallet} />
           </div>
         </div>
       </div>
       <div className="menu-content">
         <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
-          <a target="_blank" className="menu-content-item">
+          <a
+            target="_blank"
+            className="menu-content-item"
+            onClick={handleCloseMenu}
+          >
             Discord
           </a>
         </Link>
         <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
-          <a target="_blank" className="menu-content-item">
+          <a
+            target="_blank"
+            className="menu-content-item"
+            onClick={handleCloseMenu}
+          >
             Docs
           </a>
         </Link>
@@ -78,12 +101,16 @@ export const NavBar = () => {
           href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
           rel="noopener noreferrer"
         >
-          <a target="_blank" className="menu-content-item">
+          <a
+            target="_blank"
+            className="menu-content-item"
+            onClick={handleCloseMenu}
+          >
             Credential Issuers
           </a>
         </Link>
         <div className="menu-content-button">
-          <Button text="Try the Beta" onClick={handleOpenConnectWallet} />
+          <Button text="Try the Beta" onClick={handleOpenWallet} />
         </div>
       </div>
     </Wrapper>

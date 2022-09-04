@@ -148,6 +148,10 @@ export const NavBarOption = styled.div<INavBarOptionProps>`
         width: 30px;
         height: 30px;
         fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
+
+        & > path {
+          fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
+        }
       }
     }
 

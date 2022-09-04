@@ -46,10 +46,7 @@ export const VeriffController = async (
     // TODO: check self-signature
     // TODO: Check if the claim already has verifications by me
     // TODO: Check if the proofValue of the sent VC is OK
-    console.log(
-      'checkCredential: ',
-      await Issuer.checkCredential(claimedCredential)
-    );
+    console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
     // If claim is digitalProperty "veriff"
     if (claimedCredential?.credentialSubject?.type === 'legalName') {

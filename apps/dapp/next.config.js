@@ -4,5 +4,9 @@ const withTM = require('next-transpile-modules')([
 ]);
 
 module.exports = withTM({
-  reactStrictMode: true
+  reactStrictMode: true,
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    domains: ['krebit.id', 'arweave.net']
+  }
 });
