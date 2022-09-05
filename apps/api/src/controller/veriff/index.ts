@@ -29,6 +29,10 @@ export const VeriffController = async (
     }
 
     const { claimedCredential } = request.body;
+    if (claimedCredential?.credentialSubject?.type !== 'legalName') {
+      throw new Error(`claimedCredential type is not legalName`);
+    }
+
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -52,26 +56,29 @@ export const VeriffController = async (
       await Issuer.checkCredential(claimedCredential)
     );
 
+    // get the claimValue
+    let claimValue = null;
+    //Decrypt
+    if (claimedCredential.credentialSubject.encrypted === 'lit') {
+      claimValue = JSON.parse(await Issuer.decryptClaim(claimedCredential));
+      console.log('Decrypted claim value: ', claimValue);
+    } else {
+      claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('Claim value: ', claimValue);
+    }
+
     // If claim is digitalProperty "veriff"
     if (claimedCredential?.credentialSubject?.type === 'legalName') {
-      // Decrypt the claimValue
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to veriff and get decision status for the session ID (claimedCredential.id)
       const veriffDecision = await getVeriffDecision(claimedCredential.id);
       console.log('veriffDecision: ', veriffDecision);
 
       // If valid veriffID
-      // claimValue.person.firstName == veriffDecision.person.firstName
-      // claimValue.person.lastName == veriffDecision.person.lastName
       if (
         veriffDecision.status === 'approved' &&
         claimValue.person.firstName === veriffDecision.person.firstName &&
         claimValue.person.lastName === veriffDecision.person.lastName
       ) {
-        //delete claimValue.proofs;
-
         console.log('Valid veriff ID:', veriffDecision);
 
         const expirationDate = new Date();
@@ -85,15 +92,12 @@ export const VeriffController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(1),
-          value: {
-            ...claimValue,
-            ...veriffDecision
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
           expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'lit' as 'lit'
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 

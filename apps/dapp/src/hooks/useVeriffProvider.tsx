@@ -7,7 +7,8 @@ import {
   openOAuthUrl,
   getVeriffSession,
   sortByDate,
-  getWalletInformation
+  getWalletInformation,
+  generateUID
 } from 'utils';
 import { debounce } from 'ts-debounce';
 
@@ -17,6 +18,7 @@ interface IClaimValues {
 }
 
 const DEFAULT_VERIFF_NODE = 'http://localhost:4000/veriff';
+const issuerAddres = '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860';
 
 export const useVeriffProvider = () => {
   const [veriffSession, setVeriffSession] = useState({});
@@ -84,9 +86,14 @@ export const useVeriffProvider = () => {
         person: {
           ...claimValues
         },
-        proofs: veriffSession
+        proofs: {
+          ...veriffSession,
+          nonce: `${generateUID(10)}`
+        }
       },
-      expirationDate: new Date(expirationDate).toISOString()
+      expirationDate: new Date(expirationDate).toISOString(),
+      encrypt: 'lit' as 'lit',
+      shareEncryptedWith: issuerAddres
     };
   };
 
@@ -129,8 +136,18 @@ export const useVeriffProvider = () => {
         // TODO: in this case, we can encrypt for the issuer too
         const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
-        // Optional: save claimedCredential (ask the user if they want to)
-        // await passport.addClaimed(claimedCredential)
+
+        const passport = new Krebit.core.Passport({
+          ...walletInformation
+        });
+        await passport.connect(currentSession);
+        // Save claimedCredential
+        if (claimedCredential) {
+          const claimedCredentialId = await passport.addClaim(
+            claimedCredential
+          );
+          console.log('claimedCredentialId: ', claimedCredentialId);
+        }
 
         // Step 1-B: Send self-signed credential to the Issuer for verification
 
@@ -143,10 +160,6 @@ export const useVeriffProvider = () => {
 
         // Step 1-C: Get the verifiable credential, and save it to the passport
         if (issuedCredential) {
-          const passport = new Krebit.core.Passport({
-            ...walletInformation
-          });
-          await passport.connect(currentSession);
           const addedCredentialId = await passport.addCredential(
             issuedCredential
           );

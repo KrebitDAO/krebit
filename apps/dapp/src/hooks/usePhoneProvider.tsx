@@ -41,7 +41,8 @@ export const usePhoneProvider = () => {
       value: {
         ...claimValues,
         proofs: {
-          verificationId: verificationId
+          verificationId: verificationId,
+          nonce: `${generateUID(10)}`
         }
       },
       expirationDate: new Date(expirationDate).toISOString(),
@@ -125,11 +126,18 @@ export const usePhoneProvider = () => {
       // TODO: in this case, we can encrypt for the issuer too
       const claimedCredential = await Issuer.issue(claim);
       console.log('claimedCredential: ', claimedCredential);
-      // Optional: save claimedCredential (ask the user if they want to)
-      // await passport.addClaimed(claimedCredential)
+
+      const passport = new Krebit.core.Passport({
+        ...walletInformation
+      });
+      await passport.connect(currentSession);
+      // Save claimedCredential
+      if (claimedCredential) {
+        const claimedCredentialId = await passport.addClaim(claimedCredential);
+        console.log('claimedCredentialId: ', claimedCredentialId);
+      }
 
       // Step 1-B: Send self-signed credential to the Issuer for verification
-
       const issuedCredential = await getCredential({
         verifyUrl: DEFAULT_PHONE_NODE,
         claimedCredential
@@ -139,15 +147,10 @@ export const usePhoneProvider = () => {
 
       // Step 1-C: Get the verifiable credential, and save it to the passport
       if (issuedCredential) {
-        const passport = new Krebit.core.Passport({
-          ...walletInformation
-        });
-        await passport.connect(currentSession);
         const addedCredentialId = await passport.addCredential(
           issuedCredential
         );
         console.log('addedCredentialId: ', addedCredentialId);
-
         setStatus('resolved');
       }
     } catch (error) {
