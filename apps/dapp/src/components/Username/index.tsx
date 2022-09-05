@@ -101,6 +101,9 @@ export const Username = () => {
         const veriffCredentials = await publicPassport.getCredentials(
           'legalName'
         );
+        const phoneCredentials = await publicPassport.getCredentials(
+          'phoneNumber'
+        );
         const latestDiscordCredential = discordCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
@@ -108,6 +111,9 @@ export const Username = () => {
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
         const latestVeriffCredential = veriffCredentials
+          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+          .at(-1);
+        const latestPhoneCredential = phoneCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
 
@@ -122,6 +128,9 @@ export const Username = () => {
         );
         const latestVeriffStamp = stamps.find(
           stamp => stamp.claimId === latestVeriffCredential?.id
+        );
+        const latestPhoneStamp = stamps.find(
+          stamp => stamp.claimId === latestPhoneCredential?.id
         );
 
         currentProfile = {
@@ -141,6 +150,11 @@ export const Username = () => {
               length: veriffCredentials?.length || 0,
               credential: latestVeriffCredential,
               stamp: latestVeriffStamp
+            },
+            phone: {
+              length: phoneCredentials?.length || 0,
+              credential: latestPhoneCredential,
+              stamp: latestPhoneStamp
             }
           }
         };

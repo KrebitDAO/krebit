@@ -8,7 +8,8 @@ import {
   TwitterController,
   VeriffController,
   IssuerController,
-  SpectController
+  SpectController,
+  PhoneController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -25,7 +26,8 @@ router
   .post('/twitter', TwitterController)
   .post('/veriff', VeriffController)
   .post('/issuer', IssuerController)
-  .post('/spect', SpectController);
+  .post('/spect', SpectController)
+  .post('/phone', PhoneController);
 
 app.use('/', router);
 

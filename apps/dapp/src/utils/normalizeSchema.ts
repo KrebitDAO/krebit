@@ -24,6 +24,11 @@ export interface IProfile {
       credential: Object;
       stamp: Object;
     };
+    phone: {
+      length: number;
+      credential: Object;
+      stamp: Object;
+    };
   };
 }
 
