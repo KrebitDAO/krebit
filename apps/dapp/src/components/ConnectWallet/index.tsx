@@ -6,7 +6,7 @@ import { Loading } from 'components/Loading';
 import { GeneralContext } from 'context';
 
 interface IProps {
-  onClose: (e: MouseEvent<HTMLDivElement>) => void;
+  onClose: () => void;
   isOpen: boolean;
 }
 
@@ -21,6 +21,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
     setStatus('pending');
 
     await connect(type);
+    onClose();
   };
 
   if (!isOpen) return;

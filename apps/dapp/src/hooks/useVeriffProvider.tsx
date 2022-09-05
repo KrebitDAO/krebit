@@ -25,6 +25,10 @@ export const useVeriffProvider = () => {
     lastName: ''
   });
   const [status, setStatus] = useState('idle');
+  const [currentCredential, setCurrentCredential] = useState<
+    Object | undefined
+  >();
+  const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
 
   useEffect(() => {
     if (!window) return;
@@ -91,7 +95,7 @@ export const useVeriffProvider = () => {
     target: string;
     data: { state: string };
   }) => {
-    setStatus('pending');
+    setStatus('credential_pending');
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
@@ -148,17 +152,18 @@ export const useVeriffProvider = () => {
           );
           console.log('addedCredentialId: ', addedCredentialId);
 
-          setStatus('resolved');
+          setCurrentCredential(issuedCredential);
+          setStatus('credential_resolved');
         }
       }
     } catch (error) {
-      setStatus('rejected');
+      setStatus('credential_rejected');
     }
   };
 
   const handleStampCredential = async () => {
     try {
-      setStatus('pending');
+      setStatus('stamp_pending');
 
       const session = window.localStorage.getItem('ceramic-session');
       const currentSession = JSON.parse(session);
@@ -192,9 +197,10 @@ export const useVeriffProvider = () => {
       const stampTx = await Issuer.stampCredential(getLatestVeriffCredential);
       console.log('stampTx: ', stampTx);
 
-      setStatus('resolved');
+      setCurrentStamp(stampTx);
+      setStatus('stamp_resolved');
     } catch (error) {
-      setStatus('rejected');
+      setStatus('stamp_rejected');
     }
   };
 
@@ -213,6 +219,8 @@ export const useVeriffProvider = () => {
     handleStampCredential,
     handleClaimValues,
     claimValues,
-    status
+    status,
+    currentCredential,
+    currentStamp
   };
 };

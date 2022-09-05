@@ -16,6 +16,10 @@ const DEFAULT_DISCORD_NODE = 'http://localhost:4000/discord';
 
 export const useDiscordProvider = () => {
   const [status, setStatus] = useState('idle');
+  const [currentCredential, setCurrentCredential] = useState<
+    Object | undefined
+  >();
+  const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
 
   useEffect(() => {
     if (!window) return;
@@ -79,7 +83,7 @@ export const useDiscordProvider = () => {
     target: string;
     data: { accessToken: string; tokenType: string; state: string };
   }) => {
-    setStatus('pending');
+    setStatus('credential_pending');
 
     try {
       // when receiving discord oauth response from a spawned child run fetchVerifiableCredential
@@ -138,17 +142,18 @@ export const useDiscordProvider = () => {
           );
           console.log('addedCredentialId: ', addedCredentialId);
 
-          setStatus('resolved');
+          setCurrentCredential(issuedCredential);
+          setStatus('credential_resolved');
         }
       }
     } catch (error) {
-      setStatus('rejected');
+      setStatus('credential_rejected');
     }
   };
 
   const handleStampCredential = async () => {
     try {
-      setStatus('pending');
+      setStatus('stamp_pending');
 
       const session = window.localStorage.getItem('ceramic-session');
       const currentSession = JSON.parse(session);
@@ -183,11 +188,19 @@ export const useDiscordProvider = () => {
       const stampTx = await Issuer.stampCredential(getLatestDiscordCredential);
       console.log('stampTx: ', stampTx);
 
-      setStatus('resolved');
+      setCurrentStamp(stampTx);
+      setStatus('stamp_resolved');
     } catch (error) {
-      setStatus('rejected');
+      setStatus('stamp_rejected');
     }
   };
 
-  return { listenForRedirect, handleFetchOAuth, handleStampCredential, status };
+  return {
+    listenForRedirect,
+    handleFetchOAuth,
+    handleStampCredential,
+    status,
+    currentCredential,
+    currentStamp
+  };
 };

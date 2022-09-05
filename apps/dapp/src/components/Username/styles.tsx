@@ -72,18 +72,27 @@ export const Wrapper = styled.div`
           }
 
           .profile-info-naming {
+            display: flex;
+            align-items: center;
+
             .profile-info-name {
               margin: 0;
               font-size: ${theme.fonts.xl};
               color: ${theme.colors.white};
+              max-width: 250px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
 
               @media (min-width: ${theme.screens.lg}) {
                 font-size: ${theme.fonts['2xl']};
+                max-width: 525px;
               }
             }
 
             .profile-info-token {
               margin: 0;
+              margin-left: 10px;
               font-size: ${theme.fonts.sm};
               color: ${theme.colors.cyan};
             }
@@ -176,10 +185,14 @@ export const Background = styled.div<IBackgrounProps>`
     width: 100%;
     height: 165px;
     position: relative;
-    background-image: url(${image});
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    ${image &&
+      css`
+        background-image: url(${image});
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      `}
+    background-color: ${theme.colors.bunting};
 
     @media (min-width: ${theme.screens.lg}) {
       height: 273px;

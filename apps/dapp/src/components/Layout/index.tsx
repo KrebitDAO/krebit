@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useContext } from 'react';
+import { FunctionComponent, ReactNode, useContext, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -11,6 +11,7 @@ import {
   Wrapper
 } from './styles';
 import { Bell, Explore, Home, Menu, Send } from 'components/Icons';
+import { InlineDropdown } from 'components/InlineDropdown';
 import { GeneralContext } from 'context';
 
 interface IProps {
@@ -42,6 +43,7 @@ const MENU_OPTIONS = [
 
 export const Layout: FunctionComponent<IProps> = props => {
   const { children } = props;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const {
     auth,
     profileInformation: { profile }
@@ -51,7 +53,19 @@ export const Layout: FunctionComponent<IProps> = props => {
   const handlePushProfile = () => {
     if (!auth) return;
 
+    handleFilterOpen();
     push(`/${profile.did}`);
+  };
+
+  const handleLogout = () => {
+    if (!window) return;
+
+    auth.logout();
+    push(`/`);
+  };
+
+  const handleFilterOpen = () => {
+    setIsFilterOpen(prevState => !prevState);
   };
 
   return (
@@ -61,12 +75,30 @@ export const Layout: FunctionComponent<IProps> = props => {
           <Menu />
         </div>
         {auth?.isAuthenticated && (
-          <div className="photo" onClick={handlePushProfile}>
-            <Image
-              src={profile?.pfp || '/imgs/logos/Krebit.svg'}
-              width={30}
-              height={30}
-            />
+          <div className="profile-menu">
+            <div className="profile-menu-photo" onClick={handleFilterOpen}>
+              <Image
+                src={profile.picture || '/imgs/logos/Krebit.svg'}
+                width={30}
+                height={30}
+              />
+            </div>
+            {isFilterOpen && (
+              <div className="profile-menu-dropdown">
+                <InlineDropdown
+                  items={[
+                    {
+                      title: 'My profile',
+                      onClick: handlePushProfile
+                    },
+                    {
+                      title: 'Log out',
+                      onClick: handleLogout
+                    }
+                  ]}
+                />
+              </div>
+            )}
           </div>
         )}
       </MenuMobile>
@@ -96,15 +128,33 @@ export const Layout: FunctionComponent<IProps> = props => {
           ))}
         </div>
         {auth?.isAuthenticated && (
-          <div className="option-profile">
-            <div className="profile" onClick={handlePushProfile}>
-              <Image
-                src={profile?.pfp || '/imgs/logos/Krebit.svg'}
-                width={34}
-                height={34}
-              />
+          <div className="option-profile-container">
+            <div className="option-profile">
+              <div className="profile" onClick={handleFilterOpen}>
+                <Image
+                  src={profile.picture || '/imgs/logos/Krebit.svg'}
+                  width={34}
+                  height={34}
+                />
+              </div>
+              <p className="profile-text">Profile</p>
             </div>
-            <p className="profile-text">Profile</p>
+            {isFilterOpen && (
+              <div className="option-profile-dropdown">
+                <InlineDropdown
+                  items={[
+                    {
+                      title: 'My profile',
+                      onClick: handlePushProfile
+                    },
+                    {
+                      title: 'Log out',
+                      onClick: handleLogout
+                    }
+                  ]}
+                />
+              </div>
+            )}
           </div>
         )}
       </NavBarDesktop>

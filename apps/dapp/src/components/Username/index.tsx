@@ -17,9 +17,12 @@ import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { ToolTip } from 'components/ToolTip';
-import { constants, sortByDate, isValid } from 'utils';
+import { constants, sortByDate, isValid, normalizeSchema } from 'utils';
 import { GeneralContext } from 'context';
 import { Loading } from 'components/Loading';
+
+// types
+import { IProfile } from 'utils/normalizeSchema';
 
 const MOCK_SKILLS = [
   'PHP expert',
@@ -28,33 +31,6 @@ const MOCK_SKILLS = [
   'C master',
   'C++ pro'
 ];
-
-interface IProfile {
-  pfp: string;
-  username: string;
-  description: string;
-  did: string;
-  reputation: string | number;
-  countFollowers: number;
-  countFollowing: number;
-  personhood: {
-    discord: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    twitter: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    veriff: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-  };
-}
 
 export const Username = () => {
   const [
@@ -98,32 +74,15 @@ export const Username = () => {
         let currentProfile: IProfile;
 
         const profile = await publicPassport.getProfile();
+        const orbisProfile = await orbis.getProfile(did);
         const reputation = await publicPassport.getReputation();
 
-        if (profile) {
-          currentProfile = {
-            ...profile,
-            did,
-            reputation: reputation || 0,
-            countFollowers: 0,
-            countFollowing: 0
-          };
-        } else {
-          const orbisProfile = await orbis.getProfile(did);
-
-          if (orbisProfile?.data?.did) {
-            currentProfile = {
-              ...orbisProfile?.data?.details?.profile,
-              did: orbisProfile?.data?.did,
-              reputation: reputation || 0,
-              countFollowers: orbisProfile?.data?.count_followers || 0,
-              countFollowing: orbisProfile?.data?.count_following || 0
-            };
-          } else {
-            setStatus('rejected');
-            return;
-          }
-        }
+        currentProfile = normalizeSchema.profile(
+          profile,
+          orbisProfile,
+          reputation,
+          did as string
+        );
 
         const discordCredentials = await publicPassport.getCredentials(
           'discord'
@@ -228,17 +187,17 @@ export const Username = () => {
       ) : (
         <Wrapper>
           <div className="profile-container">
-            <Background image="/imgs/images/trust.jpg" />
+            <Background image={profile.background} />
             <div className="profile">
               <div className="profile-photo">
                 <Image
-                  src={profile.pfp || '/imgs/logos/Krebit.svg'}
+                  src={profile.picture || '/imgs/logos/Krebit.svg'}
                   layout="fill"
                 />
               </div>
               <div className="profile-info">
                 <div className="profile-info-naming">
-                  <span className="profile-info-name">andresmontoya.eth</span>{' '}
+                  <p className="profile-info-name">{profile.name}</p>{' '}
                   <span className="profile-info-token">
                     rkRB {profile.reputation}
                   </span>

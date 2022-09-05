@@ -163,6 +163,13 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
         `}
     }
 
+    .verify-box-loading {
+      margin: 0;
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.white}B3;
+      text-align: center;
+    }
+
     .verify-box-step-content {
       .verify-box-step-content-title {
         margin: 0;

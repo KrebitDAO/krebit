@@ -8,6 +8,7 @@ import { openOAuthUrl } from './openOAuthUrl';
 import { sortByDate } from './sortByDate';
 import { getWalletInformation } from './getWalletInformation';
 import { isValid } from './isValid';
+import { normalizeSchema } from './normalizeSchema';
 
 export {
   constants,
@@ -19,5 +20,6 @@ export {
   openOAuthUrl,
   sortByDate,
   getWalletInformation,
-  isValid
+  isValid,
+  normalizeSchema
 };

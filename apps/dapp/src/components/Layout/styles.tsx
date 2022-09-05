@@ -28,14 +28,25 @@ export const MenuMobile = styled.div`
       fill: ${theme.colors.white};
     }
 
-    .photo {
-      border: 2px solid ${theme.colors.white};
-      border-radius: 9999px;
-      width: 30px;
-      height: 30px;
+    .profile-menu {
+      position: relative;
 
-      img {
+      .profile-menu-photo {
+        border: 2px solid ${theme.colors.white};
         border-radius: 9999px;
+        width: 30px;
+        height: 30px;
+
+        img {
+          border-radius: 9999px;
+        }
+      }
+
+      .profile-menu-dropdown {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        z-index: 10;
       }
     }
 
@@ -99,32 +110,42 @@ export const NavBarDesktop = styled.div`
         }
       }
 
-      .option-profile {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      .option-profile-container {
         position: absolute;
         bottom: 24px;
         right: 0;
         left: 0;
-        cursor: pointer;
 
-        .profile {
-          width: 34px;
-          height: 34px;
-          border-radius: 9999px;
-          border: 2px solid ${theme.colors.white};
+        .option-profile {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          cursor: pointer;
 
-          img {
+          .profile {
+            width: 34px;
+            height: 34px;
             border-radius: 9999px;
+            border: 2px solid ${theme.colors.white};
+
+            img {
+              border-radius: 9999px;
+            }
+          }
+
+          .profile-text {
+            font-size: ${theme.fonts.sm};
+            margin: 0;
+            margin-top: 12px;
+            color: ${theme.colors.gray};
           }
         }
 
-        .profile-text {
-          font-size: ${theme.fonts.sm};
-          margin: 0;
-          margin-top: 12px;
-          color: ${theme.colors.gray};
+        .option-profile-dropdown {
+          position: absolute;
+          top: -68px;
+          left: 68px;
+          z-index: 10;
         }
       }
     }

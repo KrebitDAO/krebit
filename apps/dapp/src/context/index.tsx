@@ -6,7 +6,10 @@ import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
 import { Passport } from '@krebitdao/reputation-passport/dist/core';
 
-import { getWalletInformation } from 'utils';
+import { getWalletInformation, normalizeSchema } from 'utils';
+
+// types
+import { IProfile } from 'utils/normalizeSchema';
 
 interface IProps {
   children: JSX.Element;
@@ -22,7 +25,7 @@ export const GeneralContext = createContext(undefined);
 
 export const GeneralProvider: FunctionComponent<IProps> = props => {
   const { children } = props;
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState<IProfile | undefined>();
   const [openConnectWallet, setOpenConnectWallet] = useState(false);
   const [status, setStatus] = useState('idle');
   const [passport, setPassport] = useState<Passport>();
@@ -64,22 +67,19 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const isConnected = await passport.isConnected();
 
       if (isConnected) {
-        setPassport(passport);
-
         const profile = await passport.getProfile();
+        const orbisProfile = await orbis.getProfile(passport.did);
+        const reputation = await passport.getReputation();
 
-        if (profile) {
-          setProfile({ ...profile, did: passport.did });
-        } else {
-          const orbisProfile = await orbis.getProfile(passport.did);
+        const currentProfile = normalizeSchema.profile(
+          profile,
+          orbisProfile,
+          reputation,
+          passport.did as string
+        );
 
-          if (orbisProfile?.data?.did) {
-            setProfile({
-              ...orbisProfile?.data?.details?.profile,
-              did: passport.did
-            });
-          }
-        }
+        setPassport(passport);
+        setProfile(currentProfile);
       }
 
       setStatus('resolved');
@@ -119,12 +119,35 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         setOrbis(orbis);
 
         if (orbis) {
+          const profile = await passport.getProfile();
+          const orbisProfile = await orbis.getProfile(passport.did);
+          const reputation = await passport.getReputation();
+
+          const currentProfile = normalizeSchema.profile(
+            profile,
+            orbisProfile,
+            reputation,
+            passport.did as string
+          );
+
+          setProfile(currentProfile);
+          setStatus('resolved');
+
           push(`/${passport.did}`);
         }
       }
     } catch (error) {
       setStatus('rejected');
     }
+  };
+
+  const logout = () => {
+    if (!window) return;
+
+    window.localStorage.removeItem('auth-type');
+    window.localStorage.removeItem('ceramic-session');
+    setProfile(undefined);
+    setPassport(undefined);
   };
 
   return (
@@ -137,7 +160,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         auth: {
           connect,
           isAuthenticated: status === 'resolved' && !!passport?.did,
-          did: passport?.did
+          did: passport?.did,
+          logout
         },
         walletInformation: {
           ...walletInformation,
