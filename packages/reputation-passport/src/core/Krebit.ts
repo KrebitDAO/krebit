@@ -180,11 +180,15 @@ export class Krebit {
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
       const lit = new Lit();
-
+      const stream = await TileDocument.load(
+        this.idx.ceramic,
+        encrypted.accessControlConditions
+      );
+      const accessControlConditions = stream.content as any;
       return await lit.decrypt(
         encrypted.encryptedString,
         encrypted.encryptedSymmetricKey,
-        encrypted.accessControlConditions,
+        accessControlConditions,
         this.wallet
       );
     }

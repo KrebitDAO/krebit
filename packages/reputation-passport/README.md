@@ -27,7 +27,9 @@ $ npm install -s @krebitdao/reputation-passport
 ```javascript
 import krebit from '@krebitdao/reputation-passport';
 
-const passport = new krebit.core.Passport();
+const passport = new krebit.core.Passport({
+  ceramicUrl: 'https://ceramic-clay.3boxlabs.com'
+});
 passport.read(address, `did:pkh:eip155:80001:${address}`);
 
 const profile = await passport.getProfile();
@@ -101,7 +103,8 @@ const Issuer = new krebit.core.Krebit({
   wallet,
   ethProvider,
   network: 'mumbai',
-  address: wallet.address
+  address: wallet.address,
+  ceramicUrl: 'https://ceramic-clay.3boxlabs.com'
 });
 const did = await Issuer.connect();
 ```
@@ -157,7 +160,8 @@ const { wallet, ethProvider } = await connectWeb3();
 
 const passport = new krebit.core.Passport({
   ethProvider: ethProvider.provider,
-  address
+  address,
+  ceramicUrl: 'https://ceramic-clay.3boxlabs.com'
 });
 await passport.connect();
 
@@ -179,6 +183,7 @@ const Issuer = new krebit.core.Krebit({
         wallet,
         ethProvider: ethProvider.provider,
         address,
+        ceramicUrl: 'https://ceramic-clay.3boxlabs.com',
         litSdk: LitJsSdk // Added Lit
       });
 

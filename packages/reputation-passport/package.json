@@ -1,6 +1,6 @@
 {
   "name": "@krebitdao/reputation-passport",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Krebit SDK for Verified Credentials",
   "type": "module",
   "main": "./dist/index.js",
