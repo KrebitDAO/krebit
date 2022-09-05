@@ -177,8 +177,8 @@ export const useVeriffProvider = () => {
       passport.read(
         walletInformation.address,
         `did:pkh:eip155:${
-          Krebit.schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK].domain
-            .chainId
+          Krebit.schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK]?.domain
+            ?.chainId
         }:${walletInformation.address}`
       );
 

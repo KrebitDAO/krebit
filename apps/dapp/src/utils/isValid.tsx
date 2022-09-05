@@ -2,7 +2,7 @@ import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken
 
 const addressRegex = '0x[a-fA-F0-9]{40}';
 const didRegex = `did:pkh:eip155:${
-  krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK].domain.chainId
+  krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId
 }:${addressRegex}`;
 
 export const isValid = (type: string, value: string) => {

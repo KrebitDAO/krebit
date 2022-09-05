@@ -88,7 +88,7 @@ export const profile = (
       picture: '/imgs/logos/Krebit.svg',
       name: did.replace(
         `did:pkh:eip155:${
-          krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK].domain.chainId
+          krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId
         }:`,
         ''
       ),

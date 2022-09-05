@@ -6,6 +6,8 @@ const withTM = require('next-transpile-modules')([
 module.exports = withTM({
   reactStrictMode: true,
   images: {
+    loader: 'imgix',
+    path: 'https://krebit.id/',
     formats: ['image/avif', 'image/webp'],
     domains: ['krebit.id', 'arweave.net']
   }

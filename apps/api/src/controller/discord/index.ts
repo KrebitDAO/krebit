@@ -75,7 +75,7 @@ export const DiscordController = async (
       const claim = {
         id: claimedCredential.id,
         ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-        did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK].domain.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+        did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
         type: claimedCredential.credentialSubject.type,
         typeSchema: claimedCredential.credentialSubject.typeSchema,
         tags: claimedCredential.type.slice(1),
