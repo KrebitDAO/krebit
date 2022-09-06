@@ -1,9 +1,12 @@
 import express from 'express';
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getVeriffDecision } from '../../utils';
+import {
+  connect,
+  startPhoneVerification,
+  checkPhoneVerification
+} from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -13,9 +16,7 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
-const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
-
-export const VeriffController = async (
+export const PhoneController = async (
   request: express.Request,
   response: express.Response
 ) => {
@@ -29,9 +30,16 @@ export const VeriffController = async (
     }
 
     const { claimedCredential } = request.body;
-    if (claimedCredential?.credentialSubject?.type !== 'legalName') {
-      throw new Error(`claimedCredential type is not legalName`);
+    if (claimedCredential?.credentialSubject?.type !== 'phoneNumber') {
+      throw new Error(`claimedCredential type is not phoneNumber`);
     }
+
+    let channel = 'sms';
+    if (request?.body?.channel) {
+      channel = request.body.channel;
+    }
+
+    // Check and decrypt claimed credential
 
     const { wallet, ethProvider } = await connect();
 
@@ -40,13 +48,12 @@ export const VeriffController = async (
       wallet,
       ethProvider,
       address: wallet.address,
-      ceramicUrl: SERVER_CERAMIC_URL,
       litSdk: LitJsSdk
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
 
-    console.log('Verifying veriff with claimedCredential: ', claimedCredential);
+    console.log('Verifying phone with claimedCredential: ', claimedCredential);
 
     // TODO: check self-signature
     // TODO: Check if the claim already has verifications by me
@@ -67,20 +74,21 @@ export const VeriffController = async (
       console.log('Claim value: ', claimValue);
     }
 
-    // If claim is digitalProperty "veriff"
-    if (claimedCredential?.credentialSubject?.type === 'legalName') {
-      // Connect to veriff and get decision status for the session ID (claimedCredential.id)
-      const veriffDecision = await getVeriffDecision(claimedCredential.id);
-      console.log('veriffDecision: ', veriffDecision);
-
-      // If valid veriffID
+    if (
+      claimValue?.proofs?.verificationId &&
+      claimValue?.proofs?.verificationId != ''
+    ) {
+      const verificationId = claimValue.proofs.verificationId;
+      // Check Verification status
+      console.log('verificationId: ', verificationId);
+      const verification = await checkPhoneVerification(verificationId);
+      console.log('verification: ', verification);
+      // If verification number matches claimed number
       if (
-        veriffDecision.status === 'approved' &&
-        claimValue.person.firstName === veriffDecision.person.firstName &&
-        claimValue.person.lastName === veriffDecision.person.lastName
+        verification.to === claimValue.countryCode + claimValue.number &&
+        verification.status === 'pending'
       ) {
-        console.log('Valid veriff ID:', veriffDecision);
-
+        // Issue verifiable credential
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -91,7 +99,7 @@ export const VeriffController = async (
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(1),
+          tags: claimedCredential.type.slice(2),
           value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
@@ -110,7 +118,18 @@ export const VeriffController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong veriff ID: ${veriffDecision}`);
+        return response.json({ status: verification.status });
+      }
+    } else {
+      // Start Twilio verification
+      const verificationId = await startPhoneVerification(
+        claimValue.countryCode.concat(claimValue.number),
+        channel
+      );
+      console.log('verificationId: ', verificationId);
+      // return verificationId
+      if (verificationId) {
+        return response.json({ verificationId });
       }
     }
   } catch (err) {
