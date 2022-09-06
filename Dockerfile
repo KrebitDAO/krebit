@@ -1,16 +1,16 @@
 FROM node:lts-alpine AS builder
 RUN apk update
-RUN apk add git
 
 # Set working directory
 WORKDIR /app
 RUN yarn global add turbo
 COPY . .
-RUN turbo prune --scope=api --docker
+RUN turbo prune --scope=@krebitdao/api --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:lts-alpine AS installer
 RUN apk update
+RUN apk add git
 RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=builder /app/out/json/ .

@@ -36,7 +36,8 @@ export const DiscordController = async (
     const Issuer = new krebit.core.Krebit({
       wallet,
       ethProvider,
-      address: wallet.address
+      address: wallet.address,
+      ceramicUrl: SERVER_CERAMIC_URL
       //litSdk: LitJsSdk
     });
     const did = await Issuer.connect();

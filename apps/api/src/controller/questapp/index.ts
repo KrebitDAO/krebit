@@ -11,7 +11,8 @@ const {
   SERVER_EXPIRES_YEARS,
   SERVER_TRUST,
   SERVER_STAKE,
-  SERVER_PRICE
+  SERVER_PRICE,
+  SERVER_CERAMIC_URL
 } = process.env;
 
 export const QuestappController = async (
@@ -37,6 +38,7 @@ export const QuestappController = async (
       wallet,
       ethProvider,
       address: wallet.address,
+      ceramicUrl: SERVER_CERAMIC_URL,
       litSdk: LitJsSdk
     });
     const did = await Issuer.connect();

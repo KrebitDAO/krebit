@@ -36,6 +36,7 @@ export const VeriffController = async (
       wallet,
       ethProvider,
       address: wallet.address,
+      ceramicUrl: SERVER_CERAMIC_URL,
       litSdk: LitJsSdk
     });
     const did = await Issuer.connect();

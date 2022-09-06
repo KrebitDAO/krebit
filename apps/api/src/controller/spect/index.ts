@@ -33,7 +33,8 @@ export const SpectController = async (
     const Issuer = new krebit.core.Krebit({
       wallet,
       ethProvider,
-      address: wallet.address
+      address: wallet.address,
+      ceramicUrl: SERVER_CERAMIC_URL
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
