@@ -18,7 +18,8 @@ const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
 
 export const DiscordController = async (
   request: express.Request,
-  response: express.Response
+  response: express.Response,
+  next: express.NextFunction
 ) => {
   try {
     if (!request?.body) {
@@ -104,6 +105,6 @@ export const DiscordController = async (
       }
     }
   } catch (err) {
-    throw new Error(err);
+    next(err);
   }
 };

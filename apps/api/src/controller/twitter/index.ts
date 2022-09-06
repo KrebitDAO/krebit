@@ -28,7 +28,8 @@ const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
 
 export const TwitterController = async (
   request: express.Request,
-  response: express.Response
+  response: express.Response,
+  next: express.NextFunction
 ) => {
   try {
     if (!request?.body) {
@@ -130,7 +131,6 @@ export const TwitterController = async (
       }
     }
   } catch (err) {
-    console.log('err: ', err);
-    throw new Error(err);
+    next(err);
   }
 };

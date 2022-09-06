@@ -17,7 +17,8 @@ const {
 
 export const QuestappController = async (
   request: express.Request,
-  response: express.Response
+  response: express.Response,
+  next: express.NextFunction
 ) => {
   try {
     if (!request?.body) {
@@ -107,7 +108,6 @@ export const QuestappController = async (
       return response.json(issuedCredential);
     }
   } catch (err) {
-    console.log('err:', err);
-    throw new Error(err);
+    next(err);
   }
 };

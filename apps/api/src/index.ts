@@ -8,8 +8,7 @@ import {
   TwitterController,
   VeriffController,
   IssuerController,
-  SpectController,
-  PhoneController
+  SpectController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -26,10 +25,14 @@ router
   .post('/twitter', TwitterController)
   .post('/veriff', VeriffController)
   .post('/issuer', IssuerController)
-  .post('/spect', SpectController)
-  .post('/phone', PhoneController);
+  .post('/spect', SpectController);
 
 app.use('/', router);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: err.message });
+});
 
 app.listen(SERVER_PORT, () => {
   console.log(`Server is listening on ${SERVER_PORT}`);

@@ -14,7 +14,8 @@ const {
 
 export const SpectController = async (
   request: express.Request,
-  response: express.Response
+  response: express.Response,
+  next: express.NextFunction
 ) => {
   console.log(request.body);
   try {
@@ -91,6 +92,6 @@ export const SpectController = async (
 
     return response.json(result);
   } catch (err) {
-    throw new Error(err);
+    next(err);
   }
 };

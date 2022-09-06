@@ -18,7 +18,8 @@ const {
 
 export const PhoneController = async (
   request: express.Request,
-  response: express.Response
+  response: express.Response,
+  next: express.NextFunction
 ) => {
   try {
     if (!request?.body) {
@@ -133,7 +134,6 @@ export const PhoneController = async (
       }
     }
   } catch (err) {
-    console.log('err: ', err);
-    throw new Error(err);
+    next(err);
   }
 };
