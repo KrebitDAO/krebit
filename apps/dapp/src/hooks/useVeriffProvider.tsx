@@ -141,6 +141,7 @@ export const useVeriffProvider = () => {
           ...walletInformation
         });
         await passport.connect(currentSession);
+
         // Save claimedCredential
         if (claimedCredential) {
           const claimedCredentialId = await passport.addClaim(

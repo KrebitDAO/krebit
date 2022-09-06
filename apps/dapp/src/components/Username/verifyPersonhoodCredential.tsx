@@ -7,7 +7,8 @@ import { GeneralContext } from 'context';
 import {
   useDiscordProvider,
   useTwitterProvider,
-  useVeriffProvider
+  useVeriffProvider,
+  usePhoneProvider
 } from 'hooks';
 
 interface IProps {
@@ -24,6 +25,10 @@ interface IProps {
       credential: Object;
       stamp: Object;
     };
+    phone: {
+      credential: Object;
+      stamp: Object;
+    };
   };
   onClose: () => void;
   verifyId?: string;
@@ -35,6 +40,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
   const veriffProvider = useVeriffProvider();
+  const phoneProvider = usePhoneProvider();
 
   return (
     <Verify
@@ -191,7 +197,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                             !veriffProvider.claimValues.lastName
                         }
                 }}
-                isLoading={veriffProvider.status === 'pending'}
+                isLoading={veriffProvider.status === 'credential_pending'}
               />
               <BoxStep
                 title="Step 2"
@@ -210,7 +216,97 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                           onClick: veriffProvider.handleStampCredential
                         }
                 }}
-                isLoading={veriffProvider.status === 'pending'}
+                isLoading={veriffProvider.status === 'stamp_pending'}
+              />
+            </>
+          )}
+          {currentVerify?.id === 'phone' && (
+            <>
+              <BoxStep
+                title="Step 1"
+                description={
+                  phoneProvider.currentVerificationId
+                    ? 'Step completed, you can now check your verification'
+                    : 'Enter your information'
+                }
+                form={{
+                  inputs:
+                    phoneProvider.currentVerificationId ||
+                    currentPersonhood.phone.credential
+                      ? undefined
+                      : [
+                          {
+                            type: 'number',
+                            name: 'countryCode',
+                            placeholder: '+',
+                            value: phoneProvider.claimValues.countryCode,
+                            onChange: phoneProvider.handleClaimValues
+                          },
+                          {
+                            type: 'tel',
+                            name: 'number',
+                            placeholder: 'Enter phone number',
+                            value: phoneProvider.claimValues.number,
+                            onChange: phoneProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    phoneProvider.currentVerificationId ||
+                    currentPersonhood.phone.credential
+                      ? {
+                          text: 'Completed',
+                          onClick: () => {},
+                          isDisabled: true
+                        }
+                      : {
+                          text: 'Start SMS verification',
+                          onClick:
+                            !phoneProvider.claimValues.countryCode ||
+                            !phoneProvider.claimValues.number
+                              ? undefined
+                              : phoneProvider.handleStartVerification,
+                          isDisabled:
+                            !phoneProvider.claimValues.countryCode ||
+                            !phoneProvider.claimValues.number
+                        }
+                }}
+                isLoading={phoneProvider.status === 'verification_pending'}
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  phoneProvider.currentCredential ||
+                  currentPersonhood.phone.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Get phone number credential via Twilio'
+                }
+                form={{
+                  button:
+                    phoneProvider.currentCredential ||
+                    currentPersonhood.phone.credential
+                      ? { text: 'Check it', onClick: () => {} }
+                      : {
+                          text: 'Verify',
+                          onClick: phoneProvider.handleGetCredential
+                        }
+                }}
+              />
+              <BoxStep
+                title="Step 3"
+                description={
+                  phoneProvider.currentStamp || currentPersonhood.phone.stamp
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Stamp verification on-chain'
+                }
+                form={{
+                  button:
+                    phoneProvider.currentStamp || currentPersonhood.phone.stamp
+                      ? { text: 'Check it', onClick: () => {} }
+                      : {
+                          text: 'Stamp',
+                          onClick: veriffProvider.handleStampCredential
+                        }
+                }}
               />
             </>
           )}

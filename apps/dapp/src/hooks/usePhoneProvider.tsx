@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 
@@ -8,7 +8,6 @@ import {
   sortByDate,
   getWalletInformation
 } from 'utils';
-import { debounce } from 'ts-debounce';
 
 interface IClaimValues {
   countryCode: string;
@@ -19,12 +18,16 @@ const DEFAULT_PHONE_NODE = 'http://localhost:4000/phone';
 const issuerAddres = '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860';
 
 export const usePhoneProvider = () => {
-  const [verificationId, setVerificationId] = useState('');
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     countryCode: '',
     number: ''
   });
   const [status, setStatus] = useState('idle');
+  const [currentVerificationId, setCurrentVerificationId] = useState('');
+  const [currentCredential, setCurrentCredential] = useState<
+    Object | undefined
+  >();
+  const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
 
   const getClaim = async (address: string, issuerAddres: string) => {
     const expirationDate = new Date();
@@ -41,7 +44,7 @@ export const usePhoneProvider = () => {
       value: {
         ...claimValues,
         proofs: {
-          verificationId: verificationId,
+          verificationId: currentVerificationId,
           nonce: `${generateUID(10)}`
         }
       },
@@ -52,11 +55,10 @@ export const usePhoneProvider = () => {
   };
 
   const handleStartVerification = async () => {
-    setStatus('pending');
+    setStatus('verification_pending');
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-
       console.log('Saving Stamp', { type: 'phoneNumber' });
 
       const session = window.localStorage.getItem('ceramic-session');
@@ -92,16 +94,16 @@ export const usePhoneProvider = () => {
 
       // Step 1-C: Get the verifiable credential, and save it to the passport
       if (result) {
-        setVerificationId(result.verificationId);
-        setStatus('resolved');
+        setCurrentVerificationId(result.verificationId);
+        setStatus('verification_resolved');
       }
     } catch (error) {
-      setStatus('rejected');
+      setStatus('verification_rejected');
     }
   };
 
   const handleGetCredential = async () => {
-    setStatus('pending');
+    setStatus('credential_pending');
 
     try {
       const session = window.localStorage.getItem('ceramic-session');
@@ -151,16 +153,18 @@ export const usePhoneProvider = () => {
           issuedCredential
         );
         console.log('addedCredentialId: ', addedCredentialId);
-        setStatus('resolved');
+
+        setCurrentCredential(issuedCredential);
+        setStatus('credential_resolved');
       }
     } catch (error) {
-      setStatus('rejected');
+      setStatus('credential_rejected');
     }
   };
 
   const handleStampCredential = async () => {
     try {
-      setStatus('pending');
+      setStatus('stamp_pending');
 
       const session = window.localStorage.getItem('ceramic-session');
       const currentSession = JSON.parse(session);
@@ -194,9 +198,10 @@ export const usePhoneProvider = () => {
       const stampTx = await Issuer.stampCredential(getLatestPhoneCredential);
       console.log('stampTx: ', stampTx);
 
-      setStatus('resolved');
+      setCurrentStamp(stampTx);
+      setStatus('stamp_resolved');
     } catch (error) {
-      setStatus('rejected');
+      setStatus('stamp_rejected');
     }
   };
 
@@ -215,6 +220,9 @@ export const usePhoneProvider = () => {
     handleStampCredential,
     handleClaimValues,
     claimValues,
-    status
+    status,
+    currentVerificationId,
+    currentCredential,
+    currentStamp
   };
 };
