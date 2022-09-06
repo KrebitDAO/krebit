@@ -12,7 +12,7 @@ import {
   WorkCredential,
   Wrapper
 } from './styles';
-import { VerifyPersonhoodCredential } from './VerifyPersonhoodCredential';
+import { VerifyPersonhoodCredential } from './verifyPersonhoodCredential';
 import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
@@ -23,6 +23,7 @@ import { Loading } from 'components/Loading';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
+import { VerifyEducationCredential } from './verifyEducationCredential';
 
 const MOCK_SKILLS = [
   'PHP expert',
@@ -40,6 +41,10 @@ export const Username = () => {
   const [
     isVerifyPersonhoodCredentialOpen,
     setIsVerifyPersonhoodCredentialOpen
+  ] = useState(false);
+  const [
+    isVerifyEducationCredentialOpen,
+    setIsVerifyEducationCredentialOpen
   ] = useState(false);
   const [status, setStatus] = useState('idle');
   const [profile, setProfile] = useState<IProfile | undefined>();
@@ -168,6 +173,10 @@ export const Username = () => {
     setIsVerifyPersonhoodCredentialOpen(prevState => !prevState);
   };
 
+  const handleIsVerifyEducationCredentialOpen = () => {
+    setIsVerifyEducationCredentialOpen(prevState => !prevState);
+  };
+
   if (status === 'rejected') {
     return <Error statusCode={404} />;
   }
@@ -178,6 +187,23 @@ export const Username = () => {
         <VerifyPersonhoodCredential
           currentPersonhood={profile?.personhood}
           onClose={handleIsVerifyPersonhoodCredentialOpen}
+        />
+      )}
+      {isVerifyEducationCredentialOpen && (
+        <VerifyEducationCredential
+          // YOU HAVE TO REPLACE THESE VALUES WITH THE ONES FETCHED FROM CERAMIC, IF A CREDENTIAL FROM PLATZI IS ALREADY DONE, THIS COMPONENT MUST KNOW
+          // QUESTION: FOR DYNAMIC CONTENT, MAYBE SHOULD BE THIS JUST AN OBJECT?
+          currentEducation={{
+            platzi: {
+              credential: undefined,
+              stamp: undefined
+            },
+            udemy: {
+              credential: undefined,
+              stamp: undefined
+            }
+          }}
+          onClose={handleIsVerifyEducationCredentialOpen}
         />
       )}
       {isLoading ? (
@@ -308,7 +334,10 @@ export const Username = () => {
                 <div className="education-header">
                   <p className="education-header-text">Education credentials</p>
                   {query.id === auth?.did && (
-                    <p className="education-header-verify" onClick={() => {}}>
+                    <p
+                      className="education-header-verify"
+                      onClick={handleIsVerifyEducationCredentialOpen}
+                    >
                       Verify
                     </p>
                   )}

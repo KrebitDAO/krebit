@@ -86,7 +86,7 @@ export const Wrapper = styled.div`
 
               @media (min-width: ${theme.screens.lg}) {
                 font-size: ${theme.fonts['2xl']};
-                max-width: 525px;
+                max-width: 600px;
               }
             }
 

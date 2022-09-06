@@ -84,7 +84,7 @@ export const profile = (
   } else {
     currentProfile = {
       did: did,
-      background: '/imgs/images/trust.jpg',
+      background: undefined,
       picture: '/imgs/logos/Krebit.svg',
       name: did.replace(
         `did:pkh:eip155:${
