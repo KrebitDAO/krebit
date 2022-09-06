@@ -26,10 +26,11 @@ interface IProps {
     };
   };
   onClose: () => void;
+  verifyId?: string;
 }
 
 export const VerifyPersonhoodCredential = (props: IProps) => {
-  const { currentPersonhood, onClose } = props;
+  const { currentPersonhood, onClose, verifyId } = props;
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
@@ -39,6 +40,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
     <Verify
       initialList={constants.PERSONHOOD_CREDENTIALS}
       onClose={onClose}
+      verifyId={verifyId}
       component={({ currentVerify }) => (
         <>
           {currentVerify?.id === 'discord' && (

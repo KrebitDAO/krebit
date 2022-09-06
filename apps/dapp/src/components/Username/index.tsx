@@ -13,6 +13,7 @@ import {
   Wrapper
 } from './styles';
 import { VerifyPersonhoodCredential } from './verifyPersonhoodCredential';
+import { VerifyEducationCredential } from './verifyEducationCredential';
 import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
@@ -23,7 +24,6 @@ import { Loading } from 'components/Loading';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
-import { VerifyEducationCredential } from './verifyEducationCredential';
 
 const MOCK_SKILLS = [
   'PHP expert',
@@ -42,6 +42,9 @@ export const Username = () => {
     isVerifyPersonhoodCredentialOpen,
     setIsVerifyPersonhoodCredentialOpen
   ] = useState(false);
+  const [currentVerifyPersonhoodId, setCurrentVerifyPersonhoodId] = useState<
+    string
+  >();
   const [
     isVerifyEducationCredentialOpen,
     setIsVerifyEducationCredentialOpen
@@ -171,6 +174,11 @@ export const Username = () => {
 
   const handleIsVerifyPersonhoodCredentialOpen = () => {
     setIsVerifyPersonhoodCredentialOpen(prevState => !prevState);
+    setCurrentVerifyPersonhoodId(undefined);
+  };
+
+  const handleVerifyPersonhoodId = (id: string) => {
+    setCurrentVerifyPersonhoodId(id);
   };
 
   const handleIsVerifyEducationCredentialOpen = () => {
@@ -183,12 +191,13 @@ export const Username = () => {
 
   return (
     <Layout>
-      {isVerifyPersonhoodCredentialOpen && (
+      {isVerifyPersonhoodCredentialOpen || currentVerifyPersonhoodId ? (
         <VerifyPersonhoodCredential
           currentPersonhood={profile?.personhood}
           onClose={handleIsVerifyPersonhoodCredentialOpen}
+          verifyId={currentVerifyPersonhoodId}
         />
-      )}
+      ) : null}
       {isVerifyEducationCredentialOpen && (
         <VerifyEducationCredential
           // YOU HAVE TO REPLACE THESE VALUES WITH THE ONES FETCHED FROM CERAMIC, IF A CREDENTIAL FROM PLATZI IS ALREADY DONE, THIS COMPONENT MUST KNOW
@@ -278,6 +287,7 @@ export const Username = () => {
                         <p className="person-box-item-text">{item.text}</p>
                         <div
                           className="person-box-item-tooltip"
+                          onClick={() => handleVerifyPersonhoodId(item.id)}
                           onMouseOver={() =>
                             handleCurrentPersonhoodToolTipActiveCallback(
                               index + 1

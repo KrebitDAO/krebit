@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 
 import { Wrapper } from './styles';
 import { ArrowForward, Close } from 'components/Icons';
@@ -24,14 +24,26 @@ interface IProps {
   initialList: IInitialListProps[];
   onClose: () => void;
   component: (props: IComponentProps) => ReactElement;
+  verifyId?: string;
 }
 
 export const Verify = (props: IProps) => {
-  const { initialList, component, onClose } = props;
+  const { initialList, component, onClose, verifyId } = props;
   const [viewStatus, setViewStatus] = useState<IViewStatusProps>('init');
   const [currentVerify, setCurrentVerify] = useState<
     ICurrentVerifyProps | undefined
   >();
+
+  useEffect(() => {
+    if (verifyId) {
+      const currentElement = initialList.find(list => list.id === verifyId);
+
+      if (currentElement) {
+        setViewStatus('steps');
+        setCurrentVerify(currentElement);
+      }
+    }
+  }, [verifyId]);
 
   const handleViewStatus = (status: IViewStatusProps) => {
     setViewStatus(status);

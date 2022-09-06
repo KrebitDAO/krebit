@@ -249,6 +249,8 @@ export const PersonhoodCredential = styled.div`
       }
 
       .person-box-item-icon {
+        cursor: pointer;
+
         & > svg {
           opacity: 0.2;
         }
@@ -265,8 +267,8 @@ export const PersonhoodCredential = styled.div`
 
         .person-box-item-tooltip-box {
           position: absolute;
-          top: -50px;
-          right: 10px;
+          top: -60px;
+          right: 15px;
         }
       }
 

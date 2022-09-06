@@ -3,7 +3,6 @@ import { ChangeEvent, useContext, useState } from 'react';
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
 import { Explore } from 'components/Icons';
-import { constants } from 'utils';
 import { GeneralContext } from 'context';
 
 interface IProps {
