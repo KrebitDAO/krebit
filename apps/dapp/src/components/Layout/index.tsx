@@ -1,5 +1,4 @@
 import { FunctionComponent, ReactNode, useContext, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -8,7 +7,8 @@ import {
   NavBarDesktop,
   NavBarMobile,
   NavBarOption,
-  Wrapper
+  Wrapper,
+  Image
 } from './styles';
 import { Bell, Explore, Home, Menu, Send } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
@@ -76,13 +76,12 @@ export const Layout: FunctionComponent<IProps> = props => {
         </div>
         {auth?.isAuthenticated && (
           <div className="profile-menu">
-            <div className="profile-menu-photo" onClick={handleFilterOpen}>
-              <Image
-                src={profile.picture || '/imgs/logos/Krebit.svg'}
-                width={30}
-                height={30}
-              />
-            </div>
+            <Image
+              src={profile.picture || '/imgs/logos/Krebit.svg'}
+              width={30}
+              height={30}
+              onClick={handleFilterOpen}
+            />
             {isFilterOpen && (
               <div className="profile-menu-dropdown">
                 <InlineDropdown
@@ -116,7 +115,7 @@ export const Layout: FunctionComponent<IProps> = props => {
       <NavBarDesktop>
         <div className="options">
           <div className="option-logo">
-            <Image src="/imgs/logos/Krebit.svg" width={50} height={50} />
+            <img src="/imgs/logos/Krebit.svg" width={50} height={50} />
           </div>
           {MENU_OPTIONS.map((content, index) => (
             <Link href={content.href} key={index}>
@@ -130,13 +129,12 @@ export const Layout: FunctionComponent<IProps> = props => {
         {auth?.isAuthenticated && (
           <div className="option-profile-container">
             <div className="option-profile">
-              <div className="profile" onClick={handleFilterOpen}>
-                <Image
-                  src={profile.picture || '/imgs/logos/Krebit.svg'}
-                  width={34}
-                  height={34}
-                />
-              </div>
+              <Image
+                src={profile.picture || '/imgs/logos/Krebit.svg'}
+                width={34}
+                height={34}
+                onClick={handleFilterOpen}
+              />
               <p className="profile-text">Profile</p>
             </div>
             {isFilterOpen && (

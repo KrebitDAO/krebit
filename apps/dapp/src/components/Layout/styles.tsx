@@ -5,6 +5,12 @@ interface INavBarOptionProps {
   isActive: boolean;
 }
 
+interface IImageProps {
+  width: number;
+  height: number;
+  src: string;
+}
+
 export const Wrapper = styled.div`
   ${({ theme }) => css``}
 `;
@@ -29,19 +35,6 @@ export const MenuMobile = styled.div`
     }
 
     .profile-menu {
-      position: relative;
-
-      .profile-menu-photo {
-        border: 2px solid ${theme.colors.white};
-        border-radius: 9999px;
-        width: 30px;
-        height: 30px;
-
-        img {
-          border-radius: 9999px;
-        }
-      }
-
       .profile-menu-dropdown {
         position: absolute;
         top: 40px;
@@ -122,17 +115,6 @@ export const NavBarDesktop = styled.div`
           align-items: center;
           cursor: pointer;
 
-          .profile {
-            width: 34px;
-            height: 34px;
-            border-radius: 9999px;
-            border: 2px solid ${theme.colors.white};
-
-            img {
-              border-radius: 9999px;
-            }
-          }
-
           .profile-text {
             font-size: ${theme.fonts.sm};
             margin: 0;
@@ -181,5 +163,18 @@ export const NavBarOption = styled.div<INavBarOptionProps>`
       margin: 0 auto;
       color: ${isActive ? theme.colors.cyan : theme.colors.gray};
     }
+  `}
+`;
+
+export const Image = styled.div<IImageProps>`
+  ${({ theme, width, height, src }) => css`
+    border: 2px solid ${theme.colors.white};
+    border-radius: 9999px;
+    width: ${width}px;
+    height: ${height}px;
+    background-image: url('${src}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   `}
 `;

@@ -67,16 +67,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const isConnected = await passport.isConnected();
 
       if (isConnected) {
-        const profile = await passport.getProfile();
-        const orbisProfile = await orbis.getProfile(passport.did);
-        const reputation = await passport.getReputation();
-
-        const currentProfile = normalizeSchema.profile(
-          profile,
-          orbisProfile,
-          reputation,
-          passport.did as string
-        );
+        const currentProfile = await normalizeSchema.profile(passport, orbis);
 
         setPassport(passport);
         setProfile(currentProfile);
@@ -119,16 +110,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         setOrbis(orbis);
 
         if (orbis) {
-          const profile = await passport.getProfile();
-          const orbisProfile = await orbis.getProfile(passport.did);
-          const reputation = await passport.getReputation();
-
-          const currentProfile = normalizeSchema.profile(
-            profile,
-            orbisProfile,
-            reputation,
-            passport.did as string
-          );
+          const currentProfile = await normalizeSchema.profile(passport, orbis);
 
           setProfile(currentProfile);
           setStatus('resolved');

@@ -154,13 +154,6 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
 
     @media (min-width: ${theme.screens.lg}) {
       padding: 22px;
-
-      ${!hasInputs &&
-        css`
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        `}
     }
 
     .verify-box-loading {
@@ -171,23 +164,39 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
     }
 
     .verify-box-step-content {
-      .verify-box-step-content-title {
-        margin: 0;
-        font-size: ${theme.fonts.base};
-        color: ${theme.colors.white}B3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-        @media (min-width: ${theme.screens.lg}) {
-          font-size: ${theme.fonts.xl};
+      .verify-box-step-content-texts {
+        .verify-box-step-content-title {
+          margin: 0;
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white}B3;
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts.xl};
+          }
+        }
+
+        .verify-box-step-content-description {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white}B3;
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts.base};
+          }
         }
       }
 
-      .verify-box-step-content-description {
-        margin: 0;
-        font-size: ${theme.fonts.sm};
-        color: ${theme.colors.white}B3;
+      .verify-box-step-content-icon {
+        margin-left: 20px;
 
-        @media (min-width: ${theme.screens.lg}) {
-          font-size: ${theme.fonts.base};
+        & > svg {
+          width: 30px;
+          height: 30px;
+          fill: ${theme.colors.white};
         }
       }
     }
@@ -229,12 +238,7 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
       margin-top: 24px;
 
       @media (min-width: ${theme.screens.lg}) {
-        margin: 0;
-
-        ${hasInputs &&
-          css`
-            float: right;
-          `}
+        float: right;
       }
     }
   `}

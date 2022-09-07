@@ -79,17 +79,9 @@ export const Username = () => {
 
         publicPassport.read(address, did);
 
-        let currentProfile: IProfile;
-
-        const profile = await publicPassport.getProfile();
-        const orbisProfile = await orbis.getProfile(did);
-        const reputation = await publicPassport.getReputation();
-
-        currentProfile = normalizeSchema.profile(
-          profile,
-          orbisProfile,
-          reputation,
-          did as string
+        let currentProfile = await normalizeSchema.profile(
+          publicPassport,
+          orbis
         );
 
         const discordCredentials = await publicPassport.getCredentials(
@@ -234,16 +226,11 @@ export const Username = () => {
           <Loading />
         </LoadingWrapper>
       ) : (
-        <Wrapper>
+        <Wrapper profilePicture={profile.picture || '/imgs/logos/Krebit.svg'}>
           <div className="profile-container">
             <Background image={profile.background} />
             <div className="profile">
-              <div className="profile-photo">
-                <Image
-                  src={profile.picture || '/imgs/logos/Krebit.svg'}
-                  layout="fill"
-                />
-              </div>
+              <div className="profile-photo"></div>
               <div className="profile-info">
                 <div className="profile-info-naming">
                   <p className="profile-info-name">{profile.name}</p>{' '}
@@ -391,7 +378,7 @@ export const Username = () => {
                         </div>
                       </div>
                       <div className="education-card-bottom-icon">
-                        <Image src="/imgs/images/platzi.png" layout="fill" />
+                        <img src="/imgs/images/platzi.png" />
                       </div>
                     </div>
                   ))}
@@ -411,7 +398,7 @@ export const Username = () => {
                   {new Array(2).fill(0).map((_, index) => (
                     <div className="work-card" key={index}>
                       <div className="work-card-image">
-                        <Image
+                        <img
                           src="/imgs/logos/ethereum-logo.png"
                           width={75}
                           height={31}

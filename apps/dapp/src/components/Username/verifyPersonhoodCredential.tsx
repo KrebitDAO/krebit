@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import krbToken from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
@@ -42,6 +43,31 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
 
+  const handleCheckURL = (type: string, valuesType: string, values: any) => {
+    let currentUrl: string;
+    let value: string;
+
+    if (valuesType === 'credential') {
+      value = values?.vcId.replace('ceramic://', '');
+    }
+
+    if (valuesType === 'stamp') {
+      value = values?.transaction;
+    }
+
+    if (type === 'ceramic') {
+      currentUrl = `https://cerscan.com/testnet-clay/stream/${value}`;
+    }
+
+    if (type === 'polygon') {
+      let url = krbToken[process.env.NEXT_PUBLIC_NETWORK]?.txUrl;
+
+      currentUrl = `${url}${value}`;
+    }
+
+    window.open(currentUrl, '_blank');
+  };
+
   return (
     <Verify
       initialList={constants.PERSONHOOD_CREDENTIALS}
@@ -65,7 +91,13 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     currentPersonhood.discord.credential
                       ? {
                           text: 'Check it',
-                          onClick: () => {}
+                          onClick: () =>
+                            handleCheckURL(
+                              'ceramic',
+                              'credential',
+                              discordProvider.currentCredential ||
+                                currentPersonhood.discord.credential
+                            )
                         }
                       : {
                           text: 'Verify',
@@ -73,6 +105,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordProvider.status === 'credential_pending'}
+                iconType="credential"
               />
               <BoxStep
                 title="Step 2"
@@ -88,7 +121,13 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     currentPersonhood.discord.stamp
                       ? {
                           text: 'Check it',
-                          onClick: () => {}
+                          onClick: () =>
+                            handleCheckURL(
+                              'polygon',
+                              'stamp',
+                              discordProvider.currentStamp ||
+                                currentPersonhood.discord.stamp
+                            )
                         }
                       : {
                           text: 'Stamp',
@@ -96,6 +135,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordProvider.status === 'stamp_pending'}
+                iconType="stamp"
               />
             </>
           )}
@@ -115,7 +155,13 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     currentPersonhood.twitter.credential
                       ? {
                           text: 'Check it',
-                          onClick: () => {}
+                          onClick: () =>
+                            handleCheckURL(
+                              'ceramic',
+                              'credential',
+                              twitterProvider.currentCredential ||
+                                currentPersonhood.twitter.credential
+                            )
                         }
                       : {
                           text: 'Verify',
@@ -126,6 +172,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterProvider.status === 'credential_pending'}
+                iconType="credential"
               />
               <BoxStep
                 title="Step 2"
@@ -139,13 +186,23 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                   button:
                     twitterProvider.currentStamp ||
                     currentPersonhood.twitter.stamp
-                      ? { text: 'Check it', onClick: () => {} }
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'polygon',
+                              'stamp',
+                              twitterProvider.currentStamp ||
+                                currentPersonhood.twitter.stamp
+                            )
+                        }
                       : {
                           text: 'Stamp',
                           onClick: twitterProvider.handleStampCredential
                         }
                 }}
                 isLoading={twitterProvider.status === 'stamp_pending'}
+                iconType="stamp"
               />
             </>
           )}
@@ -181,7 +238,16 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                   button:
                     veriffProvider.currentCredential ||
                     currentPersonhood.veriff.credential
-                      ? { text: 'Check it', onClick: () => {} }
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'ceramic',
+                              'credential',
+                              veriffProvider.currentCredential ||
+                                currentPersonhood.veriff.credential
+                            )
+                        }
                       : {
                           text: 'Verify',
                           onClick:
@@ -198,6 +264,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={veriffProvider.status === 'credential_pending'}
+                iconType="credential"
               />
               <BoxStep
                 title="Step 2"
@@ -210,13 +277,23 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                   button:
                     veriffProvider.currentStamp ||
                     currentPersonhood.veriff.stamp
-                      ? { text: 'Check it', onClick: () => {} }
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'polygon',
+                              'stamp',
+                              veriffProvider.currentStamp ||
+                                currentPersonhood.veriff.stamp
+                            )
+                        }
                       : {
                           text: 'Stamp',
                           onClick: veriffProvider.handleStampCredential
                         }
                 }}
                 isLoading={veriffProvider.status === 'stamp_pending'}
+                iconType="stamp"
               />
             </>
           )}
@@ -259,7 +336,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                           isDisabled: true
                         }
                       : {
-                          text: 'Start SMS verification',
+                          text: 'Verify',
                           onClick:
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
@@ -284,12 +361,22 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                   button:
                     phoneProvider.currentCredential ||
                     currentPersonhood.phone.credential
-                      ? { text: 'Check it', onClick: () => {} }
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'ceramic',
+                              'credential',
+                              phoneProvider.currentCredential ||
+                                currentPersonhood.phone.credential
+                            )
+                        }
                       : {
                           text: 'Verify',
                           onClick: phoneProvider.handleGetCredential
                         }
                 }}
+                iconType="credential"
               />
               <BoxStep
                 title="Step 3"
@@ -301,12 +388,22 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 form={{
                   button:
                     phoneProvider.currentStamp || currentPersonhood.phone.stamp
-                      ? { text: 'Check it', onClick: () => {} }
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'polygon',
+                              'stamp',
+                              phoneProvider.currentStamp ||
+                                currentPersonhood.phone.stamp
+                            )
+                        }
                       : {
                           text: 'Stamp',
                           onClick: veriffProvider.handleStampCredential
                         }
                 }}
+                iconType="stamp"
               />
             </>
           )}

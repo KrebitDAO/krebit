@@ -1,12 +1,16 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+interface IProps {
+  profilePicture: string;
+}
+
 interface IBackgrounProps {
   image: string;
 }
 
-export const Wrapper = styled.div`
-  ${({ theme }) => css`
+export const Wrapper = styled.div<IProps>`
+  ${({ theme, profilePicture }) => css`
     max-width: 1216px;
     margin: 0 auto;
 
@@ -47,10 +51,12 @@ export const Wrapper = styled.div`
           border: 2px solid ${theme.colors.white};
           position: relative;
           justify-self: center;
+          border-radius: 9999px;
+          background-image: url('${profilePicture}');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
 
-          img {
-            border-radius: 9999px;
-          }
 
           @media (min-width: ${theme.screens.lg}) {
             width: 171px;

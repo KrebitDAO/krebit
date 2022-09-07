@@ -2,7 +2,7 @@ import { ChangeEvent, MouseEvent } from 'react';
 
 import { BoxStepWrapper } from './styles';
 import { Button } from 'components/Button';
-import { Loading } from 'components/Loading';
+import { Approval, Fingerprint } from 'components/Icons';
 
 interface IProps {
   title: string;
@@ -23,10 +23,11 @@ interface IProps {
     };
   };
   isLoading?: Boolean;
+  iconType?: string;
 }
 
 export const BoxStep = (props: IProps) => {
-  const { title, description, form, isLoading = false } = props;
+  const { title, description, form, isLoading = false, iconType } = props;
 
   return (
     <BoxStepWrapper hasInputs={!!form?.inputs}>
@@ -35,8 +36,21 @@ export const BoxStep = (props: IProps) => {
       ) : (
         <>
           <div className="verify-box-step-content">
-            <p className="verify-box-step-content-title">{title}</p>
-            <p className="verify-box-step-content-description">{description}</p>
+            <div className="verify-box-step-content-texts">
+              <p className="verify-box-step-content-title">{title}</p>
+              <p className="verify-box-step-content-description">
+                {description}
+              </p>
+            </div>
+            {iconType && (
+              <div className="verify-box-step-content-icon">
+                {iconType === 'credential' ? (
+                  <Fingerprint />
+                ) : iconType === 'stamp' ? (
+                  <Approval />
+                ) : null}
+              </div>
+            )}
           </div>
           {form?.inputs && (
             <div className="verify-box-step-inputs">

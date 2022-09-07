@@ -14,6 +14,8 @@ import { Linkedin } from './Linkedin';
 import { Phone } from './Phone';
 import { Twitter } from './Twitter';
 import { ArrowForward } from './ArrowForward';
+import { Approval } from './Approval';
+import { Fingerprint } from './Fingerprint';
 
 export {
   Close,
@@ -31,5 +33,7 @@ export {
   Linkedin,
   Phone,
   Twitter,
-  ArrowForward
+  ArrowForward,
+  Approval,
+  Fingerprint
 };
