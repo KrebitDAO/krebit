@@ -142,7 +142,10 @@ export const useTwitterProvider = () => {
           );
           console.log('addedCredentialId: ', addedCredentialId);
 
-          setCurrentCredential(issuedCredential);
+          setCurrentCredential({
+            ...issuedCredential,
+            vcId: addedCredentialId
+          });
           setStatus('credential_resolved');
         }
       }
@@ -187,7 +190,7 @@ export const useTwitterProvider = () => {
       const stampTx = await Issuer.stampCredential(getLatestTwitterCredential);
       console.log('stampTx: ', stampTx);
 
-      setCurrentStamp(stampTx);
+      setCurrentStamp({ transaction: stampTx });
       setStatus('stamp_resolved');
     } catch (error) {
       setStatus('stamp_rejected');
