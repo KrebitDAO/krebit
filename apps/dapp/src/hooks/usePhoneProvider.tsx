@@ -14,8 +14,8 @@ interface IClaimValues {
   number: string;
 }
 
-const DEFAULT_PHONE_NODE = 'http://localhost:4000/phone';
-const issuerAddres = '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860';
+const { NEXT_PUBLIC_PHONE_NODE_URL } = process.env;
+const { NEXT_PUBLIC_PHONE_NODE_ADDRESS } = process.env;
 
 export const usePhoneProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
@@ -71,7 +71,10 @@ export const usePhoneProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the phone
-      const claim = await getClaim(walletInformation.address, issuerAddres);
+      const claim = await getClaim(
+        walletInformation.address,
+        NEXT_PUBLIC_PHONE_NODE_ADDRESS
+      );
       console.log('claim: ', claim);
 
       const Issuer = new Krebit.core.Krebit({
@@ -87,7 +90,7 @@ export const usePhoneProvider = () => {
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
       const result = await getCredential({
-        verifyUrl: DEFAULT_PHONE_NODE,
+        verifyUrl: NEXT_PUBLIC_PHONE_NODE_URL,
         claimedCredential
       });
       console.log('verificationId: ', result);
@@ -116,7 +119,10 @@ export const usePhoneProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the phone
-      const claim = await getClaim(walletInformation.address, issuerAddres);
+      const claim = await getClaim(
+        walletInformation.address,
+        NEXT_PUBLIC_PHONE_NODE_ADDRESS
+      );
       console.log('claim: ', claim);
 
       const Issuer = new Krebit.core.Krebit({
@@ -141,7 +147,7 @@ export const usePhoneProvider = () => {
 
       // Step 1-B: Send self-signed credential to the Issuer for verification
       const issuedCredential = await getCredential({
-        verifyUrl: DEFAULT_PHONE_NODE,
+        verifyUrl: NEXT_PUBLIC_PHONE_NODE_URL,
         claimedCredential
       });
 

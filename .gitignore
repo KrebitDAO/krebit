@@ -33,5 +33,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+fly.toml
+
 # turbo
 .turbo

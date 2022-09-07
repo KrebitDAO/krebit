@@ -12,7 +12,7 @@ import {
   getWalletInformation
 } from 'utils';
 
-const DEFAULT_DISCORD_NODE = 'http://localhost:4000/discord';
+const { NEXT_PUBLIC_DISCORD_NODE_URL } = process.env;
 
 export const useDiscordProvider = () => {
   const [status, setStatus] = useState('idle');
@@ -125,7 +125,7 @@ export const useDiscordProvider = () => {
         // Step 1-B: Send self-signed credential to the Issuer for verification
 
         const issuedCredential = await getCredential({
-          verifyUrl: DEFAULT_DISCORD_NODE,
+          verifyUrl: NEXT_PUBLIC_DISCORD_NODE_URL,
           claimedCredential
         });
 

@@ -17,8 +17,8 @@ interface IClaimValues {
   lastName: string;
 }
 
-const DEFAULT_VERIFF_NODE = 'http://localhost:4000/veriff';
-const issuerAddres = '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860';
+const { NEXT_PUBLIC_VERIFF_NODE_URL } = process.env;
+const { NEXT_PUBLIC_VERIFF_NODE_ADDRESS } = process.env;
 
 export const useVeriffProvider = () => {
   const [veriffSession, setVeriffSession] = useState({});
@@ -93,7 +93,7 @@ export const useVeriffProvider = () => {
       },
       expirationDate: new Date(expirationDate).toISOString(),
       encrypt: 'lit' as 'lit',
-      shareEncryptedWith: issuerAddres
+      shareEncryptedWith: NEXT_PUBLIC_VERIFF_NODE_ADDRESS
     };
   };
 
@@ -153,7 +153,7 @@ export const useVeriffProvider = () => {
         // Step 1-B: Send self-signed credential to the Issuer for verification
 
         const issuedCredential = await getCredential({
-          verifyUrl: DEFAULT_VERIFF_NODE,
+          verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
           claimedCredential
         });
 

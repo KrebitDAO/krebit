@@ -12,7 +12,8 @@ import {
   sortByDate
 } from 'utils';
 
-const DEFAULT_TWITTER_NODE = 'http://localhost:4000/twitter';
+const { NEXT_PUBLIC_TWITTER_NODE_URL } = process.env;
+
 const authClient = new auth.OAuth2User({
   client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
   callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
@@ -123,7 +124,7 @@ export const useTwitterProvider = () => {
         // Step 1-B: Send self-signed credential to the Issuer for verification
 
         const issuedCredential = await getCredential({
-          verifyUrl: DEFAULT_TWITTER_NODE,
+          verifyUrl: NEXT_PUBLIC_TWITTER_NODE_URL,
           claimedCredential
         });
 
