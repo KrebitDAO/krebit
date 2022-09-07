@@ -8,7 +8,8 @@ const {
   SERVER_EXPIRES_YEARS,
   SERVER_TRUST,
   SERVER_STAKE,
-  SERVER_PRICE
+  SERVER_PRICE,
+  SERVER_CERAMIC_URL
 } = process.env;
 
 export const IssuerController = async (
@@ -32,7 +33,8 @@ export const IssuerController = async (
     const Issuer = new krebit.core.Krebit({
       wallet,
       ethProvider,
-      address: wallet.address
+      address: wallet.address,
+      ceramicUrl: SERVER_CERAMIC_URL
     });
     const did = await Issuer.connect();
     console.log('DID:', did);

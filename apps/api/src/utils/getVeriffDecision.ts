@@ -3,8 +3,8 @@ import 'isomorphic-fetch';
 import * as crypto from 'crypto';
 
 const {
-  NEXT_PUBLIC_VERIFF_API_URL,
-  NEXT_PUBLIC_VERIFF_API_TOKEN,
+  SERVER_VERIFF_API_URL,
+  SERVER_VERIFF_API_TOKEN,
   SERVER_VERIFF_PRIVATE_KEY
 } = process.env;
 
@@ -29,13 +29,13 @@ const generateHmacSignature = (payload: any) => {
 export const getVeriffDecision = async (veriffId: string): Promise<any> => {
   try {
     const response = await fetch(
-      `${NEXT_PUBLIC_VERIFF_API_URL}/sessions/${veriffId}/decision`,
+      `${SERVER_VERIFF_API_URL}/sessions/${veriffId}/decision`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-HMAC-SIGNATURE': generateHmacSignature(veriffId),
-          'X-AUTH-CLIENT': NEXT_PUBLIC_VERIFF_API_TOKEN
+          'X-AUTH-CLIENT': SERVER_VERIFF_API_TOKEN
         }
       }
     ).then(result => result.json());

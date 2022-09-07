@@ -49,7 +49,8 @@ export const PhoneController = async (
       wallet,
       ethProvider,
       address: wallet.address,
-      litSdk: LitJsSdk
+      litSdk: LitJsSdk,
+      ceramicUrl: SERVER_CERAMIC_URL
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
