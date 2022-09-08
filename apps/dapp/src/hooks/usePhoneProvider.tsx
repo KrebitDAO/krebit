@@ -12,6 +12,7 @@ import {
 interface IClaimValues {
   countryCode: string;
   number: string;
+  code: string;
 }
 
 const { NEXT_PUBLIC_PHONE_NODE_URL } = process.env;
@@ -20,7 +21,8 @@ const { NEXT_PUBLIC_PHONE_NODE_ADDRESS } = process.env;
 export const usePhoneProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     countryCode: '',
-    number: ''
+    number: '',
+    code: ''
   });
   const [status, setStatus] = useState('idle');
   const [currentVerificationId, setCurrentVerificationId] = useState('');
@@ -42,10 +44,11 @@ export const usePhoneProvider = () => {
       typeSchema: 'ceramic://...',
       tags: ['phone', 'contact', 'personhood'],
       value: {
-        ...claimValues,
+        countryCode: claimValues.countryCode,
+        number: claimValues.number,
         proofs: {
           verificationId: currentVerificationId,
-          nonce: `${generateUID(10)}`
+          nonce: claimValues.code
         }
       },
       expirationDate: new Date(expirationDate).toISOString(),
@@ -143,28 +146,35 @@ export const usePhoneProvider = () => {
       if (claimedCredential) {
         const claimedCredentialId = await passport.addClaim(claimedCredential);
         console.log('claimedCredentialId: ', claimedCredentialId);
-      }
 
-      // Step 1-B: Send self-signed credential to the Issuer for verification
-      const issuedCredential = await getCredential({
-        verifyUrl: NEXT_PUBLIC_PHONE_NODE_URL,
-        claimedCredential
-      });
-
-      console.log('issuedCredential: ', issuedCredential);
-
-      // Step 1-C: Get the verifiable credential, and save it to the passport
-      if (issuedCredential) {
-        const addedCredentialId = await passport.addCredential(
-          issuedCredential
-        );
-        console.log('addedCredentialId: ', addedCredentialId);
-
-        setCurrentCredential({
-          ...issuedCredential,
-          vcId: addedCredentialId
+        // Step 1-B: Send self-signed credential to the Issuer for verification
+        const issuedCredential = await getCredential({
+          verifyUrl: NEXT_PUBLIC_PHONE_NODE_URL,
+          claimedCredentialId
         });
-        setStatus('credential_resolved');
+
+        console.log('issuedCredential: ', issuedCredential);
+
+        // Step 1-C: Get the verifiable credential, and save it to the passport
+        if (issuedCredential) {
+          const addedCredentialId = await passport.addCredential(
+            issuedCredential
+          );
+          console.log('addedCredentialId: ', addedCredentialId);
+          /*
+          //TODO: Restrict access to my claim again
+          await Issuer.removeAllEncryptedCredentialShares(claimedCredentialId);
+          console.log(
+            'EncryptedCredentialConditions: ',
+            await Issuer.getEncryptedCredentialConditions(claimedCredentialId)
+          );*/
+
+          setCurrentCredential({
+            ...issuedCredential,
+            vcId: addedCredentialId
+          });
+          setStatus('credential_resolved');
+        }
       }
     } catch (error) {
       setStatus('credential_rejected');

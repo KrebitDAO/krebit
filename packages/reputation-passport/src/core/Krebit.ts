@@ -13,7 +13,7 @@ import {
 import localStore from 'store2';
 
 import { ceramic, graph, Lit } from '../lib';
-import { issueCredential, ClaimProps } from '../utils';
+import { issueCredential, ClaimProps, hashClaimValue } from '../utils';
 import { krbToken } from '../schemas';
 import { config, IConfigProps } from '../config';
 
@@ -149,6 +149,13 @@ export class Krebit {
     }
   };
 
+  // get credential from ceramic
+  getCredential = async (vcId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    const stream = await TileDocument.load(this.idx.ceramic, vcId);
+    return stream.content as W3CCredential;
+  };
+
   checkCredential = (w3cCredential: W3CCredential) => {
     const expired = this.isCredentialExpired(w3cCredential);
     console.debug('expired: ', expired);
@@ -174,8 +181,88 @@ export class Krebit {
     return now.toISOString() >= w3cCredential.expirationDate;
   };
 
-  // checks the signature
-  decryptClaim = async (w3cCredential: W3CCredential) => {
+  // get Current Lit Access Control Conditions
+  getEncryptedCredentialConditions = async (vcId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    console.log(
+      'Getting VerifiableCredential accessControlConditions from Ceramic...'
+    );
+    const w3cCredential: W3CCredential = await this.getCredential(vcId);
+
+    if (w3cCredential.credentialSubject.encrypted === 'lit') {
+      const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+      const stream = await TileDocument.load(
+        this.idx.ceramic,
+        encrypted.accessControlConditions
+      );
+      return stream.content as any;
+    }
+  };
+
+  // add address to Lit Access Control Conditions
+  shareEncryptedCredentialWith = async (
+    vcId: string,
+    ethereumAddres: string
+  ) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    console.log(
+      'Updating VerifiableCredential accessControlConditions on Ceramic...'
+    );
+    const w3cCredential: W3CCredential = await this.getCredential(vcId);
+
+    if (w3cCredential.credentialSubject.encrypted === 'lit') {
+      const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+      const lit = new Lit();
+      const stream = await TileDocument.load(
+        this.idx.ceramic,
+        encrypted.accessControlConditions
+      );
+      const accessControlConditions = stream.content as any;
+
+      const newAccessControlConditions = accessControlConditions.concat(
+        lit.getShareWithCondition(ethereumAddres)
+      );
+      const updated = await lit.updateConditions(
+        encrypted.encryptedSymmetricKey,
+        newAccessControlConditions,
+        this.wallet
+      );
+      if (updated) {
+        return await stream.update(newAccessControlConditions);
+      }
+    }
+  };
+
+  // add address to Lit Access Control Conditions
+  removeAllEncryptedCredentialShares = async (vcId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    console.log(
+      'Updating VerifiableCredential accessControlConditions on Ceramic...'
+    );
+    const w3cCredential: W3CCredential = await this.getCredential(vcId);
+
+    if (w3cCredential.credentialSubject.encrypted === 'lit') {
+      const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+      const lit = new Lit();
+      const stream = await TileDocument.load(
+        this.idx.ceramic,
+        encrypted.accessControlConditions
+      );
+      const newAccessControlConditions = lit.getOwnsAddressCondition(
+        this.address
+      );
+      const updated = await lit.updateConditions(
+        encrypted.encryptedSymmetricKey,
+        newAccessControlConditions,
+        this.wallet
+      );
+      if (updated) {
+        return await stream.update(newAccessControlConditions);
+      }
+    }
+  };
+
+  decryptClaimValue = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
@@ -185,22 +272,29 @@ export class Krebit {
         encrypted.accessControlConditions
       );
       const accessControlConditions = stream.content as any;
-      return await lit.decrypt(
+      const result = await lit.decrypt(
         encrypted.encryptedString,
         encrypted.encryptedSymmetricKey,
         accessControlConditions,
         this.wallet
       );
+      if (result) {
+        return JSON.parse(result);
+      }
     }
   };
 
-  /*
-  // Check if the plain claimed value matches the encrypted/hashed credential value
-  // to get access to private data
-  verifyClaim = async (claim: any, w3cCredential: W3CCredential) => {
-    //TODO if you have permission to decrypt the claim, you can compare it's hash to the verifiable credential
-    return true;
-  };*/
+  // Check if the plain claimed value matches the hashed credential value
+  compareClaimValueHash = (claimValue: any, w3cCredential: W3CCredential) => {
+    if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const hash = hashClaimValue({
+        did: w3cCredential.issuer.id,
+        value: claimValue
+      });
+      console.debug('claimValueHash: ', hash);
+      return w3cCredential.credentialSubject.value === hash;
+    }
+  };
 
   // get IssuerCredential from subgraph
   getIssuers = async (props: IssuerProps) => {
@@ -233,13 +327,6 @@ export class Krebit {
       claim
     });
   };
-
-  // Delegate power to another issuer for a dynamic list of users
-  /* TODO
-  delegateIssue = async (issuerAddres, issuerDid, addresses[] dids[]) => {
-    return true;
-  };
-  */
 
   // Stamp
   // on-chain  (claim KRB reputation)

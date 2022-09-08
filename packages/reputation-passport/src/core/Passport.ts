@@ -133,18 +133,18 @@ export class Passport {
     return stream.id.toUrl();
   };
 
-  // claimedCredentials from ceramic
-  getVerifiableCredential = async (credentialId: any) => {
-    const stream = await TileDocument.load(this.idx.ceramic, credentialId);
+  // get credential from ceramic
+  getCredential = async (vcId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    const stream = await TileDocument.load(this.idx.ceramic, vcId);
     return stream.content as W3CCredential;
   };
 
   // claimedCredentials from ceramic
-  checkCredentialStatus = async (credentialId: any) => {
+  checkCredentialStatus = async (vcId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
     console.log('Checking VerifiableCredentialn from Ceramic...');
-    const w3cCredential: W3CCredential = await this.getVerifiableCredential(
-      credentialId
-    );
+    const w3cCredential: W3CCredential = await this.getCredential(vcId);
     let result = null;
 
     const issuedList = await this.idx.get(
@@ -154,7 +154,7 @@ export class Passport {
     if (issuedList && issuedList.issued) {
       const issued = issuedList.issued ? issuedList.issued : [];
 
-      if (!issued.includes(credentialId)) {
+      if (!issued.includes(vcId)) {
         result = 'Issued';
       }
     }
@@ -166,7 +166,7 @@ export class Passport {
     if (revokedList && revokedList.issued) {
       const revoked = revokedList.revoked ? revokedList.revoked : [];
 
-      if (!revoked.includes(credentialId)) {
+      if (!revoked.includes(vcId)) {
         result = 'Revoked';
       }
     }

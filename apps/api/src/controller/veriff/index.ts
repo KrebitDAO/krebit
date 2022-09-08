@@ -25,14 +25,11 @@ export const VeriffController = async (
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.claimedCredential) {
-      throw new Error(`No claimedCredential in body`);
+    if (!request?.body?.claimedCredentialId) {
+      throw new Error(`No claimedCredentialId in body`);
     }
 
-    const { claimedCredential } = request.body;
-    if (claimedCredential?.credentialSubject?.type !== 'legalName') {
-      throw new Error(`claimedCredential type is not legalName`);
-    }
+    const { claimedCredentialId } = request.body;
 
     const { wallet, ethProvider } = await connect();
 
@@ -47,11 +44,14 @@ export const VeriffController = async (
     const did = await Issuer.connect();
     console.log('DID:', did);
 
+    const claimedCredential = await Issuer.getCredential(claimedCredentialId);
+
     console.log('Verifying veriff with claimedCredential: ', claimedCredential);
 
-    // TODO: check self-signature
-    // TODO: Check if the claim already has verifications by me
-    // TODO: Check if the proofValue of the sent VC is OK
+    if (claimedCredential?.credentialSubject?.type !== 'legalName') {
+      throw new Error(`claimedCredential type is not legalName`);
+    }
+
     console.log(
       'checkCredential: ',
       await Issuer.checkCredential(claimedCredential)
@@ -61,7 +61,7 @@ export const VeriffController = async (
     let claimValue = null;
     //Decrypt
     if (claimedCredential.credentialSubject.encrypted === 'lit') {
-      claimValue = JSON.parse(await Issuer.decryptClaim(claimedCredential));
+      claimValue = await Issuer.decryptClaimValue(claimedCredential);
       console.log('Decrypted claim value: ', claimValue);
     } else {
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);

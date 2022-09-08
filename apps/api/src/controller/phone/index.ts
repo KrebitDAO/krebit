@@ -26,15 +26,6 @@ export const PhoneController = async (
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.claimedCredential) {
-      throw new Error(`No claimedCredential in body`);
-    }
-
-    const { claimedCredential } = request.body;
-    if (claimedCredential?.credentialSubject?.type !== 'phoneNumber') {
-      throw new Error(`claimedCredential type is not phoneNumber`);
-    }
-
     let channel = 'sms';
     if (request?.body?.channel) {
       channel = request.body.channel;
@@ -55,21 +46,31 @@ export const PhoneController = async (
     const did = await Issuer.connect();
     console.log('DID:', did);
 
+    let claimedCredential = null;
+    if (request?.body?.claimedCredential) {
+      claimedCredential = request.body.claimedCredential;
+    } else if (request?.body?.claimedCredentialId) {
+      claimedCredential = await Issuer.getCredential(
+        request.body.claimedCredentialId
+      );
+    }
+
     console.log('Verifying phone with claimedCredential: ', claimedCredential);
 
-    // TODO: check self-signature
-    // TODO: Check if the claim already has verifications by me
-    // TODO: Check if the proofValue of the sent VC is OK
     console.log(
       'checkCredential: ',
       await Issuer.checkCredential(claimedCredential)
     );
 
+    if (claimedCredential?.credentialSubject?.type !== 'phoneNumber') {
+      throw new Error(`claimedCredential type is not phoneNumber`);
+    }
+
     // get the claimValue
     let claimValue = null;
     //Decrypt
     if (claimedCredential.credentialSubject.encrypted === 'lit') {
-      claimValue = JSON.parse(await Issuer.decryptClaim(claimedCredential));
+      claimValue = await Issuer.decryptClaimValue(claimedCredential);
       console.log('Decrypted claim value: ', claimValue);
     } else {
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);
@@ -80,15 +81,18 @@ export const PhoneController = async (
       claimValue?.proofs?.verificationId &&
       claimValue?.proofs?.verificationId != ''
     ) {
-      const verificationId = claimValue.proofs.verificationId;
       // Check Verification status
-      console.log('verificationId: ', verificationId);
-      const verification = await checkPhoneVerification(verificationId);
+      console.log('proofs: ', claimValue.proofs);
+      const verification = await checkPhoneVerification(
+        '+'.concat(claimValue.countryCode).concat(claimValue.number),
+        claimValue.proofs.nonce
+      );
       console.log('verification: ', verification);
       // If verification number matches claimed number
       if (
-        verification.to === claimValue.countryCode + claimValue.number &&
-        verification.status === 'pending'
+        parseInt(verification.to) ===
+          parseInt(claimValue.countryCode + claimValue.number) &&
+        verification.status === 'approved'
       ) {
         // Issue verifiable credential
         const expirationDate = new Date();
@@ -116,6 +120,11 @@ export const PhoneController = async (
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
 
+        console.log(
+          'Valid hash: ',
+          Issuer.compareClaimValueHash(claimValue, issuedCredential)
+        );
+
         if (issuedCredential) {
           return response.json(issuedCredential);
         }
@@ -125,7 +134,7 @@ export const PhoneController = async (
     } else {
       // Start Twilio verification
       const verificationId = await startPhoneVerification(
-        claimValue.countryCode.concat(claimValue.number),
+        '+'.concat(claimValue.countryCode).concat(claimValue.number),
         channel
       );
       console.log('verificationId: ', verificationId);
