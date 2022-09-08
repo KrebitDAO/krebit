@@ -37,6 +37,11 @@ export const Wrapper = styled.div<Props>`
         position: relative;
         z-index: 10;
 
+        @media (min-width: ${theme.screens.lg}) {
+          padding: 0;
+          padding-left: 40px;
+        }
+
         @media (min-width: ${theme.screens['2xl']}) {
           padding: 0;
         }
@@ -53,6 +58,11 @@ export const Wrapper = styled.div<Props>`
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts['7xl']};
           }
+        }
+
+        ul {
+          margin: 0;
+          padding-inline-start: 20px;
         }
 
         .main-description {
@@ -751,7 +761,7 @@ export const Footer = styled.footer`
         margin: 0 auto;
 
         @media (min-width: ${theme.screens.lg}) {
-          width: 211px;
+          width: 231px;
           height: 58px;
         }
       }

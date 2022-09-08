@@ -31,10 +31,6 @@ export const Wrapper = styled.button<Props>`
       cursor: not-allowed;
     }
 
-    @media (min-width: ${theme.screens.lg}) {
-      font-size: ${theme.fonts.base};
-    }
-
     ${styleType === 'background' &&
       css`
         background: linear-gradient(

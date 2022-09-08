@@ -8,6 +8,7 @@ interface IInitialListProps {
   id: string;
   text: string;
   icon: ReactNode;
+  isDisabled?: boolean;
 }
 type IViewStatusProps = 'init' | 'steps';
 type ICurrentVerifyProps = {
@@ -90,7 +91,11 @@ export const Verify = (props: IProps) => {
                 <div className="verify-box-item-button">
                   <Button
                     text="Verify"
-                    onClick={() => handleCurrentVerify(item)}
+                    onClick={
+                      item.isDisabled
+                        ? undefined
+                        : () => handleCurrentVerify(item)
+                    }
                     styleType="border"
                     borderBackgroundColor="bunting"
                   />

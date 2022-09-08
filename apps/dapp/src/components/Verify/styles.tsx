@@ -233,7 +233,7 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
     }
 
     .verify-box-step-button {
-      width: 85px;
+      min-width: 85px;
       height: 38px;
       margin-top: 24px;
 

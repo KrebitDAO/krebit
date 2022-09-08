@@ -1,9 +1,9 @@
-import { Layout } from 'components/Layout';
+import { Layout, Messages } from 'components';
 
 const MessagesPage = () => {
   return (
     <Layout>
-      <h1>Very soon!</h1>
+      <Messages />
     </Layout>
   );
 };

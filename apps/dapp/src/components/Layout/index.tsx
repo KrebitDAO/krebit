@@ -48,7 +48,7 @@ export const Layout: FunctionComponent<IProps> = props => {
     auth,
     profileInformation: { profile }
   } = useContext(GeneralContext);
-  const { push, pathname } = useRouter();
+  const { push, asPath } = useRouter();
 
   const handlePushProfile = () => {
     if (!auth) return;
@@ -105,7 +105,7 @@ export const Layout: FunctionComponent<IProps> = props => {
       <NavBarMobile>
         {MENU_OPTIONS.map((content, index) => (
           <Link href={content.href} key={index}>
-            <NavBarOption isActive={content.href === pathname}>
+            <NavBarOption isActive={asPath.includes(content.href)}>
               <div className="option-icon">{content.icon}</div>
               <p className="option-title">{content.title}</p>
             </NavBarOption>
@@ -119,7 +119,7 @@ export const Layout: FunctionComponent<IProps> = props => {
           </div>
           {MENU_OPTIONS.map((content, index) => (
             <Link href={content.href} key={index}>
-              <NavBarOption isActive={content.href === pathname}>
+              <NavBarOption isActive={asPath.includes(content.href)}>
                 <div className="option-icon">{content.icon}</div>
                 <p className="option-title">{content.title}</p>
               </NavBarOption>

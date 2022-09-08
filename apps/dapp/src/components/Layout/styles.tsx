@@ -37,8 +37,8 @@ export const MenuMobile = styled.div`
     .profile-menu {
       .profile-menu-dropdown {
         position: absolute;
-        top: 40px;
-        right: 0;
+        top: 45px;
+        right: 25px;
         z-index: 10;
       }
     }

@@ -142,6 +142,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         auth: {
           connect,
           isAuthenticated: status === 'resolved' && !!passport?.did,
+          status,
           did: passport?.did,
           logout
         },

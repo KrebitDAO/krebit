@@ -92,15 +92,17 @@ export const Home = () => {
             <h1 className="main-title">
               Professionals: Build and claim your Reputation Passport
             </h1>
-            <p className="main-description">
-              Get verified once, reuse it a billion times.
-            </p>
-            <p className="main-description">
-              We help you build it, you own it.
-            </p>
-            <p className="main-description">
-              Say goodbye to job applications and background checks.
-            </p>
+            <ul>
+              <li className="main-description">
+                Get verified once, reuse it a billion times.
+              </li>
+              <li className="main-description">
+                We help you build it, you own it.
+              </li>
+              <li className="main-description">
+                Say goodbye to job applications and background checks.
+              </li>
+            </ul>
             <div className="main-buttons">
               <div className="main-button">
                 <Button text="Try it now" onClick={handleOpenConnectWallet} />

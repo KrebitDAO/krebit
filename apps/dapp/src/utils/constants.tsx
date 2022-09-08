@@ -14,17 +14,20 @@ const PERSONHOOD_CREDENTIALS = [
   {
     id: 'veriff',
     text: 'Veriff',
-    icon: <Linkedin />
+    icon: <Linkedin />,
+    isDisabled: true
   },
   {
     id: 'contact',
     text: 'Contact',
-    icon: <Email />
+    icon: <Email />,
+    isDisabled: true
   },
   {
     id: 'phone',
     text: 'Phone',
-    icon: <Phone />
+    icon: <Phone />,
+    isDisabled: true
   }
 ];
 
