@@ -80,7 +80,7 @@ export const DiscordController = async (
         did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
         type: claimedCredential.credentialSubject.type,
         typeSchema: claimedCredential.credentialSubject.typeSchema,
-        tags: claimedCredential.type.slice(1),
+        tags: claimedCredential.type.slice(2),
         value: claimValue,
         trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
         stake: parseInt(SERVER_STAKE, 10), // In KRB

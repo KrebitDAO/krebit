@@ -9,9 +9,9 @@ import { connect, getTwitterUser } from '../../utils';
 import { Client, auth } from 'twitter-api-sdk';
 
 const authClient = new auth.OAuth2User({
-  client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
+  client_id: process.env.SERVER_TWITTER_CLIENT_ID as string,
   client_secret: process.env.SERVER_TWITTER_CLIENT_SECRET as string,
-  callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
+  callback: process.env.SERVER_TWITTER_CALLBACK as string,
   scopes: ['tweet.read', 'users.read']
 });
 
@@ -102,7 +102,7 @@ export const TwitterController = async (
           did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(1),
+          tags: claimedCredential.type.slice(2),
           value: {
             ...claimValue,
             ...twitterUser
