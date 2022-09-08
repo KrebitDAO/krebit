@@ -35,6 +35,11 @@ interface IssueProps {
   claim: ClaimProps;
 }
 
+interface HashProps {
+  did: string;
+  value: any;
+}
+
 const currentConfig = config.get();
 
 // utility to create an ordered array of the given input (of the form [[key:string, value:string], ...])
@@ -46,8 +51,17 @@ const objToSortedArray = (obj: { [k: string]: string }): string[][] => {
   }, [] as string[][]);
 };
 
-const arrayToObject = (arr: string[][]): { [k: string]: string } => {
-  return arr.reduce((o, key) => ({ ...o, [key[0]]: key[1] }), {});
+// Generate a hash like SHA256(DID+PII), where PII is the (deterministic) JSON representation
+// of the PII object after transforming it to an array of the form [[key:string, value:string], ...]
+// with the elements sorted by key
+// This hash can be used to de-duplicate provider verifications without revealing PII
+export const hashClaimValue = (props: HashProps) => {
+  return base64.encode(
+    createHash('sha256')
+      .update(props.did, 'utf-8')
+      .update(JSON.stringify(objToSortedArray(props.value)))
+      .digest()
+  );
 };
 
 export const issueCredential = async (props: IssueProps) => {
@@ -75,17 +89,7 @@ export const issueCredential = async (props: IssueProps) => {
 
   if (typeof claim.value === 'object') {
     if (claim.encrypt == 'hash') {
-      // Generate a hash like SHA256(DID+PII), where PII is the (deterministic) JSON representation
-      // of the PII object after transforming it to an array of the form [[key:string, value:string], ...]
-      // with the elements sorted by key
-      // This hash can be used to de-duplicate provider verifications without revealing PII
-      const hash = base64.encode(
-        createHash('sha256')
-          .update(idx.id, 'utf-8')
-          .update(JSON.stringify(objToSortedArray(claim.value)))
-          .digest()
-      );
-      claim['value'] = hash;
+      claim['value'] = hashClaimValue({ did: idx.id, value: claim.value });
       claim['encrypted'] = 'hash';
     } else if (claim.encrypt == 'lit') {
       let accessControlConditions = lit.getOwnsAddressCondition(

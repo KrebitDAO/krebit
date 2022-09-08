@@ -148,29 +148,29 @@ export const useVeriffProvider = () => {
             claimedCredential
           );
           console.log('claimedCredentialId: ', claimedCredentialId);
-        }
 
-        // Step 1-B: Send self-signed credential to the Issuer for verification
+          // Step 1-B: Send self-signed credential to the Issuer for verification
 
-        const issuedCredential = await getCredential({
-          verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
-          claimedCredential
-        });
-
-        console.log('issuedCredential: ', issuedCredential);
-
-        // Step 1-C: Get the verifiable credential, and save it to the passport
-        if (issuedCredential) {
-          const addedCredentialId = await passport.addCredential(
-            issuedCredential
-          );
-          console.log('addedCredentialId: ', addedCredentialId);
-
-          setCurrentCredential({
-            ...issuedCredential,
-            vcId: addedCredentialId
+          const issuedCredential = await getCredential({
+            verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
+            claimedCredentialId
           });
-          setStatus('credential_resolved');
+
+          console.log('issuedCredential: ', issuedCredential);
+
+          // Step 1-C: Get the verifiable credential, and save it to the passport
+          if (issuedCredential) {
+            const addedCredentialId = await passport.addCredential(
+              issuedCredential
+            );
+            console.log('addedCredentialId: ', addedCredentialId);
+
+            setCurrentCredential({
+              ...issuedCredential,
+              vcId: addedCredentialId
+            });
+            setStatus('credential_resolved');
+          }
         }
       }
     } catch (error) {

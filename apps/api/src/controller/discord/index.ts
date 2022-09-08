@@ -1,6 +1,5 @@
 import express from 'express';
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, getDiscordUser } from '../../utils';
@@ -14,8 +13,6 @@ const {
   SERVER_NETWORK
 } = process.env;
 
-const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
-
 export const DiscordController = async (
   request: express.Request,
   response: express.Response,
@@ -26,11 +23,11 @@ export const DiscordController = async (
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.claimedCredential) {
-      throw new Error(`No claimedCredential in body`);
+    if (!request?.body?.claimedCredentialId) {
+      throw new Error(`No claimedCredentialId in body`);
     }
 
-    const { claimedCredential } = request.body;
+    const { claimedCredentialId } = request.body;
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -39,20 +36,21 @@ export const DiscordController = async (
       ethProvider,
       address: wallet.address,
       ceramicUrl: SERVER_CERAMIC_URL
-      //litSdk: LitJsSdk
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
+
+    const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
     console.log(
       'Verifying discord with claimedCredential: ',
       claimedCredential
     );
 
-    // TODO: check self-signature
-    // TODO: Check if the claim already has verifications by me
-    // TODO: Check if the proofValue of the sent VC is OK
+    // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
+
+    // TODO: Check if the claim already has verifications by me?
 
     // If claim is digitalProperty "Discord"
     if (
@@ -75,7 +73,7 @@ export const DiscordController = async (
       console.log('expirationDate: ', expirationDate);
 
       const claim = {
-        id: claimedCredential.id,
+        id: claimedCredentialId,
         ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
         did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
         type: claimedCredential.credentialSubject.type,

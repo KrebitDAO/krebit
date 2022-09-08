@@ -119,34 +119,38 @@ export const useDiscordProvider = () => {
 
         const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
-        // Optional: save claimedCredential (ask the user if they want to)
-        // await passport.addClaimed(claimedCredential)
 
-        // Step 1-B: Send self-signed credential to the Issuer for verification
-
-        const issuedCredential = await getCredential({
-          verifyUrl: NEXT_PUBLIC_DISCORD_NODE_URL,
-          claimedCredential
+        const passport = new Krebit.core.Passport({
+          ...walletInformation
         });
-
-        console.log('issuedCredential: ', issuedCredential);
-
-        // Step 1-C: Get the verifiable credential, and save it to the passport
-        if (issuedCredential) {
-          const passport = new Krebit.core.Passport({
-            ...walletInformation
-          });
-          await passport.connect(currentSession);
-          const addedCredentialId = await passport.addCredential(
-            issuedCredential
+        await passport.connect(currentSession);
+        // Save claimedCredential
+        if (claimedCredential) {
+          const claimedCredentialId = await passport.addClaim(
+            claimedCredential
           );
-          console.log('addedCredentialId: ', addedCredentialId);
-
-          setCurrentCredential({
-            ...issuedCredential,
-            vcId: addedCredentialId
+          console.log('claimedCredentialId: ', claimedCredentialId);
+          // Step 1-B: Send self-signed credential to the Issuer for verification
+          const issuedCredential = await getCredential({
+            verifyUrl: NEXT_PUBLIC_DISCORD_NODE_URL,
+            claimedCredentialId
           });
-          setStatus('credential_resolved');
+
+          console.log('issuedCredential: ', issuedCredential);
+
+          // Step 1-C: Get the verifiable credential, and save it to the passport
+          if (issuedCredential) {
+            const addedCredentialId = await passport.addCredential(
+              issuedCredential
+            );
+            console.log('addedCredentialId: ', addedCredentialId);
+
+            setCurrentCredential({
+              ...issuedCredential,
+              vcId: addedCredentialId
+            });
+            setStatus('credential_resolved');
+          }
         }
       }
     } catch (error) {

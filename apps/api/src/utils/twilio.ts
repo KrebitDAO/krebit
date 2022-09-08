@@ -28,7 +28,10 @@ export const startPhoneVerification = async (
   }
 };
 
-export const checkPhoneVerification = async (verificationId: string) => {
+export const checkPhoneVerification = async (
+  phoneNumber: string,
+  code: string
+) => {
   try {
     const client = new Twilio(
       SERVER_TWILIO_ACCOUNT_SID,
@@ -37,8 +40,7 @@ export const checkPhoneVerification = async (verificationId: string) => {
 
     const verification = await client.verify.v2
       .services(SERVER_TWILIO_PHONE_SERVICE_SID)
-      .verifications(verificationId)
-      .fetch();
+      .verificationChecks.create({ to: phoneNumber, code });
 
     return verification;
   } catch (err) {

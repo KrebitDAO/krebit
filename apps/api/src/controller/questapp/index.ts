@@ -25,11 +25,11 @@ export const QuestappController = async (
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.claimedCredential) {
-      throw new Error(`No claimedCredential in body`);
+    if (!request?.body?.claimedCredentialId) {
+      throw new Error(`No claimedCredentialId in body`);
     }
 
-    const delegateCredential = request.body.claimedCredential;
+    const { claimedCredentialId } = request.body;
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -45,9 +45,8 @@ export const QuestappController = async (
     const did = await Issuer.connect();
     console.log('DID:', did);
 
-    // TODO: check self-signature
-    // TODO: Check if the claim already has verifications by me
-    // TODO: Check if the proofValue of the sent VC is OK
+    const delegateCredential = await Issuer.getCredential(claimedCredentialId);
+
     console.log(
       'checkCredential: ',
       await Issuer.checkCredential(delegateCredential)

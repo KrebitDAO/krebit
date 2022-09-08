@@ -303,7 +303,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   phoneProvider.currentVerificationId
-                    ? 'Step completed, you can now check your verification'
+                    ? 'SMS code sent'
                     : 'Enter your information'
                 }
                 form={{
@@ -331,12 +331,12 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     phoneProvider.currentVerificationId ||
                     currentPersonhood.phone.credential
                       ? {
-                          text: 'Completed',
+                          text: 'Re-send SMS code',
                           onClick: () => {},
                           isDisabled: true
                         }
                       : {
-                          text: 'Verify',
+                          text: 'Send SMS code',
                           onClick:
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
@@ -358,6 +358,20 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     : 'Get phone number credential via Twilio'
                 }
                 form={{
+                  inputs:
+                    phoneProvider.currentCredential ||
+                    currentPersonhood.phone.credential
+                      ? undefined
+                      : [
+                          {
+                            type: 'SMS code',
+                            name: 'code',
+                            placeholder:
+                              'Enter the SMS code sent to your phone',
+                            value: phoneProvider.claimValues.code,
+                            onChange: phoneProvider.handleClaimValues
+                          }
+                        ],
                   button:
                     phoneProvider.currentCredential ||
                     currentPersonhood.phone.credential
