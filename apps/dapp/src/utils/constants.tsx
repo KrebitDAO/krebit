@@ -1,4 +1,11 @@
-import { Discord, Email, Linkedin, Phone, Twitter } from 'components/Icons';
+import {
+  Badge,
+  Discord,
+  Email,
+  Linkedin,
+  Phone,
+  Twitter
+} from 'components/Icons';
 
 const PERSONHOOD_CREDENTIALS = [
   {
@@ -13,8 +20,8 @@ const PERSONHOOD_CREDENTIALS = [
   },
   {
     id: 'veriff',
-    text: 'Veriff',
-    icon: <Linkedin />,
+    text: 'Legal Name',
+    icon: <Badge />,
     isDisabled: true
   },
   {

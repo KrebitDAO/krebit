@@ -16,6 +16,7 @@ import { Twitter } from './Twitter';
 import { ArrowForward } from './ArrowForward';
 import { Approval } from './Approval';
 import { Fingerprint } from './Fingerprint';
+import { Badge } from './Badge';
 
 export {
   Close,
@@ -35,5 +36,6 @@ export {
   Twitter,
   ArrowForward,
   Approval,
-  Fingerprint
+  Fingerprint,
+  Badge
 };
