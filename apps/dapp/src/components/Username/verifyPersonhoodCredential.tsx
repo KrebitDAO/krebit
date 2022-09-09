@@ -9,7 +9,8 @@ import {
   useDiscordProvider,
   useTwitterProvider,
   useVeriffProvider,
-  usePhoneProvider
+  usePhoneProvider,
+  useIssuerProvider
 } from 'hooks';
 
 interface IProps {
@@ -30,6 +31,10 @@ interface IProps {
       credential: Object;
       stamp: Object;
     };
+    issuer: {
+      credential: Object;
+      stamp: Object;
+    };
   };
   onClose: () => void;
   verifyId?: string;
@@ -42,6 +47,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
   const twitterProvider = useTwitterProvider();
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
+  const issuerProvider = useIssuerProvider();
 
   const handleCheckURL = (type: string, valuesType: string, values: any) => {
     let currentUrl: string;
@@ -330,11 +336,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                   button:
                     phoneProvider.currentVerificationId ||
                     currentPersonhood.phone.credential
-                      ? {
-                          text: 'Re-send SMS code',
-                          onClick: () => {},
-                          isDisabled: true
-                        }
+                      ? undefined
                       : {
                           text: 'Send SMS code',
                           onClick:
@@ -364,7 +366,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                       ? undefined
                       : [
                           {
-                            type: 'SMS code',
+                            type: 'number',
                             name: 'code',
                             placeholder:
                               'Enter the SMS code sent to your phone',
@@ -414,7 +416,111 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                       : {
                           text: 'Stamp',
-                          onClick: veriffProvider.handleStampCredential
+                          onClick: phoneProvider.handleStampCredential
+                        }
+                }}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.id === 'issuer' && (
+            <>
+              <BoxStep
+                title="Step 1"
+                description={
+                  issuerProvider.currentCredential ||
+                  currentPersonhood.issuer.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Become an Issuer'
+                }
+                form={{
+                  inputs:
+                    issuerProvider.currentCredential ||
+                    currentPersonhood.issuer.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'entity',
+                            placeholder: 'Enter the Issuing Entity name',
+                            value: issuerProvider.claimValues.entity,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'description',
+                            placeholder: 'Enter the Issuing Entity description',
+                            value: issuerProvider.claimValues.description,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'credentialType',
+                            placeholder: 'Enter the credential type nme',
+                            value: issuerProvider.claimValues.credentialType,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'credentialSchema',
+                            placeholder:
+                              'Enter the credential type JSON schema',
+                            value: issuerProvider.claimValues.credentialSchema,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'imageUrl',
+                            placeholder: 'Enter the Issuing Entity logo Url',
+                            value: issuerProvider.claimValues.imageUrl,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'verificationUrl',
+                            placeholder: 'Enter the Verification Url',
+                            value: issuerProvider.claimValues.verificationUrl,
+                            onChange: issuerProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    issuerProvider.currentCredential ||
+                    currentPersonhood.issuer.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'ceramic',
+                              'credential',
+                              issuerProvider.currentCredential ||
+                                currentPersonhood.issuer.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick: issuerProvider.handleGetCredential
+                        }
+                }}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  issuerProvider.currentStamp || currentPersonhood.issuer.stamp
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Stamp verification on-chain'
+                }
+                form={{
+                  button:
+                    issuerProvider.currentStamp ||
+                    currentPersonhood.issuer.stamp
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'polygon',
+                              'stamp',
+                              issuerProvider.currentStamp ||
+                                currentPersonhood.issuer.stamp
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: issuerProvider.handleStampCredential
                         }
                 }}
                 iconType="stamp"

@@ -93,6 +93,7 @@ export const Username = () => {
         const phoneCredentials = await publicPassport.getCredentials(
           'phoneNumber'
         );
+        const issuerCredentials = await publicPassport.getCredentials('issuer');
         const latestDiscordCredential = discordCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
@@ -103,6 +104,9 @@ export const Username = () => {
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
         const latestPhoneCredential = phoneCredentials
+          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+          .at(-1);
+        const latestIssuerCredential = issuerCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
 
@@ -120,6 +124,13 @@ export const Username = () => {
         );
         const latestPhoneStamp = stamps.find(
           stamp => stamp.claimId === latestPhoneCredential?.id
+        );
+
+        const issuerStamps = await publicPassport.getStamps({
+          type: 'issuer'
+        });
+        const latestIssuerStamp = issuerStamps.find(
+          stamp => stamp.claimId === latestIssuerCredential?.id
         );
 
         currentProfile = {
@@ -144,6 +155,11 @@ export const Username = () => {
               length: phoneCredentials?.length || 0,
               credential: latestPhoneCredential,
               stamp: latestPhoneStamp
+            },
+            issuer: {
+              length: issuerCredentials?.length || 0,
+              credential: latestIssuerCredential,
+              stamp: latestIssuerStamp
             }
           }
         };

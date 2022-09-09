@@ -13,6 +13,7 @@ import {
 } from 'utils';
 
 const { NEXT_PUBLIC_TWITTER_NODE_URL } = process.env;
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const authClient = new auth.OAuth2User({
   client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
@@ -111,7 +112,8 @@ export const useTwitterProvider = () => {
 
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
-          litSdk: LitJsSdk
+          litSdk: LitJsSdk,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
 
         await Issuer.connect(currentSession);
@@ -120,7 +122,8 @@ export const useTwitterProvider = () => {
         console.log('claimedCredential: ', claimedCredential);
 
         const passport = new Krebit.core.Passport({
-          ...walletInformation
+          ...walletInformation,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await passport.connect(currentSession);
         // Save claimedCredential
@@ -168,7 +171,8 @@ export const useTwitterProvider = () => {
       const walletInformation = await getWalletInformation(currentType);
 
       const passport = new Krebit.core.Passport({
-        ...walletInformation
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       passport.read(
         walletInformation.address,
@@ -186,7 +190,8 @@ export const useTwitterProvider = () => {
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
-        litSdk: LitJsSdk
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       await Issuer.connect(currentSession);
 

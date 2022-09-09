@@ -32,6 +32,11 @@ export interface IProfile {
       credential: Object;
       stamp: Object;
     };
+    issuer: {
+      length: number;
+      credential: Object;
+      stamp: Object;
+    };
   };
 }
 
