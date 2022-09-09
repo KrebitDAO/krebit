@@ -355,9 +355,8 @@ export const Username = () => {
                             {currentPersonhoodToolTipActive === index + 1 && (
                               <div className="person-box-item-tooltip-box">
                                 <ToolTip
-                                  message={`This personhood credential has ${profile
-                                    .personhood[item.id]?.length ||
-                                    0} credentials`}
+                                  message={`This credential has ${profile
+                                    .personhood[item.id]?.length || 0} stamps`}
                                 />
                               </div>
                             )}
