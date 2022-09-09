@@ -27,13 +27,7 @@ import { GeneralContext } from 'context';
 // types
 import { IProfile } from 'utils/normalizeSchema';
 
-const MOCK_SKILLS = [
-  'PHP expert',
-  'Pascal evangelist',
-  'Assembly builder',
-  'C master',
-  'C++ pro'
-];
+const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 
 export const Username = () => {
   const [
@@ -265,7 +259,7 @@ export const Username = () => {
                   <div className="profile-info-naming">
                     <p className="profile-info-name">{profile.name}</p>{' '}
                     <span className="profile-info-token">
-                      rkRB {profile.reputation}
+                      KRB {profile.reputation}
                     </span>
                   </div>
                   <div className="profile-info-follow">

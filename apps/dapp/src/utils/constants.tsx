@@ -19,21 +19,21 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Twitter />
   },
   {
-    id: 'veriff',
-    text: 'Legal Name',
-    icon: <Badge />,
+    id: 'phone',
+    text: 'Phone',
+    icon: <Phone />,
     isDisabled: true
   },
   {
     id: 'contact',
-    text: 'Contact',
+    text: 'Email',
     icon: <Email />,
     isDisabled: true
   },
   {
-    id: 'phone',
-    text: 'Phone',
-    icon: <Phone />,
+    id: 'veriff',
+    text: 'Legal Name',
+    icon: <Badge />,
     isDisabled: true
   }
 ];
