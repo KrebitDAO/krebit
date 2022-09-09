@@ -302,7 +302,8 @@ export class Krebit {
     //Get verifications from subgraph
     let where = {};
     where['credentialStatus'] = 'Issued';
-    where['_type'] = `["VerifiableCredential","issuer","${type}"]`;
+    where['credentialSubject_'] = { _type: 'issuer' };
+    if (type) where['_type_contains_nocase'] = type;
 
     //Get verifications from subgraph
     return await graph.verifiableCredentialsQuery({
@@ -432,8 +433,7 @@ export class Krebit {
     const { first, type, claimId } = props;
     // Get verifications from subgraph
     let where = {};
-
-    if (type) where['_type'] = `["VerifiableCredential","${type}"]`;
+    if (type) where['_type_contains_nocase'] = type;
     if (claimId) where['claimId'] = claimId;
 
     //Get verifications from subgraph
