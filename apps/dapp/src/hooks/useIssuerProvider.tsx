@@ -16,6 +16,10 @@ interface IClaimValues {
   credentialSchema: string;
   imageUrl: string;
   verificationUrl: string;
+  did: string;
+  ethereumAddress: string;
+  expirationMonths: number;
+  price: number;
 }
 
 const { NEXT_PUBLIC_ISSUER_NODE_URL } = process.env;
@@ -28,7 +32,11 @@ export const useIssuerProvider = () => {
     credentialType: '',
     credentialSchema: '',
     imageUrl: '',
-    verificationUrl: ''
+    verificationUrl: '',
+    did: '',
+    ethereumAddress: '',
+    expirationMonths: 12,
+    price: 0.0
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -84,7 +92,6 @@ export const useIssuerProvider = () => {
       const claim = await getClaim(walletInformation.address, typeSchemaUrl);
       console.log('claim: ', claim);
 
-      // TODO: in this case, we can encrypt for the issuer too
       const claimedCredential = await Issuer.issue(claim);
       console.log('claimedCredential: ', claimedCredential);
 

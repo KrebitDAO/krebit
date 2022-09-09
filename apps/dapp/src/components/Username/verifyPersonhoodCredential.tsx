@@ -475,6 +475,35 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                             placeholder: 'Enter the Verification Url',
                             value: issuerProvider.claimValues.verificationUrl,
                             onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'did',
+                            placeholder: 'Enter the issuer DID',
+                            value: issuerProvider.claimValues.did,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'ethereumAddress',
+                            placeholder: 'Enter the issuer Address',
+                            value: issuerProvider.claimValues.ethereumAddress,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            type: 'number',
+                            name: 'expirationMonths',
+                            placeholder:
+                              'Enter the number of expiration months for credentials',
+                            value: issuerProvider.claimValues.expirationMonths,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          ,
+                          {
+                            type: 'number',
+                            name: 'price',
+                            placeholder:
+                              'Enter the native token price for issuing this credential',
+                            value: issuerProvider.claimValues.price,
+                            onChange: issuerProvider.handleClaimValues
                           }
                         ],
                   button:

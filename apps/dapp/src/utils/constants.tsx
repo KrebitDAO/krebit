@@ -21,8 +21,8 @@ const PERSONHOOD_CREDENTIALS = [
   {
     id: 'phone',
     text: 'Phone',
-    icon: <Phone />,
-    isDisabled: true
+    icon: <Phone />
+    //isDisabled: true
   },
   {
     id: 'contact',
