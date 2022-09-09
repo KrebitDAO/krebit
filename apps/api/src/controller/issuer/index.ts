@@ -73,11 +73,8 @@ export const IssuerController = async (
         console.log('expirationDate: ', expirationDate);
 
         const claim = {
-          id: claimedCredential.id,
+          id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: claimedCredential.credentialSubject.id
-            ? claimedCredential.credentialSubject.id
-            : `did:pkh:eip155:1:${claimedCredential.credentialSubject.ethereumAddress}`,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: [claimValue.credentialType],
@@ -89,14 +86,8 @@ export const IssuerController = async (
         };
         console.log('claim: ', claim);
 
-        // Issue Verifiable credential (twitterUsername)
-
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
-
-        // TODO: Issue Verifiable credential (twitterFollowers)
-        // TODO: Issue Verifiable credential (twitterTweets)
-        //TODO: return array of issuedCredentials
 
         if (issuedCredential) {
           return response.json(issuedCredential);

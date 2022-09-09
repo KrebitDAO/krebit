@@ -101,7 +101,7 @@ export const PhoneController = async (
         console.log('expirationDate: ', expirationDate);
 
         const claim = {
-          id: claimedCredential.id,
+          id: request.body.claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,

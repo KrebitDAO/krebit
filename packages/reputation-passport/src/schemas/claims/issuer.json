@@ -12,7 +12,7 @@
     "credentialSchema": { "type": "string" },
     "credentialSubjectListUrl": { "type": "string" },
     "price": { "type": "number" },
-    "expirationPolicy": { "type": "string" },
+    "expirationMonths": { "type": "number" },
     "proofs": { "type": "object" }
   },
   "required": ["did", "entity", "credentialType"],

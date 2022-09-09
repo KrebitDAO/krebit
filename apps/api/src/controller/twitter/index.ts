@@ -94,7 +94,7 @@ export const TwitterController = async (
         console.log('expirationDate: ', expirationDate);
 
         const claim = {
-          id: claimedCredential.id,
+          id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
           type: claimedCredential.credentialSubject.type,

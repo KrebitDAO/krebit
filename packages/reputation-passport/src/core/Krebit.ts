@@ -25,7 +25,7 @@ interface IProps extends IConfigProps {
 
 interface IssuerProps {
   first?: number;
-  type?: string;
+  type: string;
 }
 
 interface StampsProps {
@@ -302,8 +302,7 @@ export class Krebit {
     //Get verifications from subgraph
     let where = {};
     where['credentialStatus'] = 'Issued';
-    //where['issuerDID'] = process.env.KREBIT_DID;
-    if (type) where['_type'] = `["VerifiableCredential","issuer","${type}"]`;
+    where['_type'] = `["VerifiableCredential","issuer","${type}"]`;
 
     //Get verifications from subgraph
     return await graph.verifiableCredentialsQuery({
