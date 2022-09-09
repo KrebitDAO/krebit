@@ -1,8 +1,8 @@
 import {
+  Approval,
   Badge,
   Discord,
   Email,
-  Linkedin,
   Phone,
   Twitter
 } from 'components/Icons';
@@ -35,6 +35,12 @@ const PERSONHOOD_CREDENTIALS = [
     text: 'Legal Name',
     icon: <Badge />,
     isDisabled: true
+  },
+  {
+    id: 'issuer',
+    text: 'Issuer',
+    icon: <Approval />
+    //isDisabled: true
   }
 ];
 

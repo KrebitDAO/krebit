@@ -10,104 +10,47 @@ import {
 } from 'utils';
 
 interface IClaimValues {
-  countryCode: string;
-  number: string;
-  code: string;
+  entity: string;
+  description: string;
+  credentialType: string;
+  credentialSchema: string;
+  imageUrl: string;
+  verificationUrl: string;
 }
 
-const { NEXT_PUBLIC_PHONE_NODE_URL } = process.env;
-const { NEXT_PUBLIC_PHONE_NODE_ADDRESS } = process.env;
+const { NEXT_PUBLIC_ISSUER_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
-export const usePhoneProvider = () => {
+export const useIssuerProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    countryCode: '',
-    number: '',
-    code: ''
+    entity: '',
+    description: '',
+    credentialType: '',
+    credentialSchema: '',
+    imageUrl: '',
+    verificationUrl: ''
   });
   const [status, setStatus] = useState('idle');
-  const [currentVerificationId, setCurrentVerificationId] = useState('');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
 
-  const getClaim = async (address: string, issuerAddres: string) => {
+  const getClaim = async (address: string, typeSchemaUrl: string) => {
     const expirationDate = new Date();
     const expiresYears = 1;
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
     console.log('expirationDate: ', expirationDate);
 
     return {
-      id: `phone-${generateUID(10)}`,
+      id: `issuer-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'phoneNumber',
-      typeSchema: 'ceramic://...',
-      tags: ['phone', 'contact', 'personhood'],
-      value: {
-        countryCode: claimValues.countryCode,
-        number: claimValues.number,
-        proofs: {
-          verificationId: currentVerificationId,
-          nonce: claimValues.code
-        }
-      },
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit',
-      shareEncryptedWith: issuerAddres
+      type: 'issuer',
+      typeSchema: typeSchemaUrl,
+      tags: [claimValues.credentialType],
+      value: claimValues,
+      expirationDate: new Date(expirationDate).toISOString()
     };
-  };
-
-  const handleStartVerification = async () => {
-    setStatus('verification_pending');
-
-    try {
-      // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      console.log('Saving Stamp', { type: 'phoneNumber' });
-
-      const session = window.localStorage.getItem('ceramic-session');
-      const currentSession = JSON.parse(session);
-
-      if (!currentSession) return;
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
-
-      // Step 1-A:  Get credential from Issuer based on claim:
-      // Issue self-signed credential claiming the phone
-      const claim = await getClaim(
-        walletInformation.address,
-        NEXT_PUBLIC_PHONE_NODE_ADDRESS
-      );
-      console.log('claim: ', claim);
-
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      // TODO: in this case, we can encrypt for the issuer too
-      const claimedCredential = await Issuer.issue(claim);
-      console.log('claimedCredential: ', claimedCredential);
-
-      // Step 1-B: Send self-signed credential to the Issuer for verification
-
-      const result = await getCredential({
-        verifyUrl: NEXT_PUBLIC_PHONE_NODE_URL,
-        claimedCredential
-      });
-      console.log('verificationId: ', result);
-
-      // Step 1-C: Get the verifiable credential, and save it to the passport
-      if (result) {
-        setCurrentVerificationId(result.verificationId);
-        setStatus('verification_resolved');
-      }
-    } catch (error) {
-      setStatus('verification_rejected');
-    }
   };
 
   const handleGetCredential = async () => {
@@ -122,13 +65,8 @@ export const usePhoneProvider = () => {
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
 
-      // Step 1-A:  Get credential from Issuer based on claim:
-      // Issue self-signed credential claiming the phone
-      const claim = await getClaim(
-        walletInformation.address,
-        NEXT_PUBLIC_PHONE_NODE_ADDRESS
-      );
-      console.log('claim: ', claim);
+      // Step 1-A:  Get credential from Master Issuer based on claim:
+      // Issue self-signed credential to become an Issuer
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
@@ -136,6 +74,15 @@ export const usePhoneProvider = () => {
         ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       await Issuer.connect(currentSession);
+
+      let typeSchemaUrl = await Issuer.getTypeSchema('issuer');
+      if (!typeSchemaUrl) {
+        const issuerSchema = Krebit.schemas.claims.issuer;
+        typeSchemaUrl = await Issuer.setTypeSchema('issuer', issuerSchema);
+      }
+
+      const claim = await getClaim(walletInformation.address, typeSchemaUrl);
+      console.log('claim: ', claim);
 
       // TODO: in this case, we can encrypt for the issuer too
       const claimedCredential = await Issuer.issue(claim);
@@ -153,7 +100,7 @@ export const usePhoneProvider = () => {
 
         // Step 1-B: Send self-signed credential to the Issuer for verification
         const issuedCredential = await getCredential({
-          verifyUrl: NEXT_PUBLIC_PHONE_NODE_URL,
+          verifyUrl: NEXT_PUBLIC_ISSUER_NODE_URL,
           claimedCredentialId
         });
 
@@ -165,13 +112,6 @@ export const usePhoneProvider = () => {
             issuedCredential
           );
           console.log('addedCredentialId: ', addedCredentialId);
-          /*
-          //TODO: Restrict access to my claim again
-          await Issuer.removeAllEncryptedCredentialShares(claimedCredentialId);
-          console.log(
-            'EncryptedCredentialConditions: ',
-            await Issuer.getEncryptedCredentialConditions(claimedCredentialId)
-          );*/
 
           setCurrentCredential({
             ...issuedCredential,
@@ -208,8 +148,8 @@ export const usePhoneProvider = () => {
       );
 
       const credentials = await passport.getCredentials();
-      const getLatestPhoneCredential = credentials
-        .filter(credential => credential.type.includes('phoneNumber'))
+      const getLatestIssuerCredential = credentials
+        .filter(credential => credential.type.includes('issuer'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 
@@ -220,7 +160,7 @@ export const usePhoneProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestPhoneCredential);
+      const stampTx = await Issuer.stampCredential(getLatestIssuerCredential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });
@@ -240,13 +180,11 @@ export const usePhoneProvider = () => {
   };
 
   return {
-    handleStartVerification,
     handleGetCredential,
     handleStampCredential,
     handleClaimValues,
     claimValues,
     status,
-    currentVerificationId,
     currentCredential,
     currentStamp
   };
