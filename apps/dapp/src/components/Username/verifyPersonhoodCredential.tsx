@@ -13,40 +13,15 @@ import {
   usePhoneProvider,
   useIssuerProvider
 } from 'hooks';
+import { IPersonhood } from 'utils/normalizeSchema';
 
 interface IProps {
-  currentPersonhood: {
-    discord: {
-      credential: Object;
-      stamp: Object;
-    };
-    twitter: {
-      credential: Object;
-      stamp: Object;
-    };
-    twitterFollowers: {
-      credential: Object;
-      stamp: Object;
-    };
-    veriff: {
-      credential: Object;
-      stamp: Object;
-    };
-    phone: {
-      credential: Object;
-      stamp: Object;
-    };
-    issuer: {
-      credential: Object;
-      stamp: Object;
-    };
-  };
+  currentPersonhood: IPersonhood;
   onClose: () => void;
-  verifyId?: string;
 }
 
 export const VerifyPersonhoodCredential = (props: IProps) => {
-  const { currentPersonhood, onClose, verifyId } = props;
+  const { currentPersonhood, onClose } = props;
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
@@ -84,7 +59,6 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
     <Verify
       initialList={constants.PERSONHOOD_CREDENTIALS}
       onClose={onClose}
-      verifyId={verifyId}
       component={({ currentVerify }) => (
         <>
           {currentVerify?.id === 'discord' && (
@@ -93,14 +67,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   discordProvider.currentCredential ||
-                  currentPersonhood.discord.credential
+                  currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Step 1 for Discord verification'
                 }
                 form={{
                   button:
                     discordProvider.currentCredential ||
-                    currentPersonhood.discord.credential
+                    currentPersonhood.credential
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -108,7 +82,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               discordProvider.currentCredential ||
-                                currentPersonhood.discord.credential
+                                currentPersonhood.credential
                             )
                         }
                       : {
@@ -123,14 +97,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 2"
                 description={
                   discordProvider.currentStamp ||
-                  currentPersonhood.discord.stamp
+                  currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Step 2 for Discord verification'
                 }
                 form={{
                   button:
                     discordProvider.currentStamp ||
-                    currentPersonhood.discord.stamp
+                    currentPersonhood.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -138,7 +112,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'polygon',
                               'stamp',
                               discordProvider.currentStamp ||
-                                currentPersonhood.discord.stamp
+                                currentPersonhood.stamps[0]
                             )
                         }
                       : {
@@ -157,14 +131,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   twitterProvider.currentCredential ||
-                  currentPersonhood.twitter.credential
+                  currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Step 1 for Twitter verification'
                 }
                 form={{
                   inputs:
                     twitterProvider.currentCredential ||
-                    currentPersonhood.twitter.credential
+                    currentPersonhood.credential
                       ? undefined
                       : [
                           {
@@ -176,7 +150,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         ],
                   button:
                     twitterProvider.currentCredential ||
-                    currentPersonhood.twitter.credential
+                    currentPersonhood.credential
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -184,7 +158,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               twitterProvider.currentCredential ||
-                                currentPersonhood.twitter.credential
+                                currentPersonhood.credential
                             )
                         }
                       : {
@@ -209,14 +183,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 2"
                 description={
                   twitterProvider.currentStamp ||
-                  currentPersonhood.twitter.stamp
+                  currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Step 2 for Twitter verification'
                 }
                 form={{
                   button:
                     twitterProvider.currentStamp ||
-                    currentPersonhood.twitter.stamp
+                    currentPersonhood.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -224,7 +198,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'polygon',
                               'stamp',
                               twitterProvider.currentStamp ||
-                                currentPersonhood.twitter.stamp
+                                currentPersonhood.stamps[0]
                             )
                         }
                       : {
@@ -244,14 +218,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   twitterFollowersProvider.currentCredential ||
-                  currentPersonhood.twitterFollowers.credential
+                  currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Enter your twitter follower count ( i.e. more than 1,000 would be gt1000 )'
                 }
                 form={{
                   inputs:
                     twitterFollowersProvider.currentCredential ||
-                    currentPersonhood.twitterFollowers.credential
+                    currentPersonhood.credential
                       ? undefined
                       : [
                           {
@@ -265,7 +239,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         ],
                   button:
                     twitterFollowersProvider.currentCredential ||
-                    currentPersonhood.twitter.credential
+                    currentPersonhood.credential
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -273,7 +247,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               twitterFollowersProvider.currentCredential ||
-                                currentPersonhood.twitter.credential
+                                currentPersonhood.credential
                             )
                         }
                       : {
@@ -302,14 +276,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 2"
                 description={
                   twitterFollowersProvider.currentStamp ||
-                  currentPersonhood.twitterFollowers.stamp
+                  currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Step 2 for Twitter verification'
                 }
                 form={{
                   button:
                     twitterFollowersProvider.currentStamp ||
-                    currentPersonhood.twitterFollowers.stamp
+                    currentPersonhood.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -317,7 +291,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'polygon',
                               'stamp',
                               twitterFollowersProvider.currentStamp ||
-                                currentPersonhood.twitterFollowers.stamp
+                                currentPersonhood.stamps[0]
                             )
                         }
                       : {
@@ -337,14 +311,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   veriffProvider.currentCredential ||
-                  currentPersonhood.veriff.credential
+                  currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Enter your information'
                 }
                 form={{
                   inputs:
                     veriffProvider.currentCredential ||
-                    currentPersonhood.veriff.credential
+                    currentPersonhood.credential
                       ? undefined
                       : [
                           {
@@ -362,7 +336,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         ],
                   button:
                     veriffProvider.currentCredential ||
-                    currentPersonhood.veriff.credential
+                    currentPersonhood.credential
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -370,7 +344,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               veriffProvider.currentCredential ||
-                                currentPersonhood.veriff.credential
+                                currentPersonhood.credential
                             )
                         }
                       : {
@@ -394,14 +368,15 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
               <BoxStep
                 title="Step 2"
                 description={
-                  veriffProvider.currentStamp || currentPersonhood.veriff.stamp
+                  veriffProvider.currentStamp ||
+                  currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Step 2 to stamp verification'
                 }
                 form={{
                   button:
                     veriffProvider.currentStamp ||
-                    currentPersonhood.veriff.stamp
+                    currentPersonhood.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -409,7 +384,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'polygon',
                               'stamp',
                               veriffProvider.currentStamp ||
-                                currentPersonhood.veriff.stamp
+                                currentPersonhood.stamps[0]
                             )
                         }
                       : {
@@ -434,7 +409,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 form={{
                   inputs:
                     phoneProvider.currentVerificationId ||
-                    currentPersonhood.phone.credential
+                    currentPersonhood.credential
                       ? undefined
                       : [
                           {
@@ -454,7 +429,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         ],
                   button:
                     phoneProvider.currentVerificationId ||
-                    currentPersonhood.phone.credential
+                    currentPersonhood.credential
                       ? undefined
                       : {
                           text: 'Send SMS code',
@@ -474,14 +449,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 2"
                 description={
                   phoneProvider.currentCredential ||
-                  currentPersonhood.phone.credential
+                  currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Get phone number credential via Twilio'
                 }
                 form={{
                   inputs:
                     phoneProvider.currentCredential ||
-                    currentPersonhood.phone.credential
+                    currentPersonhood.credential
                       ? undefined
                       : [
                           {
@@ -495,7 +470,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         ],
                   button:
                     phoneProvider.currentCredential ||
-                    currentPersonhood.phone.credential
+                    currentPersonhood.credential
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -503,7 +478,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               phoneProvider.currentCredential ||
-                                currentPersonhood.phone.credential
+                                currentPersonhood.credential
                             )
                         }
                       : {
@@ -516,13 +491,15 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
               <BoxStep
                 title="Step 3"
                 description={
-                  phoneProvider.currentStamp || currentPersonhood.phone.stamp
+                  phoneProvider.currentStamp ||
+                  currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Stamp verification on-chain'
                 }
                 form={{
                   button:
-                    phoneProvider.currentStamp || currentPersonhood.phone.stamp
+                    phoneProvider.currentStamp ||
+                    currentPersonhood.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -530,7 +507,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'polygon',
                               'stamp',
                               phoneProvider.currentStamp ||
-                                currentPersonhood.phone.stamp
+                                currentPersonhood.stamps[0]
                             )
                         }
                       : {
@@ -548,14 +525,14 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   issuerProvider.currentCredential ||
-                  currentPersonhood.issuer.credential
+                  currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Become an Issuer'
                 }
                 form={{
                   inputs:
                     issuerProvider.currentCredential ||
-                    currentPersonhood.issuer.credential
+                    currentPersonhood.credential
                       ? undefined
                       : [
                           {
@@ -627,7 +604,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         ],
                   button:
                     issuerProvider.currentCredential ||
-                    currentPersonhood.issuer.credential
+                    currentPersonhood.credential
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -635,7 +612,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               issuerProvider.currentCredential ||
-                                currentPersonhood.issuer.credential
+                                currentPersonhood.credential
                             )
                         }
                       : {
@@ -648,14 +625,15 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
               <BoxStep
                 title="Step 2"
                 description={
-                  issuerProvider.currentStamp || currentPersonhood.issuer.stamp
+                  issuerProvider.currentStamp ||
+                  currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Stamp verification on-chain'
                 }
                 form={{
                   button:
                     issuerProvider.currentStamp ||
-                    currentPersonhood.issuer.stamp
+                    currentPersonhood.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
@@ -663,7 +641,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                               'polygon',
                               'stamp',
                               issuerProvider.currentStamp ||
-                                currentPersonhood.issuer.stamp
+                                currentPersonhood.stamps[0]
                             )
                         }
                       : {

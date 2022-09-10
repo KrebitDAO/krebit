@@ -2,6 +2,11 @@ import { Orbis } from '@orbisclub/orbis-sdk';
 import { Passport } from '@krebitdao/reputation-passport/dist/core';
 import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
 
+export interface IPersonhood {
+  credential: any;
+  stamps: any[];
+}
+
 export interface IProfile {
   did: string;
   background: string;
@@ -11,38 +16,7 @@ export interface IProfile {
   reputation: string | number;
   countFollowers: number;
   countFollowing: number;
-  personhood?: {
-    discord: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    twitter: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    twitterFollowers: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    veriff: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    phone: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-    issuer: {
-      length: number;
-      credential: Object;
-      stamp: Object;
-    };
-  };
+  personhoods?: IPersonhood[];
 }
 
 export const profile = async (passport: Passport, orbis: Orbis) => {

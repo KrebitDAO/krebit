@@ -15,7 +15,7 @@ import {
 } from './styles';
 import { VerifyPersonhoodCredential } from './verifyPersonhoodCredential';
 import { VerifyEducationCredential } from './verifyEducationCredential';
-import { Krebit } from 'components/Icons';
+import { Krebit, MoreVert } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { ToolTip } from 'components/ToolTip';
@@ -25,7 +25,8 @@ import { constants, sortByDate, isValid, normalizeSchema } from 'utils';
 import { GeneralContext } from 'context';
 
 // types
-import { IProfile } from 'utils/normalizeSchema';
+import { IPersonhood, IProfile } from 'utils/normalizeSchema';
+import { InlineDropdown } from 'components/InlineDropdown';
 
 const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 
@@ -34,19 +35,22 @@ export const Username = () => {
     currentPersonhoodToolTipActive,
     setCurrentPersonhoodToolTipActive
   ] = useState<number | undefined>(undefined);
+  const [isPersonhoodDropdownOpen, setIsPersonhoodDropdownOpen] = useState(
+    undefined
+  );
   const [
     isVerifyPersonhoodCredentialOpen,
     setIsVerifyPersonhoodCredentialOpen
   ] = useState(false);
-  const [currentVerifyPersonhoodId, setCurrentVerifyPersonhoodId] = useState<
-    string
-  >();
   const [
     isVerifyEducationCredentialOpen,
     setIsVerifyEducationCredentialOpen
   ] = useState(false);
   const [status, setStatus] = useState('idle');
   const [profile, setProfile] = useState<IProfile | undefined>();
+  const [currentPersonhood, setCurrentPersonhood] = useState<
+    (IPersonhood & { actionType: string }) | undefined
+  >();
   const { query, push } = useRouter();
   const {
     auth,
@@ -81,101 +85,46 @@ export const Username = () => {
           orbis
         );
 
-        const discordCredentials = await publicPassport.getCredentials(
-          'discord'
-        );
-        const twitterCredentials = await publicPassport.getCredentials(
-          'twitter'
-        );
-        const twitterFollowersCredentials = await publicPassport.getCredentials(
-          'twitterFollowers'
-        );
-        const veriffCredentials = await publicPassport.getCredentials(
-          'legalName'
-        );
-        const phoneCredentials = await publicPassport.getCredentials(
-          'phoneNumber'
-        );
-        const issuerCredentials = await publicPassport.getCredentials('issuer');
-        const latestDiscordCredential = discordCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestTwitterCredential = twitterCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestTwitterFollowersCredential = twitterFollowersCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestVeriffCredential = veriffCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestPhoneCredential = phoneCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestIssuerCredential = issuerCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
+        const currentCredentials = await publicPassport.getCredentials();
 
-        const stamps = await publicPassport.getStamps({
-          type: 'digitalProperty'
-        });
-        const latestDiscordStamp = stamps.find(
-          stamp => stamp.claimId === latestDiscordCredential?.id
-        );
-        const latestTwitterStamp = stamps.find(
-          stamp => stamp.claimId === latestTwitterCredential?.id
-        );
-        const latestTwitterFollowersStamp = stamps.find(
-          stamp => stamp.claimId === latestTwitterFollowersCredential?.id
-        );
-        const latestVeriffStamp = stamps.find(
-          stamp => stamp.claimId === latestVeriffCredential?.id
-        );
-        const latestPhoneStamp = stamps.find(
-          stamp => stamp.claimId === latestPhoneCredential?.id
-        );
+        if (currentCredentials?.length === 0) {
+          currentProfile = {
+            ...currentProfile,
+            personhoods: []
+          };
+        }
 
-        const issuerStamps = await publicPassport.getStamps({
-          type: 'issuer'
-        });
-        const latestIssuerStamp = issuerStamps.find(
-          stamp => stamp.claimId === latestIssuerCredential?.id
+        const currentPersonhoods = await Promise.all(
+          currentCredentials.map(async credential => {
+            const stamps = await publicPassport.getStamps({
+              type: 'digitalProperty',
+              claimId: credential.id
+            });
+            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
+              constant => credential.type.includes(constant.id)
+            );
+
+            return {
+              credential: {
+                ...credential,
+                visualInformation
+              },
+              stamps
+            };
+          })
+        ).then(personhoods =>
+          personhoods.sort((a, b) =>
+            sortByDate(
+              a.credential.issuanceDate,
+              b.credential.issuanceDate,
+              'des'
+            )
+          )
         );
 
         currentProfile = {
           ...currentProfile,
-          personhood: {
-            discord: {
-              length: discordCredentials?.length || 0,
-              credential: latestDiscordCredential,
-              stamp: latestDiscordStamp
-            },
-            twitter: {
-              length: twitterCredentials?.length || 0,
-              credential: latestTwitterCredential,
-              stamp: latestTwitterStamp
-            },
-            twitterFollowers: {
-              length: twitterFollowersCredentials?.length || 0,
-              credential: latestTwitterFollowersCredential,
-              stamp: latestTwitterFollowersStamp
-            },
-            veriff: {
-              length: veriffCredentials?.length || 0,
-              credential: latestVeriffCredential,
-              stamp: latestVeriffStamp
-            },
-            phone: {
-              length: phoneCredentials?.length || 0,
-              credential: latestPhoneCredential,
-              stamp: latestPhoneStamp
-            },
-            issuer: {
-              length: issuerCredentials?.length || 0,
-              credential: latestIssuerCredential,
-              stamp: latestIssuerStamp
-            }
-          }
+          personhoods: currentPersonhoods
         };
 
         setProfile(currentProfile);
@@ -205,23 +154,44 @@ export const Username = () => {
     [currentPersonhoodToolTipActive]
   );
 
+  const handleIsPersonhoodDropdownOpen = (index: number | undefined) => {
+    if (!auth?.isAuthenticated) return;
+
+    if (
+      isPersonhoodDropdownOpen === undefined ||
+      isPersonhoodDropdownOpen !== index
+    ) {
+      setIsPersonhoodDropdownOpen(index);
+    }
+
+    if (
+      isPersonhoodDropdownOpen !== undefined &&
+      isPersonhoodDropdownOpen === index
+    ) {
+      setIsPersonhoodDropdownOpen(undefined);
+    }
+  };
+
   const handleIsVerifyPersonhoodCredentialOpen = () => {
     if (!auth?.isAuthenticated) return;
 
     setIsVerifyPersonhoodCredentialOpen(prevState => !prevState);
-    setCurrentVerifyPersonhoodId(undefined);
-  };
-
-  const handleVerifyPersonhoodId = (id: string) => {
-    if (!auth?.isAuthenticated) return;
-
-    setCurrentVerifyPersonhoodId(id);
+    setCurrentPersonhood(undefined);
   };
 
   const handleIsVerifyEducationCredentialOpen = () => {
     if (!auth?.isAuthenticated) return;
 
     setIsVerifyEducationCredentialOpen(prevState => !prevState);
+  };
+
+  const handleCurrentPersonhood = (type: string, values: IPersonhood) => {
+    if (!auth?.isAuthenticated) return;
+
+    setCurrentPersonhood({
+      ...values,
+      actionType: type
+    });
   };
 
   const handleSendMessage = () => {
@@ -251,11 +221,10 @@ export const Username = () => {
         onClose={handleOpenConnectWallet}
       />
       <Layout>
-        {isVerifyPersonhoodCredentialOpen || currentVerifyPersonhoodId ? (
+        {isVerifyPersonhoodCredentialOpen || currentPersonhood ? (
           <VerifyPersonhoodCredential
-            currentPersonhood={profile?.personhood}
+            currentPersonhood={currentPersonhood}
             onClose={handleIsVerifyPersonhoodCredentialOpen}
-            verifyId={currentVerifyPersonhoodId}
           />
         ) : null}
         {isVerifyEducationCredentialOpen && (
@@ -335,49 +304,95 @@ export const Username = () => {
                     )}
                   </div>
                   <div className="person-box">
-                    {constants.PERSONHOOD_CREDENTIALS.map((item, index) => (
+                    {profile.personhoods.map((personhood, index) => (
                       <Fragment key={index}>
                         <div className="person-box-item">
-                          <div className="person-box-icon">{item.icon}</div>
-                          <p className="person-box-item-text">{item.text}</p>
-                          <div
-                            className="person-box-item-tooltip"
-                            onClick={
-                              item.isDisabled
-                                ? undefined
-                                : () => handleVerifyPersonhoodId(item.id)
-                            }
-                            onMouseOver={() =>
-                              handleCurrentPersonhoodToolTipActiveCallback(
-                                index + 1
-                              )
-                            }
-                            onMouseOut={
-                              handleCurrentPersonhoodToolTipHideActiveCallback
-                            }
-                          >
+                          <div className="person-box-icon">
+                            {personhood.credential?.visualInformation?.icon}
+                          </div>
+                          <p className="person-box-item-text">
+                            {personhood.credential?.visualInformation?.text}
+                          </p>
+                          <div className="person-box-item-content">
                             <div
                               className={`person-box-icon person-box-item-icon ${
-                                profile.personhood[item.id]?.credential &&
-                                profile.personhood[item.id]?.stamp
+                                personhood.credential &&
+                                personhood.stamps?.length > 0
                                   ? 'person-box-item-icon-is-active'
                                   : ''
                               }`}
+                              onMouseOver={() =>
+                                handleCurrentPersonhoodToolTipActiveCallback(
+                                  index + 1
+                                )
+                              }
+                              onMouseOut={
+                                handleCurrentPersonhoodToolTipHideActiveCallback
+                              }
                             >
                               <Krebit />
                             </div>
+                            {query.id === auth?.did && (
+                              <div
+                                className="person-box-more-vert"
+                                onClick={() =>
+                                  handleIsPersonhoodDropdownOpen(index + 1)
+                                }
+                              >
+                                <MoreVert />
+                              </div>
+                            )}
+                            {isPersonhoodDropdownOpen === index + 1 && (
+                              <div className="person-box-more-vert-inline-dropdown">
+                                <InlineDropdown
+                                  items={[
+                                    {
+                                      title: 'Add stamp',
+                                      onClick: () =>
+                                        handleCurrentPersonhood(
+                                          'add_stamp',
+                                          personhood
+                                        )
+                                    },
+                                    {
+                                      title: 'Remove credential',
+                                      onClick: () =>
+                                        handleCurrentPersonhood(
+                                          'remove_credential',
+                                          personhood
+                                        )
+                                    },
+                                    {
+                                      title: 'Remove stamp',
+                                      onClick: () =>
+                                        handleCurrentPersonhood(
+                                          'remove_stamp',
+                                          personhood
+                                        )
+                                    },
+                                    {
+                                      title: 'Decrypt',
+                                      onClick: () =>
+                                        handleCurrentPersonhood(
+                                          'decrypt',
+                                          personhood
+                                        )
+                                    }
+                                  ]}
+                                />
+                              </div>
+                            )}
                             {currentPersonhoodToolTipActive === index + 1 && (
                               <div className="person-box-item-tooltip-box">
                                 <ToolTip
-                                  message={`This credential has ${profile
-                                    .personhood[item.id]?.length || 0} stamps`}
+                                  message={`This credential has ${personhood
+                                    .stamps?.length || 0} stamps`}
                                 />
                               </div>
                             )}
                           </div>
                         </div>
-                        {index !==
-                          constants.PERSONHOOD_CREDENTIALS.length - 1 && (
+                        {index !== profile.personhoods?.length - 1 && (
                           <hr className="person-box-item-hr" />
                         )}
                       </Fragment>

@@ -254,7 +254,7 @@ export const PersonhoodCredential = styled.div`
     .person-box-item {
       display: grid;
       align-items: center;
-      grid-template-columns: 26px auto 22px;
+      grid-template-columns: 26px auto 56px;
 
       .person-box-icon {
         width: 26px;
@@ -266,35 +266,60 @@ export const PersonhoodCredential = styled.div`
         }
       }
 
-      .person-box-item-icon {
-        cursor: pointer;
-
-        & > svg {
-          opacity: 0.2;
-        }
-      }
-
-      .person-box-item-icon-is-active {
-        & > svg {
-          opacity: 1;
-        }
-      }
-
-      .person-box-item-tooltip {
-        position: relative;
-
-        .person-box-item-tooltip-box {
-          position: absolute;
-          top: -60px;
-          right: 15px;
-        }
-      }
-
       .person-box-item-text {
         margin: 0;
         margin-left: 14px;
         font-size: ${theme.fonts.sm};
         color: ${theme.colors.white};
+      }
+
+      .person-box-item-content {
+        position: relative;
+        display: flex;
+
+        .person-box-item-icon {
+          & > svg {
+            opacity: 0.2;
+          }
+        }
+
+        .person-box-item-icon-is-active {
+          & > svg {
+            opacity: 1;
+          }
+        }
+
+        .person-box-more-vert {
+          width: 30px;
+          height: 26px;
+          text-align: center;
+          cursor: pointer;
+
+          & > svg {
+            width: 30px;
+            height: 26px;
+            fill: ${theme.colors.white};
+          }
+        }
+
+        .person-box-item-tooltip-box {
+          position: absolute;
+          top: -40px;
+          right: 45px;
+        }
+
+        .person-box-more-vert-inline-dropdown {
+          position: absolute;
+          bottom: 16px;
+          right: 30px;
+          z-index: 10;
+
+          @media (min-width: ${theme.screens.lg}) {
+            bottom: 16px;
+            right: initial;
+            left: 56px;
+          }
+        }
       }
     }
 

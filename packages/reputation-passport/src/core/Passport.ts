@@ -529,7 +529,7 @@ export class Passport {
         const current = content.held ? content.held : [];
 
         result = await Promise.all(
-          await current.map(async vcId => {
+          current.map(async vcId => {
             let vcStream = await this.ceramic.loadStream(vcId);
 
             if (vcStream) {
