@@ -39,6 +39,7 @@
     "@ceramicnetwork/stream-tile": "^2.4.0",
     "@glazed/datamodel": "^0.3.1",
     "@glazed/did-datastore": "^0.3.2",
+    "ajv": "^8.11.0",
     "did-session": "^0.1.1",
     "isomorphic-fetch": "^3.0.0",
     "key-did-provider-ed25519": "^2.0.1",

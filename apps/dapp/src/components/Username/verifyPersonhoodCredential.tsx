@@ -156,6 +156,18 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     : 'Step 1 for Twitter verification'
                 }
                 form={{
+                  inputs:
+                    twitterProvider.currentCredential ||
+                    currentPersonhood.twitter.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you twitter handle',
+                            value: twitterProvider.claimValues.username,
+                            onChange: twitterProvider.handleClaimValues
+                          }
+                        ],
                   button:
                     twitterProvider.currentCredential ||
                     currentPersonhood.twitter.credential
@@ -171,10 +183,17 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                       : {
                           text: 'Verify',
-                          onClick: () =>
-                            twitterProvider.handleFetchOAuth(
-                              walletInformation.address
-                            )
+                          onClick:
+                            !twitterProvider.claimValues.username ||
+                            twitterProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  twitterProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !twitterProvider.claimValues.username ||
+                            twitterProvider.claimValues.username === ''
                         }
                 }}
                 isLoading={twitterProvider.status === 'credential_pending'}

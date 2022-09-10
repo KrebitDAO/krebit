@@ -24,8 +24,6 @@ const {
   SERVER_NETWORK
 } = process.env;
 
-const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
-
 export const TwitterController = async (
   request: express.Request,
   response: express.Response,
@@ -83,7 +81,10 @@ export const TwitterController = async (
       console.log('twitterUser: ', twitterUser);
 
       // If valid twitterID
-      if (twitterUser && twitterUser.username) {
+      if (
+        twitterUser &&
+        twitterUser.username.toLowerCase() === claimValue.username.toLowerCase()
+      ) {
         delete claimValue.proofs;
 
         console.log('Valid twitter ID:', twitterUser);
@@ -107,7 +108,8 @@ export const TwitterController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 

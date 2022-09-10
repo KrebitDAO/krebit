@@ -42,7 +42,7 @@ export const usePhoneProvider = () => {
       id: `phone-${generateUID(10)}`,
       ethereumAddress: address,
       type: 'phoneNumber',
-      typeSchema: 'ceramic://...',
+      typeSchema: 'krebit://schemas/phoneNumber',
       tags: ['phone', 'contact', 'personhood'],
       value: {
         countryCode: claimValues.countryCode,

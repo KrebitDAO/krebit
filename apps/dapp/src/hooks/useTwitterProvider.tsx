@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 import { auth } from 'twitter-api-sdk';
@@ -21,7 +21,14 @@ const authClient = new auth.OAuth2User({
   scopes: ['tweet.read', 'users.read']
 });
 
+interface IClaimValues {
+  username: string;
+}
+
 export const useTwitterProvider = () => {
+  const [claimValues, setClaimValues] = useState<IClaimValues>({
+    username: ''
+  });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -65,6 +72,7 @@ export const useTwitterProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
+      username: claimValues.username,
       proofs
     };
 
@@ -77,7 +85,7 @@ export const useTwitterProvider = () => {
       id: proofs.state,
       ethereumAddress: address,
       type: 'digitalProperty',
-      typeSchema: 'ceramic://...',
+      typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['twitter', 'social', 'personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
@@ -90,7 +98,7 @@ export const useTwitterProvider = () => {
     data: { code: string; state: string };
   }) => {
     setStatus('credential_pending');
-
+    console.log('username at listenForRedirect:', claimValues.username);
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
       if (e.target === 'twitter') {
@@ -205,10 +213,21 @@ export const useTwitterProvider = () => {
     }
   };
 
+  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setClaimValues(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+    console.log('changed username:', claimValues.username);
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
+    handleClaimValues,
+    claimValues,
     status,
     currentCredential,
     currentStamp

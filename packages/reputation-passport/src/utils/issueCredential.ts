@@ -1,15 +1,17 @@
+import 'isomorphic-fetch';
 import { createHash } from 'crypto';
 import { ethers } from 'ethers';
 import { base64 } from 'ethers/lib/utils';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
+import Ajv, { str } from 'ajv';
 import {
   EIP712VC,
   getEIP712Credential,
   getKrebitCredentialTypes
 } from '@krebitdao/eip712-vc';
 
-import { krbToken } from '../schemas';
+import { krbToken, claims } from '../schemas';
 import { Lit } from '../lib';
 import { config } from '../config';
 
@@ -31,6 +33,11 @@ export interface ClaimProps {
 
 interface IssueProps {
   wallet: ethers.Wallet;
+  idx: DIDDataStore;
+  claim: ClaimProps;
+}
+
+interface ValidateProps {
   idx: DIDDataStore;
   claim: ClaimProps;
 }
@@ -62,6 +69,34 @@ export const hashClaimValue = (props: HashProps) => {
       .update(JSON.stringify(objToSortedArray(props.value)))
       .digest()
   );
+};
+
+export const validateSchema = async (props: ValidateProps) => {
+  const { idx, claim } = props;
+  let schema;
+  if (claim.typeSchema.startsWith('ceramic://')) {
+    const stream = await TileDocument.load(idx.ceramic, claim.typeSchema);
+    schema = stream.content;
+  } else if (claim.typeSchema.startsWith('krebit://')) {
+    const krebitSchema = claim.typeSchema.substring(
+      claim.typeSchema.lastIndexOf('/') + 1
+    );
+    console.log('schema: ', claims[krebitSchema]);
+    schema = claims[krebitSchema];
+  } else if (claim.typeSchema.startsWith('https://')) {
+    const response = await fetch(claim.typeSchema);
+    schema = await response.json();
+  }
+  const ajv = new Ajv();
+  const validateSchema = ajv.compile(schema);
+  const validSchema = validateSchema(claim.value);
+  if (!validSchema) {
+    throw new Error(
+      'Claim value does not match typeSchema: ' +
+        validateSchema.errors.toString()
+    );
+  }
+  return validSchema;
 };
 
 export const issueCredential = async (props: IssueProps) => {

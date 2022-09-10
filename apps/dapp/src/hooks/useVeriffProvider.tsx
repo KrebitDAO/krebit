@@ -81,7 +81,7 @@ export const useVeriffProvider = () => {
       id: payload.id,
       ethereumAddress: address,
       type: 'legalName',
-      typeSchema: 'ceramic://...',
+      typeSchema: 'krebit://schemas/legalName',
       tags: ['veriff', 'fullName', 'kyc', 'personhood'],
       value: {
         person: {
