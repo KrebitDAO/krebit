@@ -267,7 +267,7 @@ export class Krebit {
     }
   };
 
-  decryptClaimValue = async (w3cCredential: W3CCredential) => {
+  getClaimValue = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
@@ -286,6 +286,13 @@ export class Krebit {
       if (result) {
         return JSON.parse(result);
       }
+    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const claimedCredential: W3CCredential = await this.getCredential(
+        w3cCredential.id
+      );
+      return this.getClaimValue(claimedCredential);
+    } else if (w3cCredential.credentialSubject.encrypted === 'none') {
+      return JSON.parse(w3cCredential.credentialSubject.value);
     }
   };
 

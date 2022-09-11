@@ -34,11 +34,10 @@ export const useTwitterProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('twitter_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -54,7 +53,7 @@ export const useTwitterProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
   const handleFetchOAuth = (address: string) => {
     const authUrl = authClient.generateAuthURL({
@@ -98,7 +97,7 @@ export const useTwitterProvider = () => {
     data: { code: string; state: string };
   }) => {
     setStatus('credential_pending');
-    console.log('username at listenForRedirect:', claimValues.username);
+
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
       if (e.target === 'twitter') {
@@ -219,7 +218,6 @@ export const useTwitterProvider = () => {
       ...prevValues,
       [name]: value
     }));
-    console.log('changed username:', claimValues.username);
   };
 
   return {
