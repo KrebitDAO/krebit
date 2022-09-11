@@ -22,12 +22,12 @@ const authClient = new auth.OAuth2User({
 });
 
 interface IClaimValues {
-  username: string;
+  followers: string;
 }
 
-export const useTwitterProvider = () => {
+export const useTwitterFollowersProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    username: ''
+    followers: ''
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -57,7 +57,7 @@ export const useTwitterProvider = () => {
 
   const handleFetchOAuth = (address: string) => {
     const authUrl = authClient.generateAuthURL({
-      state: `twitter-${generateUID(10)}`,
+      state: `twitterFollowers-${generateUID(10)}`,
       code_challenge: address,
       code_challenge_method: 'plain'
     });
@@ -71,7 +71,7 @@ export const useTwitterProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
-      username: claimValues.username,
+      followers: claimValues.followers,
       proofs
     };
 
@@ -83,7 +83,7 @@ export const useTwitterProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'twitter',
+      type: 'twitterFollowers',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['digitalProperty', 'social', 'personhood'],
       value: claimValue,
@@ -100,8 +100,11 @@ export const useTwitterProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'twitter') {
-        console.log('Saving Stamp', { type: 'twitter', proof: e.data });
+      if (e.target === 'twitterFollowers') {
+        console.log('Saving Stamp', {
+          type: 'twitterFollowers',
+          proof: e.data
+        });
 
         const session = window.localStorage.getItem('ceramic-session');
         const currentSession = JSON.parse(session);

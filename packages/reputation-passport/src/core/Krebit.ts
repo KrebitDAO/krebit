@@ -267,25 +267,30 @@ export class Krebit {
     }
   };
 
+  decryptClaimValue = async (w3cCredential: W3CCredential) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+    const lit = new Lit();
+    const stream = await TileDocument.load(
+      this.idx.ceramic,
+      encrypted.accessControlConditions
+    );
+    const accessControlConditions = stream.content as any;
+    const result = await lit.decrypt(
+      encrypted.encryptedString,
+      encrypted.encryptedSymmetricKey,
+      accessControlConditions,
+      this.wallet
+    );
+    if (result) {
+      return JSON.parse(result);
+    }
+  };
+
   getClaimValue = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
-      const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-      const lit = new Lit();
-      const stream = await TileDocument.load(
-        this.idx.ceramic,
-        encrypted.accessControlConditions
-      );
-      const accessControlConditions = stream.content as any;
-      const result = await lit.decrypt(
-        encrypted.encryptedString,
-        encrypted.encryptedSymmetricKey,
-        accessControlConditions,
-        this.wallet
-      );
-      if (result) {
-        return JSON.parse(result);
-      }
+      return this.decryptClaimValue(w3cCredential);
     } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id

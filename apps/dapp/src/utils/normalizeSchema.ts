@@ -22,6 +22,11 @@ export interface IProfile {
       credential: Object;
       stamp: Object;
     };
+    twitterFollowers: {
+      length: number;
+      credential: Object;
+      stamp: Object;
+    };
     veriff: {
       length: number;
       credential: Object;

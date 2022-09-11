@@ -19,6 +19,12 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Twitter />
   },
   {
+    id: 'twitterFollowers',
+    text: 'Twitter Followers',
+    icon: <Twitter />
+    //isDisabled: true
+  },
+  {
     id: 'phone',
     text: 'Phone',
     icon: <Phone />
