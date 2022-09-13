@@ -4,7 +4,10 @@ import { useRouter } from 'next/router';
 import LitJsSdk from 'lit-js-sdk';
 import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
-import { Passport } from '@krebitdao/reputation-passport/dist/core';
+import {
+  Passport,
+  Krebit as Issuer
+} from '@krebitdao/reputation-passport/dist/core';
 
 import { getWalletInformation, normalizeSchema } from 'utils';
 
@@ -29,6 +32,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [openConnectWallet, setOpenConnectWallet] = useState(false);
   const [status, setStatus] = useState('idle');
   const [passport, setPassport] = useState<Passport>();
+  const [issuer, setIssuer] = useState<Issuer>();
   const [publicPassport, setPublicPassport] = useState<Passport>();
   const [orbis, setOrbis] = useState<Orbis>();
   const [walletInformation, setWalletInformation] = useState<
@@ -64,12 +68,23 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         address: information.address,
         litSdk: LitJsSdk
       });
-      const isConnected = await passport.isConnected();
+      const isPassportConnected = await passport.isConnected();
 
-      if (isConnected) {
+      const issuer = new Krebit.core.Krebit({
+        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
+        ethProvider: information.ethProvider,
+        address: information.address,
+        wallet: information.wallet,
+        litSdk: LitJsSdk,
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
+      });
+      const isIssuerConnected = await issuer.isConnected();
+
+      if (isPassportConnected && isIssuerConnected) {
         const currentProfile = await normalizeSchema.profile(passport, orbis);
 
         setPassport(passport);
+        setIssuer(issuer);
         setProfile(currentProfile);
       }
 
@@ -101,10 +116,21 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         address: information.address,
         litSdk: LitJsSdk
       });
-      const connection = await passport.connect();
+      const passportConnection = await passport.connect();
 
-      if (connection) {
+      const issuer = new Krebit.core.Krebit({
+        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
+        ethProvider: information.ethProvider,
+        address: information.address,
+        wallet: information.wallet,
+        litSdk: LitJsSdk,
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
+      });
+      const issuerConnection = await issuer.connect();
+
+      if (passportConnection && issuerConnection) {
         setPassport(passport);
+        setIssuer(issuer);
 
         const orbis = new Orbis();
         setOrbis(orbis);
@@ -149,6 +175,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         walletInformation: {
           ...walletInformation,
           passport,
+          issuer,
           publicPassport,
           orbis
         },

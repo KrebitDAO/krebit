@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 
@@ -7,18 +7,15 @@ import {
   EducationCard,
   EducationCredentials,
   LoadingWrapper,
-  PersonhoodCredential,
   Skills,
   WorkCard,
   WorkCredential,
   Wrapper
 } from './styles';
-import { VerifyPersonhoodCredential } from './verifyPersonhoodCredential';
 import { VerifyEducationCredential } from './verifyEducationCredential';
 import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
-import { ToolTip } from 'components/ToolTip';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { constants, sortByDate, isValid, normalizeSchema } from 'utils';
@@ -26,21 +23,11 @@ import { GeneralContext } from 'context';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
+import { Personhood } from './Personhood';
 
 const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 
 export const Username = () => {
-  const [
-    currentPersonhoodToolTipActive,
-    setCurrentPersonhoodToolTipActive
-  ] = useState<number | undefined>(undefined);
-  const [
-    isVerifyPersonhoodCredentialOpen,
-    setIsVerifyPersonhoodCredentialOpen
-  ] = useState(false);
-  const [currentVerifyPersonhoodId, setCurrentVerifyPersonhoodId] = useState<
-    string
-  >();
   const [
     isVerifyEducationCredentialOpen,
     setIsVerifyEducationCredentialOpen
@@ -50,7 +37,7 @@ export const Username = () => {
   const { query, push } = useRouter();
   const {
     auth,
-    walletInformation: { publicPassport, orbis },
+    walletInformation: { publicPassport, passport, issuer, orbis },
     walletModal: { openConnectWallet, handleOpenConnectWallet }
   } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
@@ -81,71 +68,47 @@ export const Username = () => {
           orbis
         );
 
-        const discordCredentials = await publicPassport.getCredentials(
-          'discord'
-        );
-        const twitterCredentials = await publicPassport.getCredentials(
-          'twitter'
-        );
-        const veriffCredentials = await publicPassport.getCredentials(
-          'legalName'
-        );
-        const phoneCredentials = await publicPassport.getCredentials(
-          'phoneNumber'
-        );
-        const latestDiscordCredential = discordCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestTwitterCredential = twitterCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestVeriffCredential = veriffCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
-        const latestPhoneCredential = phoneCredentials
-          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-          .at(-1);
+        const currentCredentials = await publicPassport.getCredentials();
 
-        const stamps = await publicPassport.getStamps({
-          type: 'digitalProperty'
-        });
-        const latestDiscordStamp = stamps.find(
-          stamp => stamp.claimId === latestDiscordCredential?.id
-        );
-        const latestTwitterStamp = stamps.find(
-          stamp => stamp.claimId === latestTwitterCredential?.id
-        );
-        const latestVeriffStamp = stamps.find(
-          stamp => stamp.claimId === latestVeriffCredential?.id
-        );
-        const latestPhoneStamp = stamps.find(
-          stamp => stamp.claimId === latestPhoneCredential?.id
+        if (currentCredentials?.length === 0) {
+          currentProfile = {
+            ...currentProfile,
+            personhoods: []
+          };
+        }
+
+        const currentPersonhoods = await Promise.all(
+          currentCredentials.map(async credential => {
+            const stamps = await publicPassport.getStamps({
+              type: 'digitalProperty',
+              claimId: credential.id
+            });
+            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
+              constant => credential.type.includes(constant.id)
+            );
+            const customCredential = {
+              ...credential,
+              visualInformation
+            };
+
+            return {
+              credential: customCredential,
+              stamps
+            };
+          })
+        ).then(personhoods =>
+          personhoods.sort((a, b) =>
+            sortByDate(
+              a.credential.issuanceDate,
+              b.credential.issuanceDate,
+              'des'
+            )
+          )
         );
 
         currentProfile = {
           ...currentProfile,
-          personhood: {
-            discord: {
-              length: discordCredentials?.length || 0,
-              credential: latestDiscordCredential,
-              stamp: latestDiscordStamp
-            },
-            twitter: {
-              length: twitterCredentials?.length || 0,
-              credential: latestTwitterCredential,
-              stamp: latestTwitterStamp
-            },
-            veriff: {
-              length: veriffCredentials?.length || 0,
-              credential: latestVeriffCredential,
-              stamp: latestVeriffStamp
-            },
-            phone: {
-              length: phoneCredentials?.length || 0,
-              credential: latestPhoneCredential,
-              stamp: latestPhoneStamp
-            }
-          }
+          personhoods: currentPersonhoods
         };
 
         setProfile(currentProfile);
@@ -158,35 +121,6 @@ export const Username = () => {
 
     getProfile();
   }, [publicPassport, query.id]);
-
-  const handleCurrentPersonhoodToolTipActive = (index: number) => {
-    setCurrentPersonhoodToolTipActive(index);
-  };
-  const handleCurrentPersonhoodToolTipActiveCallback = useCallback(
-    handleCurrentPersonhoodToolTipActive,
-    [currentPersonhoodToolTipActive]
-  );
-
-  const handleCurrentPersonhoodToolTipHide = () => {
-    setCurrentPersonhoodToolTipActive(undefined);
-  };
-  const handleCurrentPersonhoodToolTipHideActiveCallback = useCallback(
-    handleCurrentPersonhoodToolTipHide,
-    [currentPersonhoodToolTipActive]
-  );
-
-  const handleIsVerifyPersonhoodCredentialOpen = () => {
-    if (!auth?.isAuthenticated) return;
-
-    setIsVerifyPersonhoodCredentialOpen(prevState => !prevState);
-    setCurrentVerifyPersonhoodId(undefined);
-  };
-
-  const handleVerifyPersonhoodId = (id: string) => {
-    if (!auth?.isAuthenticated) return;
-
-    setCurrentVerifyPersonhoodId(id);
-  };
 
   const handleIsVerifyEducationCredentialOpen = () => {
     if (!auth?.isAuthenticated) return;
@@ -221,13 +155,6 @@ export const Username = () => {
         onClose={handleOpenConnectWallet}
       />
       <Layout>
-        {isVerifyPersonhoodCredentialOpen || currentVerifyPersonhoodId ? (
-          <VerifyPersonhoodCredential
-            currentPersonhood={profile?.personhood}
-            onClose={handleIsVerifyPersonhoodCredentialOpen}
-            verifyId={currentVerifyPersonhoodId}
-          />
-        ) : null}
         {isVerifyEducationCredentialOpen && (
           <VerifyEducationCredential
             // YOU HAVE TO REPLACE THESE VALUES WITH THE ONES FETCHED FROM CERAMIC, IF A CREDENTIAL FROM PLATZI IS ALREADY DONE, THIS COMPONENT MUST KNOW
@@ -292,69 +219,6 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
-                <PersonhoodCredential>
-                  <div className="person-header">
-                    <p className="person-header-text">Personhood Credentials</p>
-                    {query.id === auth?.did && (
-                      <p
-                        className="person-header-verify"
-                        onClick={handleIsVerifyPersonhoodCredentialOpen}
-                      >
-                        Verify
-                      </p>
-                    )}
-                  </div>
-                  <div className="person-box">
-                    {constants.PERSONHOOD_CREDENTIALS.map((item, index) => (
-                      <Fragment key={index}>
-                        <div className="person-box-item">
-                          <div className="person-box-icon">{item.icon}</div>
-                          <p className="person-box-item-text">{item.text}</p>
-                          <div
-                            className="person-box-item-tooltip"
-                            onClick={
-                              item.isDisabled
-                                ? undefined
-                                : () => handleVerifyPersonhoodId(item.id)
-                            }
-                            onMouseOver={() =>
-                              handleCurrentPersonhoodToolTipActiveCallback(
-                                index + 1
-                              )
-                            }
-                            onMouseOut={
-                              handleCurrentPersonhoodToolTipHideActiveCallback
-                            }
-                          >
-                            <div
-                              className={`person-box-icon person-box-item-icon ${
-                                profile.personhood[item.id]?.credential &&
-                                profile.personhood[item.id]?.stamp
-                                  ? 'person-box-item-icon-is-active'
-                                  : ''
-                              }`}
-                            >
-                              <Krebit />
-                            </div>
-                            {currentPersonhoodToolTipActive === index + 1 && (
-                              <div className="person-box-item-tooltip-box">
-                                <ToolTip
-                                  message={`This personhood credential has ${profile
-                                    .personhood[item.id]?.length ||
-                                    0} credentials`}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        {index !==
-                          constants.PERSONHOOD_CREDENTIALS.length - 1 && (
-                          <hr className="person-box-item-hr" />
-                        )}
-                      </Fragment>
-                    ))}
-                  </div>
-                </PersonhoodCredential>
                 <Skills>
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>
@@ -367,6 +231,12 @@ export const Username = () => {
                     ))}
                   </div>
                 </Skills>
+                <Personhood
+                  isAuthenticated={query.id === auth?.did}
+                  personhoods={profile.personhoods}
+                  passport={passport}
+                  issuer={issuer}
+                />
               </div>
               <div className="content-right">
                 <EducationCredentials>

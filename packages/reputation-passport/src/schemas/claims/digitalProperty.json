@@ -11,6 +11,6 @@
     "posts": { "type": "string" },
     "proofs": { "type": "object" }
   },
-  "required": ["protocol", "host", "id"],
+  "required": ["protocol", "host"],
   "additionalProperties": true
 }

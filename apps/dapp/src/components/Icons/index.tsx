@@ -17,6 +17,8 @@ import { ArrowForward } from './ArrowForward';
 import { Approval } from './Approval';
 import { Fingerprint } from './Fingerprint';
 import { Badge } from './Badge';
+import { Delegate } from './Delegate';
+import { MoreVert } from './MoreVert';
 
 export {
   Close,
@@ -37,5 +39,7 @@ export {
   ArrowForward,
   Approval,
   Fingerprint,
-  Badge
+  Badge,
+  Delegate,
+  MoreVert
 };

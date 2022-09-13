@@ -1,7 +1,7 @@
 import { WalletProvider } from './WalletProvider';
-import { issueCredential, ClaimProps, hashClaimValue } from './issueCredential';
+import { issueCredential, validateSchema,  ClaimProps, hashClaimValue } from './issueCredential';
 import { base64 } from './base64';
 
-export { WalletProvider, issueCredential, base64, hashClaimValue };    
+export { WalletProvider, issueCredential, validateSchema, base64, hashClaimValue };    
 export type { ClaimProps };
 

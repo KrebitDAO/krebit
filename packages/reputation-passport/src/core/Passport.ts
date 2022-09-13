@@ -520,7 +520,7 @@ export class Passport {
   };
 
   // heldCredentials from ceramic, filter by type
-  getCredentials = async (type?: string) => {
+  getCredentials = async (type?: string, tag?: string) => {
     try {
       let result = [];
       const content = await this.idx.get('heldCredentials', this.did);
@@ -529,24 +529,29 @@ export class Passport {
         const current = content.held ? content.held : [];
 
         result = await Promise.all(
-          await current.map(async vcId => {
+          current.map(async vcId => {
             let vcStream = await this.ceramic.loadStream(vcId);
 
             if (vcStream) {
               if (type) {
-                if (vcStream.content.type.includes(type))
+                if (vcStream.content.credentialSubject.type === type)
+                  return {
+                    ...vcStream.content,
+                    vcId: vcId
+                  };
+              } else if (tag) {
+                if (vcStream.content.type.includes(tag))
                   return {
                     ...vcStream.content,
                     vcId: vcId
                   };
               } else {
-                return vcStream.content;
+                return { ...vcStream.content, vcId: vcId };
               }
             }
           })
         );
       }
-
       return result.filter(c => c != null);
     } catch (err) {
       throw new Error(err);

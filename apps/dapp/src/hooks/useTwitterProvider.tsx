@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 import { auth } from 'twitter-api-sdk';
@@ -13,6 +13,7 @@ import {
 } from 'utils';
 
 const { NEXT_PUBLIC_TWITTER_NODE_URL } = process.env;
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const authClient = new auth.OAuth2User({
   client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
@@ -20,17 +21,23 @@ const authClient = new auth.OAuth2User({
   scopes: ['tweet.read', 'users.read']
 });
 
+interface IClaimValues {
+  username: string;
+}
+
 export const useTwitterProvider = () => {
+  const [claimValues, setClaimValues] = useState<IClaimValues>({
+    username: ''
+  });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('twitter_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -46,7 +53,7 @@ export const useTwitterProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
   const handleFetchOAuth = (address: string) => {
     const authUrl = authClient.generateAuthURL({
@@ -64,6 +71,7 @@ export const useTwitterProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
+      username: claimValues.username,
       proofs
     };
 
@@ -75,9 +83,9 @@ export const useTwitterProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'digitalProperty',
-      typeSchema: 'ceramic://...',
-      tags: ['twitter', 'social', 'personhood'],
+      type: 'twitter',
+      typeSchema: 'krebit://schemas/digitalProperty',
+      tags: ['digitalProperty', 'social', 'personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -111,7 +119,8 @@ export const useTwitterProvider = () => {
 
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
-          litSdk: LitJsSdk
+          litSdk: LitJsSdk,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
 
         await Issuer.connect(currentSession);
@@ -120,7 +129,8 @@ export const useTwitterProvider = () => {
         console.log('claimedCredential: ', claimedCredential);
 
         const passport = new Krebit.core.Passport({
-          ...walletInformation
+          ...walletInformation,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await passport.connect(currentSession);
         // Save claimedCredential
@@ -168,7 +178,8 @@ export const useTwitterProvider = () => {
       const walletInformation = await getWalletInformation(currentType);
 
       const passport = new Krebit.core.Passport({
-        ...walletInformation
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       passport.read(
         walletInformation.address,
@@ -186,7 +197,8 @@ export const useTwitterProvider = () => {
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
-        litSdk: LitJsSdk
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       await Issuer.connect(currentSession);
 
@@ -200,10 +212,20 @@ export const useTwitterProvider = () => {
     }
   };
 
+  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setClaimValues(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
+    handleClaimValues,
+    claimValues,
     status,
     currentCredential,
     currentStamp

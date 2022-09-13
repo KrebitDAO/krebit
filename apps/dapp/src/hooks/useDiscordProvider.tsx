@@ -13,6 +13,7 @@ import {
 } from 'utils';
 
 const { NEXT_PUBLIC_DISCORD_NODE_URL } = process.env;
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 export const useDiscordProvider = () => {
   const [status, setStatus] = useState('idle');
@@ -70,9 +71,9 @@ export const useDiscordProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'digitalProperty',
-      typeSchema: 'digitalProperty',
-      tags: ['discord', 'social', 'personhood'],
+      type: 'discord',
+      typeSchema: 'krebit://schemas/digitalProperty',
+      tags: ['digitalProperty', 'social', 'personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -113,7 +114,8 @@ export const useDiscordProvider = () => {
 
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
-          litSdk: LitJsSdk
+          litSdk: LitJsSdk,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await Issuer.connect(currentSession);
 
@@ -121,7 +123,8 @@ export const useDiscordProvider = () => {
         console.log('claimedCredential: ', claimedCredential);
 
         const passport = new Krebit.core.Passport({
-          ...walletInformation
+          ...walletInformation,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await passport.connect(currentSession);
         // Save claimedCredential
@@ -170,7 +173,8 @@ export const useDiscordProvider = () => {
 
       const passport = new Krebit.core.Passport({
         ethProvider: walletInformation.ethProvider,
-        address: walletInformation.address
+        address: walletInformation.address,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       passport.read(
         walletInformation.address,
@@ -188,7 +192,8 @@ export const useDiscordProvider = () => {
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
-        litSdk: LitJsSdk
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       await Issuer.connect(currentSession);
 

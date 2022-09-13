@@ -60,7 +60,7 @@ export const DeworkController = async (
             id: task.permalink,
             ethereumAddress: address,
             type: 'workExperience',
-            typeSchema: 'https://github.com/KrebitDAO/schemas/workExperience',
+            typeSchema: 'krebit://schemas/workExperience',
             tags: ['dework', 'task', 'community'],
             value: {
               ...task,

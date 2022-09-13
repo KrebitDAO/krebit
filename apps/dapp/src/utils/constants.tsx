@@ -1,8 +1,8 @@
 import {
+  Approval,
   Badge,
   Discord,
   Email,
-  Linkedin,
   Phone,
   Twitter
 } from 'components/Icons';
@@ -19,10 +19,16 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Twitter />
   },
   {
+    id: 'twitterFollowers',
+    text: 'Twitter Followers',
+    icon: <Twitter />
+    //isDisabled: true
+  },
+  {
     id: 'phone',
     text: 'Phone',
-    icon: <Phone />,
-    isDisabled: true
+    icon: <Phone />
+    //isDisabled: true
   },
   {
     id: 'contact',
@@ -35,6 +41,12 @@ const PERSONHOOD_CREDENTIALS = [
     text: 'Legal Name',
     icon: <Badge />,
     isDisabled: true
+  },
+  {
+    id: 'issuer',
+    text: 'Issuer',
+    icon: <Approval />
+    //isDisabled: true
   }
 ];
 
