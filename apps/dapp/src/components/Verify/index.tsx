@@ -60,14 +60,14 @@ export const Verify = (props: IProps) => {
       <div className="verify-box">
         <div className="verify-box-header">
           <div className="verify-box-header-content">
-            {viewStatus === 'steps' && (
+            {viewStatus === 'steps' && !verifyId ? (
               <div
                 className="verify-box-header-content-icon"
                 onClick={() => handleViewStatus('init')}
               >
                 <ArrowForward />
               </div>
-            )}
+            ) : null}
             <p className="verify-box-header-content-title">
               {viewStatus === 'steps'
                 ? `Verify ${currentVerify.text}`

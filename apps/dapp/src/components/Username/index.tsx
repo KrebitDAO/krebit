@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 
@@ -7,54 +7,37 @@ import {
   EducationCard,
   EducationCredentials,
   LoadingWrapper,
-  PersonhoodCredential,
   Skills,
   WorkCard,
   WorkCredential,
   Wrapper
 } from './styles';
-import { VerifyPersonhoodCredential } from './verifyPersonhoodCredential';
 import { VerifyEducationCredential } from './verifyEducationCredential';
-import { Krebit, MoreVert } from 'components/Icons';
+import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
-import { ToolTip } from 'components/ToolTip';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { constants, sortByDate, isValid, normalizeSchema } from 'utils';
 import { GeneralContext } from 'context';
 
 // types
-import { IPersonhood, IProfile } from 'utils/normalizeSchema';
-import { InlineDropdown } from 'components/InlineDropdown';
+import { IProfile } from 'utils/normalizeSchema';
+import { Personhood } from './Personhood';
 
 const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 
 export const Username = () => {
-  const [
-    currentPersonhoodToolTipActive,
-    setCurrentPersonhoodToolTipActive
-  ] = useState<number | undefined>(undefined);
-  const [isPersonhoodDropdownOpen, setIsPersonhoodDropdownOpen] = useState(
-    undefined
-  );
-  const [
-    isVerifyPersonhoodCredentialOpen,
-    setIsVerifyPersonhoodCredentialOpen
-  ] = useState(false);
   const [
     isVerifyEducationCredentialOpen,
     setIsVerifyEducationCredentialOpen
   ] = useState(false);
   const [status, setStatus] = useState('idle');
   const [profile, setProfile] = useState<IProfile | undefined>();
-  const [currentPersonhood, setCurrentPersonhood] = useState<
-    (IPersonhood & { actionType: string }) | undefined
-  >();
   const { query, push } = useRouter();
   const {
     auth,
-    walletInformation: { publicPassport, orbis },
+    walletInformation: { publicPassport, passport, issuer, orbis },
     walletModal: { openConnectWallet, handleOpenConnectWallet }
   } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
@@ -103,12 +86,13 @@ export const Username = () => {
             const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
               constant => credential.type.includes(constant.id)
             );
+            const customCredential = {
+              ...credential,
+              visualInformation
+            };
 
             return {
-              credential: {
-                ...credential,
-                visualInformation
-              },
+              credential: customCredential,
               stamps
             };
           })
@@ -138,60 +122,10 @@ export const Username = () => {
     getProfile();
   }, [publicPassport, query.id]);
 
-  const handleCurrentPersonhoodToolTipActive = (index: number) => {
-    setCurrentPersonhoodToolTipActive(index);
-  };
-  const handleCurrentPersonhoodToolTipActiveCallback = useCallback(
-    handleCurrentPersonhoodToolTipActive,
-    [currentPersonhoodToolTipActive]
-  );
-
-  const handleCurrentPersonhoodToolTipHide = () => {
-    setCurrentPersonhoodToolTipActive(undefined);
-  };
-  const handleCurrentPersonhoodToolTipHideActiveCallback = useCallback(
-    handleCurrentPersonhoodToolTipHide,
-    [currentPersonhoodToolTipActive]
-  );
-
-  const handleIsPersonhoodDropdownOpen = (index: number | undefined) => {
-    if (!auth?.isAuthenticated) return;
-
-    if (
-      isPersonhoodDropdownOpen === undefined ||
-      isPersonhoodDropdownOpen !== index
-    ) {
-      setIsPersonhoodDropdownOpen(index);
-    }
-
-    if (
-      isPersonhoodDropdownOpen !== undefined &&
-      isPersonhoodDropdownOpen === index
-    ) {
-      setIsPersonhoodDropdownOpen(undefined);
-    }
-  };
-
-  const handleIsVerifyPersonhoodCredentialOpen = () => {
-    if (!auth?.isAuthenticated) return;
-
-    setIsVerifyPersonhoodCredentialOpen(prevState => !prevState);
-    setCurrentPersonhood(undefined);
-  };
-
   const handleIsVerifyEducationCredentialOpen = () => {
     if (!auth?.isAuthenticated) return;
 
     setIsVerifyEducationCredentialOpen(prevState => !prevState);
-  };
-
-  const handleCurrentPersonhood = (type: string, values: IPersonhood) => {
-    if (!auth?.isAuthenticated) return;
-
-    setCurrentPersonhood({
-      ...values,
-      actionType: type
-    });
   };
 
   const handleSendMessage = () => {
@@ -221,12 +155,6 @@ export const Username = () => {
         onClose={handleOpenConnectWallet}
       />
       <Layout>
-        {isVerifyPersonhoodCredentialOpen || currentPersonhood ? (
-          <VerifyPersonhoodCredential
-            currentPersonhood={currentPersonhood}
-            onClose={handleIsVerifyPersonhoodCredentialOpen}
-          />
-        ) : null}
         {isVerifyEducationCredentialOpen && (
           <VerifyEducationCredential
             // YOU HAVE TO REPLACE THESE VALUES WITH THE ONES FETCHED FROM CERAMIC, IF A CREDENTIAL FROM PLATZI IS ALREADY DONE, THIS COMPONENT MUST KNOW
@@ -291,114 +219,6 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
-                <PersonhoodCredential>
-                  <div className="person-header">
-                    <p className="person-header-text">Personhood Credentials</p>
-                    {query.id === auth?.did && (
-                      <p
-                        className="person-header-verify"
-                        onClick={handleIsVerifyPersonhoodCredentialOpen}
-                      >
-                        Verify
-                      </p>
-                    )}
-                  </div>
-                  <div className="person-box">
-                    {profile.personhoods.map((personhood, index) => (
-                      <Fragment key={index}>
-                        <div className="person-box-item">
-                          <div className="person-box-icon">
-                            {personhood.credential?.visualInformation?.icon}
-                          </div>
-                          <p className="person-box-item-text">
-                            {personhood.credential?.visualInformation?.text}
-                          </p>
-                          <div className="person-box-item-content">
-                            <div
-                              className={`person-box-icon person-box-item-icon ${
-                                personhood.credential &&
-                                personhood.stamps?.length > 0
-                                  ? 'person-box-item-icon-is-active'
-                                  : ''
-                              }`}
-                              onMouseOver={() =>
-                                handleCurrentPersonhoodToolTipActiveCallback(
-                                  index + 1
-                                )
-                              }
-                              onMouseOut={
-                                handleCurrentPersonhoodToolTipHideActiveCallback
-                              }
-                            >
-                              <Krebit />
-                            </div>
-                            {query.id === auth?.did && (
-                              <div
-                                className="person-box-more-vert"
-                                onClick={() =>
-                                  handleIsPersonhoodDropdownOpen(index + 1)
-                                }
-                              >
-                                <MoreVert />
-                              </div>
-                            )}
-                            {isPersonhoodDropdownOpen === index + 1 && (
-                              <div className="person-box-more-vert-inline-dropdown">
-                                <InlineDropdown
-                                  items={[
-                                    {
-                                      title: 'Add stamp',
-                                      onClick: () =>
-                                        handleCurrentPersonhood(
-                                          'add_stamp',
-                                          personhood
-                                        )
-                                    },
-                                    {
-                                      title: 'Remove credential',
-                                      onClick: () =>
-                                        handleCurrentPersonhood(
-                                          'remove_credential',
-                                          personhood
-                                        )
-                                    },
-                                    {
-                                      title: 'Remove stamp',
-                                      onClick: () =>
-                                        handleCurrentPersonhood(
-                                          'remove_stamp',
-                                          personhood
-                                        )
-                                    },
-                                    {
-                                      title: 'Decrypt',
-                                      onClick: () =>
-                                        handleCurrentPersonhood(
-                                          'decrypt',
-                                          personhood
-                                        )
-                                    }
-                                  ]}
-                                />
-                              </div>
-                            )}
-                            {currentPersonhoodToolTipActive === index + 1 && (
-                              <div className="person-box-item-tooltip-box">
-                                <ToolTip
-                                  message={`This credential has ${personhood
-                                    .stamps?.length || 0} stamps`}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        {index !== profile.personhoods?.length - 1 && (
-                          <hr className="person-box-item-hr" />
-                        )}
-                      </Fragment>
-                    ))}
-                  </div>
-                </PersonhoodCredential>
                 <Skills>
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>
@@ -411,6 +231,12 @@ export const Username = () => {
                     ))}
                   </div>
                 </Skills>
+                <Personhood
+                  isAuthenticated={query.id === auth?.did}
+                  personhoods={profile.personhoods}
+                  passport={passport}
+                  issuer={issuer}
+                />
               </div>
               <div className="content-right">
                 <EducationCredentials>

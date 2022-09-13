@@ -12,15 +12,17 @@ export const InlineDropdown = (props: IProps) => {
 
   return (
     <Wrapper>
-      {items.map((item, index) => (
-        <button
-          className="inline-dropdown-item"
-          key={index}
-          onClick={item.onClick}
-        >
-          {item.title}
-        </button>
-      ))}
+      {items
+        .filter(item => item !== undefined)
+        .map((item, index) => (
+          <button
+            className="inline-dropdown-item"
+            key={index}
+            onClick={item.onClick}
+          >
+            {item.title}
+          </button>
+        ))}
     </Wrapper>
   );
 };
