@@ -147,9 +147,10 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleDecryptCredential = async (credential: any) => {
-    const result = {};
+    const result = await issuer.getClaimValue(credential);
 
     if (result) {
+      console.log('decrypted: ', result);
     }
   };
 
@@ -194,15 +195,21 @@ export const Personhood = (props: IProps) => {
                 <p className="person-box-item-title">
                   {personhood.credential?.visualInformation?.text}
                 </p>
-                <p className="person-box-item-description">*********</p>
+                <p className="person-box-item-description">
+                  {JSON.stringify(personhood.credential?.value, null, 2)}
+                </p>
                 <div className="person-box-item-dates">
                   <div className="person-box-item-date">
                     <p className="person-box-item-date-title">ISSUED</p>
-                    <p className="person-box-item-date-text">02/11/2022</p>
+                    <p className="person-box-item-date-text">
+                      {personhood.credential?.issuanceDate}
+                    </p>
                   </div>
                   <div className="person-box-item-date">
                     <p className="person-box-item-date-title">EXPIRES</p>
-                    <p className="person-box-item-date-text">05/12/2024</p>
+                    <p className="person-box-item-date-text">
+                      {personhood.credential?.expirationDate}
+                    </p>
                   </div>
                 </div>
               </div>
