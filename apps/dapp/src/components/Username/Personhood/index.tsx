@@ -35,6 +35,8 @@ export const Personhood = (props: IProps) => {
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
+  console.log(personhoods);
+
   const handleCurrentToolTipActive = (index: number) => {
     setCurrentToolTipActive(index);
   };
@@ -114,7 +116,7 @@ export const Personhood = (props: IProps) => {
         setStatus('remove_pending');
 
         const response = await passport.removeCredential(
-          currentPersonhoodSelected.credential?.id
+          currentPersonhoodSelected.credential?.vcId
         );
 
         if (response) {
@@ -145,9 +147,7 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleDecryptCredential = async (credential: any) => {
-    const result = await issuer.decryptClaimValue(credential);
-
-    console.log(credential);
+    const result = {};
 
     if (result) {
     }

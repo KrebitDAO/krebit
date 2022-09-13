@@ -411,7 +411,8 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  phoneProvider.currentVerificationId
+                  phoneProvider.currentVerificationId ||
+                  currentPersonhood?.credential
                     ? 'SMS code sent'
                     : 'Enter your information'
                 }
@@ -496,6 +497,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 iconType="credential"
+                isLoading={phoneProvider.status === 'credential_pending'}
               />
               <BoxStep
                 title="Step 3"
@@ -525,6 +527,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 iconType="stamp"
+                isLoading={phoneProvider.status === 'stamp_pending'}
               />
             </>
           )}
@@ -629,6 +632,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 iconType="credential"
+                isLoading={issuerProvider.status === 'credential_pending'}
               />
               <BoxStep
                 title="Step 2"
@@ -658,6 +662,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 iconType="stamp"
+                isLoading={issuerProvider.status === 'stamp_pending'}
               />
             </>
           )}
