@@ -1,42 +1,43 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
-
-import {
-  getCredential,
-  openOAuthUrl,
-  getVeriffSession,
-  sortByDate,
-  getWalletInformation,
-  generateUID
-} from 'utils';
+import { auth } from 'twitter-api-sdk';
 import { debounce } from 'ts-debounce';
 
-interface IClaimValues {
-  firstName: string;
-  lastName: string;
-}
+import {
+  generateUID,
+  getCredential,
+  getWalletInformation,
+  openOAuthUrl,
+  sortByDate
+} from 'utils';
 
-const { NEXT_PUBLIC_VERIFF_NODE_URL } = process.env;
-const { NEXT_PUBLIC_VERIFF_NODE_ADDRESS } = process.env;
+const { NEXT_PUBLIC_TWITTER_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
-export const useVeriffProvider = () => {
-  const [veriffSession, setVeriffSession] = useState({});
+const authClient = new auth.OAuth2User({
+  client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
+  callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
+  scopes: ['tweet.read', 'users.read']
+});
+
+interface IClaimValues {
+  followers: string;
+}
+
+export const useTwitterFollowersProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    firstName: '',
-    lastName: ''
+    followers: ''
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('veriff_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -52,63 +53,58 @@ export const useVeriffProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
-  const handleFetchOAuth = async (address: string) => {
-    const veriff = await getVeriffSession({
-      verification: {
-        person: {
-          ...claimValues
-        },
-        vendorData: address,
-        timestamp: new Date().toISOString()
-      }
+  const handleFetchOAuth = (address: string) => {
+    const authUrl = authClient.generateAuthURL({
+      state: `twitterFollowers-${generateUID(10)}`,
+      code_challenge: address,
+      code_challenge_method: 'plain'
     });
 
-    setVeriffSession(veriff);
     openOAuthUrl({
-      url: veriff.url
+      url: authUrl
     });
   };
 
-  const getClaim = async (address: string, payload: any, proofs: any) => {
+  const getClaim = async (address: string, proofs: any) => {
+    const claimValue = {
+      protocol: 'https',
+      host: 'twitter.com',
+      followers: claimValues.followers,
+      proofs
+    };
+
     const expirationDate = new Date();
-    const expiresYears = 1;
-    expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+    const expiresSeconds = 300;
+    expirationDate.setSeconds(expirationDate.getSeconds() + expiresSeconds);
     console.log('expirationDate: ', expirationDate);
 
     return {
-      id: payload.id,
+      id: proofs.state,
       ethereumAddress: address,
-      type: 'legalName',
-      typeSchema: 'krebit://schemas/legalName',
-      tags: ['veriff', 'fullName', 'kyc', 'personhood'],
-      value: {
-        person: {
-          ...claimValues
-        },
-        proofs: {
-          ...veriffSession,
-          nonce: `${generateUID(10)}`
-        }
-      },
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit',
-      shareEncryptedWith: NEXT_PUBLIC_VERIFF_NODE_ADDRESS
+      type: 'twitterFollowers',
+      typeSchema: 'krebit://schemas/digitalProperty',
+      tags: ['digitalProperty', 'social', 'personhood'],
+      value: claimValue,
+      expirationDate: new Date(expirationDate).toISOString()
     };
   };
 
   // Listener to watch for oauth redirect response on other windows (on the same host)
   const listenForRedirect = async (e: {
     target: string;
-    data: { state: string };
+    data: { code: string; state: string };
   }) => {
     setStatus('credential_pending');
 
     try {
-      // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'veriff') {
-        console.log('Saving Stamp', { type: 'veriff', proof: e.data });
+      // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
+      if (e.target === 'twitterFollowers') {
+        console.log('Saving Stamp', {
+          type: 'twitterFollowers',
+          proof: e.data
+        });
 
         const session = window.localStorage.getItem('ceramic-session');
         const currentSession = JSON.parse(session);
@@ -120,12 +116,8 @@ export const useVeriffProvider = () => {
 
         // Step 1-A:  Get credential from Issuer based on claim:
 
-        // Issue self-signed credential claiming the veriff
-        const claim = await getClaim(
-          walletInformation.address,
-          veriffSession,
-          e.data
-        );
+        //Issue self-signed credential claiming the Twitter
+        const claim = await getClaim(walletInformation.address, e.data);
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -133,9 +125,9 @@ export const useVeriffProvider = () => {
           litSdk: LitJsSdk,
           ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
+
         await Issuer.connect(currentSession);
 
-        // TODO: in this case, we can encrypt for the issuer too
         const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
 
@@ -144,18 +136,15 @@ export const useVeriffProvider = () => {
           ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await passport.connect(currentSession);
-
         // Save claimedCredential
         if (claimedCredential) {
           const claimedCredentialId = await passport.addClaim(
             claimedCredential
           );
           console.log('claimedCredentialId: ', claimedCredentialId);
-
           // Step 1-B: Send self-signed credential to the Issuer for verification
-
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
+            verifyUrl: NEXT_PUBLIC_TWITTER_NODE_URL,
             claimedCredentialId
           });
 
@@ -204,8 +193,8 @@ export const useVeriffProvider = () => {
       );
 
       const credentials = await passport.getCredentials();
-      const getLatestVeriffCredential = credentials
-        .filter(credential => credential.type.includes('veriff'))
+      const getLatestTwitterCredential = credentials
+        .filter(credential => credential.type.includes('twitter'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 
@@ -216,7 +205,7 @@ export const useVeriffProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestVeriffCredential);
+      const stampTx = await Issuer.stampCredential(getLatestTwitterCredential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });
@@ -228,7 +217,6 @@ export const useVeriffProvider = () => {
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
     setClaimValues(prevValues => ({
       ...prevValues,
       [name]: value

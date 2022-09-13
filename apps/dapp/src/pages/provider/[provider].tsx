@@ -87,10 +87,24 @@ const DynamicProvider = () => {
           data: { code: queryCode, state: queryState }
         });
       }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^twitterFollowers-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
 
-      // always close the redirected window
-      window.close();
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'twitterFollowers',
+          data: { code: queryCode, state: queryState }
+        });
+      }
     }
+    // always close the redirected window
+    window.close();
   };
 
   const veriffChannel = () => {

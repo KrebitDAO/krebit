@@ -8,6 +8,7 @@ import { GeneralContext } from 'context';
 import {
   useDiscordProvider,
   useTwitterProvider,
+  useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
   useIssuerProvider
@@ -20,6 +21,10 @@ interface IProps {
       stamp: Object;
     };
     twitter: {
+      credential: Object;
+      stamp: Object;
+    };
+    twitterFollowers: {
       credential: Object;
       stamp: Object;
     };
@@ -45,6 +50,7 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
+  const twitterFollowersProvider = useTwitterFollowersProvider();
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
   const issuerProvider = useIssuerProvider();
@@ -156,6 +162,18 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                     : 'Step 1 for Twitter verification'
                 }
                 form={{
+                  inputs:
+                    twitterProvider.currentCredential ||
+                    currentPersonhood.twitter.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you twitter handle',
+                            value: twitterProvider.claimValues.username,
+                            onChange: twitterProvider.handleClaimValues
+                          }
+                        ],
                   button:
                     twitterProvider.currentCredential ||
                     currentPersonhood.twitter.credential
@@ -171,10 +189,17 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                       : {
                           text: 'Verify',
-                          onClick: () =>
-                            twitterProvider.handleFetchOAuth(
-                              walletInformation.address
-                            )
+                          onClick:
+                            !twitterProvider.claimValues.username ||
+                            twitterProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  twitterProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !twitterProvider.claimValues.username ||
+                            twitterProvider.claimValues.username === ''
                         }
                 }}
                 isLoading={twitterProvider.status === 'credential_pending'}
@@ -208,6 +233,100 @@ export const VerifyPersonhoodCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+            </>
+          )}
+          ,
+          {currentVerify?.id === 'twitterFollowers' && (
+            <>
+              <BoxStep
+                title="Step 1"
+                description={
+                  twitterFollowersProvider.currentCredential ||
+                  currentPersonhood.twitterFollowers.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Enter your twitter follower count ( i.e. more than 1,000 would be gt1000 )'
+                }
+                form={{
+                  inputs:
+                    twitterFollowersProvider.currentCredential ||
+                    currentPersonhood.twitterFollowers.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'followers',
+                            placeholder:
+                              'gt100 | gt500 | gt1000 | gt5K | gt10K | gt50K | gt100K | gt1M',
+                            value:
+                              twitterFollowersProvider.claimValues.followers,
+                            onChange: twitterFollowersProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    twitterFollowersProvider.currentCredential ||
+                    currentPersonhood.twitter.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'ceramic',
+                              'credential',
+                              twitterFollowersProvider.currentCredential ||
+                                currentPersonhood.twitter.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !twitterFollowersProvider.claimValues.followers ||
+                            twitterFollowersProvider.claimValues.followers ===
+                              ''
+                              ? undefined
+                              : () =>
+                                  twitterFollowersProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !twitterFollowersProvider.claimValues.followers ||
+                            twitterFollowersProvider.claimValues.followers ===
+                              ''
+                        }
+                }}
+                isLoading={
+                  twitterFollowersProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  twitterFollowersProvider.currentStamp ||
+                  currentPersonhood.twitterFollowers.stamp
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Step 2 for Twitter verification'
+                }
+                form={{
+                  button:
+                    twitterFollowersProvider.currentStamp ||
+                    currentPersonhood.twitterFollowers.stamp
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            handleCheckURL(
+                              'polygon',
+                              'stamp',
+                              twitterFollowersProvider.currentStamp ||
+                                currentPersonhood.twitterFollowers.stamp
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick:
+                            twitterFollowersProvider.handleStampCredential
+                        }
+                }}
+                isLoading={twitterFollowersProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
             </>

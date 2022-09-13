@@ -71,9 +71,9 @@ export const useDiscordProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'digitalProperty',
-      typeSchema: 'digitalProperty',
-      tags: ['discord', 'social', 'personhood'],
+      type: 'discord',
+      typeSchema: 'krebit://schemas/digitalProperty',
+      tags: ['digitalProperty', 'social', 'personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };

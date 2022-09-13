@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 import { auth } from 'twitter-api-sdk';
@@ -21,17 +21,23 @@ const authClient = new auth.OAuth2User({
   scopes: ['tweet.read', 'users.read']
 });
 
+interface IClaimValues {
+  username: string;
+}
+
 export const useTwitterProvider = () => {
+  const [claimValues, setClaimValues] = useState<IClaimValues>({
+    username: ''
+  });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('twitter_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -47,7 +53,7 @@ export const useTwitterProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
   const handleFetchOAuth = (address: string) => {
     const authUrl = authClient.generateAuthURL({
@@ -65,6 +71,7 @@ export const useTwitterProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
+      username: claimValues.username,
       proofs
     };
 
@@ -76,9 +83,9 @@ export const useTwitterProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'digitalProperty',
-      typeSchema: 'ceramic://...',
-      tags: ['twitter', 'social', 'personhood'],
+      type: 'twitter',
+      typeSchema: 'krebit://schemas/digitalProperty',
+      tags: ['digitalProperty', 'social', 'personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -205,10 +212,20 @@ export const useTwitterProvider = () => {
     }
   };
 
+  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setClaimValues(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
+    handleClaimValues,
+    claimValues,
     status,
     currentCredential,
     currentStamp

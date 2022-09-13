@@ -87,6 +87,9 @@ export const Username = () => {
         const twitterCredentials = await publicPassport.getCredentials(
           'twitter'
         );
+        const twitterFollowersCredentials = await publicPassport.getCredentials(
+          'twitterFollowers'
+        );
         const veriffCredentials = await publicPassport.getCredentials(
           'legalName'
         );
@@ -98,6 +101,9 @@ export const Username = () => {
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
         const latestTwitterCredential = twitterCredentials
+          .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+          .at(-1);
+        const latestTwitterFollowersCredential = twitterFollowersCredentials
           .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
           .at(-1);
         const latestVeriffCredential = veriffCredentials
@@ -118,6 +124,9 @@ export const Username = () => {
         );
         const latestTwitterStamp = stamps.find(
           stamp => stamp.claimId === latestTwitterCredential?.id
+        );
+        const latestTwitterFollowersStamp = stamps.find(
+          stamp => stamp.claimId === latestTwitterFollowersCredential?.id
         );
         const latestVeriffStamp = stamps.find(
           stamp => stamp.claimId === latestVeriffCredential?.id
@@ -145,6 +154,11 @@ export const Username = () => {
               length: twitterCredentials?.length || 0,
               credential: latestTwitterCredential,
               stamp: latestTwitterStamp
+            },
+            twitterFollowers: {
+              length: twitterFollowersCredentials?.length || 0,
+              credential: latestTwitterFollowersCredential,
+              stamp: latestTwitterFollowersStamp
             },
             veriff: {
               length: veriffCredentials?.length || 0,
