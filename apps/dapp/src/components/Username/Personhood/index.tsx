@@ -35,8 +35,6 @@ export const Personhood = (props: IProps) => {
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
-  console.log(personhoods);
-
   const handleCurrentToolTipActive = (index: number) => {
     setCurrentToolTipActive(index);
   };
@@ -154,6 +152,20 @@ export const Personhood = (props: IProps) => {
     }
   };
 
+  const formatCredentialName = (value: any) => {
+    if (value?.encrypted) return value.encrypted;
+
+    if (value?.host === 'twitter.com') {
+      return value.username;
+    }
+
+    if (value?.host === 'discord.com') {
+      return value.id;
+    }
+
+    return '';
+  };
+
   return (
     <>
       {isVerifyCredentialOpen ? (
@@ -196,21 +208,29 @@ export const Personhood = (props: IProps) => {
                   {personhood.credential?.visualInformation?.text}
                 </p>
                 <p className="person-box-item-description">
-                  {JSON.stringify(personhood.credential?.value, null, 2)}
+                  {formatCredentialName(personhood.credential?.value)}
                 </p>
                 <div className="person-box-item-dates">
-                  <div className="person-box-item-date">
-                    <p className="person-box-item-date-title">ISSUED</p>
-                    <p className="person-box-item-date-text">
-                      {personhood.credential?.issuanceDate.split('T')[0]}
-                    </p>
-                  </div>
-                  <div className="person-box-item-date">
-                    <p className="person-box-item-date-title">EXPIRES</p>
-                    <p className="person-box-item-date-text">
-                      {personhood.credential?.expirationDate.split('T')[0]}
-                    </p>
-                  </div>
+                  {personhood.credential?.issuanceDate && (
+                    <div className="person-box-item-date">
+                      <p className="person-box-item-date-title">ISSUED</p>
+                      <p className="person-box-item-date-text">
+                        {new Date(
+                          personhood.credential?.issuanceDate
+                        ).toLocaleDateString('en-US')}
+                      </p>
+                    </div>
+                  )}
+                  {personhood.credential?.expirationDate && (
+                    <div className="person-box-item-date">
+                      <p className="person-box-item-date-title">EXPIRES</p>
+                      <p className="person-box-item-date-text">
+                        {new Date(
+                          personhood.credential?.expirationDate
+                        ).toLocaleDateString('en-US')}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="person-box-item-content">
