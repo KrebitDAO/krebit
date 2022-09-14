@@ -86,7 +86,9 @@ export const Username = () => {
             const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
               constant => credential.type.includes(constant.id)
             );
-            const claimValue = (await issuer.getClaimValue(credential)) as any;
+            const claimValue = (await publicPassport.getClaimValue(
+              credential
+            )) as any;
             delete claimValue.proofs;
             const customCredential = {
               ...credential,
