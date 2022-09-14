@@ -290,6 +290,11 @@ export class Krebit {
       } catch (err) {
         return { encrypted: '********' };
       }
+    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const claimedCredential: W3CCredential = await this.getCredential(
+        w3cCredential.id
+      );
+      return this.decryptClaimValue(claimedCredential);
     }
   };
 

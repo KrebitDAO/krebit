@@ -145,7 +145,7 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleDecryptCredential = async (credential: any) => {
-    const result = await issuer.getClaimValue(credential);
+    const result = await issuer.decryptClaimValue(credential);
 
     if (result) {
       console.log('decrypted: ', result);
@@ -155,12 +155,18 @@ export const Personhood = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
-    if (value?.host === 'twitter.com') {
+    if (value?.username) {
       return value.username;
     }
 
-    if (value?.host === 'discord.com') {
+    if (value?.id) {
       return value.id;
+    }
+
+    if (value?.followers) {
+      return value.followers.startsWith('gt')
+        ? value.followers.replace('gt', '> ')
+        : value.followers;
     }
 
     return '';
