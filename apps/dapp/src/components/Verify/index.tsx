@@ -90,7 +90,7 @@ export const Verify = (props: IProps) => {
                 </div>
                 <div className="verify-box-item-button">
                   <Button
-                    text="Verify"
+                    text={item.isDisabled ? 'Soon' : 'Verify'}
                     onClick={
                       item.isDisabled
                         ? undefined

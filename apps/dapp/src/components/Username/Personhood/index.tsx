@@ -202,13 +202,13 @@ export const Personhood = (props: IProps) => {
                   <div className="person-box-item-date">
                     <p className="person-box-item-date-title">ISSUED</p>
                     <p className="person-box-item-date-text">
-                      {personhood.credential?.issuanceDate}
+                      {personhood.credential?.issuanceDate.split('T')[0]}
                     </p>
                   </div>
                   <div className="person-box-item-date">
                     <p className="person-box-item-date-title">EXPIRES</p>
                     <p className="person-box-item-date-text">
-                      {personhood.credential?.expirationDate}
+                      {personhood.credential?.expirationDate.split('T')[0]}
                     </p>
                   </div>
                 </div>
