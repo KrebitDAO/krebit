@@ -32,7 +32,9 @@ export const BoxStep = (props: IProps) => {
   return (
     <BoxStepWrapper hasInputs={!!form?.inputs}>
       {isLoading ? (
-        <p className="verify-box-loading">Loading...</p>
+        <p className="verify-box-loading">
+          Approve signature on your Wallet...
+        </p>
       ) : (
         <>
           <div className="verify-box-step-content">

@@ -140,6 +140,19 @@ export class Passport {
     return stream.content as W3CCredential;
   };
 
+  getClaimValue = async (w3cCredential: W3CCredential) => {
+    if (w3cCredential.credentialSubject.encrypted === 'lit') {
+      return { encrypted: '********' };
+    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const claimedCredential: W3CCredential = await this.getCredential(
+        w3cCredential.id
+      );
+      return this.getClaimValue(claimedCredential);
+    } else if (w3cCredential.credentialSubject.encrypted === 'none') {
+      return JSON.parse(w3cCredential.credentialSubject.value);
+    }
+  };
+
   // claimedCredentials from ceramic
   checkCredentialStatus = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
