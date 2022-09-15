@@ -59,7 +59,7 @@ export const Wrapper = styled.div<IProps>`
           background-image: url('${profilePicture}');
           background-position: center;
           background-repeat: no-repeat;
-          background-size: contain;
+          background-size: cover;
           background-color: ${theme.colors.blueCharcoal};
 
 
