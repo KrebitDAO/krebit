@@ -54,8 +54,10 @@ export const DiscordController = async (
 
     // If claim is digitalProperty "Discord"
     if (
-      claimedCredential?.credentialSubject?.type === 'digitalProperty' &&
-      claimedCredential?.credentialSubject?.value.includes('discord')
+      claimedCredential?.credentialSubject?.type === 'discord' &&
+      claimedCredential?.credentialSubject?.typeSchema.includes(
+        'digitalProperty'
+      )
     ) {
       // Get evidence bearer token
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);

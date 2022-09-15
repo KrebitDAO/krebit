@@ -68,7 +68,12 @@ export const TwitterController = async (
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
     // If claim is digitalProperty "twitter"
-    if (claimedCredential?.credentialSubject?.type === 'twitter') {
+    if (
+      claimedCredential?.credentialSubject?.type === 'twitter' &&
+      claimedCredential?.credentialSubject?.typeSchema.includes(
+        'digitalProperty'
+      )
+    ) {
       // Get evidence bearer token
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('claim value: ', claimValue);
