@@ -12,6 +12,7 @@ import {
   WorkCredential,
   Wrapper
 } from './styles';
+import { Personhood } from './Personhood';
 import { VerifyEducationCredential } from './verifyEducationCredential';
 import { Krebit } from 'components/Icons';
 import { Button } from 'components/Button';
@@ -23,7 +24,6 @@ import { GeneralContext } from 'context';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
-import { Personhood } from './Personhood';
 
 const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 
@@ -86,14 +86,15 @@ export const Username = () => {
             const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
               constant => credential.type.includes(constant.id)
             );
-            const claimValue = (await publicPassport.getClaimValue(
-              credential
-            )) as any;
+            const claimValue = await publicPassport.getClaimValue(credential);
             delete claimValue.proofs;
             const customCredential = {
               ...credential,
-              value: claimValue,
-              visualInformation
+              visualInformation: {
+                ...visualInformation,
+                isEncryptedByDefault: !!claimValue?.encrypted
+              },
+              value: claimValue
             };
 
             return {
@@ -131,6 +132,10 @@ export const Username = () => {
     if (!auth?.isAuthenticated) return;
 
     setIsVerifyEducationCredentialOpen(prevState => !prevState);
+  };
+
+  const handleProfile = (profile: IProfile) => {
+    setProfile(profile);
   };
 
   const handleSendMessage = () => {
@@ -241,6 +246,7 @@ export const Username = () => {
                   personhoods={profile.personhoods}
                   passport={passport}
                   issuer={issuer}
+                  handleProfile={handleProfile}
                 />
               </div>
               <div className="content-right">

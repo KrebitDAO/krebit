@@ -199,14 +199,23 @@ export const Background = styled.div<IBackgrounProps>`
     width: 100%;
     height: 165px;
     position: relative;
-    ${image &&
-      css`
-        background-image: url(${image});
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-      `}
-    background-color: ${theme.colors.bunting};
+    ${
+      image
+        ? css`
+            background-image: url(${image});
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+          `
+        : css`
+            background: linear-gradient(
+              90deg,
+              rgba(2, 0, 36, 1) 0%,
+              rgba(50, 50, 128, 1) 41%,
+              rgba(0, 212, 255, 1) 100%
+            );
+          `
+    }
 
     @media (min-width: ${theme.screens.lg}) {
       height: 273px;
