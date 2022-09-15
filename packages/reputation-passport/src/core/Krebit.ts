@@ -39,13 +39,16 @@ interface StampsProps {
   claimId?: string;
 }
 
-const getEIP712credential = (stamp: any) =>
+const getEIP712CredentialFromStamp = (stamp: any) =>
   ({
     ...stamp,
     id: stamp.claimId,
     credentialSubject: {
       ...stamp.credentialSubject,
-      id: stamp.credentialSubjectDID
+      id: stamp.credentialSubjectDID,
+      stake: Number(stamp.credentialSubject.stake),
+      nbf: Number(stamp.credentialSubject.nbf),
+      exp: Number(stamp.credentialSubject.exp)
     }
   } as EIP712VerifiableCredential);
 
@@ -269,28 +272,38 @@ export class Krebit {
 
   decryptClaimValue = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
-    const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-    const lit = new Lit();
-    const stream = await TileDocument.load(
-      this.idx.ceramic,
-      encrypted.accessControlConditions
-    );
-    const accessControlConditions = stream.content as any;
-    const result = await lit.decrypt(
-      encrypted.encryptedString,
-      encrypted.encryptedSymmetricKey,
-      accessControlConditions,
-      this.wallet
-    );
-    if (result) {
-      return JSON.parse(result);
+    if (w3cCredential.credentialSubject.encrypted === 'lit') {
+      try {
+        const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+        const lit = new Lit();
+        const stream = await TileDocument.load(
+          this.idx.ceramic,
+          encrypted.accessControlConditions
+        );
+        const accessControlConditions = stream.content as any;
+        const result = await lit.decrypt(
+          encrypted.encryptedString,
+          encrypted.encryptedSymmetricKey,
+          accessControlConditions,
+          this.wallet
+        );
+        if (result) {
+          return JSON.parse(result);
+        }
+      } catch (err) {
+        return { encrypted: '********' };
+      }
+    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const claimedCredential: W3CCredential = await this.getCredential(
+        w3cCredential.id
+      );
+      return this.decryptClaimValue(claimedCredential);
     }
   };
 
   getClaimValue = async (w3cCredential: W3CCredential) => {
-    if (!this.isConnected()) throw new Error('Not connected');
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
-      return this.decryptClaimValue(w3cCredential);
+      return { encrypted: '********' };
     } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
@@ -474,7 +487,7 @@ export class Krebit {
   checkStamp = async (stamp: any) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = getEIP712credential(stamp);
+    const eip712credential = getEIP712CredentialFromStamp(stamp);
     return await this.krbContract.getVCStatus(eip712credential);
   };
 
@@ -483,12 +496,12 @@ export class Krebit {
   revokeStamp = async (stamp: any, reason: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = getEIP712credential(stamp);
+    const eip712credential = getEIP712CredentialFromStamp(stamp);
 
     //call krbToken Contract
     const tx = await this.krbContract.revokeVC(eip712credential, reason, {
-      value: 0,
-      from: eip712credential.issuer.ethereumAddress
+      value: ethers.constants.Zero.toString(),
+      from: this.address
     });
 
     return tx.hash;
@@ -498,12 +511,12 @@ export class Krebit {
   suspendStamp = async (stamp: any, reason: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = getEIP712credential(stamp);
+    const eip712credential = getEIP712CredentialFromStamp(stamp);
 
     //call krbToken Contract
     const tx = await this.krbContract.suspendVC(eip712credential, reason, {
-      value: 0,
-      from: eip712credential.issuer.ethereumAddress
+      value: ethers.constants.Zero.toString(),
+      from: this.address
     });
 
     return tx.hash;
@@ -513,12 +526,12 @@ export class Krebit {
   expireStamp = async (stamp: any) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = getEIP712credential(stamp);
+    const eip712credential = getEIP712CredentialFromStamp(stamp);
 
     //call krbToken Contract
     const tx = await this.krbContract.expiredVC(eip712credential, {
-      value: 0,
-      from: eip712credential.issuer.ethereumAddress
+      value: ethers.constants.Zero.toString(),
+      from: this.address
     });
 
     return tx.hash;
@@ -528,12 +541,12 @@ export class Krebit {
   removeStamp = async (stamp: any, reason: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const eip712credential = getEIP712credential(stamp);
+    const eip712credential = getEIP712CredentialFromStamp(stamp);
 
     //call krbToken Contract
     const tx = await this.krbContract.deleteVC(eip712credential, reason, {
-      value: 0,
-      from: eip712credential.issuer.ethereumAddress
+      value: ethers.constants.Zero.toString(),
+      from: this.address
     });
 
     return tx.hash;

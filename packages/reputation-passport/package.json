@@ -1,6 +1,6 @@
 {
   "name": "@krebitdao/reputation-passport",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Krebit SDK for Verified Credentials",
   "type": "module",
   "main": "./dist/index.js",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/KrebitDAO/krebit#readme",
   "peerDependencies": {
-    "@krebitdao/eip712-vc": "1.0.0",
+    "@krebitdao/eip712-vc": "1.0.1",
     "ethers": "^5.6.9",
     "lit-js-sdk": "^1.1.207",
     "siwe": "^1.1.6"
