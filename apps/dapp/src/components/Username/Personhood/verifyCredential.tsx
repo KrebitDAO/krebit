@@ -432,7 +432,7 @@ export const VerifyCredential = (props: IProps) => {
                           },
                           {
                             type: 'password',
-                            inputmode: 'tel',
+                            pattern: '[0-9]*',
                             name: 'number',
                             placeholder: 'Enter phone number',
                             value: phoneProvider.claimValues.number,
