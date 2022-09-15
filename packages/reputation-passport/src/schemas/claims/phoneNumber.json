@@ -3,8 +3,8 @@
   "type": "object",
   "properties": {
     "country": { "type": "string" },
-    "countryCode": { "type": "string" },
-    "number": { "type": "string" },
+    "countryCode": { "type": "number" },
+    "number": { "type": "number" },
     "proofs": { "type": "object" }
   },
   "required": ["countryCode", "number"],
