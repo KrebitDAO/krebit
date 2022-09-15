@@ -79,7 +79,7 @@ export const VerifyCredential = (props: IProps) => {
                   discordProvider.currentCredential ||
                   currentPersonhood?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Step 1 for Discord verification'
+                    : 'Claim your Discord profile'
                 }
                 form={{
                   button:
@@ -109,7 +109,7 @@ export const VerifyCredential = (props: IProps) => {
                   discordProvider.currentStamp ||
                   currentPersonhood?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 for Discord verification'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
@@ -143,7 +143,7 @@ export const VerifyCredential = (props: IProps) => {
                   twitterProvider.currentCredential ||
                   currentPersonhood?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Step 1 for Twitter verification'
+                    : 'Claim your twitter profile'
                 }
                 form={{
                   inputs:
@@ -195,7 +195,7 @@ export const VerifyCredential = (props: IProps) => {
                   twitterProvider.currentStamp ||
                   currentPersonhood?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 for Twitter verification'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
@@ -229,7 +229,7 @@ export const VerifyCredential = (props: IProps) => {
                   twitterFollowersProvider.currentCredential ||
                   currentPersonhood.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Enter your twitter follower count ( i.e. more than 1,000 would be gt1000 )'
+                    : 'Claim your twitter follower count ( i.e. more than 1,000 would be gt1000 )'
                 }
                 form={{
                   inputs:
@@ -287,7 +287,7 @@ export const VerifyCredential = (props: IProps) => {
                   twitterFollowersProvider.currentStamp ||
                   currentPersonhood.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 for Twitter verification'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
@@ -322,7 +322,7 @@ export const VerifyCredential = (props: IProps) => {
                   veriffProvider.currentCredential ||
                   currentPersonhood?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Enter your information'
+                    : 'Claim your full legal name'
                 }
                 form={{
                   inputs:
@@ -380,7 +380,7 @@ export const VerifyCredential = (props: IProps) => {
                   veriffProvider.currentStamp ||
                   currentPersonhood?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 to stamp verification'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
@@ -414,7 +414,7 @@ export const VerifyCredential = (props: IProps) => {
                   phoneProvider.currentVerificationId ||
                   currentPersonhood?.credential
                     ? 'SMS code sent'
-                    : 'Enter your information'
+                    : 'Claim your phone number'
                 }
                 form={{
                   inputs:
@@ -505,7 +505,7 @@ export const VerifyCredential = (props: IProps) => {
                   phoneProvider.currentStamp ||
                   currentPersonhood?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Stamp verification on-chain'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
