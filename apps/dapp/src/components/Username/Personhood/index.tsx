@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import {
   Passport,
   Krebit as Issuer
@@ -6,59 +6,43 @@ import {
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
-import { Krebit, MoreVert } from 'components/Icons';
-import { InlineDropdown } from 'components/InlineDropdown';
-import { ToolTip } from 'components/ToolTip';
+import { QuestionModal } from 'components/QuestionModal';
+import { Card } from 'components/Card';
 
 // types
-import { IPersonhood } from 'utils/normalizeSchema';
-import { QuestionModal } from 'components/QuestionModal';
+import { IPersonhood, IProfile } from 'utils/normalizeSchema';
 
 interface IProps {
   isAuthenticated: boolean;
   personhoods: IPersonhood[];
   passport: Passport;
   issuer: Issuer;
+  handleProfile: Dispatch<SetStateAction<IProfile>>;
 }
 
 export const Personhood = (props: IProps) => {
-  const { personhoods, isAuthenticated, passport, issuer } = props;
+  const {
+    personhoods,
+    isAuthenticated,
+    passport,
+    issuer,
+    handleProfile
+  } = props;
   const [currentPersonhoodSelected, setCurrentPersonhoodSelected] = useState<
     IPersonhood
   >();
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [status, setStatus] = useState('idle');
-  const [currentToolTipActive, setCurrentToolTipActive] = useState<
-    number | undefined
-  >(undefined);
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
-  const handleCurrentToolTipActive = (index: number) => {
-    setCurrentToolTipActive(index);
-  };
-  const handleCurrentToolTipActiveCallback = useCallback(
-    handleCurrentToolTipActive,
-    [currentToolTipActive]
-  );
-
-  const handleCurrentToolTipHide = () => {
-    setCurrentToolTipActive(undefined);
-  };
-  const handleCurrentToolTipHideActiveCallback = useCallback(
-    handleCurrentToolTipHide,
-    [currentToolTipActive]
-  );
-
-  const handleIsDropdownOpen = (index: number | undefined) => {
-    if (!isAuthenticated) return;
-
-    if (isDropdownOpen === undefined || isDropdownOpen !== index) {
-      setIsDropdownOpen(index);
+  const handleIsDropdownOpen = (id: string) => {
+    if (isDropdownOpen === undefined || isDropdownOpen !== id) {
+      setIsDropdownOpen(id);
     }
 
-    if (isDropdownOpen !== undefined && isDropdownOpen === index) {
+    if (isDropdownOpen !== undefined && isDropdownOpen === id) {
       setIsDropdownOpen(undefined);
     }
   };
@@ -97,8 +81,8 @@ export const Personhood = (props: IProps) => {
       setIsRemoveModalOpen(true);
     }
 
-    if (type === 'decrypt') {
-      handleDecryptCredential(values.credential);
+    if (type === 'decrypt' || type === 'encrypt') {
+      handleClaimValue(type, values.credential);
     }
 
     handleIsDropdownOpen(undefined);
@@ -144,11 +128,50 @@ export const Personhood = (props: IProps) => {
     }
   };
 
-  const handleDecryptCredential = async (credential: any) => {
-    const result = await issuer.decryptClaimValue(credential);
+  const handleClaimValue = async (type: string, credential: any) => {
+    const claimValue =
+      type === 'decrypt'
+        ? await issuer.decryptClaimValue(credential)
+        : { encrypted: '********' };
 
-    if (result) {
-      console.log('decrypted: ', result);
+    const currentCredentialPosition = personhoods.findIndex(
+      personhood => personhood.credential.vcId === credential.vcId
+    );
+
+    if (currentCredentialPosition === -1) return;
+
+    if (claimValue) {
+      delete claimValue?.proofs;
+
+      handleProfile(prevValues => {
+        console.log({
+          ...prevValues,
+          personhoods: [
+            ...prevValues.personhoods,
+            (personhoods[currentCredentialPosition] = {
+              ...personhoods[currentCredentialPosition],
+              credential: {
+                ...personhoods[currentCredentialPosition].credential,
+                value: claimValue
+              }
+            })
+          ]
+        });
+
+        return {
+          ...prevValues,
+          personhoods: [
+            ...prevValues.personhoods,
+            (personhoods[currentCredentialPosition] = {
+              ...personhoods[currentCredentialPosition],
+              credential: {
+                ...personhoods[currentCredentialPosition].credential,
+                value: claimValue
+              }
+            })
+          ]
+        };
+      });
     }
   };
 
@@ -161,6 +184,10 @@ export const Personhood = (props: IProps) => {
 
     if (value?.id) {
       return value.id;
+    }
+
+    if (value?.countryCode) {
+      return `+${value?.countryCode}${value?.number}`;
     }
 
     if (value?.followers) {
@@ -182,7 +209,7 @@ export const Personhood = (props: IProps) => {
       ) : null}
       {isRemoveModalOpen ? (
         <QuestionModal
-          text="This action can’t be undone."
+          text="This action can't be undone."
           continueButton={{
             text: 'Delete',
             onClick: handleRemoveAction
@@ -203,114 +230,79 @@ export const Personhood = (props: IProps) => {
             </p>
           )}
         </div>
-        <div className="person-box">
+        <div className="cards-box">
           {personhoods.map((personhood, index) => (
-            <div className="person-box-item" key={index}>
-              <div className="person-box-icon">
-                {personhood.credential?.visualInformation?.icon}
-              </div>
-              <div className="person-box-item-texts">
-                <p className="person-box-item-title">
-                  {personhood.credential?.visualInformation?.text}
-                </p>
-                <p className="person-box-item-description">
-                  {formatCredentialName(personhood.credential?.value)}
-                </p>
-                <div className="person-box-item-dates">
-                  {personhood.credential?.issuanceDate && (
-                    <div className="person-box-item-date">
-                      <p className="person-box-item-date-title">ISSUED</p>
-                      <p className="person-box-item-date-text">
-                        {new Date(
-                          personhood.credential?.issuanceDate
-                        ).toLocaleDateString('en-US')}
-                      </p>
-                    </div>
-                  )}
-                  {personhood.credential?.expirationDate && (
-                    <div className="person-box-item-date">
-                      <p className="person-box-item-date-title">EXPIRES</p>
-                      <p className="person-box-item-date-text">
-                        {new Date(
-                          personhood.credential?.expirationDate
-                        ).toLocaleDateString('en-US')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="person-box-item-content">
-                <div
-                  className={`person-box-icon person-box-item-icon ${
-                    personhood.credential && personhood.stamps?.length > 0
-                      ? 'person-box-item-icon-is-active'
-                      : ''
-                  }`}
-                  onMouseOver={() =>
-                    handleCurrentToolTipActiveCallback(index + 1)
-                  }
-                  onMouseOut={handleCurrentToolTipHideActiveCallback}
-                >
-                  <Krebit />
-                </div>
-                {isAuthenticated && (
-                  <div
-                    className="person-box-more-vert"
-                    onClick={() => handleIsDropdownOpen(index + 1)}
-                  >
-                    <MoreVert />
-                  </div>
-                )}
-                {isDropdownOpen === index + 1 && (
-                  <div className="person-box-more-vert-inline-dropdown">
-                    <InlineDropdown
-                      items={[
-                        personhood.stamps?.length === 0
-                          ? {
-                              title: 'Add stamp',
-                              onClick: () =>
-                                handleCurrentPersonhood('add_stamp', personhood)
-                            }
-                          : undefined,
-                        {
+            <Card
+              type="simple"
+              key={index}
+              id={`personhood_${index}`}
+              icon={personhood.credential?.visualInformation?.icon}
+              title={personhood.credential?.visualInformation?.text}
+              description={formatCredentialName(personhood.credential?.value)}
+              dates={{
+                issuanceDate: {
+                  text: 'ISSUED',
+                  value: new Date(
+                    personhood.credential?.issuanceDate
+                  ).toLocaleDateString('en-US')
+                },
+                expirationDate: {
+                  text: 'EXPIRES',
+                  value: new Date(
+                    personhood.credential?.expirationDate
+                  ).toLocaleDateString('en-US')
+                }
+              }}
+              dropdown={{
+                isDropdownOpen,
+                onClick: () => handleIsDropdownOpen(`personhood_${index}`),
+                items: [
+                  personhood.stamps?.length === 0
+                    ? {
+                        title: 'Add stamp',
+                        onClick: () =>
+                          handleCurrentPersonhood('add_stamp', personhood)
+                      }
+                    : undefined,
+                  personhood.credential?.visualInformation.isEncryptedByDefault
+                    ? personhood.credential.value.encrypted
+                      ? {
                           title: 'Decrypt',
                           onClick: () =>
                             handleCurrentPersonhood('decrypt', personhood)
-                        },
-                        personhood.stamps?.length === 0
-                          ? {
-                              title: 'Remove credential',
-                              onClick: () =>
-                                handleCurrentPersonhood(
-                                  'remove_credential',
-                                  personhood
-                                )
-                            }
-                          : undefined,
-                        personhood.credential && personhood.stamps?.length !== 0
-                          ? {
-                              title: 'Remove stamp',
-                              onClick: () =>
-                                handleCurrentPersonhood(
-                                  'remove_stamp',
-                                  personhood
-                                )
-                            }
-                          : undefined
-                      ]}
-                    />
-                  </div>
-                )}
-                {currentToolTipActive === index + 1 && (
-                  <div className="person-box-item-tooltip-box">
-                    <ToolTip
-                      message={`This credential has ${personhood.stamps
-                        ?.length || 0} stamps`}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
+                        }
+                      : {
+                          title: 'Encrypt',
+                          onClick: () =>
+                            handleCurrentPersonhood('encrypt', personhood)
+                        }
+                    : undefined,
+                  personhood.stamps?.length === 0
+                    ? {
+                        title: 'Remove credential',
+                        onClick: () =>
+                          handleCurrentPersonhood(
+                            'remove_credential',
+                            personhood
+                          )
+                      }
+                    : undefined,
+                  personhood.credential && personhood.stamps?.length !== 0
+                    ? {
+                        title: 'Remove stamp',
+                        onClick: () =>
+                          handleCurrentPersonhood('remove_stamp', personhood)
+                      }
+                    : undefined
+                ]
+              }}
+              shouldShowMoreVert={isAuthenticated}
+              isIssued={personhood.credential && personhood.stamps?.length > 0}
+              tooltip={{
+                message: `This credential has ${personhood.stamps?.length ||
+                  0} stamps`
+              }}
+            />
           ))}
         </div>
       </Wrapper>
