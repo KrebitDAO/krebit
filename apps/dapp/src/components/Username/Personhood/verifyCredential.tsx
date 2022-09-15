@@ -426,11 +426,13 @@ export const VerifyCredential = (props: IProps) => {
                             type: 'number',
                             name: 'countryCode',
                             placeholder: '+',
+                            pattern: '^+[0-9]*',
                             value: phoneProvider.claimValues.countryCode,
                             onChange: phoneProvider.handleClaimValues
                           },
                           {
-                            type: 'tel',
+                            type: 'password',
+                            inputmode: 'tel',
                             name: 'number',
                             placeholder: 'Enter phone number',
                             value: phoneProvider.claimValues.number,
