@@ -59,7 +59,8 @@ export const Wrapper = styled.div<IProps>`
           background-image: url('${profilePicture}');
           background-position: center;
           background-repeat: no-repeat;
-          background-size: cover;
+          background-size: contain;
+          background-color: ${theme.colors.blueCharcoal};
 
 
           @media (min-width: ${theme.screens.lg}) {

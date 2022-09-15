@@ -65,7 +65,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
       currentProfile = {
         did,
         background: undefined,
-        picture: '/imgs/logos/Krebit.svg',
+        picture: '/imgs/images/person_outline.svg',
         name: did.replace(
           `did:pkh:eip155:${
             krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId

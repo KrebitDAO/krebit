@@ -41,7 +41,7 @@ export const Card = (props: IProps) => {
     description,
     dates,
     dropdown,
-    shouldShowMoreVert = false,
+    shouldShowMoreVert = true,
     isIssued = false,
     tooltip
   } = props;

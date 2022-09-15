@@ -126,7 +126,7 @@ export const Username = () => {
     };
 
     getProfile();
-  }, [publicPassport, issuer, query.id]);
+  }, [publicPassport, query.id]);
 
   const handleIsVerifyEducationCredentialOpen = () => {
     if (!auth?.isAuthenticated) return;
