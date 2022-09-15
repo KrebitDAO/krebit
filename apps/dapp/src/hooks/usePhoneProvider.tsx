@@ -45,8 +45,8 @@ export const usePhoneProvider = () => {
       typeSchema: 'krebit://schemas/phoneNumber',
       tags: ['phone', 'contact', 'personhood'],
       value: {
-        countryCode: claimValues.countryCode,
-        number: claimValues.number,
+        countryCode: Number(claimValues.countryCode),
+        number: Number(claimValues.number),
         proofs: {
           verificationId: currentVerificationId,
           nonce: claimValues.code

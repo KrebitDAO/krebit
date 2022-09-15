@@ -91,7 +91,9 @@ export const PhoneController = async (
       // If verification number matches claimed number
       if (
         parseInt(verification.to) ===
-          parseInt(claimValue.countryCode + claimValue.number) &&
+          parseInt(
+            claimValue.countryCode.toString() + claimValue.number.toString()
+          ) &&
         verification.status === 'approved'
       ) {
         // Issue verifiable credential

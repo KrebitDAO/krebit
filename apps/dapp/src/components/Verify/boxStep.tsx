@@ -14,6 +14,7 @@ interface IProps {
       value: string | number;
       onChange: (event: ChangeEvent<HTMLInputElement>) => void;
       type?: string;
+      pattern?: string;
       isDisabled?: boolean;
     }[];
     button?: {
@@ -61,6 +62,7 @@ export const BoxStep = (props: IProps) => {
                   key={index}
                   className="verify-box-step-input"
                   type={input.type || 'text'}
+                  pattern={input.pattern}
                   name={input.name}
                   placeholder={input.placeholder}
                   disabled={input.isDisabled}
