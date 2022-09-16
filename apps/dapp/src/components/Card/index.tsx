@@ -20,6 +20,7 @@ interface IProps {
   dropdown: {
     isDropdownOpen: string;
     onClick: (id: string) => void;
+    onClose: () => void;
     items: {
       title: string;
       onClick: () => void;
@@ -119,7 +120,10 @@ export const Card = (props: IProps) => {
           )}
           {dropdown.isDropdownOpen === id && (
             <div className="card-more-vert-inline-dropdown">
-              <InlineDropdown items={dropdown.items} />
+              <InlineDropdown
+                items={dropdown.items}
+                onClose={dropdown.onClose}
+              />
             </div>
           )}
           {tooltip && currentToolTipActive === id ? (
