@@ -95,6 +95,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                       onClick: handleLogout
                     }
                   ]}
+                  onClose={handleFilterOpen}
                 />
               </div>
             )}
@@ -150,6 +151,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                       onClick: handleLogout
                     }
                   ]}
+                  onClose={handleFilterOpen}
                 />
               </div>
             )}

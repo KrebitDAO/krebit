@@ -246,6 +246,7 @@ export const Personhood = (props: IProps) => {
               dropdown={{
                 isDropdownOpen,
                 onClick: () => handleIsDropdownOpen(`personhood_${index}`),
+                onClose: () => handleIsDropdownOpen(undefined),
                 items: [
                   !isAuthenticated
                     ? {
