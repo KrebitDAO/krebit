@@ -8,8 +8,6 @@ interface IProps {
 export function useOutsideClick(props: IProps) {
   const { ref, handler } = props;
 
-  console.log(ref);
-
   useEffect(() => {
     const listener = (event: any) => {
       if (!ref.current || ref.current.contains(event.target)) {
