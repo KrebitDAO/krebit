@@ -5,6 +5,7 @@ import { useTwitterFollowersProvider } from './useTwitterFollowersProvider';
 import { useVeriffProvider } from './useVeriffProvider';
 import { usePhoneProvider } from './usePhoneProvider';
 import { useIssuerProvider } from './useIssuerProvider';
+import { useOutsideClick } from './useOutsideClick';
 
 export {
   useWindowSize,
@@ -13,5 +14,6 @@ export {
   useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
-  useIssuerProvider
+  useIssuerProvider,
+  useOutsideClick
 };
