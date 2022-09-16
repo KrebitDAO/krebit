@@ -304,7 +304,7 @@ export class Passport {
         const current = content.issued ? content.issued : [];
 
         if (current.includes(vcId)) {
-          current.splice(current.indexOf(vcId), 2);
+          current.splice(current.indexOf(vcId), 1);
           result = await this.idx.merge('issuedCredentials', {
             issued: current
           });
@@ -411,7 +411,7 @@ export class Passport {
         const current = content.claimed ? content.claimed : [];
 
         if (current.includes(vcId)) {
-          current.splice(current.indexOf(vcId), 2);
+          current.splice(current.indexOf(vcId), 1);
           result = await this.idx.merge('claimedCredentials', {
             claimed: current
           });
@@ -517,7 +517,7 @@ export class Passport {
         const current = content.held ? content.held : [];
 
         if (current.includes(vcId)) {
-          current.splice(current.indexOf(vcId), 2);
+          current.splice(current.indexOf(vcId), 1);
           result = await this.idx.merge('heldCredentials', {
             held: current
           });
