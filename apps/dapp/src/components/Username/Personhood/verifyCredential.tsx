@@ -1,9 +1,8 @@
 import { useContext } from 'react';
-import krbToken from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { constants } from 'utils';
+import { constants, checkCredentialsURLs } from 'utils';
 import { GeneralContext } from 'context';
 import {
   useDiscordProvider,
@@ -39,31 +38,6 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleCheckURL = (type: string, valuesType: string, values: any) => {
-    let currentUrl: string;
-    let value: string;
-
-    if (valuesType === 'credential') {
-      value = values?.vcId.replace('ceramic://', '');
-    }
-
-    if (valuesType === 'stamp') {
-      value = values?.transaction;
-    }
-
-    if (type === 'ceramic') {
-      currentUrl = `https://cerscan.com/testnet-clay/stream/${value}`;
-    }
-
-    if (type === 'polygon') {
-      let url = krbToken[process.env.NEXT_PUBLIC_NETWORK]?.txUrl;
-
-      currentUrl = `${url}${value}`;
-    }
-
-    window.open(currentUrl, '_blank');
-  };
-
   return (
     <Verify
       initialList={constants.PERSONHOOD_CREDENTIALS}
@@ -88,7 +62,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'ceramic',
                               'credential',
                               discordProvider.currentCredential ||
@@ -118,7 +92,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'polygon',
                               'stamp',
                               discordProvider.currentStamp ||
@@ -164,7 +138,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'ceramic',
                               'credential',
                               twitterProvider.currentCredential ||
@@ -204,7 +178,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'polygon',
                               'stamp',
                               twitterProvider.currentStamp ||
@@ -252,7 +226,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'ceramic',
                               'credential',
                               twitterFollowersProvider.currentCredential ||
@@ -296,7 +270,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'polygon',
                               'stamp',
                               twitterFollowersProvider.currentStamp ||
@@ -349,7 +323,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'ceramic',
                               'credential',
                               veriffProvider.currentCredential ||
@@ -389,7 +363,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'polygon',
                               'stamp',
                               veriffProvider.currentStamp ||
@@ -486,7 +460,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'ceramic',
                               'credential',
                               phoneProvider.currentCredential ||
@@ -516,7 +490,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'polygon',
                               'stamp',
                               phoneProvider.currentStamp ||
@@ -621,7 +595,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'ceramic',
                               'credential',
                               issuerProvider.currentCredential ||
@@ -651,7 +625,7 @@ export const VerifyCredential = (props: IProps) => {
                       ? {
                           text: 'Check it',
                           onClick: () =>
-                            handleCheckURL(
+                            checkCredentialsURLs(
                               'polygon',
                               'stamp',
                               issuerProvider.currentStamp ||

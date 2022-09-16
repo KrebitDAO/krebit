@@ -9,6 +9,7 @@ import { sortByDate } from './sortByDate';
 import { getWalletInformation } from './getWalletInformation';
 import { isValid } from './isValid';
 import { normalizeSchema } from './normalizeSchema';
+import { checkCredentialsURLs } from './checkCredentialsURLs';
 
 export {
   constants,
@@ -21,5 +22,6 @@ export {
   sortByDate,
   getWalletInformation,
   isValid,
-  normalizeSchema
+  normalizeSchema,
+  checkCredentialsURLs
 };

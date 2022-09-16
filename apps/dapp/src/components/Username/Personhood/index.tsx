@@ -8,6 +8,7 @@ import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
+import { checkCredentialsURLs } from 'utils';
 
 // types
 import { IPersonhood, IProfile } from 'utils/normalizeSchema';
@@ -92,8 +93,6 @@ export const Personhood = (props: IProps) => {
     if (!currentPersonhoodSelected) return;
 
     try {
-      let isCompleted = false;
-
       if (currentActionType === 'remove_credential') {
         setStatus('remove_pending');
 
@@ -102,7 +101,7 @@ export const Personhood = (props: IProps) => {
         );
 
         if (response) {
-          isCompleted = true;
+          handleIsRemoveModalOpen();
         }
       }
 
@@ -115,12 +114,8 @@ export const Personhood = (props: IProps) => {
         );
 
         if (response) {
-          isCompleted = true;
+          handleIsRemoveModalOpen();
         }
-      }
-
-      if (isCompleted) {
-        handleIsRemoveModalOpen();
       }
     } catch (error) {
       console.error(error);
@@ -144,32 +139,18 @@ export const Personhood = (props: IProps) => {
       delete claimValue?.proofs;
 
       handleProfile(prevValues => {
-        console.log({
-          ...prevValues,
-          personhoods: [
-            ...prevValues.personhoods,
-            (personhoods[currentCredentialPosition] = {
-              ...personhoods[currentCredentialPosition],
-              credential: {
-                ...personhoods[currentCredentialPosition].credential,
-                value: claimValue
-              }
-            })
-          ]
-        });
+        const updatedPersnohoods = [...prevValues.personhoods];
+        updatedPersnohoods[currentCredentialPosition] = {
+          ...updatedPersnohoods[currentCredentialPosition],
+          credential: {
+            ...updatedPersnohoods[currentCredentialPosition].credential,
+            value: claimValue
+          }
+        };
 
         return {
           ...prevValues,
-          personhoods: [
-            ...prevValues.personhoods,
-            (personhoods[currentCredentialPosition] = {
-              ...personhoods[currentCredentialPosition],
-              credential: {
-                ...personhoods[currentCredentialPosition].credential,
-                value: claimValue
-              }
-            })
-          ]
+          personhoods: updatedPersnohoods
         };
       });
     }
@@ -197,6 +178,15 @@ export const Personhood = (props: IProps) => {
     }
 
     return '';
+  };
+
+  const handleCheckCredentialsURLs = (
+    type: string,
+    valuesType: string,
+    values: any
+  ) => {
+    checkCredentialsURLs(type, valuesType, values);
+    handleIsDropdownOpen(undefined);
   };
 
   return (
@@ -257,13 +247,36 @@ export const Personhood = (props: IProps) => {
                 isDropdownOpen,
                 onClick: () => handleIsDropdownOpen(`personhood_${index}`),
                 items: [
-                  personhood.stamps?.length === 0
+                  !isAuthenticated
+                    ? {
+                        title: 'Credential details',
+                        onClick: () =>
+                          handleCheckCredentialsURLs(
+                            'ceramic',
+                            'credential',
+                            personhood.credential
+                          )
+                      }
+                    : undefined,
+                  !isAuthenticated && personhood.stamps?.length !== 0
+                    ? {
+                        title: 'Stamp details',
+                        onClick: () =>
+                          handleCheckCredentialsURLs(
+                            'polygon',
+                            'stamp',
+                            personhood.stamps[0]
+                          )
+                      }
+                    : undefined,
+                  isAuthenticated && personhood.stamps?.length === 0
                     ? {
                         title: 'Add stamp',
                         onClick: () =>
                           handleCurrentPersonhood('add_stamp', personhood)
                       }
                     : undefined,
+                  isAuthenticated &&
                   personhood.credential?.visualInformation.isEncryptedByDefault
                     ? personhood.credential.value.encrypted
                       ? {
@@ -277,7 +290,7 @@ export const Personhood = (props: IProps) => {
                             handleCurrentPersonhood('encrypt', personhood)
                         }
                     : undefined,
-                  personhood.stamps?.length === 0
+                  isAuthenticated && personhood.stamps?.length === 0
                     ? {
                         title: 'Remove credential',
                         onClick: () =>
@@ -287,7 +300,9 @@ export const Personhood = (props: IProps) => {
                           )
                       }
                     : undefined,
-                  personhood.credential && personhood.stamps?.length !== 0
+                  isAuthenticated &&
+                  personhood.credential &&
+                  personhood.stamps?.length !== 0
                     ? {
                         title: 'Remove stamp',
                         onClick: () =>
@@ -296,7 +311,6 @@ export const Personhood = (props: IProps) => {
                     : undefined
                 ]
               }}
-              shouldShowMoreVert={isAuthenticated}
               isIssued={personhood.credential && personhood.stamps?.length > 0}
               tooltip={{
                 message: `This credential has ${personhood.stamps?.length ||
