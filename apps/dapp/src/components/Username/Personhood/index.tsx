@@ -249,7 +249,7 @@ export const Personhood = (props: IProps) => {
                 items: [
                   !isAuthenticated
                     ? {
-                        title: 'Credential detail',
+                        title: 'Credential details',
                         onClick: () =>
                           handleCheckCredentialsURLs(
                             'ceramic',
