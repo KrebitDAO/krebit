@@ -7,14 +7,8 @@ import { GeneralContext } from 'context';
 
 interface IProps {
   currentEducation: {
-    platzi: {
-      credential: Object;
-      stamp: Object;
-    };
-    udemy: {
-      credential: Object;
-      stamp: Object;
-    };
+    credential: any;
+    stamps: any[];
   };
   onClose: () => void;
 }
@@ -41,12 +35,17 @@ const MOCK_EDUCATION = [
   }
 ];
 
-export const VerifyEducationCredential = (props: IProps) => {
+export const VerifyCredential = (props: IProps) => {
   const { currentEducation, onClose } = props;
   const [values, setValues] = useState<MOCK_IValues>({});
-  const [currentCredentials, setCurrentCredentials] = useState({});
-  const [currentStamps, setCurrentStamps] = useState({});
   const { walletInformation } = useContext(GeneralContext);
+
+  const handleClose = () => {
+    if (!window) return;
+
+    // TODO: WE SHOULD USE onClose INSTEAD
+    window.location.reload();
+  };
 
   const handleValues = (event: ChangeEvent<HTMLInputElement>, id: string) => {
     const { name, value } = event.target;
@@ -62,30 +61,16 @@ export const VerifyEducationCredential = (props: IProps) => {
 
   const handleStep1 = (credential: Object, id: string) => {
     console.log('Credential added!');
-    setCurrentCredentials(prevValues => ({
-      ...prevValues,
-      [id]: {
-        credential
-      }
-    }));
   };
 
   const handleStep2 = (stamp: Object, id: string) => {
     console.log('Stamp added!');
-    setCurrentStamps(prevValues => ({
-      ...prevValues,
-      [id]: {
-        stamp
-      }
-    }));
   };
-
-  console.log(values, currentCredentials, currentStamps);
 
   return (
     <Verify
       initialList={MOCK_EDUCATION}
-      onClose={onClose}
+      onClose={handleClose}
       component={({ currentVerify }) => (
         <>
           {currentVerify?.id === 'platzi' && (
@@ -93,12 +78,12 @@ export const VerifyEducationCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  currentEducation.platzi.credential
+                  currentEducation?.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Enter your information'
                 }
                 form={{
-                  inputs: currentEducation.platzi.credential
+                  inputs: currentEducation?.credential
                     ? undefined
                     : [
                         {
@@ -132,7 +117,7 @@ export const VerifyEducationCredential = (props: IProps) => {
                             handleValues(event, currentVerify.id)
                         }
                       ],
-                  button: currentEducation.platzi.stamp
+                  button: currentEducation?.credential
                     ? { text: 'Check it', onClick: () => {} }
                     : {
                         text: 'Verify',
@@ -150,24 +135,27 @@ export const VerifyEducationCredential = (props: IProps) => {
                           !values[currentVerify?.id]?.endDate
                       }
                 }}
+                iconType="credential"
               />
               <BoxStep
                 title="Step 2"
                 description={
-                  currentEducation.platzi.credential
+                  currentEducation?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Step 2 to stamp verification'
                 }
                 form={{
-                  button: currentEducation.platzi.credential
-                    ? { text: 'Check it', onClick: () => {} }
-                    : {
-                        text: 'Stamp',
-                        onClick: () =>
-                          handleStep2({ did: 123 }, currentVerify.id)
-                      }
+                  button:
+                    currentEducation?.stamps?.length !== 0
+                      ? { text: 'Check it', onClick: () => {} }
+                      : {
+                          text: 'Stamp',
+                          onClick: () =>
+                            handleStep2({ did: 123 }, currentVerify.id)
+                        }
                 }}
                 isLoading={false}
+                iconType="stamp"
               />
             </>
           )}
@@ -176,12 +164,12 @@ export const VerifyEducationCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  currentEducation.udemy.credential
+                  currentEducation?.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Enter your information'
                 }
                 form={{
-                  inputs: currentEducation.udemy.credential
+                  inputs: currentEducation?.credential
                     ? undefined
                     : [
                         {
@@ -215,7 +203,7 @@ export const VerifyEducationCredential = (props: IProps) => {
                             handleValues(event, currentVerify.id)
                         }
                       ],
-                  button: currentEducation.udemy.stamp
+                  button: currentEducation?.credential
                     ? { text: 'Check it', onClick: () => {} }
                     : {
                         text: 'Verify',
@@ -233,24 +221,27 @@ export const VerifyEducationCredential = (props: IProps) => {
                           !values[currentVerify?.id]?.endDate
                       }
                 }}
+                iconType="credential"
               />
               <BoxStep
                 title="Step 2"
                 description={
-                  currentEducation.udemy.credential
+                  currentEducation?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Step 2 to stamp verification'
                 }
                 form={{
-                  button: currentEducation.udemy.credential
-                    ? { text: 'Check it', onClick: () => {} }
-                    : {
-                        text: 'Stamp',
-                        onClick: () =>
-                          handleStep1({ did: 123 }, currentVerify.id)
-                      }
+                  button:
+                    currentEducation?.stamps?.length !== 0
+                      ? { text: 'Check it', onClick: () => {} }
+                      : {
+                          text: 'Stamp',
+                          onClick: () =>
+                            handleStep1({ did: 123 }, currentVerify.id)
+                        }
                 }}
                 isLoading={false}
+                iconType="stamp"
               />
             </>
           )}

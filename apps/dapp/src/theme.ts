@@ -17,7 +17,9 @@ export const theme: Theme = {
     gray: '#B7BAC3',
     alto: '#D9D9D9',
     scorpion: '#5f5f5f',
-    brightGray: '#3A4154'
+    brightGray: '#3A4154',
+    ebonyClay: '#2D3442',
+    melrose: '#BDB4FE'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

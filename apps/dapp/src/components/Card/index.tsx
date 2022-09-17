@@ -1,14 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
-import { SimpleCardWrapper } from './styles';
+import { LongCardWrapper, SimpleCardWrapper, SmallCardWrapper } from './styles';
 import { Krebit, MoreVert } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { ToolTip } from 'components/ToolTip';
 
 interface IProps {
-  type: 'simple' | 'small' | 'medium' | 'large';
+  type: 'simple' | 'small' | 'medium' | 'large' | 'long';
   id: string;
-  icon: JSX.Element;
   title: string;
   description: string;
   dates: {
@@ -26,7 +25,8 @@ interface IProps {
       onClick: () => void;
     }[];
   };
-  shouldShowMoreVert?: boolean;
+  icon?: JSX.Element;
+  image?: string;
   isIssued?: boolean;
   tooltip?: {
     message: string;
@@ -37,18 +37,19 @@ export const Card = (props: IProps) => {
   const {
     type,
     id,
-    icon,
     title,
     description,
     dates,
     dropdown,
-    shouldShowMoreVert = true,
+    icon,
+    image,
     isIssued = false,
     tooltip
   } = props;
   const [currentToolTipActive, setCurrentToolTipActive] = useState<
     string | undefined
   >(undefined);
+  const parentDropdownRef = useRef(undefined);
 
   const handleCurrentToolTipActive = (id: string) => {
     setCurrentToolTipActive(id);
@@ -68,10 +69,12 @@ export const Card = (props: IProps) => {
 
   if (type === 'simple') {
     return (
-      <SimpleCardWrapper id={id} shouldShowMoreVert={shouldShowMoreVert}>
-        <div className="card-icon">{icon}</div>
-        <div className="card-item-texts">
-          <p className="card-item-title">{title}</p>
+      <SimpleCardWrapper id={id}>
+        <div className="card-item-content-left">
+          <div className="card-item-content-title">
+            <div className="card-icon">{icon}</div>
+            <p className="card-item-title">{title}</p>
+          </div>
           <p className="card-item-description">{description}</p>
           <div className="card-item-dates">
             {dates.issuanceDate && (
@@ -100,7 +103,7 @@ export const Card = (props: IProps) => {
             )}
           </div>
         </div>
-        <div className="card-item-content">
+        <div className="card-item-content-right">
           <div
             className={`card-icon card-item-icon ${
               isIssued ? 'card-item-icon-is-active' : ''
@@ -110,18 +113,18 @@ export const Card = (props: IProps) => {
           >
             <Krebit />
           </div>
-          {shouldShowMoreVert && (
-            <div
-              className="card-more-vert"
-              onClick={() => dropdown.onClick(id)}
-            >
-              <MoreVert />
-            </div>
-          )}
+          <div
+            className="card-more-vert"
+            ref={parentDropdownRef}
+            onClick={() => dropdown.onClick(id)}
+          >
+            <MoreVert />
+          </div>
           {dropdown.isDropdownOpen === id && (
             <div className="card-more-vert-inline-dropdown">
               <InlineDropdown
                 items={dropdown.items}
+                parentRef={parentDropdownRef}
                 onClose={dropdown.onClose}
               />
             </div>
@@ -133,6 +136,120 @@ export const Card = (props: IProps) => {
           ) : null}
         </div>
       </SimpleCardWrapper>
+    );
+  }
+
+  if (type === 'small') {
+    return (
+      <SmallCardWrapper id={id} image={image}>
+        <div className="card-information">
+          <p className="card-information-title">{title}</p>
+          <p className="card-information-company">{description}</p>
+        </div>
+        <div className="card-top-icons">
+          <div
+            className={`card-top-icon ${
+              isIssued ? 'card-top-icon-is-active' : ''
+            }`}
+            onMouseOver={() => handleCurrentToolTipActiveCallback(id)}
+            onMouseOut={handleCurrentToolTipHideActiveCallback}
+          >
+            <Krebit />
+          </div>
+          <div
+            className="card-top-more-vert"
+            ref={parentDropdownRef}
+            onClick={() => dropdown.onClick(id)}
+          >
+            <MoreVert />
+          </div>
+        </div>
+        {dropdown.isDropdownOpen === id && (
+          <div className="card-more-vert-inline-dropdown">
+            <InlineDropdown
+              items={dropdown.items}
+              parentRef={parentDropdownRef}
+              onClose={dropdown.onClose}
+            />
+          </div>
+        )}
+        {tooltip && currentToolTipActive === id ? (
+          <div className="card-tooltip-box">
+            <ToolTip message={tooltip.message} />
+          </div>
+        ) : null}
+        <div className="card-dates">
+          {dates.issuanceDate && (
+            <div className="card-date">
+              <p className="card-date-title">{dates.issuanceDate.text}</p>
+              <p className="card-date-text">
+                {new Date(dates.issuanceDate.value).toLocaleDateString('en-US')}
+              </p>
+            </div>
+          )}
+          {dates.expirationDate && (
+            <div className="card-date">
+              <p className="card-date-title">{dates.expirationDate.text}</p>
+              <p className="card-date-text">
+                {new Date(dates.expirationDate.value).toLocaleDateString(
+                  'en-US'
+                )}
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="card-bottom-icon"></div>
+      </SmallCardWrapper>
+    );
+  }
+
+  if (type === 'long') {
+    return (
+      <LongCardWrapper image={image}>
+        <div className="card-image"></div>
+        <div className="card-information">
+          <p className="card-information-title">{title}</p>
+          <p className="card-information-description">{description}</p>
+          {dates.issuanceDate && (
+            <p className="card-information-date">
+              {dates.issuanceDate.text}{' '}
+              <span>
+                {new Date(dates.issuanceDate.value).toLocaleDateString('en-US')}
+              </span>
+            </p>
+          )}
+        </div>
+        <div className="card-icons">
+          <div
+            className={`card-icon ${isIssued ? 'card-icon-is-active' : ''}`}
+            onMouseOver={() => handleCurrentToolTipActiveCallback(id)}
+            onMouseOut={handleCurrentToolTipHideActiveCallback}
+          >
+            <Krebit />
+          </div>
+          <div
+            className="card-more-vert"
+            ref={parentDropdownRef}
+            onClick={() => dropdown.onClick(id)}
+          >
+            <MoreVert />
+          </div>
+        </div>
+        {dropdown.isDropdownOpen === id && (
+          <div className="card-more-vert-inline-dropdown">
+            <InlineDropdown
+              items={dropdown.items}
+              parentRef={parentDropdownRef}
+              onClose={dropdown.onClose}
+            />
+          </div>
+        )}
+        {tooltip && currentToolTipActive === id ? (
+          <div className="card-tooltip-box">
+            <ToolTip message={tooltip.message} />
+          </div>
+        ) : null}
+      </LongCardWrapper>
     );
   }
 

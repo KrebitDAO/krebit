@@ -223,8 +223,8 @@ export const Personhood = (props: IProps) => {
         <div className="cards-box">
           {personhoods.map((personhood, index) => (
             <Card
-              type="simple"
               key={index}
+              type="simple"
               id={`personhood_${index}`}
               icon={personhood.credential?.visualInformation?.icon}
               title={personhood.credential?.visualInformation?.text}
