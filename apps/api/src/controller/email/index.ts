@@ -16,7 +16,7 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
-export const PhoneController = async (
+export const EmailController = async (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction
@@ -26,7 +26,7 @@ export const PhoneController = async (
       throw new Error('Body not defined');
     }
 
-    const channel = 'sms';
+    const channel = 'email';
 
     // Check and decrypt claimed credential
 
@@ -59,8 +59,8 @@ export const PhoneController = async (
       await Issuer.checkCredential(claimedCredential)
     );
 
-    if (claimedCredential?.credentialSubject?.type !== 'phoneNumber') {
-      throw new Error(`claimedCredential type is not phoneNumber`);
+    if (claimedCredential?.credentialSubject?.type !== 'email') {
+      throw new Error(`claimedCredential type is not email`);
     }
 
     // get the claimValue
@@ -74,6 +74,10 @@ export const PhoneController = async (
       console.log('Claim value: ', claimValue);
     }
 
+    if (claimValue?.protocol !== 'email') {
+      throw new Error(`claimedCredential type is not email`);
+    }
+
     if (
       claimValue?.proofs?.verificationId &&
       claimValue?.proofs?.verificationId != ''
@@ -81,16 +85,14 @@ export const PhoneController = async (
       // Check Verification status
       console.log('proofs: ', claimValue.proofs);
       const verification = await checkTwilioVerification(
-        '+'.concat(claimValue.countryCode).concat(claimValue.number),
+        claimValue.username.concat('@').concat(claimValue.host),
         claimValue.proofs.nonce
       );
       console.log('verification: ', verification);
-      // If verification number matches claimed number
+      // If verification number matches claimed email
       if (
-        parseInt(verification.to) ===
-          parseInt(
-            claimValue.countryCode.toString() + claimValue.number.toString()
-          ) &&
+        verification.to ===
+          claimValue.username.concat('@').concat(claimValue.host) &&
         verification.status === 'approved'
       ) {
         // Issue verifiable credential
@@ -115,7 +117,6 @@ export const PhoneController = async (
         console.log('claim: ', claim);
 
         // Issue Verifiable credential
-
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
 
@@ -134,7 +135,7 @@ export const PhoneController = async (
     } else {
       // Start Twilio verification
       const verificationId = await startTwilioVerification(
-        '+'.concat(claimValue.countryCode).concat(claimValue.number),
+        claimValue.username.concat('@').concat(claimValue.host),
         channel
       );
       console.log('verificationId: ', verificationId);

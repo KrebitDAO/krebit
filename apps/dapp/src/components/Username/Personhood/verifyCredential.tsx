@@ -10,7 +10,8 @@ import {
   useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
-  useIssuerProvider
+  useIssuerProvider,
+  useEmailProvider
 } from 'hooks';
 
 // types
@@ -30,6 +31,7 @@ export const VerifyCredential = (props: IProps) => {
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
   const issuerProvider = useIssuerProvider();
+  const emailProvider = useEmailProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -639,6 +641,120 @@ export const VerifyCredential = (props: IProps) => {
                 }}
                 iconType="stamp"
                 isLoading={issuerProvider.status === 'stamp_pending'}
+              />
+            </>
+          )}
+          {currentVerify?.id === 'email' && (
+            <>
+              <BoxStep
+                title="Step 1"
+                description={
+                  emailProvider.currentVerificationId ||
+                  currentPersonhood?.credential
+                    ? 'Verification code sent to your email'
+                    : 'Claim your email address'
+                }
+                form={{
+                  inputs:
+                    emailProvider.currentVerificationId ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            type: 'email',
+                            name: 'email',
+                            placeholder: 'username@example.com',
+                            value: emailProvider.claimValues.email,
+                            onChange: emailProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    emailProvider.currentVerificationId ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : {
+                          text: 'Send Verification Code',
+                          onClick: !emailProvider.claimValues.email
+                            ? undefined
+                            : emailProvider.handleStartVerification,
+                          isDisabled: !emailProvider.claimValues.email
+                        }
+                }}
+                isLoading={emailProvider.status === 'verification_pending'}
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  emailProvider.currentCredential ||
+                  currentPersonhood?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Get email credential via Twilio'
+                }
+                form={{
+                  inputs:
+                    emailProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            type: 'number',
+                            name: 'code',
+                            placeholder:
+                              'Enter the verification code sent to your email',
+                            value: emailProvider.claimValues.code,
+                            onChange: emailProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    emailProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              emailProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick: emailProvider.handleGetCredential
+                        }
+                }}
+                iconType="credential"
+                isLoading={emailProvider.status === 'credential_pending'}
+              />
+              <BoxStep
+                title="Step 3"
+                description={
+                  emailProvider.currentStamp ||
+                  currentPersonhood?.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    emailProvider.currentStamp ||
+                    currentPersonhood?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              emailProvider.currentStamp ||
+                                currentPersonhood?.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: emailProvider.handleStampCredential
+                        }
+                }}
+                iconType="stamp"
+                isLoading={emailProvider.status === 'stamp_pending'}
               />
             </>
           )}
