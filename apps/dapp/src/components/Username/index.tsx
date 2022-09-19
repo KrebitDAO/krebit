@@ -67,7 +67,7 @@ export const Username = () => {
         const currentPersonhoods = await Promise.all(
           currentCredentials.map(async credential => {
             const stamps = await publicPassport.getStamps({
-              type: 'digitalProperty',
+              type: 'personhood',
               claimId: credential.id
             });
             const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
@@ -99,9 +99,39 @@ export const Username = () => {
           )
         );
 
+        const currentWorks = await Promise.all(
+          currentCredentials.map(async credential => {
+            const customCredential = {
+              issuanceDate: '2022-09-19T22:28:02.401Z',
+              title: 'xxxx',
+              description: 'xxxx',
+              visualInformation: {
+                icon: '',
+                text: 'testing',
+                isEncryptedByDefault: false
+              },
+              value: 'xxxx'
+            };
+
+            return {
+              credential: customCredential,
+              stamps: []
+            };
+          })
+        ).then(works =>
+          works.sort((a, b) =>
+            sortByDate(
+              a.credential.issuanceDate,
+              b.credential.issuanceDate,
+              'des'
+            )
+          )
+        );
+
         currentProfile = {
           ...currentProfile,
-          personhoods: currentPersonhoods
+          personhoods: currentPersonhoods,
+          works: currentWorks
         };
 
         setProfile(currentProfile);
@@ -223,7 +253,7 @@ export const Username = () => {
                 />
                 <Work
                   isAuthenticated={query.id === auth?.did}
-                  works={[]}
+                  works={profile.works}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}
