@@ -5,8 +5,7 @@ import {
 } from '@krebitdao/reputation-passport/dist/core';
 
 import { Wrapper } from './styles';
-/* import { VerifyCredential } from './verifyCredential'; */
-import { Krebit } from 'components/Icons';
+import { VerifyCredential } from './verifyCredential';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { checkCredentialsURLs } from 'utils';
@@ -40,57 +39,68 @@ export const Work = (props: IProps) => {
   };
 
   return (
-    <Wrapper>
-      <div className="work-header">
-        <p className="work-header-text">Work credentials</p>
-        {isAuthenticated && (
-          <p className="work-header-verify" onClick={() => {}}>
-            Verify
-          </p>
-        )}
-      </div>
-      <div className="work-cards">
-        {new Array(2).fill(0).map((_, index) => (
-          <Card
-            key={index}
-            type="long"
-            id={`work_${index}`}
-            title="Job Title"
-            description="Job company / May 2021 - Feb 2022"
-            dates={{
-              issuanceDate: {
-                text: 'ISSUED',
-                value: '02/11/2022'
-              }
-            }}
-            dropdown={{
-              isDropdownOpen: undefined,
-              onClick: () => {},
-              onClose: () => {},
-              items: [
-                {
-                  title: 'test',
-                  onClick: () => {}
-                },
-                {
-                  title: 'test',
-                  onClick: () => {}
-                },
-                {
-                  title: 'test',
-                  onClick: () => {}
+    <>
+      {isVerifyCredentialOpen ? (
+        <VerifyCredential
+          currentWork={{ credential: undefined, stamps: [] }}
+          onClose={handleIsVerifyCredentialOpen}
+        />
+      ) : null}
+      <Wrapper>
+        <div className="work-header">
+          <p className="work-header-text">Work credentials</p>
+          {isAuthenticated && (
+            <p
+              className="work-header-verify"
+              onClick={handleIsVerifyCredentialOpen}
+            >
+              Verify
+            </p>
+          )}
+        </div>
+        <div className="work-cards">
+          {new Array(2).fill(0).map((_, index) => (
+            <Card
+              key={index}
+              type="long"
+              id={`work_${index}`}
+              title="Job Title"
+              description="Job company / May 2021 - Feb 2022"
+              dates={{
+                issuanceDate: {
+                  text: 'ISSUED',
+                  value: '02/11/2022'
                 }
-              ]
-            }}
-            isIssued={false}
-            image="/imgs/images/your-logo.png"
-            tooltip={{
-              message: 'testing'
-            }}
-          />
-        ))}
-      </div>
-      <p className="work-view-more">View 7 more</p>
-    </Wrapper>
+              }}
+              dropdown={{
+                isDropdownOpen: undefined,
+                onClick: () => {},
+                onClose: () => {},
+                items: [
+                  {
+                    title: 'test',
+                    onClick: () => {}
+                  },
+                  {
+                    title: 'test',
+                    onClick: () => {}
+                  },
+                  {
+                    title: 'test',
+                    onClick: () => {}
+                  }
+                ]
+              }}
+              isIssued={false}
+              image="/imgs/images/your-logo.png"
+              tooltip={{
+                message: 'testing'
+              }}
+            />
+          ))}
+        </div>
+        <p className="work-view-more">View 7 more</p>
+      </Wrapper>
+    </>
   );
 };

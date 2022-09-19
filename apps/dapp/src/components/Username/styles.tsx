@@ -56,7 +56,7 @@ export const Wrapper = styled.div<IProps>`
           background-position: center;
           background-repeat: no-repeat;
           background-size: cover;
-          background-color: ${theme.colors.blueCharcoal};
+          background-color: ${theme.colors.ebony};
 
 
           @media (min-width: ${theme.screens.lg}) {

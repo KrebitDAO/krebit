@@ -19,7 +19,8 @@ export const theme: Theme = {
     scorpion: '#5f5f5f',
     brightGray: '#3A4154',
     ebonyClay: '#2D3442',
-    melrose: '#BDB4FE'
+    melrose: '#BDB4FE',
+    ebony: '#101828'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',
