@@ -10,6 +10,7 @@ import { getVeriffDecision } from './getVeriffDecision';
 import { generateUID } from './generateUID';
 import { getSpectUser } from './getSpectUser';
 import { startTwilioVerification, checkTwilioVerification } from './twilio';
+import { getPersonaDecision } from './getPersonaDecision';
 
 export {
   connect,
@@ -22,5 +23,6 @@ export {
   generateUID,
   getSpectUser,
   startTwilioVerification,
-  checkTwilioVerification
+  checkTwilioVerification,
+  getPersonaDecision
 };

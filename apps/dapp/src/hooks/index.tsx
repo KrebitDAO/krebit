@@ -6,6 +6,7 @@ import { useVeriffProvider } from './useVeriffProvider';
 import { usePhoneProvider } from './usePhoneProvider';
 import { useIssuerProvider } from './useIssuerProvider';
 import { useEmailProvider } from './useEmailProvider';
+import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 
 export {
@@ -17,5 +18,6 @@ export {
   usePhoneProvider,
   useIssuerProvider,
   useEmailProvider,
+  usePersonaProvider,
   useOutsideClick
 };

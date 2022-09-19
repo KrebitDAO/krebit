@@ -80,7 +80,7 @@ export const Username = () => {
         const currentPersonhoods = await Promise.all(
           currentCredentials.map(async credential => {
             const stamps = await publicPassport.getStamps({
-              type: 'digitalProperty',
+              type: 'personhood',
               claimId: credential.id
             });
             const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
