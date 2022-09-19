@@ -55,9 +55,12 @@ export const Username = () => {
           orbis
         );
 
-        const currentCredentials = await publicPassport.getCredentials();
+        const currentPersonhoodCredentials = await publicPassport.getCredentials(
+          undefined,
+          'personhood'
+        );
 
-        if (currentCredentials?.length === 0) {
+        if (currentPersonhoodCredentials?.length === 0) {
           currentProfile = {
             ...currentProfile,
             personhoods: []
@@ -65,9 +68,9 @@ export const Username = () => {
         }
 
         const currentPersonhoods = await Promise.all(
-          currentCredentials.map(async credential => {
+          currentPersonhoodCredentials.map(async credential => {
             const stamps = await publicPassport.getStamps({
-              type: 'digitalProperty',
+              type: 'personhood',
               claimId: credential.id
             });
             const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
@@ -99,9 +102,57 @@ export const Username = () => {
           )
         );
 
+        const currentWorkCredentials = await publicPassport.getCredentials(
+          undefined,
+          'workExperience'
+        );
+
+        if (currentWorkCredentials?.length === 0) {
+          currentProfile = {
+            ...currentProfile,
+            works: []
+          };
+        }
+
+        const currentWorks = await Promise.all(
+          currentWorkCredentials.map(async credential => {
+            const stamps = await publicPassport.getStamps({
+              type: 'workExperience',
+              claimId: credential.id
+            });
+            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
+              constant => credential.type.includes('discord')
+            );
+            const claimValue = await publicPassport.getClaimValue(credential);
+            delete claimValue.proofs;
+            const customCredential = {
+              ...credential,
+              visualInformation: {
+                ...visualInformation,
+                isEncryptedByDefault: !!claimValue?.encrypted
+              },
+              value: claimValue
+            };
+
+            return {
+              credential: customCredential,
+              stamps
+            };
+          })
+        ).then(works =>
+          works.sort((a, b) =>
+            sortByDate(
+              a.credential.issuanceDate,
+              b.credential.issuanceDate,
+              'des'
+            )
+          )
+        );
+
         currentProfile = {
           ...currentProfile,
-          personhoods: currentPersonhoods
+          personhoods: currentPersonhoods,
+          works: currentWorks
         };
 
         setProfile(currentProfile);
@@ -223,7 +274,7 @@ export const Username = () => {
                 />
                 <Work
                   isAuthenticated={query.id === auth?.did}
-                  works={[]}
+                  works={profile.works}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}

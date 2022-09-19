@@ -7,6 +7,11 @@ export interface IPersonhood {
   stamps: any[];
 }
 
+export interface IWork {
+  credential: any;
+  stamps: any[];
+}
+
 export interface IProfile {
   did: string;
   background: string;
@@ -17,6 +22,7 @@ export interface IProfile {
   countFollowers: number;
   countFollowing: number;
   personhoods?: IPersonhood[];
+  works?: IWork[];
 }
 
 export const profile = async (passport: Passport, orbis: Orbis) => {

@@ -236,15 +236,11 @@ export const Personhood = (props: IProps) => {
               dates={{
                 issuanceDate: {
                   text: 'ISSUED',
-                  value: new Date(
-                    personhood.credential?.issuanceDate
-                  ).toLocaleDateString('en-US')
+                  value: personhood.credential?.issuanceDate
                 },
                 expirationDate: {
                   text: 'EXPIRES',
-                  value: new Date(
-                    personhood.credential?.expirationDate
-                  ).toLocaleDateString('en-US')
+                  value: personhood.credential?.expirationDate
                 }
               }}
               dropdown={{
@@ -283,7 +279,7 @@ export const Personhood = (props: IProps) => {
                     : undefined,
                   isAuthenticated &&
                   personhood.credential?.visualInformation.isEncryptedByDefault
-                    ? personhood.credential.value.encrypted
+                    ? personhood.credential?.value?.encrypted
                       ? {
                           title: 'Decrypt',
                           onClick: () =>
