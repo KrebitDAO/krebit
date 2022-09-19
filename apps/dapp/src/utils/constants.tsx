@@ -27,13 +27,11 @@ const PERSONHOOD_CREDENTIALS = [
     id: 'phone',
     text: 'Phone',
     icon: <Phone />
-    //isDisabled: true
   },
   {
-    id: 'contact',
+    id: 'email',
     text: 'Email',
-    icon: <Email />,
-    isDisabled: true
+    icon: <Email />
   },
   {
     id: 'veriff',

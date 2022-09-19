@@ -4,13 +4,10 @@ const { Twilio } = pkg;
 const {
   SERVER_TWILIO_ACCOUNT_SID,
   SERVER_TWILIO_AUTH_TOKEN,
-  SERVER_TWILIO_PHONE_SERVICE_SID
+  SERVER_TWILIO_SERVICE_SID
 } = process.env;
 
-export const startPhoneVerification = async (
-  phoneNumber: string,
-  channel: string
-) => {
+export const startTwilioVerification = async (to: string, channel: string) => {
   try {
     const client = new Twilio(
       SERVER_TWILIO_ACCOUNT_SID,
@@ -18,8 +15,8 @@ export const startPhoneVerification = async (
     );
 
     const verification = await client.verify.v2
-      .services(SERVER_TWILIO_PHONE_SERVICE_SID)
-      .verifications.create({ to: phoneNumber, channel });
+      .services(SERVER_TWILIO_SERVICE_SID)
+      .verifications.create({ to: to, channel });
 
     return verification.sid;
   } catch (err) {
@@ -28,10 +25,7 @@ export const startPhoneVerification = async (
   }
 };
 
-export const checkPhoneVerification = async (
-  phoneNumber: string,
-  code: string
-) => {
+export const checkTwilioVerification = async (to: string, code: string) => {
   try {
     const client = new Twilio(
       SERVER_TWILIO_ACCOUNT_SID,
@@ -39,8 +33,8 @@ export const checkPhoneVerification = async (
     );
 
     const verification = await client.verify.v2
-      .services(SERVER_TWILIO_PHONE_SERVICE_SID)
-      .verificationChecks.create({ to: phoneNumber, code });
+      .services(SERVER_TWILIO_SERVICE_SID)
+      .verificationChecks.create({ to: to, code });
 
     return verification;
   } catch (err) {

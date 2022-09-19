@@ -5,6 +5,7 @@ import { useTwitterFollowersProvider } from './useTwitterFollowersProvider';
 import { useVeriffProvider } from './useVeriffProvider';
 import { usePhoneProvider } from './usePhoneProvider';
 import { useIssuerProvider } from './useIssuerProvider';
+import { useEmailProvider } from './useEmailProvider';
 import { useOutsideClick } from './useOutsideClick';
 
 export {
@@ -15,5 +16,6 @@ export {
   useVeriffProvider,
   usePhoneProvider,
   useIssuerProvider,
+  useEmailProvider,
   useOutsideClick
 };

@@ -9,7 +9,8 @@ import {
   VeriffController,
   IssuerController,
   SpectController,
-  PhoneController
+  PhoneController,
+  EmailController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -27,7 +28,8 @@ router
   .post('/veriff', VeriffController)
   .post('/issuer', IssuerController)
   .post('/spect', SpectController)
-  .post('/phone', PhoneController);
+  .post('/phone', PhoneController)
+  .post('/email', EmailController);
 
 app.use('/', router);
 
