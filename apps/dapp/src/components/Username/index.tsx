@@ -55,9 +55,12 @@ export const Username = () => {
           orbis
         );
 
-        const currentCredentials = await publicPassport.getCredentials();
+        const currentPersonhoodCredentials = await publicPassport.getCredentials(
+          undefined,
+          'personhood'
+        );
 
-        if (currentCredentials?.length === 0) {
+        if (currentPersonhoodCredentials?.length === 0) {
           currentProfile = {
             ...currentProfile,
             personhoods: []
@@ -65,7 +68,7 @@ export const Username = () => {
         }
 
         const currentPersonhoods = await Promise.all(
-          currentCredentials.map(async credential => {
+          currentPersonhoodCredentials.map(async credential => {
             const stamps = await publicPassport.getStamps({
               type: 'personhood',
               claimId: credential.id
@@ -99,23 +102,41 @@ export const Username = () => {
           )
         );
 
+        const currentWorkCredentials = await publicPassport.getCredentials(
+          undefined,
+          'workExperience'
+        );
+
+        if (currentWorkCredentials?.length === 0) {
+          currentProfile = {
+            ...currentProfile,
+            works: []
+          };
+        }
+
         const currentWorks = await Promise.all(
-          currentCredentials.map(async credential => {
+          currentWorkCredentials.map(async credential => {
+            const stamps = await publicPassport.getStamps({
+              type: 'workExperience',
+              claimId: credential.id
+            });
+            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
+              constant => credential.type.includes('discord')
+            );
+            const claimValue = await publicPassport.getClaimValue(credential);
+            delete claimValue.proofs;
             const customCredential = {
-              issuanceDate: '2022-09-19T22:28:02.401Z',
-              title: 'xxxx',
-              description: 'xxxx',
+              ...credential,
               visualInformation: {
-                icon: '',
-                text: 'testing',
-                isEncryptedByDefault: false
+                ...visualInformation,
+                isEncryptedByDefault: !!claimValue?.encrypted
               },
-              value: 'xxxx'
+              value: claimValue
             };
 
             return {
               credential: customCredential,
-              stamps: []
+              stamps
             };
           })
         ).then(works =>
