@@ -5,18 +5,16 @@ interface INavBarOptionProps {
   isActive: boolean;
 }
 
-interface IImageProps {
-  width: number;
-  height: number;
-  src: string;
+interface IMenuProps {
+  profilePicture: string;
 }
 
 export const Wrapper = styled.div`
   ${({ theme }) => css``}
 `;
 
-export const MenuMobile = styled.div`
-  ${({ theme }) => css`
+export const MenuMobile = styled.div<IMenuProps>`
+  ${({ theme, profilePicture }) => css`
     width: 100%;
     height: 56px;
     padding: 13px 30px;
@@ -35,6 +33,17 @@ export const MenuMobile = styled.div`
     }
 
     .profile-menu {
+      .profile-menu-image {
+        border: 2px solid ${theme.colors.white};
+        border-radius: 9999px;
+        width: 30px;
+        height: 30px;
+        background-image: url('${profilePicture}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
       .profile-menu-dropdown {
         position: absolute;
         top: 45px;
@@ -74,8 +83,8 @@ export const NavBarMobile = styled.div`
   `}
 `;
 
-export const NavBarDesktop = styled.div`
-  ${({ theme }) => css`
+export const NavBarDesktop = styled.div<IMenuProps>`
+  ${({ theme, profilePicture }) => css`
     display: none;
 
     @media (min-width: ${theme.screens.lg}) {
@@ -93,34 +102,33 @@ export const NavBarDesktop = styled.div`
 
       .options {
         display: grid;
-        grid-gap: 40px;
+        grid-gap: 46px;
         grid-template-rows: repeat(5, auto);
         justify-items: center;
 
         .option-logo {
-          width: 50px;
-          height: 50px;
+          width: 40px;
+          height: 40px;
         }
       }
 
       .option-profile-container {
         position: absolute;
-        bottom: 24px;
+        bottom: 43px;
         right: 0;
         left: 0;
 
-        .option-profile {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+        .option-profile-image {
+          margin: 0 auto;
           cursor: pointer;
-
-          .profile-text {
-            font-size: ${theme.fonts.sm};
-            margin: 0;
-            margin-top: 12px;
-            color: ${theme.colors.gray};
-          }
+          border: 2px solid ${theme.colors.white};
+          border-radius: 9999px;
+          width: 34px;
+          height: 34px;
+          background-image: url('${profilePicture}');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
         }
 
         .option-profile-dropdown {
@@ -136,7 +144,6 @@ export const NavBarDesktop = styled.div`
 
 export const NavBarOption = styled.div<INavBarOptionProps>`
   ${({ theme, isActive }) => css`
-    height: 56px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -152,29 +159,10 @@ export const NavBarOption = styled.div<INavBarOptionProps>`
         height: 30px;
         fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
 
-        & > path {
+        & > g > path {
           fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
         }
       }
     }
-
-    .option-title {
-      font-size: ${theme.fonts.sm};
-      margin: 0 auto;
-      color: ${isActive ? theme.colors.cyan : theme.colors.gray};
-    }
-  `}
-`;
-
-export const Image = styled.div<IImageProps>`
-  ${({ theme, width, height, src }) => css`
-    border: 2px solid ${theme.colors.white};
-    border-radius: 9999px;
-    width: ${width}px;
-    height: ${height}px;
-    background-image: url('${src}');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
   `}
 `;

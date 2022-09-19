@@ -19,7 +19,7 @@ export const Button: FunctionComponent<Props> = props => {
     styleType = 'background',
     primaryColor = 'heliotrope',
     secondaryColor = 'cyan',
-    borderBackgroundColor = 'blueCharcoal',
+    borderBackgroundColor = 'ebony',
     isDisabled = false
   } = props;
 

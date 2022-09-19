@@ -1,50 +1,58 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-interface IProps {
-  shouldShowMoreVert?: boolean;
+interface ICardProps {
+  image: string;
 }
 
-export const SimpleCardWrapper = styled.div<IProps>`
-  ${({ theme, shouldShowMoreVert }) => css`
+export const SimpleCardWrapper = styled.div`
+  ${({ theme }) => css`
     display: grid;
-    grid-template-columns: ${shouldShowMoreVert
-      ? '26px auto 56px'
-      : '26px auto 26px'};
-    background-color: ${theme.colors.white}0D;
+    grid-template-columns: auto 30px;
+    background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
     border-radius: 15px;
-    padding: 16px;
+    padding: 14px 16px;
 
-    .card-icon {
-      width: 26px;
-      height: 26px;
-
-      & > svg {
-        width: 26px;
-        height: 26px;
-      }
+    @media (min-width: ${theme.screens.lg}) {
+      padding: 16px 20px;
     }
 
-    .card-item-texts {
-      margin-left: 14px;
+    .card-item-content-left {
+      .card-item-content-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2px;
 
-      .card-item-title {
-        margin: 0;
-        font-size: ${theme.fonts.sm};
-        color: ${theme.colors.white};
+        .card-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 6px;
+
+          & > svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        .card-item-title {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white};
+          font-family: 'HelveticaNowDisplay-Medium';
+        }
       }
 
       .card-item-description {
         margin: 0;
         font-size: ${theme.fonts.sm};
-        color: ${theme.colors.white};
+        color: ${theme.colors.white}B3;
       }
 
       .card-item-dates {
         display: flex;
         grid-gap: 14px;
-        margin-top: 31px;
+        margin-top: 20px;
 
         .card-item-date {
           .card-item-date-title {
@@ -57,14 +65,18 @@ export const SimpleCardWrapper = styled.div<IProps>`
             margin: 0;
             font-size: ${theme.fonts.xs};
             color: ${theme.colors.white};
+            font-family: 'HelveticaNowDisplay-Medium';
           }
         }
       }
     }
 
-    .card-item-content {
+    .card-item-content-right {
       position: relative;
       display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
 
       .card-item-icon {
         & > svg {
@@ -93,29 +105,286 @@ export const SimpleCardWrapper = styled.div<IProps>`
 
       .card-item-tooltip-box {
         position: absolute;
-
-        ${shouldShowMoreVert
-          ? css`
-              top: -40px;
-              right: 50px;
-            `
-          : css`
-              top: -40px;
-              right: 20px;
-            `}
+        top: -40px;
+        right: 20px;
       }
 
       .card-more-vert-inline-dropdown {
         position: absolute;
-        bottom: 86px;
+        bottom: 0;
         right: 30px;
         z-index: 10;
 
         @media (min-width: ${theme.screens.lg}) {
-          bottom: 86px;
+          bottom: 0;
           right: initial;
-          left: 56px;
+          left: 40px;
         }
+      }
+    }
+  `}
+`;
+
+export const SmallCardWrapper = styled.div<ICardProps>`
+  ${({ theme, image }) => css`
+    width: 100%;
+    background-color: ${theme.colors.ebonyClay};
+    border: 1px solid ${theme.colors.scorpion}80;
+    border-radius: 15px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-areas: 'information top-icon' 'dates bottom-icon';
+    grid-gap: 47px 0;
+    position: relative;
+
+    .card-information {
+      .card-information-title {
+        margin: 0;
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+        font-family: 'HelveticaNowDisplay-Medium';
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.xl};
+        }
+      }
+
+      .card-information-company {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white}B3;
+      }
+    }
+
+    .card-top-icons {
+      justify-self: flex-end;
+      display: flex;
+
+      .card-top-icon {
+        width: 30px;
+        height: 30px;
+  
+        & > svg {
+          width: 30px;
+          height: 30px;
+          opacity: 0.2;
+        }
+      }
+
+      .card-top-icon-is-active {
+        & > svg {
+          opacity: 1;
+        }
+      }
+
+      .card-top-more-vert {
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+  
+        & > svg {
+          width: 30px;
+          height: 30px;
+          fill: ${theme.colors.white};
+        }
+      }
+    }
+
+    .card-dates {
+      display: flex;
+      grid-gap: 14px;
+
+      .card-date {
+        .card-date-title {
+          margin: 0;
+          font-size: ${theme.fonts.xs};
+          color: ${theme.colors.white}B3;
+        }
+
+        .card-date-text {
+          margin: 0;
+          font-size: ${theme.fonts.xs};
+          color: ${theme.colors.white};
+          font-family: 'HelveticaNowDisplay-Medium';
+        }
+      }
+    }
+
+    .card-bottom-icon {
+      width: 81px;
+      height: 31px;
+      justify-self: flex-end;
+      align-self: flex-end;
+      background-image: url('${image}');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+
+      @media (min-width: ${theme.screens.lg}) {
+        width: 112px;
+        height: 44px;
+      }
+    }
+
+    .card-tooltip-box {
+      position: absolute;
+      top: -30px;
+      right: 70px;
+    }
+
+    .card-more-vert-inline-dropdown {
+      position: absolute;
+      bottom: 130px;
+      right: 50px;
+      z-index: 10;
+    }
+  `}
+`;
+
+export const LongCardWrapper = styled.div<ICardProps>`
+  ${({ theme, image }) => css`
+    width: 100%;
+    background-color: ${theme.colors.ebonyClay};
+    border: 1px solid ${theme.colors.scorpion}80;
+    border-radius: 15px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 79px auto 48px;
+    grid-gap: 15px;
+    position: relative;
+
+    @media (min-width: ${theme.screens.lg}) {
+      grid-template-columns: 134px auto 60px;
+      grid-gap: 23px;
+    }
+
+    .card-image {
+      width: 100%;
+      height: 63px;
+      background-image: url('${image}');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+
+      @media (min-width: ${theme.screens.lg}) {
+        height: 85px;
+      }
+    }
+
+    .card-information {
+      .card-information-title {
+        margin: 0;
+        font-size: ${theme.fonts.base};
+        color: ${theme.colors.white};
+        font-family: 'HelveticaNowDisplay-Medium';
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.xl};
+        }
+      } 
+
+      .card-information-description {
+        margin: 0;
+        margin-top: 5px;
+        font-size: ${theme.fonts.xs};
+        color: ${theme.colors.white}B3;
+
+        @media (min-width: ${theme.screens.lg}) {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+        }
+      }
+
+      .card-information-date {
+        margin: 0;
+        margin-top: 25px;
+        font-size: ${theme.fonts.xs};
+        color: ${theme.colors.white}B3;
+
+        & > span {
+          color: ${theme.colors.white};
+          font-family: 'HelveticaNowDisplay-Medium';
+        }
+
+        @media (min-width: ${theme.screens.lg}) {
+          margin-top: 16px;
+        }
+      }
+    }
+
+    .card-icons {
+      display:flex;
+
+      .card-icon {
+        width: 24px;
+        height: 24px;
+  
+        @media (min-width: ${theme.screens.lg}) {
+          width: 30px;
+          height: 30px;
+        }
+  
+        & > svg {
+          width: 24px;
+          height: 24px;
+          opacity: 0.2;
+  
+          @media (min-width: ${theme.screens.lg}) {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
+
+      .card-icon-is-active {
+        & > svg {
+          opacity: 1;
+        }
+      }
+
+      .card-more-vert {
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+  
+        @media (min-width: ${theme.screens.lg}) {
+          width: 30px;
+          height: 30px;
+        }
+  
+        & > svg {
+          width: 24px;
+          height: 24px;
+          fill: ${theme.colors.white};
+  
+          @media (min-width: ${theme.screens.lg}) {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
+    }
+
+    .card-tooltip-box {
+      position: absolute;
+      top: -20px;
+      right: 70px;
+    }
+
+    .card-more-vert-inline-dropdown {
+      position: absolute;
+      bottom: 110px;
+      right: 45px;
+      z-index: 10;
+
+      @media (min-width: ${theme.screens.lg}) {
+        bottom: 95px;
+        right: 45px;
       }
     }
   `}
