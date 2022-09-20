@@ -58,8 +58,7 @@ const WORK_CREDENTIALS = [
   {
     id: 'githubFollowers',
     text: 'Github Followers',
-    icon: <Github />,
-    isDisabled: true
+    icon: <Github />
   },
   {
     id: 'spect',
