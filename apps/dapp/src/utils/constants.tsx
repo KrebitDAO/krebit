@@ -4,7 +4,9 @@ import {
   Discord,
   Email,
   Phone,
-  Twitter
+  Twitter,
+  Github,
+  Spect
 } from 'components/Icons';
 
 const PERSONHOOD_CREDENTIALS = [
@@ -47,8 +49,32 @@ const PERSONHOOD_CREDENTIALS = [
   }
 ];
 
+const WORK_CREDENTIALS = [
+  {
+    id: 'github',
+    text: 'Github',
+    icon: <Github />,
+    image:
+      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
+  },
+  {
+    id: 'githubFollowers',
+    text: 'Github Followers',
+    icon: <Github />,
+    image:
+      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
+  },
+  {
+    id: 'spect',
+    text: 'Spect',
+    icon: <Spect />,
+    isDisabled: true
+  }
+];
+
 const constants = {
-  PERSONHOOD_CREDENTIALS
+  PERSONHOOD_CREDENTIALS,
+  WORK_CREDENTIALS
 };
 
 export { constants };

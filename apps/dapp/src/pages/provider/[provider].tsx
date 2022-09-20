@@ -5,7 +5,8 @@ import { BroadcastChannel } from 'broadcast-channel';
 const currentProviderChannel = {
   discord: 'discord_oauth_channel',
   twitter: 'twitter_oauth_channel',
-  veriff: 'veriff_oauth_channel'
+  veriff: 'veriff_oauth_channel',
+  github: 'github_oauth_channel'
 };
 
 const DynamicProvider = () => {
@@ -27,6 +28,10 @@ const DynamicProvider = () => {
 
     if (query.provider === 'veriff') {
       veriffChannel();
+    }
+
+    if (query.provider === 'github') {
+      githubChannel();
     }
   }, [query.provider, currentChannel]);
 
@@ -125,6 +130,51 @@ const DynamicProvider = () => {
       // always close the redirected window
       window.close();
     }
+  };
+
+  const githubChannel = () => {
+    const queryString = new URLSearchParams(window?.location?.search);
+
+    const [queryError, queryState, queryCode] = [
+      queryString.get('error'),
+      queryString.get('state'),
+      queryString.get('code')
+    ];
+
+    // if Twitter oauth then submit message to other windows and close self
+    if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^github-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'github',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubFollowers-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'githubFollowers',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    }
+    // always close the redirected window
+    window.close();
   };
 
   return <></>;

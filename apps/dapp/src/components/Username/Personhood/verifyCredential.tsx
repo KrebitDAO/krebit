@@ -15,10 +15,10 @@ import {
 } from 'hooks';
 
 // types
-import { IPersonhood } from 'utils/normalizeSchema';
+import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
-  currentPersonhood?: IPersonhood;
+  currentPersonhood?: ICredential;
   onClose: () => void;
 }
 

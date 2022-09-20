@@ -11,11 +11,11 @@ import { Card } from 'components/Card';
 import { checkCredentialsURLs } from 'utils';
 
 // types
-import { IPersonhood, IProfile } from 'utils/normalizeSchema';
+import { ICredential, IProfile } from 'utils/normalizeSchema';
 
 interface IProps {
   isAuthenticated: boolean;
-  personhoods: IPersonhood[];
+  personhoods: ICredential[];
   passport: Passport;
   issuer: Issuer;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
@@ -30,7 +30,7 @@ export const Personhood = (props: IProps) => {
     handleProfile
   } = props;
   const [currentPersonhoodSelected, setCurrentPersonhoodSelected] = useState<
-    IPersonhood
+    ICredential
   >();
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [status, setStatus] = useState('idle');
@@ -68,7 +68,7 @@ export const Personhood = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleCurrentPersonhood = (type: string, values: IPersonhood) => {
+  const handleCurrentPersonhood = (type: string, values: ICredential) => {
     if (!isAuthenticated) return;
 
     setCurrentPersonhoodSelected(values);

@@ -1,44 +1,24 @@
-import { ChangeEvent, useContext, useState } from 'react';
+import { useContext } from 'react';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { Explore } from 'components/Icons';
+import { constants, checkCredentialsURLs } from 'utils';
 import { GeneralContext } from 'context';
+import { useGithubProvider, useGithubFollowersProvider } from 'hooks';
+
+// types
+import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
-  currentWork: {
-    credential: any;
-    stamps: any[];
-  };
+  currentWork: ICredential;
   onClose: () => void;
 }
 
-interface MOCK_IValues {
-  [id: string]: {
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-  };
-}
-
-const MOCK_EDUCATION = [
-  {
-    id: 'krebit',
-    text: 'Krebit',
-    icon: <Explore />
-  },
-  {
-    id: 'google',
-    text: 'Google',
-    icon: <Explore />
-  }
-];
-
 export const VerifyCredential = (props: IProps) => {
   const { currentWork, onClose } = props;
-  const [values, setValues] = useState<MOCK_IValues>({});
   const { walletInformation } = useContext(GeneralContext);
+  const githubProvider = useGithubProvider();
+  const githubFollowersProvider = useGithubFollowersProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -47,200 +27,182 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleValues = (event: ChangeEvent<HTMLInputElement>, id: string) => {
-    const { name, value } = event.target;
-
-    setValues(prevValues => ({
-      ...prevValues,
-      [id]: {
-        ...prevValues[id],
-        [name]: value
-      }
-    }));
-  };
-
-  const handleStep1 = (credential: Object, id: string) => {
-    console.log('Credential added!');
-  };
-
-  const handleStep2 = (stamp: Object, id: string) => {
-    console.log('Stamp added!');
-  };
-
   return (
     <Verify
-      initialList={MOCK_EDUCATION}
+      initialList={constants.WORK_CREDENTIALS}
       onClose={handleClose}
+      verifyId={currentWork?.credential?.visualInformation?.id}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.id === 'krebit' && (
+          {currentVerify?.id === 'github' && (
             <>
               <BoxStep
                 title="Step 1"
                 description={
-                  currentWork?.credential
+                  githubProvider.currentCredential || currentWork?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Enter your information'
+                    : 'Claim your github profile'
                 }
                 form={{
-                  inputs: currentWork?.credential
-                    ? undefined
-                    : [
-                        {
-                          name: 'name',
-                          placeholder: 'Enter the name',
-                          value: values[currentVerify?.id]?.name || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          name: 'description',
-                          placeholder: 'Enter the description',
-                          value: values[currentVerify?.id]?.description || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'startDate',
-                          placeholder: 'Enter the startDate',
-                          value: values[currentVerify?.id]?.startDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'endDate',
-                          placeholder: 'Enter the endDate',
-                          value: values[currentVerify?.id]?.endDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
+                  inputs:
+                    githubProvider.currentCredential || currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you github username',
+                            value: githubProvider.claimValues.username,
+                            onChange: githubProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    githubProvider.currentCredential || currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              githubProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
-                      ],
-                  button: currentWork?.credential
-                    ? { text: 'Check it', onClick: () => {} }
-                    : {
-                        text: 'Verify',
-                        onClick:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                            ? undefined
-                            : () => handleStep1({ did: 123 }, currentVerify.id),
-                        isDisabled:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                      }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !githubProvider.claimValues.username ||
+                            githubProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  githubProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !githubProvider.claimValues.username ||
+                            githubProvider.claimValues.username === ''
+                        }
                 }}
+                isLoading={githubProvider.status === 'credential_pending'}
                 iconType="credential"
               />
               <BoxStep
                 title="Step 2"
                 description={
+                  githubProvider.currentStamp ||
                   currentWork?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 to stamp verification'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
+                    githubProvider.currentStamp ||
                     currentWork?.stamps?.length !== 0
-                      ? { text: 'Check it', onClick: () => {} }
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              githubProvider.currentStamp ||
+                                currentWork?.stamps[0]
+                            )
+                        }
                       : {
                           text: 'Stamp',
-                          onClick: () =>
-                            handleStep2({ did: 123 }, currentVerify.id)
+                          onClick: githubProvider.handleStampCredential
                         }
                 }}
-                isLoading={false}
+                isLoading={githubProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
             </>
           )}
-          {currentVerify?.id === 'google' && (
+          {currentVerify?.id === 'githubFollowers' && (
             <>
               <BoxStep
                 title="Step 1"
                 description={
-                  currentWork?.credential
+                  githubFollowersProvider.currentCredential ||
+                  currentWork.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Enter your information'
+                    : 'Claim your github follower count ( i.e. more than 1,000 would be gt1000 )'
                 }
                 form={{
-                  inputs: currentWork?.credential
-                    ? undefined
-                    : [
-                        {
-                          name: 'name',
-                          placeholder: 'Enter the name',
-                          value: values[currentVerify?.id]?.name || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          name: 'description',
-                          placeholder: 'Enter the description',
-                          value: values[currentVerify?.id]?.description || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'startDate',
-                          placeholder: 'Enter the startDate',
-                          value: values[currentVerify?.id]?.startDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'endDate',
-                          placeholder: 'Enter the endDate',
-                          value: values[currentVerify?.id]?.endDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
+                  inputs:
+                    githubFollowersProvider.currentCredential ||
+                    currentWork.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'followers',
+                            placeholder:
+                              'gt100 | gt500 | gt1000 | gt5K | gt10K | gt50K | gt100K | gt1M',
+                            value:
+                              githubFollowersProvider.claimValues.followers,
+                            onChange: githubFollowersProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    githubFollowersProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              githubFollowersProvider.currentCredential ||
+                                currentWork.credential
+                            )
                         }
-                      ],
-                  button: currentWork?.credential
-                    ? { text: 'Check it', onClick: () => {} }
-                    : {
-                        text: 'Verify',
-                        onClick:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                            ? undefined
-                            : () => handleStep1({ did: 123 }, currentVerify.id),
-                        isDisabled:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                      }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !githubFollowersProvider.claimValues.followers ||
+                            githubFollowersProvider.claimValues.followers === ''
+                              ? undefined
+                              : () =>
+                                  githubFollowersProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !githubFollowersProvider.claimValues.followers ||
+                            githubFollowersProvider.claimValues.followers === ''
+                        }
                 }}
+                isLoading={
+                  githubFollowersProvider.status === 'credential_pending'
+                }
                 iconType="credential"
               />
               <BoxStep
                 title="Step 2"
                 description={
-                  currentWork?.stamps?.length !== 0
+                  githubFollowersProvider.currentStamp ||
+                  currentWork.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 to stamp verification'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
-                    currentWork?.stamps?.length !== 0
-                      ? { text: 'Check it', onClick: () => {} }
+                    githubFollowersProvider.currentStamp ||
+                    currentWork.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              githubFollowersProvider.currentStamp ||
+                                currentWork.stamps[0]
+                            )
+                        }
                       : {
                           text: 'Stamp',
-                          onClick: () =>
-                            handleStep1({ did: 123 }, currentVerify.id)
+                          onClick: githubFollowersProvider.handleStampCredential
                         }
                 }}
-                isLoading={false}
+                isLoading={githubFollowersProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
             </>

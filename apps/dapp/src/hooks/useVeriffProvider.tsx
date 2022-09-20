@@ -32,11 +32,10 @@ export const useVeriffProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const channel = new BroadcastChannel('veriff_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('veriff_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -52,7 +51,7 @@ export const useVeriffProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
   const handleFetchOAuth = async (address: string) => {
     const veriff = await getVeriffSession({
@@ -203,7 +202,7 @@ export const useVeriffProvider = () => {
         }:${walletInformation.address}`
       );
 
-      const credentials = await passport.getCredentials();
+      const credentials = await passport.getCredentials('legalName');
       const getLatestVeriffCredential = credentials
         .filter(credential => credential.type.includes('veriff'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))

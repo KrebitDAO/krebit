@@ -11,11 +11,11 @@ import { Card } from 'components/Card';
 import { checkCredentialsURLs } from 'utils';
 
 // types
-import { IProfile, IWork } from 'utils/normalizeSchema';
+import { IProfile, ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
   isAuthenticated: boolean;
-  works: IWork[];
+  works: ICredential[];
   passport: Passport;
   issuer: Issuer;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
@@ -23,7 +23,7 @@ interface IProps {
 
 export const Work = (props: IProps) => {
   const { works, isAuthenticated, passport, issuer, handleProfile } = props;
-  const [currentWorkSelected, setCurrentWorkSelected] = useState<IWork>();
+  const [currentWorkSelected, setCurrentWorkSelected] = useState<ICredential>();
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [status, setStatus] = useState('idle');
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
@@ -60,7 +60,7 @@ export const Work = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleCurrentWork = (type: string, values: IWork) => {
+  const handleCurrentWork = (type: string, values: ICredential) => {
     if (!isAuthenticated) return;
 
     setCurrentWorkSelected(values);
@@ -148,6 +148,26 @@ export const Work = (props: IProps) => {
     }
   };
 
+  const formatCredentialName = (value: any) => {
+    if (value?.encrypted) return value.encrypted;
+
+    if (value?.username) {
+      return '@'.concat(value.username);
+    }
+
+    if (value?.id) {
+      return value.id;
+    }
+
+    if (value?.followers) {
+      return value.followers.startsWith('gt')
+        ? value.followers.replace('gt', '> ')
+        : value.followers;
+    }
+
+    return '';
+  };
+
   const handleCheckCredentialsURLs = (
     type: string,
     valuesType: string,
@@ -195,12 +215,16 @@ export const Work = (props: IProps) => {
               type="long"
               id={`work_${index}`}
               icon={work.credential?.visualInformation?.icon}
-              title={work.credential?.title}
-              description={work.credential?.value}
+              title={work.credential?.visualInformation?.text}
+              description={formatCredentialName(work.credential?.value)}
               dates={{
                 issuanceDate: {
                   text: 'ISSUED',
                   value: work.credential?.issuanceDate
+                },
+                expirationDate: {
+                  text: 'EXPIRES',
+                  value: work.credential?.expirationDate
                 }
               }}
               dropdown={{
@@ -266,7 +290,7 @@ export const Work = (props: IProps) => {
                 ]
               }}
               isIssued={work.credential && work.stamps?.length > 0}
-              image={work.credential.image}
+              image={work.credential?.visualInformation?.image}
               tooltip={{
                 message: `This credential has ${work.stamps?.length ||
                   0} stamps`

@@ -120,8 +120,8 @@ export const Username = () => {
               type: 'workExperience',
               claimId: credential.id
             });
-            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
-              constant => credential.type.includes('discord')
+            const visualInformation = constants.WORK_CREDENTIALS.find(
+              constant => credential.type.includes(constant.id)
             );
             const claimValue = await publicPassport.getClaimValue(credential);
             delete claimValue.proofs;
