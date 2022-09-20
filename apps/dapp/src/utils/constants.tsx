@@ -53,12 +53,16 @@ const WORK_CREDENTIALS = [
   {
     id: 'github',
     text: 'Github',
-    icon: <Github />
+    icon: <Github />,
+    image:
+      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
   },
   {
     id: 'githubFollowers',
     text: 'Github Followers',
-    icon: <Github />
+    icon: <Github />,
+    image:
+      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
   },
   {
     id: 'spect',
