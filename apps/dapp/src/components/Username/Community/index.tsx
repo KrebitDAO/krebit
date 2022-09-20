@@ -11,27 +11,21 @@ import { Card } from 'components/Card';
 import { checkCredentialsURLs } from 'utils';
 
 // types
-import { IProfile, ICommunity } from 'utils/normalizeSchema';
+import { IProfile, ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
   isAuthenticated: boolean;
-  communities: ICommunity[];
+  communities: ICredential[];
   passport: Passport;
   issuer: Issuer;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
 }
 
 export const Community = (props: IProps) => {
-  const {
-    communities,
-    isAuthenticated,
-    passport,
-    issuer,
-    handleProfile
-  } = props;
-  const [currentCommunitySelected, setCurrentCommunitySelected] = useState<
-    ICommunity
-  >();
+  const { communities, isAuthenticated, passport, issuer, handleProfile } =
+    props;
+  const [currentCommunitySelected, setCurrentCommunitySelected] =
+    useState<ICredential>();
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [status, setStatus] = useState('idle');
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
@@ -68,7 +62,7 @@ export const Community = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleCurrentCommunity = (type: string, values: ICommunity) => {
+  const handleCurrentCommunity = (type: string, values: ICredential) => {
     if (!isAuthenticated) return;
 
     setCurrentCommunitySelected(values);
@@ -156,12 +150,42 @@ export const Community = (props: IProps) => {
     }
   };
 
+  const formatCredentialName = (value: any) => {
+    if (value?.encrypted) return value.encrypted;
+
+    if (value?.id) {
+      return value.id;
+    }
+
+    return '';
+  };
+
+  const handleCheckCredentialsURLs = (
+    type: string,
+    valuesType: string,
+    values: any
+  ) => {
+    checkCredentialsURLs(type, valuesType, values);
+    handleIsDropdownOpen(undefined);
+  };
+
   return (
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          currentCommunity={{ credential: undefined, stamps: [] }}
+          currentCommunity={currentCommunitySelected}
           onClose={handleIsVerifyCredentialOpen}
+        />
+      ) : null}
+      {isRemoveModalOpen ? (
+        <QuestionModal
+          text="This action can't be undone."
+          continueButton={{
+            text: 'Delete',
+            onClick: handleRemoveAction
+          }}
+          cancelButton={{ text: 'Cancel', onClick: handleIsRemoveModalOpen }}
+          isLoading={status === 'remove_pending'}
         />
       ) : null}
       <Wrapper>
@@ -177,51 +201,101 @@ export const Community = (props: IProps) => {
           )}
         </div>
         <div className="community-cards">
-          {new Array(2).fill(0).map((_, index) => (
+          {communities.map((community, index) => (
             <Card
               key={index}
               type="small"
               id={`community_${index}`}
-              title="Institution Title"
-              description="Institution company"
+              icon={community.credential?.visualInformation?.icon}
+              title={community.credential?.visualInformation?.text}
+              description={formatCredentialName(community.credential?.value)}
               dates={{
                 issuanceDate: {
                   text: 'ISSUED',
-                  value: '02/11/2022'
+                  value: community.credential?.issuanceDate
                 },
                 expirationDate: {
                   text: 'EXPIRES',
-                  value: '02/11/2022'
+                  value: community.credential?.expirationDate
                 }
               }}
               dropdown={{
-                isDropdownOpen: undefined,
-                onClick: () => {},
-                onClose: () => {},
+                isDropdownOpen,
+                onClick: () => handleIsDropdownOpen(`community_${index}`),
+                onClose: () => handleIsDropdownOpen(undefined),
                 items: [
-                  {
-                    title: 'test',
-                    onClick: () => {}
-                  },
-                  {
-                    title: 'test',
-                    onClick: () => {}
-                  },
-                  {
-                    title: 'test',
-                    onClick: () => {}
-                  }
+                  !isAuthenticated
+                    ? {
+                        title: 'Credential details',
+                        onClick: () =>
+                          handleCheckCredentialsURLs(
+                            'ceramic',
+                            'credential',
+                            community.credential
+                          )
+                      }
+                    : undefined,
+                  !isAuthenticated && community.stamps?.length !== 0
+                    ? {
+                        title: 'Stamp details',
+                        onClick: () =>
+                          handleCheckCredentialsURLs(
+                            'polygon',
+                            'stamp',
+                            community.stamps[0]
+                          )
+                      }
+                    : undefined,
+                  isAuthenticated && community.stamps?.length === 0
+                    ? {
+                        title: 'Add stamp',
+                        onClick: () =>
+                          handleCurrentCommunity('add_stamp', community)
+                      }
+                    : undefined,
+                  isAuthenticated &&
+                  community.credential?.visualInformation.isEncryptedByDefault
+                    ? community.credential?.value?.encrypted
+                      ? {
+                          title: 'Decrypt',
+                          onClick: () =>
+                            handleCurrentCommunity('decrypt', community)
+                        }
+                      : {
+                          title: 'Encrypt',
+                          onClick: () =>
+                            handleCurrentCommunity('encrypt', community)
+                        }
+                    : undefined,
+                  isAuthenticated && community.stamps?.length === 0
+                    ? {
+                        title: 'Remove credential',
+                        onClick: () =>
+                          handleCurrentCommunity('remove_credential', community)
+                      }
+                    : undefined,
+                  isAuthenticated &&
+                  community.credential &&
+                  community.stamps?.length !== 0
+                    ? {
+                        title: 'Remove stamp',
+                        onClick: () =>
+                          handleCurrentCommunity('remove_stamp', community)
+                      }
+                    : undefined
                 ]
               }}
-              isIssued={false}
-              image="/imgs/images/testing_logo.png"
+              isIssued={community.credential && community.stamps?.length > 0}
+              image={community.credential?.visualInformation?.image}
               tooltip={{
-                message: 'testing'
+                message: `This credential has ${
+                  community.stamps?.length || 0
+                } stamps`
               }}
             />
           ))}
         </div>
-        <p className="Community-view-more">View 7 more</p>
+        <p className="community-view-more">View 7 more</p>
       </Wrapper>
     </>
   );

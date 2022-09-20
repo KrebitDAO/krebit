@@ -4,7 +4,7 @@ import Error from 'next/error';
 
 import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
-import { Education } from './Education';
+import { Community } from './Community';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
@@ -55,10 +55,8 @@ export const Username = () => {
           orbis
         );
 
-        const currentPersonhoodCredentials = await publicPassport.getCredentials(
-          undefined,
-          'personhood'
-        );
+        const currentPersonhoodCredentials =
+          await publicPassport.getCredentials(undefined, 'personhood');
 
         if (currentPersonhoodCredentials?.length === 0) {
           currentProfile = {
@@ -149,10 +147,58 @@ export const Username = () => {
           )
         );
 
+        const currentCommunityCredentials = await publicPassport.getCredentials(
+          undefined,
+          'community'
+        );
+
+        if (currentCommunityCredentials?.length === 0) {
+          currentProfile = {
+            ...currentProfile,
+            communities: []
+          };
+        }
+
+        const currentCommunities = await Promise.all(
+          currentCommunityCredentials.map(async credential => {
+            const stamps = await publicPassport.getStamps({
+              type: 'community',
+              claimId: credential.id
+            });
+            const visualInformation = constants.COMMUNITY_CREDENTIALS.find(
+              constant => credential.type.includes(constant.id)
+            );
+            const claimValue = await publicPassport.getClaimValue(credential);
+            delete claimValue.proofs;
+            const customCredential = {
+              ...credential,
+              visualInformation: {
+                ...visualInformation,
+                isEncryptedByDefault: !!claimValue?.encrypted
+              },
+              value: claimValue
+            };
+
+            return {
+              credential: customCredential,
+              stamps
+            };
+          })
+        ).then(works =>
+          works.sort((a, b) =>
+            sortByDate(
+              a.credential.issuanceDate,
+              b.credential.issuanceDate,
+              'des'
+            )
+          )
+        );
+
         currentProfile = {
           ...currentProfile,
           personhoods: currentPersonhoods,
-          works: currentWorks
+          works: currentWorks,
+          communities: currentCommunities
         };
 
         setProfile(currentProfile);
@@ -265,9 +311,9 @@ export const Username = () => {
                 />
               </div>
               <div className="content-right">
-                <Education
+                <Community
                   isAuthenticated={query.id === auth?.did}
-                  educations={[]}
+                  communities={profile.communities}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}

@@ -1,44 +1,19 @@
-import { ChangeEvent, useContext, useState } from 'react';
-
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { Explore } from 'components/Icons';
-import { GeneralContext } from 'context';
+import { constants, checkCredentialsURLs } from 'utils';
+import { useIssuerProvider } from 'hooks';
+
+// types
+import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
-  currentEducation: {
-    credential: any;
-    stamps: any[];
-  };
+  currentCommunity: ICredential;
   onClose: () => void;
 }
 
-interface MOCK_IValues {
-  [id: string]: {
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-  };
-}
-
-const MOCK_EDUCATION = [
-  {
-    id: 'platzi',
-    text: 'Platzi',
-    icon: <Explore />
-  },
-  {
-    id: 'udemy',
-    text: 'Udemy',
-    icon: <Explore />
-  }
-];
-
 export const VerifyCredential = (props: IProps) => {
-  const { currentEducation, onClose } = props;
-  const [values, setValues] = useState<MOCK_IValues>({});
-  const { walletInformation } = useContext(GeneralContext);
+  const { currentCommunity, onClose } = props;
+  const issuerProvider = useIssuerProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -47,201 +22,145 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleValues = (event: ChangeEvent<HTMLInputElement>, id: string) => {
-    const { name, value } = event.target;
-
-    setValues(prevValues => ({
-      ...prevValues,
-      [id]: {
-        ...prevValues[id],
-        [name]: value
-      }
-    }));
-  };
-
-  const handleStep1 = (credential: Object, id: string) => {
-    console.log('Credential added!');
-  };
-
-  const handleStep2 = (stamp: Object, id: string) => {
-    console.log('Stamp added!');
-  };
-
   return (
     <Verify
-      initialList={MOCK_EDUCATION}
+      initialList={constants.COMMUNITY_CREDENTIALS}
       onClose={handleClose}
+      verifyId={currentCommunity?.credential?.visualInformation?.id}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.id === 'platzi' && (
+          {currentVerify?.id === 'issuer' && (
             <>
               <BoxStep
                 title="Step 1"
                 description={
-                  currentEducation?.credential
+                  issuerProvider.currentCredential ||
+                  currentCommunity?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Enter your information'
+                    : 'Become an Issuer'
                 }
                 form={{
-                  inputs: currentEducation?.credential
-                    ? undefined
-                    : [
-                        {
-                          name: 'name',
-                          placeholder: 'Enter the name',
-                          value: values[currentVerify?.id]?.name || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          name: 'description',
-                          placeholder: 'Enter the description',
-                          value: values[currentVerify?.id]?.description || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'startDate',
-                          placeholder: 'Enter the startDate',
-                          value: values[currentVerify?.id]?.startDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'endDate',
-                          placeholder: 'Enter the endDate',
-                          value: values[currentVerify?.id]?.endDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
+                  inputs:
+                    issuerProvider.currentCredential ||
+                    currentCommunity?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'entity',
+                            placeholder: 'Enter the Issuing Entity name',
+                            value: issuerProvider.claimValues.entity,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'description',
+                            placeholder: 'Enter the Issuing Entity description',
+                            value: issuerProvider.claimValues.description,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'credentialType',
+                            placeholder: 'Enter the credential type nme',
+                            value: issuerProvider.claimValues.credentialType,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'credentialSchema',
+                            placeholder:
+                              'Enter the credential type JSON schema',
+                            value: issuerProvider.claimValues.credentialSchema,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'imageUrl',
+                            placeholder: 'Enter the Issuing Entity logo Url',
+                            value: issuerProvider.claimValues.imageUrl,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'verificationUrl',
+                            placeholder: 'Enter the Verification Url',
+                            value: issuerProvider.claimValues.verificationUrl,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'did',
+                            placeholder: 'Enter the issuer DID',
+                            value: issuerProvider.claimValues.did,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'ethereumAddress',
+                            placeholder: 'Enter the issuer Address',
+                            value: issuerProvider.claimValues.ethereumAddress,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            type: 'number',
+                            name: 'expirationMonths',
+                            placeholder:
+                              'Enter the number of expiration months for credentials',
+                            value: issuerProvider.claimValues.expirationMonths,
+                            onChange: issuerProvider.handleClaimValues
+                          },
+                          {
+                            type: 'number',
+                            name: 'price',
+                            placeholder:
+                              'Enter the native token price for issuing this credential',
+                            value: issuerProvider.claimValues.price,
+                            onChange: issuerProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    issuerProvider.currentCredential ||
+                    currentCommunity?.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              issuerProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
                         }
-                      ],
-                  button: currentEducation?.credential
-                    ? { text: 'Check it', onClick: () => {} }
-                    : {
-                        text: 'Verify',
-                        onClick:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                            ? undefined
-                            : () => handleStep1({ did: 123 }, currentVerify.id),
-                        isDisabled:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                      }
+                      : {
+                          text: 'Verify',
+                          onClick: issuerProvider.handleGetCredential
+                        }
                 }}
                 iconType="credential"
+                isLoading={issuerProvider.status === 'credential_pending'}
               />
               <BoxStep
                 title="Step 2"
                 description={
-                  currentEducation?.stamps?.length !== 0
+                  issuerProvider.currentStamp ||
+                  currentCommunity?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 to stamp verification'
+                    : 'Stamp verification on-chain'
                 }
                 form={{
                   button:
-                    currentEducation?.stamps?.length !== 0
-                      ? { text: 'Check it', onClick: () => {} }
+                    issuerProvider.currentStamp ||
+                    currentCommunity?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              issuerProvider.currentStamp ||
+                                currentCommunity?.stamps[0]
+                            )
+                        }
                       : {
                           text: 'Stamp',
-                          onClick: () =>
-                            handleStep2({ did: 123 }, currentVerify.id)
+                          onClick: issuerProvider.handleStampCredential
                         }
                 }}
-                isLoading={false}
                 iconType="stamp"
-              />
-            </>
-          )}
-          {currentVerify?.id === 'udemy' && (
-            <>
-              <BoxStep
-                title="Step 1"
-                description={
-                  currentEducation?.credential
-                    ? 'Step completed, you can now check your credential'
-                    : 'Enter your information'
-                }
-                form={{
-                  inputs: currentEducation?.credential
-                    ? undefined
-                    : [
-                        {
-                          name: 'name',
-                          placeholder: 'Enter the name',
-                          value: values[currentVerify?.id]?.name || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          name: 'description',
-                          placeholder: 'Enter the description',
-                          value: values[currentVerify?.id]?.description || '',
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'startDate',
-                          placeholder: 'Enter the startDate',
-                          value: values[currentVerify?.id]?.startDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        },
-                        {
-                          type: 'date',
-                          name: 'endDate',
-                          placeholder: 'Enter the endDate',
-                          value: values[currentVerify?.id]?.endDate,
-                          onChange: event =>
-                            handleValues(event, currentVerify.id)
-                        }
-                      ],
-                  button: currentEducation?.credential
-                    ? { text: 'Check it', onClick: () => {} }
-                    : {
-                        text: 'Verify',
-                        onClick:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                            ? undefined
-                            : () => handleStep1({ did: 123 }, currentVerify.id),
-                        isDisabled:
-                          !values[currentVerify?.id]?.name ||
-                          !values[currentVerify?.id]?.description ||
-                          !values[currentVerify?.id]?.startDate ||
-                          !values[currentVerify?.id]?.endDate
-                      }
-                }}
-                iconType="credential"
-              />
-              <BoxStep
-                title="Step 2"
-                description={
-                  currentEducation?.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Step 2 to stamp verification'
-                }
-                form={{
-                  button:
-                    currentEducation?.stamps?.length !== 0
-                      ? { text: 'Check it', onClick: () => {} }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            handleStep1({ did: 123 }, currentVerify.id)
-                        }
-                }}
-                isLoading={false}
-                iconType="stamp"
+                isLoading={issuerProvider.status === 'stamp_pending'}
               />
             </>
           )}

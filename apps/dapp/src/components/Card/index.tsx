@@ -210,14 +210,28 @@ export const Card = (props: IProps) => {
         <div className="card-information">
           <p className="card-information-title">{title}</p>
           <p className="card-information-description">{description}</p>
-          {dates.issuanceDate && (
-            <p className="card-information-date">
-              {dates.issuanceDate.text}{' '}
-              <span>
-                {new Date(dates.issuanceDate.value).toLocaleDateString('en-US')}
-              </span>
-            </p>
-          )}
+          <div className="card-information-dates">
+            {dates.issuanceDate && (
+              <p className="card-information-date">
+                {dates.issuanceDate.text}{' '}
+                <span>
+                  {new Date(dates.issuanceDate.value).toLocaleDateString(
+                    'en-US'
+                  )}
+                </span>
+              </p>
+            )}
+            {dates.expirationDate && (
+              <p className="card-information-date">
+                {dates.expirationDate.text}{' '}
+                <span>
+                  {new Date(dates.expirationDate.value).toLocaleDateString(
+                    'en-US'
+                  )}
+                </span>
+              </p>
+            )}
+          </div>
         </div>
         <div className="card-icons">
           <div
