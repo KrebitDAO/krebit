@@ -163,7 +163,7 @@ export const SmallCardWrapper = styled.div<ICardProps>`
       .card-top-icon {
         width: 30px;
         height: 30px;
-  
+
         & > svg {
           width: 30px;
           height: 30px;
@@ -181,7 +181,7 @@ export const SmallCardWrapper = styled.div<ICardProps>`
         cursor: pointer;
         width: 30px;
         height: 30px;
-  
+
         & > svg {
           width: 30px;
           height: 30px;
@@ -286,7 +286,7 @@ export const LongCardWrapper = styled.div<ICardProps>`
         @media (min-width: ${theme.screens.lg}) {
           font-size: ${theme.fonts.xl};
         }
-      } 
+      }
 
       .card-information-description {
         margin: 0;
@@ -300,40 +300,45 @@ export const LongCardWrapper = styled.div<ICardProps>`
         }
       }
 
-      .card-information-date {
-        margin: 0;
-        margin-top: 25px;
-        font-size: ${theme.fonts.xs};
-        color: ${theme.colors.white}B3;
+      .card-information-dates {
+        display: flex;
+        grid-gap: 10px;
 
-        & > span {
-          color: ${theme.colors.white};
-          font-family: 'HelveticaNowDisplay-Medium';
-        }
+        .card-information-date {
+          margin: 0;
+          margin-top: 25px;
+          font-size: ${theme.fonts.xs};
+          color: ${theme.colors.white}B3;
 
-        @media (min-width: ${theme.screens.lg}) {
-          margin-top: 16px;
+          & > span {
+            color: ${theme.colors.white};
+            font-family: 'HelveticaNowDisplay-Medium';
+          }
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin-top: 16px;
+          }
         }
       }
     }
 
     .card-icons {
-      display:flex;
+      display: flex;
 
       .card-icon {
         width: 24px;
         height: 24px;
-  
+
         @media (min-width: ${theme.screens.lg}) {
           width: 30px;
           height: 30px;
         }
-  
+
         & > svg {
           width: 24px;
           height: 24px;
           opacity: 0.2;
-  
+
           @media (min-width: ${theme.screens.lg}) {
             width: 30px;
             height: 30px;
@@ -351,17 +356,17 @@ export const LongCardWrapper = styled.div<ICardProps>`
         cursor: pointer;
         width: 24px;
         height: 24px;
-  
+
         @media (min-width: ${theme.screens.lg}) {
           width: 30px;
           height: 30px;
         }
-  
+
         & > svg {
           width: 24px;
           height: 24px;
           fill: ${theme.colors.white};
-  
+
           @media (min-width: ${theme.screens.lg}) {
             width: 30px;
             height: 30px;

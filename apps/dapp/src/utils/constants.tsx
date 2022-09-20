@@ -40,12 +40,6 @@ const PERSONHOOD_CREDENTIALS = [
     text: 'Legal Name',
     icon: <Badge />,
     isDisabled: true
-  },
-  {
-    id: 'issuer',
-    text: 'Issuer',
-    icon: <Approval />,
-    isDisabled: true
   }
 ];
 
@@ -72,9 +66,20 @@ const WORK_CREDENTIALS = [
   }
 ];
 
+const COMMUNITY_CREDENTIALS = [
+  {
+    id: 'issuer',
+    text: 'Issuer',
+    icon: <Approval />,
+    image:
+      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
+  }
+];
+
 const constants = {
   PERSONHOOD_CREDENTIALS,
-  WORK_CREDENTIALS
+  WORK_CREDENTIALS,
+  COMMUNITY_CREDENTIALS
 };
 
 export { constants };
