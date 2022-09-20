@@ -3,19 +3,19 @@ import styled from '@emotion/styled';
 
 export const Wrapper = styled.div`
   ${({ theme }) => css`
-    .education-header {
+    .community-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
 
-      .education-header-text {
+      .community-header-text {
         margin: 0;
         font-size: ${theme.fonts.lg};
         color: ${theme.colors.white};
       }
 
-      .education-header-verify {
+      .community-header-verify {
         margin: 0;
         font-size: ${theme.fonts.sm};
         color: ${theme.colors.white};
@@ -25,10 +25,10 @@ export const Wrapper = styled.div`
         cursor: pointer;
       }
 
-      .education-header-filter {
+      .community-header-filter {
         position: relative;
 
-        .education-header-filter-text {
+        .community-header-filter-text {
           margin: 0;
           font-size: ${theme.fonts.sm};
           color: ${theme.colors.white};
@@ -38,7 +38,7 @@ export const Wrapper = styled.div`
           cursor: pointer;
         }
 
-        .education-header-filter-content {
+        .community-header-filter-content {
           position: absolute;
           top: 40px;
           right: 0;
@@ -47,7 +47,7 @@ export const Wrapper = styled.div`
       }
     }
 
-    .education-cards {
+    .community-cards {
       display: grid;
       grid-gap: 17px;
 
@@ -56,7 +56,7 @@ export const Wrapper = styled.div`
       }
     }
 
-    .education-view-more {
+    .community-view-more {
       margin: 0;
       margin-top: 20px;
       font-size: ${theme.fonts.sm};

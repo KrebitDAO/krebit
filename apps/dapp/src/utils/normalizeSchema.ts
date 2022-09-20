@@ -18,6 +18,7 @@ export interface IProfile {
   countFollowing: number;
   personhoods?: ICredential[];
   works?: ICredential[];
+  communities?: ICredential[];
 }
 
 export const profile = async (passport: Passport, orbis: Orbis) => {
@@ -38,7 +39,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,
       countFollowers: orbisProfile?.data?.count_followers || 0,
-      countFollowing: orbisProfile?.data?.count_following || 0
+      countFollowing: orbisProfile?.data?.count_following || 0,
     };
   } else {
     const profile = await passport.getProfile();
@@ -60,7 +61,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         description: profile?.description,
         reputation: reputation || 0,
         countFollowers: orbisProfile?.data?.count_followers || 0,
-        countFollowing: orbisProfile?.data?.count_following || 0
+        countFollowing: orbisProfile?.data?.count_following || 0,
       };
     } else {
       currentProfile = {
@@ -76,7 +77,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         description: undefined,
         reputation: reputation || 0,
         countFollowers: 0,
-        countFollowing: 0
+        countFollowing: 0,
       };
     }
   }
@@ -85,5 +86,5 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
 };
 
 export const normalizeSchema = {
-  profile
+  profile,
 };
