@@ -206,7 +206,7 @@ export const useEmailProvider = () => {
         }:${walletInformation.address}`
       );
 
-      const credentials = await passport.getCredentials();
+      const credentials = await passport.getCredentials('email');
       const getLatestEmailCredential = credentials
         .filter(credential => credential.type.includes('email'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))

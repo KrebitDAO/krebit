@@ -1,5 +1,4 @@
 import express from 'express';
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
@@ -12,8 +11,6 @@ const {
   SERVER_PRICE,
   SERVER_CERAMIC_URL
 } = process.env;
-
-const ceramicClient = new CeramicClient(SERVER_CERAMIC_URL);
 
 export const VeriffController = async (
   request: express.Request,

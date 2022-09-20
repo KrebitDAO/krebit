@@ -2,22 +2,7 @@ import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import {
-  connect,
-  getTwitterUser,
-  getTwitterFollowersCount,
-  getTwitterPostsCount
-} from '../../utils';
-
-// Twitter Oauth2
-import { Client, auth } from 'twitter-api-sdk';
-
-const authClient = new auth.OAuth2User({
-  client_id: process.env.SERVER_TWITTER_CLIENT_ID as string,
-  client_secret: process.env.SERVER_TWITTER_CLIENT_SECRET as string,
-  callback: process.env.SERVER_TWITTER_CALLBACK as string,
-  scopes: ['tweet.read', 'users.read']
-});
+import { connect, getGithubUser } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -28,7 +13,7 @@ const {
   SERVER_NETWORK
 } = process.env;
 
-export const TwitterController = async (
+export const GithubController = async (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction
@@ -58,17 +43,14 @@ export const TwitterController = async (
 
     const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
-    console.log(
-      'Verifying twitter with claimedCredential: ',
-      claimedCredential
-    );
+    console.log('Verifying github with claimedCredential: ', claimedCredential);
 
     // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
-    // If claim is digitalProperty "twitter"
+    // If claim is digitalProperty "github"
     if (
-      claimedCredential?.credentialSubject?.type === 'twitter' &&
+      claimedCredential?.credentialSubject?.type === 'github' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -77,24 +59,19 @@ export const TwitterController = async (
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('claim value: ', claimValue);
 
-      // Connect to twitter and get user ID from code
-      const twitterUser = await getTwitterUser({
-        client: authClient,
-        state: claimValue.proofs.state,
-        code_challenge: claimedCredential.credentialSubject.ethereumAddress,
-        code: claimValue.proofs.code
-      });
-      console.log('twitterUser: ', twitterUser);
+      // Connect to github and get user ID from code
+      const githubUser = await getGithubUser(claimValue.proofs.code);
+      console.log('githubUser: ', githubUser);
 
-      // If valid twitterID
+      // If valid githubID
       if (
-        claimValue.host === 'twitter.com' &&
-        twitterUser &&
-        twitterUser.username.toLowerCase() === claimValue.username.toLowerCase()
+        claimValue.host === 'github.com' &&
+        githubUser &&
+        githubUser.login.toLowerCase() === claimValue.username.toLowerCase()
       ) {
         delete claimValue.proofs;
 
-        console.log('Valid twitter ID:', twitterUser);
+        console.log('Valid github ID:', githubUser);
 
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
@@ -110,7 +87,7 @@ export const TwitterController = async (
           tags: claimedCredential.type.slice(2),
           value: {
             ...claimValue,
-            ...twitterUser
+            id: githubUser.id.toString()
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
@@ -120,7 +97,7 @@ export const TwitterController = async (
         };
         console.log('claim: ', claim);
 
-        // Issue Verifiable credential (twitterUsername)
+        // Issue Verifiable credential (githubUsername)
 
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
@@ -129,23 +106,19 @@ export const TwitterController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong twitter ID: ${twitterUser}`);
+        throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'twitterFollowers'
+      claimedCredential?.credentialSubject?.type === 'githubFollowers'
     ) {
       // Get evidence bearer token
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('claim value: ', claimValue);
 
-      // Connect to twitter and get user ID from code
-      const followers = await getTwitterFollowersCount({
-        client: authClient,
-        state: claimValue.proofs.state,
-        code_challenge: claimedCredential.credentialSubject.ethereumAddress,
-        code: claimValue.proofs.code
-      });
-      console.log('twitterFollowersCount: ', followers);
+      // Connect to github and get user ID from code
+      const githubUser = await getGithubUser(claimValue.proofs.code);
+      const followers = githubUser.followers;
+      console.log('githubFollowersCount: ', followers);
 
       let valid = false;
       switch (claimValue.followers) {
@@ -180,7 +153,7 @@ export const TwitterController = async (
       }
 
       // If valid follower count
-      if (claimValue.host === 'twitter.com' && valid) {
+      if (claimValue.host === 'github.com' && valid) {
         delete claimValue.proofs;
 
         const expirationDate = new Date();
@@ -207,7 +180,7 @@ export const TwitterController = async (
         };
         console.log('claim: ', claim);
 
-        // Issue Verifiable credential (twitterUsername)
+        // Issue Verifiable credential (githubUsername)
 
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
@@ -216,7 +189,7 @@ export const TwitterController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong twitter ID: ${followers}`);
+        throw new Error(`Wrong github ID: ${followers}`);
       }
     }
   } catch (err) {

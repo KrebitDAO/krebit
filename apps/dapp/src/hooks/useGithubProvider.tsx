@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
-import { auth } from 'twitter-api-sdk';
 import { debounce } from 'ts-debounce';
 
 import {
@@ -12,20 +11,14 @@ import {
   sortByDate
 } from 'utils';
 
-const { NEXT_PUBLIC_TWITTER_NODE_URL } = process.env;
+const { NEXT_PUBLIC_GITHUB_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
-
-const authClient = new auth.OAuth2User({
-  client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
-  callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
-  scopes: ['tweet.read', 'users.read']
-});
 
 interface IClaimValues {
   username: string;
 }
 
-export const useTwitterProvider = () => {
+export const useGithubProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     username: ''
   });
@@ -34,7 +27,7 @@ export const useTwitterProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
-  const channel = new BroadcastChannel('twitter_oauth_channel');
+  const channel = new BroadcastChannel('github_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
@@ -56,11 +49,9 @@ export const useTwitterProvider = () => {
   }, [channel]);
 
   const handleFetchOAuth = (address: string) => {
-    const authUrl = authClient.generateAuthURL({
-      state: `twitter-${generateUID(10)}`,
-      code_challenge: address,
-      code_challenge_method: 'plain'
-    });
+    const state = 'github-' + generateUID(10);
+
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CALLBACK}&state=${state}`;
 
     openOAuthUrl({
       url: authUrl
@@ -70,7 +61,7 @@ export const useTwitterProvider = () => {
   const getClaim = async (address: string, proofs: any) => {
     const claimValue = {
       protocol: 'https',
-      host: 'twitter.com',
+      host: 'github.com',
       username: claimValues.username,
       proofs
     };
@@ -83,9 +74,15 @@ export const useTwitterProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'twitter',
+      type: 'github',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['digitalProperty', 'social', 'personhood'],
+      tags: [
+        'digitalProperty',
+        'code',
+        'programing',
+        'development',
+        'workExperience'
+      ],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -99,9 +96,9 @@ export const useTwitterProvider = () => {
     setStatus('credential_pending');
 
     try {
-      // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'twitter') {
-        console.log('Saving Stamp', { type: 'twitter', proof: e.data });
+      // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
+      if (e.target === 'github') {
+        console.log('Saving Stamp', { type: 'github', proof: e.data });
 
         const session = window.localStorage.getItem('ceramic-session');
         const currentSession = JSON.parse(session);
@@ -113,7 +110,7 @@ export const useTwitterProvider = () => {
 
         // Step 1-A:  Get credential from Issuer based on claim:
 
-        //Issue self-signed credential claiming the Twitter
+        //Issue self-signed credential claiming the Github profile
         const claim = await getClaim(walletInformation.address, e.data);
         console.log('claim: ', claim);
 
@@ -141,7 +138,7 @@ export const useTwitterProvider = () => {
           console.log('claimedCredentialId: ', claimedCredentialId);
           // Step 1-B: Send self-signed credential to the Issuer for verification
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_TWITTER_NODE_URL,
+            verifyUrl: NEXT_PUBLIC_GITHUB_NODE_URL,
             claimedCredentialId
           });
 
@@ -189,9 +186,9 @@ export const useTwitterProvider = () => {
         }:${walletInformation.address}`
       );
 
-      const credentials = await passport.getCredentials('twitter');
-      const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('twitter'))
+      const credentials = await passport.getCredentials('github');
+      const getLatestGithubCredential = credentials
+        .filter(credential => credential.type.includes('github'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 
@@ -202,7 +199,7 @@ export const useTwitterProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestTwitterCredential);
+      const stampTx = await Issuer.stampCredential(getLatestGithubCredential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });

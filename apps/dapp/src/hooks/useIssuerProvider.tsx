@@ -154,7 +154,7 @@ export const useIssuerProvider = () => {
         }:${walletInformation.address}`
       );
 
-      const credentials = await passport.getCredentials();
+      const credentials = await passport.getCredentials('issuer');
       const getLatestIssuerCredential = credentials
         .filter(credential => credential.type.includes('issuer'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
