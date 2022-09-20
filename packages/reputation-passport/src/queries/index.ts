@@ -5,6 +5,8 @@ import { erc20Balances } from './erc20Balances';
 import { erc20Contract } from './erc20Contract';
 import { verifiableCredential } from './verifiableCredential';
 import { verifiableCredentials } from './verifiableCredentials';
+import { ensResolvedAddress } from './ensResolvedAddress';
+import { ensDomains } from './ensDomains';
 
 export {
   credentialRegistries,
@@ -13,5 +15,7 @@ export {
   erc20Balances,
   erc20Contract,
   verifiableCredential,
-  verifiableCredentials
+  verifiableCredentials,
+  ensResolvedAddress,
+  ensDomains
 };

@@ -36,7 +36,7 @@ export const Username = () => {
 
     setStatus('pending');
 
-    const isValidID = isValid('did', query.id as string);
+    const isValidID = isValid('all', query.id as string);
 
     if (!isValidID) {
       setStatus('rejected');
@@ -45,10 +45,13 @@ export const Username = () => {
 
     const getProfile = async () => {
       try {
-        const did = query.id;
-        const address = (query.id as string).match(/0x[a-fA-F0-9]{40}/g)[0];
-
-        publicPassport.read(address, did);
+        if ((query.id as string).startsWith('did:')) {
+          publicPassport.readDid(query.id);
+        } else if ((query.id as string).endsWith('.eth')) {
+          await publicPassport.readEns(query.id);
+        } else if ((query.id as string).startsWith('0x')) {
+          publicPassport.read(query.id);
+        }
 
         let currentProfile = await normalizeSchema.profile(
           publicPassport,
