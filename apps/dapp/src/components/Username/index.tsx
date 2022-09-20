@@ -9,7 +9,7 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
-import { constants, sortByDate, isValid, normalizeSchema } from 'utils';
+import { constants, sortByDate, isValid, getDID, normalizeSchema } from 'utils';
 import { GeneralContext } from 'context';
 
 // types
@@ -21,6 +21,7 @@ const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 export const Username = () => {
   const [status, setStatus] = useState('idle');
   const [profile, setProfile] = useState<IProfile | undefined>();
+  const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
   const { query, push } = useRouter();
   const {
     auth,
@@ -45,20 +46,19 @@ export const Username = () => {
 
     const getProfile = async () => {
       try {
-        console.log('query.id', query.id);
-        if ((query.id as string).startsWith('did:')) {
-          publicPassport.readDid(query.id);
-        } else if ((query.id as string).endsWith('.eth')) {
-          await publicPassport.readEns(query.id);
-        } else if ((query.id as string).startsWith('0x')) {
-          publicPassport.read(query.id);
-        }
-        console.log('loading', publicPassport.did);
+        await publicPassport.read(query.id);
 
         let currentProfile = await normalizeSchema.profile(
           publicPassport,
           orbis
         );
+
+        const currentDIDFromURL = await getDID(
+          query.id as string,
+          publicPassport
+        );
+
+        setCurrentDIDFromURL(currentDIDFromURL);
 
         const currentPersonhoodCredentials =
           await publicPassport.getCredentials(undefined, 'personhood');
@@ -215,7 +215,7 @@ export const Username = () => {
     };
 
     getProfile();
-  }, [publicPassport, query.id]);
+  }, [publicPassport, query.id, currentDIDFromURL]);
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
@@ -281,7 +281,7 @@ export const Username = () => {
                     </span>
                   </div>
                 </div>
-                {query.id !== auth?.did && (
+                {currentDIDFromURL !== auth?.did && (
                   <div className="profile-buttons">
                     <Button text="Follow" onClick={() => {}} />
                     <Button
@@ -308,7 +308,7 @@ export const Username = () => {
                   </div>
                 </Skills>
                 <Personhood
-                  isAuthenticated={query.id === auth?.did}
+                  isAuthenticated={currentDIDFromURL === auth?.did}
                   personhoods={profile.personhoods}
                   passport={passport}
                   issuer={issuer}
@@ -317,14 +317,14 @@ export const Username = () => {
               </div>
               <div className="content-right">
                 <Community
-                  isAuthenticated={query.id === auth?.did}
+                  isAuthenticated={currentDIDFromURL === auth?.did}
                   communities={profile.communities}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}
                 />
                 <Work
-                  isAuthenticated={query.id === auth?.did}
+                  isAuthenticated={currentDIDFromURL === auth?.did}
                   works={profile.works}
                   passport={passport}
                   issuer={issuer}

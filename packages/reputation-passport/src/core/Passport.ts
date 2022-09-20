@@ -8,6 +8,7 @@ import localStore from 'store2';
 
 import { krbToken } from '../schemas';
 import { ceramic, graph, ens } from '../lib';
+import { regexValidations } from '../utils';
 import { config, IConfigProps } from '../config';
 
 interface IProps extends IConfigProps {
@@ -84,22 +85,27 @@ export class Passport {
     return balance ? balance.value : 0;
   };
 
-  read(address: string) {
-    this.address = address;
-    this.did = `did:pkh:eip155:${
-      krbToken[this.currentConfig.network]?.domain?.chainId
-    }:${address}`;
+  read = async (value: string) => {
+    if (value.match(regexValidations.address)) {
+      this.address = value;
+      this.did = `did:pkh:eip155:${
+        krbToken[this.currentConfig.network]?.domain?.chainId
+      }:${value}`;
+    }
 
-    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.idx = ceramic.publicIDX({
-      client: ceramicClient
-    });
-    this.ceramic = ceramicClient;
-  }
+    if (value.match(regexValidations.did)) {
+      this.did = value;
+      this.address = (value as string).match(regexValidations.address)[0];
+    }
 
-  readDid = async (did: string) => {
-    this.did = did;
-    this.address = (did as string).match(/0x[a-fA-F0-9]{40}/g)[0];
+    if (value.match(regexValidations.ens)) {
+      await this.readEns(value);
+      return;
+    }
+
+    if (!this.did || !this.address) {
+      throw new Error('Invalid did or address');
+    }
 
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.idx = ceramic.publicIDX({
@@ -110,6 +116,7 @@ export class Passport {
 
   readEns = async (ens: string) => {
     const address = await this.resolveName(ens);
+
     if (address) {
       this.ens = ens;
       this.read(address);

@@ -23,7 +23,7 @@ export interface IProfile {
 
 export const profile = async (passport: Passport, orbis: Orbis) => {
   let currentProfile: IProfile;
-  const did = passport?.did ? passport?.did : '';
+  const did = passport?.did;
 
   const orbisProfile = await orbis.getProfile(did);
   const reputation = await passport.getReputation();

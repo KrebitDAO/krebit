@@ -1,29 +1,23 @@
-import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
-
-const addressRegex = '0x[a-fA-F0-9]{40}';
-const ensRegex = 'eth$';
-const didRegex = `did:pkh:eip155:${
-  krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId
-}:${addressRegex}`;
+import { regexValidations } from '@krebitdao/reputation-passport/dist/utils';
 
 export const isValid = (type: string, value: string) => {
   if (type === 'address') {
-    return value.match(addressRegex);
+    return value.match(regexValidations.address);
   }
 
   if (type === 'did') {
-    return value.match(didRegex);
+    return value.match(regexValidations.did);
   }
 
   if (type === 'ens') {
-    return value.match(ensRegex);
+    return value.match(regexValidations.ens);
   }
 
   if (type === 'all') {
     return (
-      value.match(addressRegex) ||
-      value.match(didRegex) ||
-      value.match(ensRegex)
+      value.match(regexValidations.address) ||
+      value.match(regexValidations.did) ||
+      value.match(regexValidations.ens)
     );
   }
 
