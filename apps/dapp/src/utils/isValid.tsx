@@ -1,7 +1,7 @@
 import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
 
 const addressRegex = '0x[a-fA-F0-9]{40}';
-const ensRegex = '/eth$/';
+const ensRegex = 'eth$';
 const didRegex = `did:pkh:eip155:${
   krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId
 }:${addressRegex}`;

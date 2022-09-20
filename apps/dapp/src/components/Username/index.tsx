@@ -45,6 +45,7 @@ export const Username = () => {
 
     const getProfile = async () => {
       try {
+        console.log('query.id', query.id);
         if ((query.id as string).startsWith('did:')) {
           publicPassport.readDid(query.id);
         } else if ((query.id as string).endsWith('.eth')) {
@@ -52,6 +53,7 @@ export const Username = () => {
         } else if ((query.id as string).startsWith('0x')) {
           publicPassport.read(query.id);
         }
+        console.log('loading', publicPassport.did);
 
         let currentProfile = await normalizeSchema.profile(
           publicPassport,
