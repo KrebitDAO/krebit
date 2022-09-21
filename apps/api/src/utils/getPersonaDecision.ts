@@ -17,7 +17,7 @@ export const getPersonaDecision = async (inquiryId: string): Promise<any> => {
     ).then(result => result.json());
 
     const verification = response.included.filter(obj => {
-      return obj.type === 'inquiry-session';
+      return obj.type === 'verification/government-id';
     });
     return verification[0];
   } catch (error) {

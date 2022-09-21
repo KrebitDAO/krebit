@@ -30,11 +30,10 @@ export const usePersonaProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const channel = new BroadcastChannel('persona_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('persona_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -50,7 +49,7 @@ export const usePersonaProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
   const handleFetchOAuth = () => {
     const authUrl = `https://krebit.withpersona.com/verify?template-id=${
