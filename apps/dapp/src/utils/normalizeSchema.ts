@@ -5,6 +5,7 @@ import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken
 export interface ICredential {
   credential: any;
   stamps: any[];
+  skills?: string[];
 }
 
 export interface IProfile {
@@ -19,6 +20,7 @@ export interface IProfile {
   personhoods?: ICredential[];
   works?: ICredential[];
   communities?: ICredential[];
+  skills?: string[];
 }
 
 export const profile = async (passport: Passport, orbis: Orbis) => {
@@ -39,7 +41,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,
       countFollowers: orbisProfile?.data?.count_followers || 0,
-      countFollowing: orbisProfile?.data?.count_following || 0,
+      countFollowing: orbisProfile?.data?.count_following || 0
     };
   } else {
     const profile = await passport.getProfile();
@@ -61,7 +63,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         description: profile?.description,
         reputation: reputation || 0,
         countFollowers: orbisProfile?.data?.count_followers || 0,
-        countFollowing: orbisProfile?.data?.count_following || 0,
+        countFollowing: orbisProfile?.data?.count_following || 0
       };
     } else {
       currentProfile = {
@@ -77,7 +79,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         description: undefined,
         reputation: reputation || 0,
         countFollowers: 0,
-        countFollowing: 0,
+        countFollowing: 0
       };
     }
   }
@@ -86,5 +88,5 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
 };
 
 export const normalizeSchema = {
-  profile,
+  profile
 };

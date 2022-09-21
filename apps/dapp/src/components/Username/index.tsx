@@ -9,14 +9,19 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
-import { constants, sortByDate, isValid, getDID, normalizeSchema } from 'utils';
+import {
+  constants,
+  sortByDate,
+  isValid,
+  getDID,
+  normalizeSchema,
+  mergeArray
+} from 'utils';
 import { GeneralContext } from 'context';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
 import { Work } from './Work';
-
-const MOCK_SKILLS = ['Not a Robot', 'Anti-Sybil', 'Person', 'Human'];
 
 export const Username = () => {
   const [status, setStatus] = useState('idle');
@@ -60,8 +65,10 @@ export const Username = () => {
 
         setCurrentDIDFromURL(currentDIDFromURL);
 
-        const currentPersonhoodCredentials =
-          await publicPassport.getCredentials(undefined, 'personhood');
+        const currentPersonhoodCredentials = await publicPassport.getCredentials(
+          undefined,
+          'personhood'
+        );
 
         if (currentPersonhoodCredentials?.length === 0) {
           currentProfile = {
@@ -69,6 +76,8 @@ export const Username = () => {
             personhoods: []
           };
         }
+
+        let currentSkills = [];
 
         const currentPersonhoods = await Promise.all(
           currentPersonhoodCredentials.map(async credential => {
@@ -89,7 +98,7 @@ export const Username = () => {
               },
               value: claimValue
             };
-
+            currentSkills = currentSkills.concat(credential.type);
             return {
               credential: customCredential,
               stamps
@@ -136,7 +145,7 @@ export const Username = () => {
               },
               value: claimValue
             };
-
+            currentSkills = currentSkills.concat(credential.type);
             return {
               credential: customCredential,
               stamps
@@ -183,7 +192,7 @@ export const Username = () => {
               },
               value: claimValue
             };
-
+            currentSkills = currentSkills.concat(credential.type);
             return {
               credential: customCredential,
               stamps
@@ -203,7 +212,8 @@ export const Username = () => {
           ...currentProfile,
           personhoods: currentPersonhoods,
           works: currentWorks,
-          communities: currentCommunities
+          communities: currentCommunities,
+          skills: mergeArray(currentSkills)
         };
 
         setProfile(currentProfile);
@@ -300,7 +310,7 @@ export const Username = () => {
                     <p className="skills-header-text">Skills</p>
                   </div>
                   <div className="skills-box">
-                    {MOCK_SKILLS.map((item, index) => (
+                    {profile.skills.map((item, index) => (
                       <div className="skills-box-item" key={index}>
                         <p className="skills-box-item-text">{item}</p>
                       </div>
