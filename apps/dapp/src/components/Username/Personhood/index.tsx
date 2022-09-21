@@ -167,6 +167,10 @@ export const Personhood = (props: IProps) => {
       return '@'.concat(value.username);
     }
 
+    if (value?.fullName) {
+      return value.fullName;
+    }
+
     if (value?.id) {
       return value.id;
     }
