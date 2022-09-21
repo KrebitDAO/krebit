@@ -1,4 +1,10 @@
-import { FunctionComponent, ReactNode, useContext, useState } from 'react';
+import {
+  FunctionComponent,
+  ReactNode,
+  useContext,
+  useRef,
+  useState
+} from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -7,8 +13,7 @@ import {
   NavBarDesktop,
   NavBarMobile,
   NavBarOption,
-  Wrapper,
-  Image
+  Wrapper
 } from './styles';
 import { Bell, Explore, Home, Menu, Send } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
@@ -43,17 +48,19 @@ const MENU_OPTIONS = [
 
 export const Layout: FunctionComponent<IProps> = props => {
   const { children } = props;
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpenInView, setIsFilterOpenInView] = useState<string>();
   const {
     auth,
     profileInformation: { profile }
   } = useContext(GeneralContext);
+  const parentDropdownMobileRef = useRef(null);
+  const parentDropdownDesktopRef = useRef(null);
   const { push, asPath } = useRouter();
 
   const handlePushProfile = () => {
-    if (!auth) return;
+    if (!auth.isAuthenticated) return;
 
-    handleFilterOpen();
+    handleFilterOpen(undefined);
     push(`/${profile.did}`);
   };
 
@@ -64,25 +71,24 @@ export const Layout: FunctionComponent<IProps> = props => {
     push(`/`);
   };
 
-  const handleFilterOpen = () => {
-    setIsFilterOpen(prevState => !prevState);
+  const handleFilterOpen = (view: string | undefined) => {
+    setIsFilterOpenInView(view);
   };
 
   return (
     <Wrapper>
-      <MenuMobile>
+      <MenuMobile profilePicture={profile?.picture || '/imgs/logos/Krebit.svg'}>
         <div className="icon">
           <Menu />
         </div>
         {auth?.isAuthenticated && (
           <div className="profile-menu">
-            <Image
-              src={profile.picture || '/imgs/logos/Krebit.svg'}
-              width={30}
-              height={30}
-              onClick={handleFilterOpen}
+            <div
+              className="profile-menu-image"
+              onClick={() => handleFilterOpen('mobile')}
+              ref={parentDropdownMobileRef}
             />
-            {isFilterOpen && (
+            {isFilterOpenInView === 'mobile' && (
               <div className="profile-menu-dropdown">
                 <InlineDropdown
                   items={[
@@ -95,7 +101,8 @@ export const Layout: FunctionComponent<IProps> = props => {
                       onClick: handleLogout
                     }
                   ]}
-                  onClose={handleFilterOpen}
+                  parentRef={parentDropdownMobileRef}
+                  onClose={() => handleFilterOpen(undefined)}
                 />
               </div>
             )}
@@ -108,37 +115,33 @@ export const Layout: FunctionComponent<IProps> = props => {
           <Link href={content.href} key={index}>
             <NavBarOption isActive={asPath.includes(content.href)}>
               <div className="option-icon">{content.icon}</div>
-              <p className="option-title">{content.title}</p>
             </NavBarOption>
           </Link>
         ))}
       </NavBarMobile>
-      <NavBarDesktop>
+      <NavBarDesktop
+        profilePicture={profile?.picture || '/imgs/logos/Krebit.svg'}
+      >
         <div className="options">
           <div className="option-logo">
-            <img src="/imgs/logos/Krebit.svg" width={50} height={50} />
+            <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
           </div>
           {MENU_OPTIONS.map((content, index) => (
             <Link href={content.href} key={index}>
               <NavBarOption isActive={asPath.includes(content.href)}>
                 <div className="option-icon">{content.icon}</div>
-                <p className="option-title">{content.title}</p>
               </NavBarOption>
             </Link>
           ))}
         </div>
         {auth?.isAuthenticated && (
           <div className="option-profile-container">
-            <div className="option-profile">
-              <Image
-                src={profile.picture || '/imgs/logos/Krebit.svg'}
-                width={34}
-                height={34}
-                onClick={handleFilterOpen}
-              />
-              <p className="profile-text">Profile</p>
-            </div>
-            {isFilterOpen && (
+            <div
+              className="option-profile-image"
+              onClick={() => handleFilterOpen('desktop')}
+              ref={parentDropdownDesktopRef}
+            />
+            {isFilterOpenInView === 'desktop' && (
               <div className="option-profile-dropdown">
                 <InlineDropdown
                   items={[
@@ -151,7 +154,8 @@ export const Layout: FunctionComponent<IProps> = props => {
                       onClick: handleLogout
                     }
                   ]}
-                  onClose={handleFilterOpen}
+                  parentRef={parentDropdownDesktopRef}
+                  onClose={() => handleFilterOpen(undefined)}
                 />
               </div>
             )}

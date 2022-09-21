@@ -10,16 +10,17 @@ import {
   useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
+  useEmailProvider,
   useIssuerProvider,
   useEmailProvider,
   usePersonaProvider
 } from 'hooks';
 
 // types
-import { IPersonhood } from 'utils/normalizeSchema';
+import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
-  currentPersonhood?: IPersonhood;
+  currentPersonhood?: ICredential;
   onClose: () => void;
 }
 
@@ -31,6 +32,7 @@ export const VerifyCredential = (props: IProps) => {
   const twitterFollowersProvider = useTwitterFollowersProvider();
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
+  const emailProvider = useEmailProvider();
   const issuerProvider = useIssuerProvider();
   const emailProvider = useEmailProvider();
   const personaProvider = usePersonaProvider();
@@ -600,90 +602,69 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'issuer' && (
+          {currentVerify?.id === 'email' && (
             <>
               <BoxStep
                 title="Step 1"
                 description={
-                  issuerProvider.currentCredential ||
+                  emailProvider.currentVerificationId ||
                   currentPersonhood?.credential
-                    ? 'Step completed, you can now check your credential'
-                    : 'Become an Issuer'
+                    ? 'Verification code sent to your email'
+                    : 'Claim your email address'
                 }
                 form={{
                   inputs:
-                    issuerProvider.currentCredential ||
+                    emailProvider.currentVerificationId ||
                     currentPersonhood?.credential
                       ? undefined
                       : [
                           {
-                            name: 'entity',
-                            placeholder: 'Enter the Issuing Entity name',
-                            value: issuerProvider.claimValues.entity,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'description',
-                            placeholder: 'Enter the Issuing Entity description',
-                            value: issuerProvider.claimValues.description,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'credentialType',
-                            placeholder: 'Enter the credential type nme',
-                            value: issuerProvider.claimValues.credentialType,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'credentialSchema',
-                            placeholder:
-                              'Enter the credential type JSON schema',
-                            value: issuerProvider.claimValues.credentialSchema,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'imageUrl',
-                            placeholder: 'Enter the Issuing Entity logo Url',
-                            value: issuerProvider.claimValues.imageUrl,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'verificationUrl',
-                            placeholder: 'Enter the Verification Url',
-                            value: issuerProvider.claimValues.verificationUrl,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'did',
-                            placeholder: 'Enter the issuer DID',
-                            value: issuerProvider.claimValues.did,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'ethereumAddress',
-                            placeholder: 'Enter the issuer Address',
-                            value: issuerProvider.claimValues.ethereumAddress,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            type: 'number',
-                            name: 'expirationMonths',
-                            placeholder:
-                              'Enter the number of expiration months for credentials',
-                            value: issuerProvider.claimValues.expirationMonths,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            type: 'number',
-                            name: 'price',
-                            placeholder:
-                              'Enter the native token price for issuing this credential',
-                            value: issuerProvider.claimValues.price,
-                            onChange: issuerProvider.handleClaimValues
+                            type: 'email',
+                            name: 'email',
+                            placeholder: 'username@example.com',
+                            value: emailProvider.claimValues.email,
+                            onChange: emailProvider.handleClaimValues
                           }
                         ],
                   button:
-                    issuerProvider.currentCredential ||
+                    emailProvider.currentVerificationId ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : {
+                          text: 'Send Verification Code',
+                          onClick: !emailProvider.claimValues.email
+                            ? undefined
+                            : emailProvider.handleStartVerification,
+                          isDisabled: !emailProvider.claimValues.email
+                        }
+                }}
+                isLoading={emailProvider.status === 'verification_pending'}
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  emailProvider.currentCredential ||
+                  currentPersonhood?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Get email credential via Twilio'
+                }
+                form={{
+                  inputs:
+                    emailProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            type: 'number',
+                            name: 'code',
+                            placeholder:
+                              'Enter the verification code sent to your email',
+                            value: emailProvider.claimValues.code,
+                            onChange: emailProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    emailProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? {
                           text: 'Check it',
@@ -691,29 +672,29 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'ceramic',
                               'credential',
-                              issuerProvider.currentCredential ||
+                              emailProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
                         }
                       : {
                           text: 'Verify',
-                          onClick: issuerProvider.handleGetCredential
+                          onClick: emailProvider.handleGetCredential
                         }
                 }}
                 iconType="credential"
-                isLoading={issuerProvider.status === 'credential_pending'}
+                isLoading={emailProvider.status === 'credential_pending'}
               />
               <BoxStep
-                title="Step 2"
+                title="Step 3"
                 description={
-                  issuerProvider.currentStamp ||
+                  emailProvider.currentStamp ||
                   currentPersonhood?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
-                    : 'Stamp verification on-chain'
+                    : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
-                    issuerProvider.currentStamp ||
+                    emailProvider.currentStamp ||
                     currentPersonhood?.stamps?.length !== 0
                       ? {
                           text: 'Check it',
@@ -721,17 +702,17 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'polygon',
                               'stamp',
-                              issuerProvider.currentStamp ||
+                              emailProvider.currentStamp ||
                                 currentPersonhood?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: issuerProvider.handleStampCredential
+                          onClick: emailProvider.handleStampCredential
                         }
                 }}
                 iconType="stamp"
-                isLoading={issuerProvider.status === 'stamp_pending'}
+                isLoading={emailProvider.status === 'stamp_pending'}
               />
             </>
           )}

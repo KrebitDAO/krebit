@@ -198,15 +198,10 @@ export const useEmailProvider = () => {
         ...walletInformation,
         ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
-      passport.read(
-        walletInformation.address,
-        `did:pkh:eip155:${
-          Krebit.schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK].domain
-            .chainId
-        }:${walletInformation.address}`
-      );
 
-      const credentials = await passport.getCredentials();
+      await passport.read(walletInformation.address);
+
+      const credentials = await passport.getCredentials('email');
       const getLatestEmailCredential = credentials
         .filter(credential => credential.type.includes('email'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))

@@ -6,6 +6,7 @@ const currentProviderChannel = {
   discord: 'discord_oauth_channel',
   twitter: 'twitter_oauth_channel',
   veriff: 'veriff_oauth_channel',
+  github: 'github_oauth_channel'
   persona: 'persona_oauth_channel'
 };
 
@@ -29,8 +30,13 @@ const DynamicProvider = () => {
     if (query.provider === 'veriff') {
       veriffChannel();
     }
+    
+    if (query.provider === 'github') {
+      githubChannel();
+
     if (query.provider === 'persona') {
       personaChannel();
+
     }
   }, [query.provider, currentChannel]);
 
@@ -131,6 +137,52 @@ const DynamicProvider = () => {
     }
   };
 
+  const githubChannel = () => {
+    const queryString = new URLSearchParams(window?.location?.search);
+
+    const [queryError, queryState, queryCode] = [
+      queryString.get('error'),
+      queryString.get('state'),
+      queryString.get('code')
+    ];
+
+    // if Twitter oauth then submit message to other windows and close self
+    if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^github-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'github',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubFollowers-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'githubFollowers',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    }
+    // always close the redirected window
+    window.close();
+  };
+  
+  
   const personaChannel = () => {
     const queryString = new URLSearchParams(window?.location?.search);
     const queryString2 = new URLSearchParams(window?.location?.hash);

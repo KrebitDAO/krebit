@@ -45,7 +45,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       setStatus('pending');
 
       const publicPassport = new Krebit.core.Passport({
-        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai'
+        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
       setPublicPassport(publicPassport);
 
@@ -66,7 +67,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
         ethProvider: information.ethProvider,
         address: information.address,
-        litSdk: LitJsSdk
+        litSdk: LitJsSdk,
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
       const isPassportConnected = await passport.isConnected();
 
@@ -114,7 +116,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
         ethProvider: information.ethProvider,
         address: information.address,
-        litSdk: LitJsSdk
+        litSdk: LitJsSdk,
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
       const passportConnection = await passport.connect();
 

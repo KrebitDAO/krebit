@@ -19,6 +19,8 @@ import { Fingerprint } from './Fingerprint';
 import { Badge } from './Badge';
 import { Delegate } from './Delegate';
 import { MoreVert } from './MoreVert';
+import { Github } from './Github';
+import { Spect } from './Spect';
 
 export {
   Close,
@@ -41,5 +43,7 @@ export {
   Fingerprint,
   Badge,
   Delegate,
-  MoreVert
+  MoreVert,
+  Github,
+  Spect
 };

@@ -11,6 +11,7 @@ import {
   SpectController,
   PhoneController,
   EmailController,
+  GithubController,
   PersonaController
 } from './controller';
 
@@ -31,6 +32,7 @@ router
   .post('/spect', SpectController)
   .post('/phone', PhoneController)
   .post('/email', EmailController)
+  .post('/github', GithubController)
   .post('/persona', PersonaController);
 
 app.use('/', router);
