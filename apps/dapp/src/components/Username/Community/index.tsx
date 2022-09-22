@@ -295,7 +295,6 @@ export const Community = (props: IProps) => {
             />
           ))}
         </div>
-        <p className="community-view-more">View 7 more</p>
       </Wrapper>
     </>
   );

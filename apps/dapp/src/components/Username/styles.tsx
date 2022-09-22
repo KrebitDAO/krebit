@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 interface IProps {
   profilePicture: string;
+  isCurrentProfile: boolean;
 }
 
 interface IBackgrounProps {
@@ -10,13 +11,13 @@ interface IBackgrounProps {
 }
 
 export const Wrapper = styled.div<IProps>`
-  ${({ theme, profilePicture }) => css`
+  ${({ theme, profilePicture, isCurrentProfile }) => css`
     max-width: 1238px;
     margin: 0 auto;
 
     .profile-container {
       position: relative;
-      height: 390px;
+      height: ${isCurrentProfile ? '318px' : '390px'};
 
       @media (min-width: ${theme.screens.lg}) {
         height: 365px;
@@ -57,7 +58,6 @@ export const Wrapper = styled.div<IProps>`
           background-repeat: no-repeat;
           background-size: cover;
           background-color: ${theme.colors.ebony};
-
 
           @media (min-width: ${theme.screens.lg}) {
             width: 171px;
@@ -167,20 +167,68 @@ export const Wrapper = styled.div<IProps>`
 
       @media (min-width: ${theme.screens.lg}) {
         padding: 0;
-        margin-top: 31px;
+        margin-top: 37px;
         display: grid;
         grid-template-columns: 363px 830px;
         grid-gap: 44px;
       }
 
+      .content-filter-menu {
+        display: flex;
+        grid-gap: 28px;
+        overflow-x: scroll;
+        height: 40px;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        .content-filter-menu-item {
+          margin: 0;
+          height: fit-content;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white}80;
+          white-space: nowrap;
+          padding-bottom: 6px;
+          cursor: pointer;
+        }
+
+        .content-filter-menu-item-active {
+          color: ${theme.colors.white};
+          border-bottom: 1px solid ${theme.colors.white};
+        }
+      }
+
+      .content-filter-menu-hidden {
+        display: none;
+      }
+
       .content-left {
+        & > :nth-of-type(2) {
+          margin: 32px 0;
+        }
+
+        @media (min-width: ${theme.screens.lg}) {
+          & > :nth-of-type(2) {
+            margin: 0;
+          }
+
+          & > :nth-of-type(3) {
+            margin-top: 36px;
+          }
+        }
       }
 
       .content-right {
-        margin-top: 36px;
+        & > :nth-of-type(2) {
+          margin: 32px 0;
+        }
 
         @media (min-width: ${theme.screens.lg}) {
-          margin: 0;
+          & > :nth-of-type(2) {
+            margin: 36px 0;
+          }
         }
       }
     }
@@ -196,23 +244,21 @@ export const Background = styled.div<IBackgrounProps>`
     width: 100%;
     height: 165px;
     position: relative;
-    ${
-      image
-        ? css`
-            background-image: url(${image});
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-          `
-        : css`
-            background: linear-gradient(
-              90deg,
-              rgba(2, 0, 36, 1) 0%,
-              rgba(50, 50, 128, 1) 41%,
-              rgba(0, 212, 255, 1) 100%
-            );
-          `
-    }
+    ${image
+      ? css`
+          background-image: url(${image});
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        `
+      : css`
+          background: linear-gradient(
+            90deg,
+            rgba(2, 0, 36, 1) 0%,
+            rgba(50, 50, 128, 1) 41%,
+            rgba(0, 212, 255, 1) 100%
+          );
+        `}
 
     @media (min-width: ${theme.screens.lg}) {
       height: 273px;
@@ -223,8 +269,6 @@ export const Background = styled.div<IBackgrounProps>`
 
 export const Skills = styled.div`
   ${({ theme }) => css`
-    margin-bottom: 36px;
-
     .skills-header {
       margin-bottom: 10px;
 
