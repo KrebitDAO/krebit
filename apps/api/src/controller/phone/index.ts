@@ -4,8 +4,8 @@ import krebit from '@krebitdao/reputation-passport';
 
 import {
   connect,
-  startPhoneVerification,
-  checkPhoneVerification
+  startTwilioVerification,
+  checkTwilioVerification
 } from '../../utils';
 
 const {
@@ -26,10 +26,7 @@ export const PhoneController = async (
       throw new Error('Body not defined');
     }
 
-    let channel = 'sms';
-    if (request?.body?.channel) {
-      channel = request.body.channel;
-    }
+    const channel = 'sms';
 
     // Check and decrypt claimed credential
 
@@ -83,7 +80,7 @@ export const PhoneController = async (
     ) {
       // Check Verification status
       console.log('proofs: ', claimValue.proofs);
-      const verification = await checkPhoneVerification(
+      const verification = await checkTwilioVerification(
         '+'.concat(claimValue.countryCode).concat(claimValue.number),
         claimValue.proofs.nonce
       );
@@ -122,10 +119,11 @@ export const PhoneController = async (
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
 
+        /* Example to check the hash:
         console.log(
           'Valid hash: ',
           Issuer.compareClaimValueHash(claimValue, issuedCredential)
-        );
+        );*/
 
         if (issuedCredential) {
           return response.json(issuedCredential);
@@ -135,7 +133,7 @@ export const PhoneController = async (
       }
     } else {
       // Start Twilio verification
-      const verificationId = await startPhoneVerification(
+      const verificationId = await startTwilioVerification(
         '+'.concat(claimValue.countryCode).concat(claimValue.number),
         channel
       );

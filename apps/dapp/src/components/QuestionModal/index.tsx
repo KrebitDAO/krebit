@@ -44,6 +44,7 @@ export const QuestionModal = (props: IProps) => {
               text={cancelButton.text}
               onClick={isLoading ? undefined : cancelButton.onClick}
               styleType="border"
+              borderBackgroundColor="bunting"
               isDisabled={isLoading}
             />
           </div>

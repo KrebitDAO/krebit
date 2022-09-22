@@ -1,5 +1,4 @@
 import express from 'express';
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, getSpectUser } from '../../utils';

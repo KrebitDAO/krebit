@@ -2,14 +2,19 @@ import React, { useEffect } from 'react';
 
 interface IProps {
   ref: React.MutableRefObject<undefined | HTMLDivElement>;
+  parentRef: React.MutableRefObject<undefined | HTMLDivElement>;
   handler: (event: MouseEvent) => void;
 }
 
-export function useOutsideClick(props: IProps) {
-  const { ref, handler } = props;
+export const useOutsideClick = (props: IProps) => {
+  const { ref, parentRef, handler } = props;
 
   useEffect(() => {
     const listener = (event: any) => {
+      if (!parentRef.current || parentRef.current.contains(event.target)) {
+        return;
+      }
+
       if (!ref.current || ref.current.contains(event.target)) {
         return;
       }
@@ -24,5 +29,5 @@ export function useOutsideClick(props: IProps) {
       document.removeEventListener('mousedown', listener);
       document.removeEventListener('touchstart', listener);
     };
-  }, [ref, handler]);
-}
+  }, [ref, parentRef, handler]);
+};

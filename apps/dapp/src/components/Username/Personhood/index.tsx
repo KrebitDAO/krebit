@@ -11,11 +11,11 @@ import { Card } from 'components/Card';
 import { checkCredentialsURLs } from 'utils';
 
 // types
-import { IPersonhood, IProfile } from 'utils/normalizeSchema';
+import { ICredential, IProfile } from 'utils/normalizeSchema';
 
 interface IProps {
   isAuthenticated: boolean;
-  personhoods: IPersonhood[];
+  personhoods: ICredential[];
   passport: Passport;
   issuer: Issuer;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
@@ -30,7 +30,7 @@ export const Personhood = (props: IProps) => {
     handleProfile
   } = props;
   const [currentPersonhoodSelected, setCurrentPersonhoodSelected] = useState<
-    IPersonhood
+    ICredential
   >();
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [status, setStatus] = useState('idle');
@@ -68,7 +68,7 @@ export const Personhood = (props: IProps) => {
     window.location.reload();
   };
 
-  const handleCurrentPersonhood = (type: string, values: IPersonhood) => {
+  const handleCurrentPersonhood = (type: string, values: ICredential) => {
     if (!isAuthenticated) return;
 
     setCurrentPersonhoodSelected(values);
@@ -159,8 +159,12 @@ export const Personhood = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
+    if (value?.protocol === 'email') {
+      return value.username.concat('@').concat(value.host);
+    }
+
     if (value?.username) {
-      return value.username;
+      return '@'.concat(value.username);
     }
 
     if (value?.id) {
@@ -223,8 +227,8 @@ export const Personhood = (props: IProps) => {
         <div className="cards-box">
           {personhoods.map((personhood, index) => (
             <Card
-              type="simple"
               key={index}
+              type="simple"
               id={`personhood_${index}`}
               icon={personhood.credential?.visualInformation?.icon}
               title={personhood.credential?.visualInformation?.text}
@@ -232,15 +236,11 @@ export const Personhood = (props: IProps) => {
               dates={{
                 issuanceDate: {
                   text: 'ISSUED',
-                  value: new Date(
-                    personhood.credential?.issuanceDate
-                  ).toLocaleDateString('en-US')
+                  value: personhood.credential?.issuanceDate
                 },
                 expirationDate: {
                   text: 'EXPIRES',
-                  value: new Date(
-                    personhood.credential?.expirationDate
-                  ).toLocaleDateString('en-US')
+                  value: personhood.credential?.expirationDate
                 }
               }}
               dropdown={{
@@ -279,7 +279,7 @@ export const Personhood = (props: IProps) => {
                     : undefined,
                   isAuthenticated &&
                   personhood.credential?.visualInformation.isEncryptedByDefault
-                    ? personhood.credential.value.encrypted
+                    ? personhood.credential?.value?.encrypted
                       ? {
                           title: 'Decrypt',
                           onClick: () =>

@@ -6,7 +6,9 @@ import { DIDSession } from 'did-session';
 import { W3CCredential } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
-import { ceramic, graph } from '../lib';
+import { krbToken } from '../schemas';
+import { ceramic, graph, ens } from '../lib';
+import { regexValidations } from '../utils';
 import { config, IConfigProps } from '../config';
 
 interface IProps extends IConfigProps {
@@ -24,6 +26,7 @@ export class Passport {
   public ceramic: CeramicClient;
   public idx: DIDDataStore;
   public did: string;
+  public ens: string;
   public address: string;
   public ethProvider:
     | ethers.providers.Provider
@@ -56,7 +59,7 @@ export class Passport {
     }
 
     this.did = this.idx.id;
-
+    this.ens = await this.lookupAddress(this.address);
     return this.did;
   };
 
@@ -82,17 +85,45 @@ export class Passport {
     return balance ? balance.value : 0;
   };
 
-  read(address: string, did: string) {
-    this.did = did;
-    this.address = address;
-    // TODO get did from address with resolver
+  read = async (value: string) => {
+    if (value.match(regexValidations.address)) {
+      this.address = value;
+      this.did = `did:pkh:eip155:${
+        krbToken[this.currentConfig.network]?.domain?.chainId
+      }:${value}`;
+    }
+
+    if (value.match(regexValidations.did)) {
+      this.did = value;
+      this.address = (value as string).match(regexValidations.address)[0];
+    }
+
+    if (value.match(regexValidations.ens)) {
+      await this.readEns(value);
+      return;
+    }
+
+    if (!this.did || !this.address) {
+      throw new Error('Invalid did or address');
+    }
 
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.idx = ceramic.publicIDX({
       client: ceramicClient
     });
     this.ceramic = ceramicClient;
-  }
+  };
+
+  readEns = async (ens: string) => {
+    const address = await this.resolveName(ens);
+
+    if (address) {
+      this.ens = ens;
+      this.read(address);
+    } else {
+      throw new Error('No resolved address for that ENS domain');
+    }
+  };
 
   // basiProfile from ceramic
   getProfile = async () => {
@@ -136,6 +167,7 @@ export class Passport {
   // get credential from ceramic
   getCredential = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
+    if (!vcId.startsWith('ceramic://')) return null;
     const stream = await TileDocument.load(this.idx.ceramic, vcId);
     return stream.content as W3CCredential;
   };
@@ -147,7 +179,9 @@ export class Passport {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
       );
-      return this.getClaimValue(claimedCredential);
+      return claimedCredential
+        ? this.getClaimValue(claimedCredential)
+        : w3cCredential.credentialSubject.value;
     } else if (w3cCredential.credentialSubject.encrypted === 'none') {
       return JSON.parse(w3cCredential.credentialSubject.value);
     }
@@ -589,5 +623,29 @@ export class Passport {
       orderDirection: 'desc',
       where
     });
+  };
+
+  // ensResolvedAddress from subgraph
+  resolveName = async (name: string) => {
+    const where = {
+      name: name
+    };
+
+    //Get ensResolvedAddress from subgraph
+    const addresses = await ens.resolvedAddressQuery({
+      first: 1,
+      orderBy: 'id',
+      orderDirection: 'desc',
+      where
+    });
+
+    return addresses.length > 0 ? addresses[0].resolvedAddress.id : null;
+  };
+
+  // domainNameQuery from subgraph
+  lookupAddress = async (address: string) => {
+    const domains = await ens.domainNameQuery(address);
+
+    return domains.length > 0 ? domains[0].name : null;
   };
 }

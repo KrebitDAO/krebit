@@ -1,5 +1,4 @@
 import express from 'express';
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 

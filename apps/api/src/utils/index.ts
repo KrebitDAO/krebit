@@ -9,7 +9,8 @@ import {
 import { getVeriffDecision } from './getVeriffDecision';
 import { generateUID } from './generateUID';
 import { getSpectUser } from './getSpectUser';
-import { startPhoneVerification, checkPhoneVerification } from './twilio';
+import { startTwilioVerification, checkTwilioVerification } from './twilio';
+import { getGithubUser } from './github';
 
 export {
   connect,
@@ -21,6 +22,7 @@ export {
   getVeriffDecision,
   generateUID,
   getSpectUser,
-  startPhoneVerification,
-  checkPhoneVerification
+  startTwilioVerification,
+  checkTwilioVerification,
+  getGithubUser
 };

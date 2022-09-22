@@ -59,7 +59,8 @@ export const QuestappController = async (
     //Save the delegation credential to our passport
     const passport = new krebit.core.Passport({
       ethProvider: ethProvider,
-      address: wallet.address
+      address: wallet.address,
+      ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
     });
     await passport.connect();
     const delegateCredentialUrl = await passport.addCredential(

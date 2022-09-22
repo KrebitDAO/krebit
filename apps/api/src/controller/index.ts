@@ -6,6 +6,8 @@ import { VeriffController } from './veriff';
 import { IssuerController } from './issuer';
 import { SpectController } from './spect';
 import { PhoneController } from './phone';
+import { EmailController } from './email';
+import { GithubController } from './github';
 
 export {
   QuestappController,
@@ -15,5 +17,7 @@ export {
   VeriffController,
   IssuerController,
   SpectController,
-  PhoneController
+  PhoneController,
+  EmailController,
+  GithubController
 };

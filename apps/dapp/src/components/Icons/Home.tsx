@@ -2,11 +2,22 @@ export const Home = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      height="48"
-      width="48"
-      viewBox="0 0 48 48"
+      width="24"
+      height="24"
+      fill="none"
+      viewBox="0 0 24 24"
     >
-      <path d="M8 42V18L24.1 6 40 18v24H28.3V27.75h-8.65V42Zm3-3h5.65V24.75H31.3V39H37V19.5L24.1 9.75 11 19.5Zm13-14.65Z" />
+      <g clipPath="url(#clip0_1308_6243)">
+        <path
+          fill="#B7BAC3"
+          d="M9.999 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87l-8.36-7.53c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87h1.7v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z"
+        ></path>
+      </g>
+      <defs>
+        <clipPath id="clip0_1308_6243">
+          <path fill="#fff" d="M0 0H24V24H0z"></path>
+        </clipPath>
+      </defs>
     </svg>
   );
 };
