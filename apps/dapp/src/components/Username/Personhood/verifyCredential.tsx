@@ -10,7 +10,6 @@ import {
   useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
-  useIssuerProvider,
   useEmailProvider,
   usePersonaProvider
 } from 'hooks';
@@ -31,7 +30,6 @@ export const VerifyCredential = (props: IProps) => {
   const twitterFollowersProvider = useTwitterFollowersProvider();
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
-  const issuerProvider = useIssuerProvider();
   const emailProvider = useEmailProvider();
   const personaProvider = usePersonaProvider();
 
@@ -600,7 +598,6 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-
           {currentVerify?.id === 'email' && (
             <>
               <BoxStep

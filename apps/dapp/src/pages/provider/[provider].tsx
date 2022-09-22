@@ -184,7 +184,6 @@ const DynamicProvider = () => {
 
   const personaChannel = () => {
     const queryString = new URLSearchParams(window?.location?.search);
-    const queryString2 = new URLSearchParams(window?.location?.hash);
 
     const [queryStatus, queryState, inquiryId] = [
       queryString.get('status'),
