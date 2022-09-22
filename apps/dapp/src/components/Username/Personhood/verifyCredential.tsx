@@ -10,7 +10,9 @@ import {
   useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
-  useEmailProvider
+  useIssuerProvider,
+  useEmailProvider,
+  usePersonaProvider
 } from 'hooks';
 
 // types
@@ -29,7 +31,9 @@ export const VerifyCredential = (props: IProps) => {
   const twitterFollowersProvider = useTwitterFollowersProvider();
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
+  const issuerProvider = useIssuerProvider();
   const emailProvider = useEmailProvider();
+  const personaProvider = usePersonaProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -380,6 +384,95 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
+          {currentVerify?.id === 'persona' && (
+            <>
+              <BoxStep
+                title="Step 1"
+                description={
+                  personaProvider.currentCredential ||
+                  currentPersonhood?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your full legal name'
+                }
+                form={{
+                  inputs:
+                    personaProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'firstName',
+                            placeholder: 'Enter you first name',
+                            value: personaProvider.claimValues.firstName,
+                            onChange: personaProvider.handleClaimValues
+                          },
+                          {
+                            name: 'lastName',
+                            placeholder: 'Enter you last name',
+                            value: personaProvider.claimValues.lastName,
+                            onChange: personaProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    personaProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              personaProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !personaProvider.claimValues.firstName ||
+                            !personaProvider.claimValues.lastName
+                              ? undefined
+                              : () => personaProvider.handleFetchOAuth(),
+                          isDisabled:
+                            !personaProvider.claimValues.firstName ||
+                            !personaProvider.claimValues.lastName
+                        }
+                }}
+                isLoading={personaProvider.status === 'credential_pending'}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  personaProvider.currentStamp ||
+                  currentPersonhood?.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    personaProvider.currentStamp ||
+                    currentPersonhood?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              personaProvider.currentStamp ||
+                                currentPersonhood?.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: personaProvider.handleStampCredential
+                        }
+                }}
+                isLoading={personaProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+            </>
+          )}
           {currentVerify?.id === 'phone' && (
             <>
               <BoxStep
@@ -507,6 +600,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
+
           {currentVerify?.id === 'email' && (
             <>
               <BoxStep

@@ -198,6 +198,7 @@ export const useEmailProvider = () => {
         ...walletInformation,
         ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
+
       await passport.read(walletInformation.address);
 
       const credentials = await passport.getCredentials('email');

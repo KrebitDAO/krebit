@@ -27,19 +27,25 @@ const PERSONHOOD_CREDENTIALS = [
   },
   {
     id: 'phone',
-    text: 'Phone',
+    text: 'Phone (Twilio)',
     icon: <Phone />
   },
   {
     id: 'email',
-    text: 'Email',
+    text: 'Email (Twilio)',
     icon: <Email />
   },
   {
     id: 'veriff',
-    text: 'Legal Name',
+    text: 'Legal Name (Veriff)',
     icon: <Badge />,
     isDisabled: true
+  },
+  {
+    id: 'persona',
+    text: 'Legal Name (Persona)',
+    icon: <Badge />
+    //isDisabled: true
   }
 ];
 
