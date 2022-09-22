@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 
 export const Wrapper = styled.div`
   ${({ theme }) => css`
-    margin-top: 36px;
-
     .work-header {
       display: flex;
       justify-content: space-between;
@@ -52,20 +50,6 @@ export const Wrapper = styled.div`
     .work-cards {
       display: grid;
       grid-gap: 17px;
-    }
-
-    .work-view-more {
-      margin: 0;
-      margin-top: 20px;
-      font-size: ${theme.fonts.sm};
-      color: ${theme.colors.white};
-      text-decoration: underline;
-      text-align: center;
-
-      @media (min-width: ${theme.screens.lg}) {
-        margin-top: 36px;
-        font-size: ${theme.fonts.base};
-      }
     }
   `}
 `;

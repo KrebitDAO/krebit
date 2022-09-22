@@ -55,20 +55,5 @@ export const Wrapper = styled.div`
         grid-template-columns: repeat(2, 1fr);
       }
     }
-
-    .community-view-more {
-      margin: 0;
-      margin-top: 20px;
-      font-size: ${theme.fonts.sm};
-      color: ${theme.colors.white};
-      text-decoration: underline;
-      text-align: center;
-      cursor: pointer;
-
-      @media (min-width: ${theme.screens.lg}) {
-        margin-top: 36px;
-        font-size: ${theme.fonts.base};
-      }
-    }
   `}
 `;
