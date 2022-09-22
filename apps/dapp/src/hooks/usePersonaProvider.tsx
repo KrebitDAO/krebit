@@ -5,7 +5,6 @@ import LitJsSdk from 'lit-js-sdk';
 import {
   getCredential,
   openOAuthUrl,
-  getVeriffSession,
   sortByDate,
   getWalletInformation,
   generateUID
@@ -17,12 +16,11 @@ interface IClaimValues {
   lastName: string;
 }
 
-const { NEXT_PUBLIC_VERIFF_NODE_URL } = process.env;
-const { NEXT_PUBLIC_VERIFF_NODE_ADDRESS } = process.env;
+const { NEXT_PUBLIC_PERSONA_NODE_URL } = process.env;
+const { NEXT_PUBLIC_PERSONA_NODE_ADDRESS } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
-export const useVeriffProvider = () => {
-  const [veriffSession, setVeriffSession] = useState({});
+export const usePersonaProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     firstName: '',
     lastName: ''
@@ -32,7 +30,7 @@ export const useVeriffProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
-  const channel = new BroadcastChannel('veriff_oauth_channel');
+  const channel = new BroadcastChannel('persona_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
@@ -53,20 +51,15 @@ export const useVeriffProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = async (address: string) => {
-    const veriff = await getVeriffSession({
-      verification: {
-        person: {
-          ...claimValues
-        },
-        vendorData: address,
-        timestamp: new Date().toISOString()
-      }
-    });
+  const handleFetchOAuth = () => {
+    const authUrl = `https://krebit.withpersona.com/verify?template-id=${
+      process.env.NEXT_PUBLIC_PASSPORT_PERSONA_API_TEMPLATE
+    }&environment=sandbox&reference-id=persona-${generateUID(
+      10
+    )}&redirect-uri=${process.env.NEXT_PUBLIC_PASSPORT_PERSONA_CALLBACK}`;
 
-    setVeriffSession(veriff);
     openOAuthUrl({
-      url: veriff.url
+      url: authUrl
     });
   };
 
@@ -81,20 +74,20 @@ export const useVeriffProvider = () => {
       ethereumAddress: address,
       type: 'legalName',
       typeSchema: 'krebit://schemas/legalName',
-      tags: ['veriff', 'fullName', 'kyc', 'personhood'],
+      tags: ['persona', 'fullName', 'kyc', 'personhood'],
       value: {
         ...claimValues,
         fullName: claimValues.firstName
           .concat(' ')
           .concat(claimValues.lastName),
         proofs: {
-          ...veriffSession,
+          ...proofs,
           nonce: `${generateUID(10)}`
         }
       },
       expirationDate: new Date(expirationDate).toISOString(),
       encrypt: 'lit' as 'lit',
-      shareEncryptedWith: NEXT_PUBLIC_VERIFF_NODE_ADDRESS
+      shareEncryptedWith: NEXT_PUBLIC_PERSONA_NODE_ADDRESS
     };
   };
 
@@ -107,7 +100,7 @@ export const useVeriffProvider = () => {
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'veriff') {
+      if (e.target === 'persona') {
         console.log('Saving Stamp', { type: 'legalName', proof: e.data });
 
         const session = window.localStorage.getItem('ceramic-session');
@@ -120,7 +113,7 @@ export const useVeriffProvider = () => {
 
         // Step 1-A:  Get credential from Issuer based on claim:
 
-        // Issue self-signed credential claiming the veriff
+        // Issue self-signed credential claiming the legalName
         const claim = await getClaim(walletInformation.address, e.data);
         console.log('claim: ', claim);
 
@@ -151,7 +144,7 @@ export const useVeriffProvider = () => {
           // Step 1-B: Send self-signed credential to the Issuer for verification
 
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
+            verifyUrl: NEXT_PUBLIC_PERSONA_NODE_URL,
             claimedCredentialId
           });
 
@@ -193,9 +186,9 @@ export const useVeriffProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('legalName');
-      const getLatestVeriffCredential = credentials
-        .filter(credential => credential.type.includes('veriff'))
+      const credentials = await passport.getCredentials();
+      const getLatestPersonaCredential = credentials
+        .filter(credential => credential.type.includes('persona'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 
@@ -206,7 +199,7 @@ export const useVeriffProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestVeriffCredential);
+      const stampTx = await Issuer.stampCredential(getLatestPersonaCredential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });

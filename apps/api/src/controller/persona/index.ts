@@ -2,7 +2,7 @@ import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getVeriffDecision } from '../../utils';
+import { connect, getPersonaDecision } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -12,7 +12,7 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
-export const VeriffController = async (
+export const PersonaController = async (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction
@@ -43,7 +43,10 @@ export const VeriffController = async (
 
     const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
-    console.log('Verifying veriff with claimedCredential: ', claimedCredential);
+    console.log(
+      'Verifying persona with claimedCredential: ',
+      claimedCredential
+    );
 
     if (claimedCredential?.credentialSubject?.type !== 'legalName') {
       throw new Error(`claimedCredential type is not legalName`);
@@ -65,22 +68,21 @@ export const VeriffController = async (
       console.log('Claim value: ', claimValue);
     }
 
-    // If claim is digitalProperty "veriff"
+    // If claim is persona
     if (claimedCredential?.credentialSubject?.type === 'legalName') {
-      // Connect to veriff and get decision status for the session ID (claimedCredential.id)
-      const veriffDecision = await getVeriffDecision(claimValue.proofs.id);
-      console.log('veriffDecision: ', veriffDecision);
+      // Connect to persona and get decision status for the session ID (claimedCredential.id)
+      const personaDecision = await getPersonaDecision(claimValue.proofs.id);
+      console.log('personaDecision: ', personaDecision);
 
-      // If valid veriffID
+      // If valid inquiryId
       if (
-        veriffDecision &&
-        veriffDecision.status === 'approved' &&
+        personaDecision.attributes.status === 'passed' &&
         claimValue.firstName.toUpperCase() ===
-          veriffDecision.person.firstName.toUpperCase() &&
+          personaDecision.attributes['name-first'].toUpperCase() &&
         claimValue.lastName.toUpperCase() ===
-          veriffDecision.person.lastName.toUpperCase()
+          personaDecision.attributes['name-last'].toUpperCase()
       ) {
-        console.log('Valid veriff ID:', veriffDecision);
+        console.log('Valid persona ID:', personaDecision);
 
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
@@ -111,7 +113,7 @@ export const VeriffController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong veriff ID: ${veriffDecision}`);
+        throw new Error(`Wrong persona ID: ${personaDecision}`);
       }
     }
   } catch (err) {

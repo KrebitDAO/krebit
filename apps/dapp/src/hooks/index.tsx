@@ -8,6 +8,7 @@ import { useIssuerProvider } from './useIssuerProvider';
 import { useEmailProvider } from './useEmailProvider';
 import { useGithubProvider } from './useGithubProvider';
 import { useGithubFollowersProvider } from './useGithubFollowersProvider';
+import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 
 export {
@@ -21,5 +22,6 @@ export {
   useEmailProvider,
   useGithubProvider,
   useGithubFollowersProvider,
+  usePersonaProvider,
   useOutsideClick
 };

@@ -403,16 +403,16 @@ export const Username = () => {
                   isHidden={!isDesktop}
                   onClick={handleFilterOption}
                 />
-                <Community
+                <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  communities={profile.communities}
+                  works={profile.works}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}
                 />
-                <Work
+                <Community
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  works={profile.works}
+                  communities={profile.communities}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}
