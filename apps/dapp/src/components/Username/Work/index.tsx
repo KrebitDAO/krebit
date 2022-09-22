@@ -292,13 +292,13 @@ export const Work = (props: IProps) => {
               isIssued={work.credential && work.stamps?.length > 0}
               image={work.credential?.visualInformation?.image}
               tooltip={{
-                message: `This credential has ${work.stamps?.length ||
-                  0} stamps`
+                message: `This credential has ${
+                  work.stamps?.length || 0
+                } stamps`
               }}
             />
           ))}
         </div>
-        <p className="work-view-more">View 7 more</p>
       </Wrapper>
     </>
   );

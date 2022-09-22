@@ -11,6 +11,7 @@ import { getDID } from './getDID';
 import { isValid } from './isValid';
 import { normalizeSchema } from './normalizeSchema';
 import { checkCredentialsURLs } from './checkCredentialsURLs';
+import { mergeArray } from './mergeArray';
 
 export {
   constants,
@@ -25,5 +26,6 @@ export {
   getDID,
   isValid,
   normalizeSchema,
-  checkCredentialsURLs
+  checkCredentialsURLs,
+  mergeArray
 };
