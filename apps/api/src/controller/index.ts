@@ -8,6 +8,7 @@ import { SpectController } from './spect';
 import { PhoneController } from './phone';
 import { EmailController } from './email';
 import { GithubController } from './github';
+import { PersonaController } from './persona';
 
 export {
   QuestappController,
@@ -19,5 +20,6 @@ export {
   SpectController,
   PhoneController,
   EmailController,
-  GithubController
+  GithubController,
+  PersonaController
 };

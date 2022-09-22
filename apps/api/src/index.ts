@@ -11,7 +11,8 @@ import {
   SpectController,
   PhoneController,
   EmailController,
-  GithubController
+  GithubController,
+  PersonaController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -31,7 +32,8 @@ router
   .post('/spect', SpectController)
   .post('/phone', PhoneController)
   .post('/email', EmailController)
-  .post('/github', GithubController);
+  .post('/github', GithubController)
+  .post('/persona', PersonaController);
 
 app.use('/', router);
 
