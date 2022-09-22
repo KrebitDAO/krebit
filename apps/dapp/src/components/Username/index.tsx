@@ -122,8 +122,10 @@ export const Username = () => {
 
         setCurrentDIDFromURL(currentDIDFromURL);
 
-        const currentPersonhoodCredentials =
-          await publicPassport.getCredentials(undefined, 'personhood');
+        const currentPersonhoodCredentials = await publicPassport.getCredentials(
+          undefined,
+          'personhood'
+        );
         const currentWorkCredentials = await publicPassport.getCredentials(
           undefined,
           'workExperience'
@@ -261,12 +263,15 @@ export const Username = () => {
           )
         );
 
-        const [currentPersonhoods, currentWorks, currentCommunities] =
-          await Promise.all([
-            currentPersonhoodsPromise,
-            currentWorksPromise,
-            currentCommunitiesPromise
-          ]);
+        const [
+          currentPersonhoods,
+          currentWorks,
+          currentCommunities
+        ] = await Promise.all([
+          currentPersonhoodsPromise,
+          currentWorksPromise,
+          currentCommunitiesPromise
+        ]);
 
         currentProfile = {
           ...currentProfile,
@@ -379,7 +384,10 @@ export const Username = () => {
                   <div className="skills-box">
                     {profile.skills.map((item, index) => (
                       <div className="skills-box-item" key={index}>
-                        <p className="skills-box-item-text">{item}</p>
+                        <p className="skills-box-item-text">
+                          {item[0]}{' '}
+                          {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
+                        </p>
                       </div>
                     ))}
                   </div>
