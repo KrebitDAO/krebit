@@ -38,8 +38,8 @@ const PERSONHOOD_CREDENTIALS = [
   {
     id: 'veriff',
     text: 'Legal Name (Veriff)',
-    icon: <Badge />
-    //isDisabled: true
+    icon: <Badge />,
+    isDisabled: true
   },
   {
     id: 'persona',

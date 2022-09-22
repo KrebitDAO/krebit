@@ -73,6 +73,7 @@ export const VeriffController = async (
 
       // If valid veriffID
       if (
+        veriffDecision &&
         veriffDecision.status === 'approved' &&
         claimValue.firstName.toUpperCase() ===
           veriffDecision.person.firstName.toUpperCase() &&

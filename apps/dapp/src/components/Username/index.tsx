@@ -60,8 +60,10 @@ export const Username = () => {
 
         setCurrentDIDFromURL(currentDIDFromURL);
 
-        const currentPersonhoodCredentials =
-          await publicPassport.getCredentials(undefined, 'personhood');
+        const currentPersonhoodCredentials = await publicPassport.getCredentials(
+          undefined,
+          'personhood'
+        );
 
         if (currentPersonhoodCredentials?.length === 0) {
           currentProfile = {
@@ -316,16 +318,16 @@ export const Username = () => {
                 />
               </div>
               <div className="content-right">
-                <Community
+                <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  communities={profile.communities}
+                  works={profile.works}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}
                 />
-                <Work
+                <Community
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  works={profile.works}
+                  communities={profile.communities}
                   passport={passport}
                   issuer={issuer}
                   handleProfile={handleProfile}
