@@ -146,8 +146,13 @@ export const Home = () => {
               <SwitchTransition mode="out-in">
                 <CSSTransition
                   key={BOXES[currentUser].username}
-                  addEndListener={(node, done) =>
-                    node.addEventListener('transitionend', done, false)
+                  addEndListener={
+                    ((node: HTMLElement, done: () => void) =>
+                      node.addEventListener(
+                        'transitionend',
+                        done,
+                        false
+                      )) as any
                   }
                   classNames="fade"
                 >
