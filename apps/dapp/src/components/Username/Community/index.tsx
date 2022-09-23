@@ -10,7 +10,7 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { getCredentials } from '../utils';
-import { checkCredentialsURLs, mergeArray } from 'utils';
+import { checkCredentialsURLs } from 'utils';
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
@@ -66,10 +66,8 @@ export const Community = (props: IProps) => {
         setCommunities(communityCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          skills: mergeArray(
-            prevValues.skills.concat(
-              communityCredentials.flatMap(credential => credential.skills)
-            )
+          skills: prevValues.skills.concat(
+            communityCredentials.flatMap(credential => credential.skills)
           )
         }));
         setStatus('resolved');
@@ -270,7 +268,7 @@ export const Community = (props: IProps) => {
                 type="small"
                 id={`community_${index}`}
                 icon={community.credential?.visualInformation?.icon}
-                title={community.credential?.visualInformation?.text}
+                title={community.credential?.visualInformation?.entity}
                 description={formatCredentialName(community.credential?.value)}
                 dates={{
                   issuanceDate: {

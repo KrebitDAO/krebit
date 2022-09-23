@@ -1,18 +1,12 @@
 import { Passport } from '@krebitdao/reputation-passport/dist/core';
 
-import { constants, sortByDate } from 'utils';
+import { getIssuers, sortByDate } from 'utils';
 
 interface IProps {
   type: string;
   passport: Passport;
   limit?: number;
 }
-
-const CONSTANT_CREDENTIALS_TYPE = {
-  personhood: constants.PERSONHOOD_CREDENTIALS,
-  workExperience: constants.WORK_CREDENTIALS,
-  community: constants.COMMUNITY_CREDENTIALS
-};
 
 const getCredentials = async (props: IProps) => {
   const { type, passport, limit = 2 } = props;
@@ -28,8 +22,8 @@ const getCredentials = async (props: IProps) => {
         type: type,
         claimId: credential.id
       });
-      const visualInformation = CONSTANT_CREDENTIALS_TYPE[type].find(constant =>
-        credential.type.includes(constant.id)
+      const visualInformation = getIssuers(type).find(issuer =>
+        credential.type.includes(issuer.credentialType)
       );
       const claimValue = await passport.getClaimValue(credential);
       delete claimValue.proofs;

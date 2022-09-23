@@ -9,7 +9,7 @@ import { VerifyCredential } from './verifyCredential';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { getCredentials } from '../utils';
-import { checkCredentialsURLs, mergeArray } from 'utils';
+import { checkCredentialsURLs } from 'utils';
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
@@ -65,10 +65,8 @@ export const Work = (props: IProps) => {
         setWorks(workCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          skills: mergeArray(
-            prevValues.skills.concat(
-              workCredentials.flatMap(credential => credential.skills)
-            )
+          skills: prevValues.skills.concat(
+            workCredentials.flatMap(credential => credential.skills)
           )
         }));
         setStatus('resolved');
@@ -279,7 +277,7 @@ export const Work = (props: IProps) => {
                 type="long"
                 id={`work_${index}`}
                 icon={work.credential?.visualInformation?.icon}
-                title={work.credential?.visualInformation?.text}
+                title={work.credential?.visualInformation?.entity}
                 description={formatCredentialName(work.credential?.value)}
                 dates={{
                   issuanceDate: {
@@ -354,7 +352,7 @@ export const Work = (props: IProps) => {
                   ]
                 }}
                 isIssued={work.credential && work.stamps?.length > 0}
-                image={work.credential?.visualInformation?.image}
+                image={work.credential?.visualInformation?.imageUrl}
                 tooltip={{
                   message: `This credential has ${
                     work.stamps?.length || 0
