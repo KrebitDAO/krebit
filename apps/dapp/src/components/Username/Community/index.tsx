@@ -352,7 +352,7 @@ export const Community = (props: IProps) => {
                   ]
                 }}
                 isIssued={community.credential && community.stamps?.length > 0}
-                image={community.credential?.visualInformation?.image}
+                image={community.credential?.visualInformation?.imageUrl}
                 tooltip={{
                   message: `This credential has ${
                     community.stamps?.length || 0

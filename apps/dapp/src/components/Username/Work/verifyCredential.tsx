@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { constants, checkCredentialsURLs } from 'utils';
+import { getIssuers, checkCredentialsURLs } from 'utils';
 import { GeneralContext } from 'context';
 import { useGithubProvider, useGithubFollowersProvider } from 'hooks';
 
@@ -29,13 +29,21 @@ export const VerifyCredential = (props: IProps) => {
 
   return (
     <Verify
-      initialList={constants.WORK_CREDENTIALS}
+      initialList={getIssuers('workExperience')}
       onClose={handleClose}
-      verifyId={currentWork?.credential?.visualInformation?.id}
+      verifyId={currentWork?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.id === 'github' && (
+          {currentVerify?.credentialType === 'github' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -117,8 +125,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'githubFollowers' && (
+          {currentVerify?.credentialType === 'githubFollowers' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={

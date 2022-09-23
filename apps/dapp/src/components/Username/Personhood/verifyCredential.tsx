@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { constants, checkCredentialsURLs } from 'utils';
+import { getIssuers, checkCredentialsURLs } from 'utils';
 import { GeneralContext } from 'context';
 import {
   useDiscordProvider,
@@ -42,13 +42,23 @@ export const VerifyCredential = (props: IProps) => {
 
   return (
     <Verify
-      initialList={constants.PERSONHOOD_CREDENTIALS}
+      initialList={getIssuers('personhood')}
       onClose={handleClose}
-      verifyId={currentPersonhood?.credential?.visualInformation?.id}
+      verifyId={
+        currentPersonhood?.credential?.visualInformation?.credentialType
+      }
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.id === 'discord' && (
+          {currentVerify?.credentialType === 'discord' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -111,8 +121,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'twitter' && (
+          {currentVerify?.credentialType === 'twitter' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -197,8 +215,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'twitterFollowers' && (
+          {currentVerify?.credentialType === 'twitterFollowers' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -290,8 +316,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'veriff' && (
+          {currentVerify?.credentialType === 'veriff' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -382,8 +416,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'persona' && (
+          {currentVerify?.credentialType === 'persona' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -471,8 +513,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'phone' && (
+          {currentVerify?.credentialType === 'phone' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={
@@ -598,8 +648,16 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.id === 'email' && (
+          {currentVerify?.credentialType === 'email' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={

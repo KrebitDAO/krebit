@@ -221,7 +221,10 @@ export const Username = () => {
                   <div className="skills-box">
                     {profile.skills.map((item, index) => (
                       <div className="skills-box-item" key={index}>
-                        <p className="skills-box-item-text">{item}</p>
+                        <p className="skills-box-item-text">
+                          {item[0]}{' '}
+                          {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
+                        </p>
                       </div>
                     ))}
                   </div>

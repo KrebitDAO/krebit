@@ -1,3 +1,8 @@
-export const mergeArray = (array: any[]): any[] => {
-  return Array.from(new Set(array));
+export const mergeArray = (arr: any[]): any[] => {
+  const counts = {};
+
+  for (const num of arr) {
+    counts[num] = counts[num] ? counts[num] + 1 : 1;
+  }
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]);
 };

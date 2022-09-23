@@ -5,20 +5,31 @@ import { ArrowForward, Close } from 'components/Icons';
 import { Button } from 'components/Button';
 
 interface IInitialListProps {
-  id: string;
-  text: string;
+  credentialType: string;
+  entity: string;
+  description: string;
   icon: ReactNode;
+  imageUrl: string;
+  verificationUrl: string;
+  did: string;
+  price: string;
   isDisabled?: boolean;
 }
 type IViewStatusProps = 'init' | 'steps';
-type ICurrentVerifyProps = {
-  id: string;
-  text: string;
+type ICurrentIssuerProps = {
+  credentialType: string;
+  entity: string;
+  description: string;
+  icon: ReactNode;
+  imageUrl: string;
+  verificationUrl: string;
+  did: string;
+  price: string;
 };
 
 interface IComponentProps {
-  currentVerify: ICurrentVerifyProps | undefined;
-  handleCurrentVerify: (value: ICurrentVerifyProps) => void;
+  currentVerify: ICurrentIssuerProps | undefined;
+  handleCurrentVerify: (value: ICurrentIssuerProps) => void;
 }
 
 interface IProps {
@@ -32,12 +43,14 @@ export const Verify = (props: IProps) => {
   const { initialList, component, onClose, verifyId } = props;
   const [viewStatus, setViewStatus] = useState<IViewStatusProps>('init');
   const [currentVerify, setCurrentVerify] = useState<
-    ICurrentVerifyProps | undefined
+    ICurrentIssuerProps | undefined
   >();
 
   useEffect(() => {
     if (verifyId) {
-      const currentElement = initialList.find(list => list.id === verifyId);
+      const currentElement = initialList.find(
+        list => list.credentialType === verifyId
+      );
 
       if (currentElement) {
         setViewStatus('steps');
@@ -50,7 +63,7 @@ export const Verify = (props: IProps) => {
     setViewStatus(status);
   };
 
-  const handleCurrentVerify = (value: ICurrentVerifyProps) => {
+  const handleCurrentVerify = (value: ICurrentIssuerProps) => {
     setCurrentVerify(value);
     handleViewStatus('steps');
   };
@@ -70,7 +83,7 @@ export const Verify = (props: IProps) => {
             ) : null}
             <p className="verify-box-header-content-title">
               {viewStatus === 'steps'
-                ? `Verify ${currentVerify.text}`
+                ? `Verify ${currentVerify.entity}`
                 : 'Verify your credentials'}
             </p>
           </div>
@@ -86,7 +99,7 @@ export const Verify = (props: IProps) => {
                   <div className="verify-box-item-content-icon">
                     {item.icon}
                   </div>
-                  <p className="verify-box-item-content-text">{item.text}</p>
+                  <p className="verify-box-item-content-text">{item.entity}</p>
                 </div>
                 <div className="verify-box-item-button">
                   <Button
