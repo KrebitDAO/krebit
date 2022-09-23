@@ -265,7 +265,7 @@ export const LongCardWrapper = styled.div<ICardProps>`
       align-items: center;
       align-self: center;
       border-radius: 10px;
-      background-color: ${theme.colors.white};
+      background-color: ${theme.colors.gray};
 
       @media (min-width: ${theme.screens.lg}) {
         height: 85px;
