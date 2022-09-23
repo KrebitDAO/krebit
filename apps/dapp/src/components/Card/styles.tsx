@@ -258,21 +258,31 @@ export const LongCardWrapper = styled.div<ICardProps>`
       grid-gap: 23px;
     }
 
-    .card-image {
-      width: 100%;
+    .card-image-container {
       height: 63px;
-      background-image: url('${image}');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: contain;
-      border-radius: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
       align-self: center;
+      border-radius: 10px;
+      background-color: ${theme.colors.white};
 
       @media (min-width: ${theme.screens.lg}) {
         height: 85px;
+      }
+
+      .card-image {
+        width: 48px;
+        height: 18px;
+        background-image: url('${image}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 85px;
+          height: 31px;
+        }
       }
     }
 

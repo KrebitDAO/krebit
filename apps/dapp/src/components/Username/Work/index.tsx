@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   Passport,
   Krebit as Issuer
@@ -8,27 +8,78 @@ import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
-import { checkCredentialsURLs } from 'utils';
+import { getCredentials } from '../utils';
+import { checkCredentialsURLs, mergeArray } from 'utils';
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
+import { OpenInNew } from 'components/Icons';
 
 interface IProps {
   isAuthenticated: boolean;
-  works: ICredential[];
   passport: Passport;
+  publicPassport: Passport;
   issuer: Issuer;
+  currentFilterOption: string;
+  onFilterOption: (value: string) => void;
+  isHidden: boolean;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
 }
 
 export const Work = (props: IProps) => {
-  const { works, isAuthenticated, passport, issuer, handleProfile } = props;
+  const {
+    isAuthenticated,
+    passport,
+    publicPassport,
+    issuer,
+    currentFilterOption,
+    onFilterOption,
+    isHidden,
+    handleProfile
+  } = props;
+  const [status, setStatus] = useState('idle');
+  const [works, setWorks] = useState<ICredential[]>();
+  const [actionStatus, setActionStatus] = useState('idle');
   const [currentWorkSelected, setCurrentWorkSelected] = useState<ICredential>();
   const [currentActionType, setCurrentActionType] = useState<string>();
-  const [status, setStatus] = useState('idle');
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const isLoading = status === 'idle' || status === 'pending';
+
+  useEffect(() => {
+    if (!window) return;
+    if (!publicPassport) return;
+    if (isHidden) return;
+
+    setStatus('pending');
+
+    const getInformation = async () => {
+      try {
+        const workCredentials = await getCredentials({
+          type: 'workExperience',
+          passport: publicPassport,
+          limit: currentFilterOption === 'overview' ? 2 : 100
+        });
+
+        setWorks(workCredentials);
+        handleProfile(prevValues => ({
+          ...prevValues,
+          skills: mergeArray(
+            prevValues.skills.concat(
+              workCredentials.flatMap(credential => credential.skills)
+            )
+          )
+        }));
+        setStatus('resolved');
+      } catch (error) {
+        console.error(error);
+        setStatus('rejected');
+      }
+    };
+
+    getInformation();
+  }, [publicPassport, currentFilterOption, isHidden]);
 
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
@@ -86,7 +137,7 @@ export const Work = (props: IProps) => {
 
     try {
       if (currentActionType === 'remove_credential') {
-        setStatus('remove_pending');
+        setActionStatus('remove_pending');
 
         const response = await passport.removeCredential(
           currentWorkSelected.credential?.vcId
@@ -98,7 +149,7 @@ export const Work = (props: IProps) => {
       }
 
       if (currentActionType === 'remove_stamp') {
-        setStatus('remove_pending');
+        setActionStatus('remove_pending');
 
         const response = await issuer.removeStamp(
           currentWorkSelected.stamps[0],
@@ -111,7 +162,7 @@ export const Work = (props: IProps) => {
       }
     } catch (error) {
       console.error(error);
-      setStatus('rejected');
+      setActionStatus('rejected');
     }
   };
 
@@ -193,12 +244,22 @@ export const Work = (props: IProps) => {
             onClick: handleRemoveAction
           }}
           cancelButton={{ text: 'Cancel', onClick: handleIsRemoveModalOpen }}
-          isLoading={status === 'remove_pending'}
+          isLoading={actionStatus === 'remove_pending'}
         />
       ) : null}
-      <Wrapper>
+      <Wrapper isHidden={isHidden}>
         <div className="work-header">
-          <p className="work-header-text">Work credentials</p>
+          <div className="work-header-text-container">
+            <p className="work-header-text">Work credentials</p>
+            {currentFilterOption === 'overview' && (
+              <div
+                className="work-header-text-open-new"
+                onClick={() => onFilterOption('workExperience')}
+              >
+                <OpenInNew />
+              </div>
+            )}
+          </div>
           {isAuthenticated && (
             <p
               className="work-header-verify"
@@ -208,97 +269,101 @@ export const Work = (props: IProps) => {
             </p>
           )}
         </div>
-        <div className="work-cards">
-          {works.map((work, index) => (
-            <Card
-              key={index}
-              type="long"
-              id={`work_${index}`}
-              icon={work.credential?.visualInformation?.icon}
-              title={work.credential?.visualInformation?.text}
-              description={formatCredentialName(work.credential?.value)}
-              dates={{
-                issuanceDate: {
-                  text: 'ISSUED',
-                  value: work.credential?.issuanceDate
-                },
-                expirationDate: {
-                  text: 'EXPIRES',
-                  value: work.credential?.expirationDate
-                }
-              }}
-              dropdown={{
-                isDropdownOpen,
-                onClick: () => handleIsDropdownOpen(`work_${index}`),
-                onClose: () => handleIsDropdownOpen(undefined),
-                items: [
-                  !isAuthenticated
-                    ? {
-                        title: 'Credential details',
-                        onClick: () =>
-                          handleCheckCredentialsURLs(
-                            'ceramic',
-                            'credential',
-                            work.credential
-                          )
-                      }
-                    : undefined,
-                  !isAuthenticated && work.stamps?.length !== 0
-                    ? {
-                        title: 'Stamp details',
-                        onClick: () =>
-                          handleCheckCredentialsURLs(
-                            'polygon',
-                            'stamp',
-                            work.stamps[0]
-                          )
-                      }
-                    : undefined,
-                  isAuthenticated && work.stamps?.length === 0
-                    ? {
-                        title: 'Add stamp',
-                        onClick: () => handleCurrentWork('add_stamp', work)
-                      }
-                    : undefined,
-                  isAuthenticated &&
-                  work.credential?.visualInformation.isEncryptedByDefault
-                    ? work.credential?.value?.encrypted
+        {isLoading ? (
+          <h1>Loading...</h1>
+        ) : (
+          <div className="work-cards">
+            {works.map((work, index) => (
+              <Card
+                key={index}
+                type="long"
+                id={`work_${index}`}
+                icon={work.credential?.visualInformation?.icon}
+                title={work.credential?.visualInformation?.text}
+                description={formatCredentialName(work.credential?.value)}
+                dates={{
+                  issuanceDate: {
+                    text: 'ISSUED',
+                    value: work.credential?.issuanceDate
+                  },
+                  expirationDate: {
+                    text: 'EXPIRES',
+                    value: work.credential?.expirationDate
+                  }
+                }}
+                dropdown={{
+                  isDropdownOpen,
+                  onClick: () => handleIsDropdownOpen(`work_${index}`),
+                  onClose: () => handleIsDropdownOpen(undefined),
+                  items: [
+                    !isAuthenticated
                       ? {
-                          title: 'Decrypt',
-                          onClick: () => handleCurrentWork('decrypt', work)
+                          title: 'Credential details',
+                          onClick: () =>
+                            handleCheckCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              work.credential
+                            )
                         }
-                      : {
-                          title: 'Encrypt',
-                          onClick: () => handleCurrentWork('encrypt', work)
+                      : undefined,
+                    !isAuthenticated && work.stamps?.length !== 0
+                      ? {
+                          title: 'Stamp details',
+                          onClick: () =>
+                            handleCheckCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              work.stamps[0]
+                            )
                         }
-                    : undefined,
-                  isAuthenticated && work.stamps?.length === 0
-                    ? {
-                        title: 'Remove credential',
-                        onClick: () =>
-                          handleCurrentWork('remove_credential', work)
-                      }
-                    : undefined,
-                  isAuthenticated &&
-                  work.credential &&
-                  work.stamps?.length !== 0
-                    ? {
-                        title: 'Remove stamp',
-                        onClick: () => handleCurrentWork('remove_stamp', work)
-                      }
-                    : undefined
-                ]
-              }}
-              isIssued={work.credential && work.stamps?.length > 0}
-              image={work.credential?.visualInformation?.image}
-              tooltip={{
-                message: `This credential has ${
-                  work.stamps?.length || 0
-                } stamps`
-              }}
-            />
-          ))}
-        </div>
+                      : undefined,
+                    isAuthenticated && work.stamps?.length === 0
+                      ? {
+                          title: 'Add stamp',
+                          onClick: () => handleCurrentWork('add_stamp', work)
+                        }
+                      : undefined,
+                    isAuthenticated &&
+                    work.credential?.visualInformation.isEncryptedByDefault
+                      ? work.credential?.value?.encrypted
+                        ? {
+                            title: 'Decrypt',
+                            onClick: () => handleCurrentWork('decrypt', work)
+                          }
+                        : {
+                            title: 'Encrypt',
+                            onClick: () => handleCurrentWork('encrypt', work)
+                          }
+                      : undefined,
+                    isAuthenticated && work.stamps?.length === 0
+                      ? {
+                          title: 'Remove credential',
+                          onClick: () =>
+                            handleCurrentWork('remove_credential', work)
+                        }
+                      : undefined,
+                    isAuthenticated &&
+                    work.credential &&
+                    work.stamps?.length !== 0
+                      ? {
+                          title: 'Remove stamp',
+                          onClick: () => handleCurrentWork('remove_stamp', work)
+                        }
+                      : undefined
+                  ]
+                }}
+                isIssued={work.credential && work.stamps?.length > 0}
+                image={work.credential?.visualInformation?.image}
+                tooltip={{
+                  message: `This credential has ${
+                    work.stamps?.length || 0
+                  } stamps`
+                }}
+              />
+            ))}
+          </div>
+        )}
       </Wrapper>
     </>
   );
