@@ -166,7 +166,7 @@ export class Passport {
 
   // get credential from ceramic
   getCredential = async (vcId: string) => {
-    if (!this.isConnected()) throw new Error('Not connected');
+    if (!this.idx) throw new Error('Not connected');
     if (!vcId.startsWith('ceramic://')) return null;
     const stream = await TileDocument.load(this.idx.ceramic, vcId);
     return stream.content as W3CCredential;
