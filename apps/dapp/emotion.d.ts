@@ -88,6 +88,8 @@ declare module '@emotion/react' {
       xl: string;
       '2xl': string;
     };
+    palette?: PaletteOptions;
+    shape?: ShapeOptions;
   }
 }
 

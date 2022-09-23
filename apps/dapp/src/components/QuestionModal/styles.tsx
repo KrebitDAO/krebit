@@ -49,6 +49,12 @@ export const Wrapper = styled.div`
       .question-modal-content {
         margin: 20px 0;
 
+        .question-modal-content-loading {
+          margin: 0 auto;
+          width: 60px;
+          height: 60px;
+        }
+
         .question-modal-content-text {
           margin: 0;
           font-size: ${theme.fonts.base};

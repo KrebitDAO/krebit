@@ -228,7 +228,10 @@ export const Wrapper = styled.div<IProps>`
 `;
 
 export const LoadingWrapper = styled.div`
+  margin: 0 auto;
   margin-top: 20px;
+  width: 60px;
+  height: 60px;
 `;
 
 export const Background = styled.div<IBackgrounProps>`
@@ -271,6 +274,44 @@ export const Skills = styled.div`
       }
     }
 
+    .skills-box-loading {
+      height: 209px;
+    }
+
+    .skills-not-elements {
+      background-color: ${theme.colors.ebonyClay};
+      border: 1px solid ${theme.colors.scorpion}80;
+      border-radius: 15px;
+      padding: 44px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .skills-not-elements-image {
+        width: 243px;
+        height: 51px;
+      }
+
+      .skills-not-elements-title {
+        margin: 20px auto;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+      }
+
+      .skills-not-elements-description {
+        margin: 0;
+        background: linear-gradient(
+          99.09deg,
+          ${theme.colors.cyan} 0%,
+          ${theme.colors.heliotrope} 105.11%
+        );
+        background-clip: text;
+        text-fill-color: ${theme.colors.transparent};
+        font-size: ${theme.fonts.sm};
+      }
+    }
+
     .skills-box {
       background-color: ${theme.colors.ebonyClay};
       border: 1px solid ${theme.colors.scorpion}80;
@@ -279,12 +320,15 @@ export const Skills = styled.div`
       display: flex;
       flex-wrap: wrap;
       grid-gap: 8px;
+      min-height: 209px;
+      height: 100%;
     }
 
     .skills-box-item {
       border: 1px solid ${theme.colors.melrose};
       border-radius: 20px;
       padding: 4px 14px;
+      height: 100%;
       width: fit-content;
 
       .skills-box-item-text {

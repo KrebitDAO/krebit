@@ -104,6 +104,12 @@ export const Wrapper = styled.div<WalletProps>`
       display: grid;
       justify-content: center;
 
+      .loading-view-container {
+        margin: 0 auto;
+        width: 60px;
+        height: 60px;
+      }
+
       .loading-view-text {
         font-size: ${theme.fonts.sm};
         color: ${theme.colors.white};

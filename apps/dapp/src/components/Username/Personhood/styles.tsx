@@ -79,6 +79,14 @@ export const Wrapper = styled.div<IProps>`
           grid-template-columns: repeat(2, auto);
         `}
       }
+
+      .personhood-card-loading {
+        height: 128px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 132px;
+        }
+      }
     }
   `}
 `;

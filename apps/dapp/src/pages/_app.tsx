@@ -1,16 +1,24 @@
-import { ThemeProvider } from '@emotion/react';
+import { CacheProvider, EmotionCache, ThemeProvider } from '@emotion/react';
 import Head from 'next/head';
 import { AppProps } from 'next/app';
 
 import { theme } from 'theme';
 import { globalStyles } from 'global-styles';
+import { createEmotionCache } from 'utils';
 import { GeneralProvider } from 'context';
 
-const App = (props: AppProps) => {
-  const { Component, pageProps } = props;
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createEmotionCache();
+
+const App = (props: MyAppProps) => {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
-    <>
+    <CacheProvider value={emotionCache}>
       {globalStyles}
       <Head>
         <title>Krebit - your Reputation Passport for Better Job Matching</title>
@@ -41,7 +49,7 @@ const App = (props: AppProps) => {
           <Component {...pageProps} />
         </GeneralProvider>
       </ThemeProvider>
-    </>
+    </CacheProvider>
   );
 };
 
