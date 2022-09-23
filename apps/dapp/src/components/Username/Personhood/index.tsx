@@ -235,7 +235,7 @@ export const Personhood = (props: IProps) => {
               type="simple"
               id={`personhood_${index}`}
               icon={personhood.credential?.visualInformation?.icon}
-              title={personhood.credential?.visualInformation?.text}
+              title={personhood.credential?.visualInformation?.entity}
               description={formatCredentialName(personhood.credential?.value)}
               dates={{
                 issuanceDate: {

@@ -22,10 +22,16 @@ interface IProps {
 }
 
 export const Community = (props: IProps) => {
-  const { communities, isAuthenticated, passport, issuer, handleProfile } =
-    props;
-  const [currentCommunitySelected, setCurrentCommunitySelected] =
-    useState<ICredential>();
+  const {
+    communities,
+    isAuthenticated,
+    passport,
+    issuer,
+    handleProfile
+  } = props;
+  const [currentCommunitySelected, setCurrentCommunitySelected] = useState<
+    ICredential
+  >();
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [status, setStatus] = useState('idle');
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
@@ -207,7 +213,7 @@ export const Community = (props: IProps) => {
               type="small"
               id={`community_${index}`}
               icon={community.credential?.visualInformation?.icon}
-              title={community.credential?.visualInformation?.text}
+              title={community.credential?.visualInformation?.entity}
               description={formatCredentialName(community.credential?.value)}
               dates={{
                 issuanceDate: {
@@ -286,11 +292,10 @@ export const Community = (props: IProps) => {
                 ]
               }}
               isIssued={community.credential && community.stamps?.length > 0}
-              image={community.credential?.visualInformation?.image}
+              image={community.credential?.visualInformation?.imageUrl}
               tooltip={{
-                message: `This credential has ${
-                  community.stamps?.length || 0
-                } stamps`
+                message: `This credential has ${community.stamps?.length ||
+                  0} stamps`
               }}
             />
           ))}

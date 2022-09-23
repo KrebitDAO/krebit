@@ -215,7 +215,7 @@ export const Work = (props: IProps) => {
               type="long"
               id={`work_${index}`}
               icon={work.credential?.visualInformation?.icon}
-              title={work.credential?.visualInformation?.text}
+              title={work.credential?.visualInformation?.entity}
               description={formatCredentialName(work.credential?.value)}
               dates={{
                 issuanceDate: {
@@ -290,11 +290,10 @@ export const Work = (props: IProps) => {
                 ]
               }}
               isIssued={work.credential && work.stamps?.length > 0}
-              image={work.credential?.visualInformation?.image}
+              image={work.credential?.visualInformation?.imageUrl}
               tooltip={{
-                message: `This credential has ${
-                  work.stamps?.length || 0
-                } stamps`
+                message: `This credential has ${work.stamps?.length ||
+                  0} stamps`
               }}
             />
           ))}

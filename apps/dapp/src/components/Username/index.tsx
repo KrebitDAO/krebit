@@ -11,7 +11,7 @@ import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
 import {
-  constants,
+  getIssuers,
   sortByDate,
   isValid,
   getDID,
@@ -164,8 +164,8 @@ export const Username = () => {
               type: 'personhood',
               claimId: credential.id
             });
-            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
-              constant => credential.type.includes(constant.id)
+            const visualInformation = getIssuers('personhood').find(issuer =>
+              credential.type.includes(issuer.credentialType)
             );
             const claimValue = await publicPassport.getClaimValue(credential);
             delete claimValue.proofs;
@@ -199,9 +199,9 @@ export const Username = () => {
               type: 'workExperience',
               claimId: credential.id
             });
-            const visualInformation = constants.WORK_CREDENTIALS.find(
-              constant => credential.type.includes(constant.id)
-            );
+            const visualInformation = getIssuers(
+              'workExperience'
+            ).find(issuer => credential.type.includes(issuer.credentialType));
             const claimValue = await publicPassport.getClaimValue(credential);
             delete claimValue.proofs;
             const customCredential = {
@@ -234,8 +234,8 @@ export const Username = () => {
               type: 'community',
               claimId: credential.id
             });
-            const visualInformation = constants.COMMUNITY_CREDENTIALS.find(
-              constant => credential.type.includes(constant.id)
+            const visualInformation = getIssuers('community').find(issuer =>
+              credential.type.includes(issuer.credentialType)
             );
             const claimValue = await publicPassport.getClaimValue(credential);
             delete claimValue.proofs;

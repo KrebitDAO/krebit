@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 
 import { BoxStepWrapper } from './styles';
 import { Button } from 'components/Button';
@@ -25,10 +25,24 @@ interface IProps {
   };
   isLoading?: Boolean;
   iconType?: string;
+  icon?: ReactNode;
+  did?: string;
+  verificationUrl?: string;
+  price?: string;
 }
 
 export const BoxStep = (props: IProps) => {
-  const { title, description, form, isLoading = false, iconType } = props;
+  const {
+    title,
+    description,
+    form,
+    isLoading = false,
+    iconType,
+    icon,
+    did,
+    verificationUrl,
+    price
+  } = props;
 
   return (
     <BoxStepWrapper hasInputs={!!form?.inputs}>
@@ -39,11 +53,30 @@ export const BoxStep = (props: IProps) => {
       ) : (
         <>
           <div className="verify-box-step-content">
+            {icon && <div className="verify-box-step-content-icon">{icon}</div>}
             <div className="verify-box-step-content-texts">
               <p className="verify-box-step-content-title">{title}</p>
+
               <p className="verify-box-step-content-description">
                 {description}
               </p>
+              {did && (
+                <div className="verify-box-step-content-description">
+                  <a href={'/' + did} target="_blank">
+                    {did.substring(0, 48) + '...'}
+                  </a>
+                </div>
+              )}
+              {verificationUrl && (
+                <div className="verify-box-step-content-description">
+                  {verificationUrl}
+                </div>
+              )}
+              {price && (
+                <div className="verify-box-step-content-description">
+                  ${price}
+                </div>
+              )}
             </div>
             {iconType && (
               <div className="verify-box-step-content-icon">
