@@ -164,6 +164,7 @@ export const Wrapper = styled.div<IProps>`
       padding: 0 20px;
       margin-top: 28px;
       margin-bottom: 120px;
+      overflow: hidden;
 
       @media (min-width: ${theme.screens.lg}) {
         padding: 0;
@@ -179,6 +180,10 @@ export const Wrapper = styled.div<IProps>`
         overflow-x: scroll;
         height: 40px;
         scrollbar-width: none;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: initial;
+        }
 
         &::-webkit-scrollbar {
           display: none;
@@ -206,30 +211,17 @@ export const Wrapper = styled.div<IProps>`
 
       .content-left {
         & > :nth-of-type(2) {
-          margin: 32px 0;
+          margin-top: 32px;
         }
 
         @media (min-width: ${theme.screens.lg}) {
           & > :nth-of-type(2) {
             margin: 0;
           }
-
-          & > :nth-of-type(3) {
-            margin-top: 36px;
-          }
         }
       }
 
       .content-right {
-        & > :nth-of-type(2) {
-          margin: 32px 0;
-        }
-
-        @media (min-width: ${theme.screens.lg}) {
-          & > :nth-of-type(2) {
-            margin: 36px 0;
-          }
-        }
       }
     }
   `}

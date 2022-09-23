@@ -206,7 +206,9 @@ export const Card = (props: IProps) => {
   if (type === 'long') {
     return (
       <LongCardWrapper image={image}>
-        <div className="card-image"></div>
+        <div className="card-image-container">
+          <div className="card-image"></div>
+        </div>
         <div className="card-information">
           <p className="card-information-title">{title}</p>
           <p className="card-information-description">{description}</p>
