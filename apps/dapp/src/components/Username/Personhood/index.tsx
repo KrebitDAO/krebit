@@ -10,7 +10,7 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { getCredentials } from '../utils';
-import { checkCredentialsURLs, mergeArray } from 'utils';
+import { checkCredentialsURLs } from 'utils';
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
@@ -66,10 +66,8 @@ export const Personhood = (props: IProps) => {
         setPersonhoods(personhoodCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          skills: mergeArray(
-            prevValues.skills.concat(
-              personhoodCredentials.flatMap(credential => credential.skills)
-            )
+          skills: prevValues.skills.concat(
+            personhoodCredentials.flatMap(credential => credential.skills)
           )
         }));
         setStatus('resolved');
@@ -292,7 +290,7 @@ export const Personhood = (props: IProps) => {
                 type="simple"
                 id={`personhood_${index}`}
                 icon={personhood.credential?.visualInformation?.icon}
-                title={personhood.credential?.visualInformation?.text}
+                title={personhood.credential?.visualInformation?.entity}
                 description={formatCredentialName(personhood.credential?.value)}
                 dates={{
                   issuanceDate: {

@@ -1,6 +1,6 @@
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { constants, checkCredentialsURLs } from 'utils';
+import { getIssuers, checkCredentialsURLs } from 'utils';
 import { useIssuerProvider } from 'hooks';
 
 // types
@@ -24,13 +24,21 @@ export const VerifyCredential = (props: IProps) => {
 
   return (
     <Verify
-      initialList={constants.COMMUNITY_CREDENTIALS}
+      initialList={getIssuers('community')}
       onClose={handleClose}
-      verifyId={currentCommunity?.credential?.visualInformation?.id}
+      verifyId={currentCommunity?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.id === 'issuer' && (
+          {currentVerify?.credentialType === 'issuer' && (
             <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
               <BoxStep
                 title="Step 1"
                 description={

@@ -10,7 +10,7 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
-import { isValid, getDID, normalizeSchema } from 'utils';
+import { isValid, getDID, normalizeSchema, mergeArray } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -134,6 +134,7 @@ export const Username = () => {
   };
 
   const handleFilterOption = (value: string) => {
+    setProfile({ ...profile, skills: [] });
     setCurrentFilterOption(value);
   };
 
@@ -219,9 +220,12 @@ export const Username = () => {
                     <p className="skills-header-text">Skills</p>
                   </div>
                   <div className="skills-box">
-                    {profile.skills.map((item, index) => (
+                    {mergeArray(profile.skills).map((item, index) => (
                       <div className="skills-box-item" key={index}>
-                        <p className="skills-box-item-text">{item}</p>
+                        <p className="skills-box-item-text">
+                          {item[0]}{' '}
+                          {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
+                        </p>
                       </div>
                     ))}
                   </div>

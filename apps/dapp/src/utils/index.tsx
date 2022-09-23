@@ -1,4 +1,4 @@
-import { constants } from './constants';
+import { getIssuers } from './getIssuers';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getCredential } from './getCredential';
@@ -14,7 +14,7 @@ import { checkCredentialsURLs } from './checkCredentialsURLs';
 import { mergeArray } from './mergeArray';
 
 export {
-  constants,
+  getIssuers,
   getDeworkUser,
   getDiscordUser,
   getCredential,
