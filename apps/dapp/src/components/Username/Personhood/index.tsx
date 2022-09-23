@@ -9,8 +9,9 @@ import { VerifyCredential } from './verifyCredential';
 import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
+import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
-import { checkCredentialsURLs } from 'utils';
+import { checkCredentialsURLs, constants } from 'utils';
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
@@ -38,7 +39,7 @@ export const Personhood = (props: IProps) => {
     handleProfile
   } = props;
   const [status, setStatus] = useState('idle');
-  const [personhoods, setPersonhoods] = useState<ICredential[]>();
+  const [personhoods, setPersonhoods] = useState<ICredential[]>([]);
   const [actionStatus, setActionStatus] = useState('idle');
   const [currentPersonhoodSelected, setCurrentPersonhoodSelected] =
     useState<ICredential>();
@@ -54,6 +55,11 @@ export const Personhood = (props: IProps) => {
     if (isHidden) return;
 
     setStatus('pending');
+    // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
+    handleProfile(prevValues => ({
+      ...prevValues,
+      skills: undefined
+    }));
 
     const getInformation = async () => {
       try {
@@ -66,9 +72,10 @@ export const Personhood = (props: IProps) => {
         setPersonhoods(personhoodCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          skills: prevValues.skills.concat(
-            personhoodCredentials.flatMap(credential => credential.skills)
-          )
+          skills:
+            (prevValues.skills || []).concat(
+              personhoodCredentials.flatMap(credential => credential.skills)
+            ) || []
         }));
         setStatus('resolved');
       } catch (error) {
@@ -262,14 +269,14 @@ export const Personhood = (props: IProps) => {
         <div className="person-header">
           <div className="person-header-text-container">
             <p className="person-header-text">Personhood Credentials</p>
-            {currentFilterOption === 'overview' && (
+            {currentFilterOption === 'overview' && personhoods?.length !== 0 ? (
               <div
                 className="person-header-text-open-new"
                 onClick={() => onFilterOption('personhood')}
               >
                 <OpenInNew />
               </div>
-            )}
+            ) : null}
           </div>
           {isAuthenticated && (
             <p
@@ -280,11 +287,30 @@ export const Personhood = (props: IProps) => {
             </p>
           )}
         </div>
-        {isLoading ? (
-          <h1>Loading...</h1>
-        ) : (
-          <div className="cards-box">
-            {personhoods.map((personhood, index) => (
+        <div className="cards-box">
+          {isLoading ? (
+            <>
+              <div className="personhood-card-loading">
+                <Loading type="skeleton" />
+              </div>
+              <div className="personhood-card-loading">
+                <Loading type="skeleton" />
+              </div>
+            </>
+          ) : personhoods?.length === 0 ? (
+            new Array(2)
+              .fill(constants.DEFAULT_EMPTY_CARD_PERSONHOOD)
+              .map((personhood, index) => (
+                <Card
+                  key={index}
+                  type="simple"
+                  id={`personhood_${index}`}
+                  isEmpty={true}
+                  {...personhood}
+                />
+              ))
+          ) : (
+            personhoods.map((personhood, index) => (
               <Card
                 key={index}
                 type="simple"
@@ -307,18 +333,16 @@ export const Personhood = (props: IProps) => {
                   onClick: () => handleIsDropdownOpen(`personhood_${index}`),
                   onClose: () => handleIsDropdownOpen(undefined),
                   items: [
-                    !isAuthenticated
-                      ? {
-                          title: 'Credential details',
-                          onClick: () =>
-                            handleCheckCredentialsURLs(
-                              'ceramic',
-                              'credential',
-                              personhood.credential
-                            )
-                        }
-                      : undefined,
-                    !isAuthenticated && personhood.stamps?.length !== 0
+                    {
+                      title: 'Credential details',
+                      onClick: () =>
+                        handleCheckCredentialsURLs(
+                          'ceramic',
+                          'credential',
+                          personhood.credential
+                        )
+                    },
+                    personhood.stamps?.length !== 0
                       ? {
                           title: 'Stamp details',
                           onClick: () =>
@@ -381,9 +405,9 @@ export const Personhood = (props: IProps) => {
                   } stamps`
                 }}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </Wrapper>
     </>
   );

@@ -8,8 +8,9 @@ import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
+import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
-import { checkCredentialsURLs } from 'utils';
+import { checkCredentialsURLs, constants } from 'utils';
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
@@ -38,7 +39,7 @@ export const Work = (props: IProps) => {
     handleProfile
   } = props;
   const [status, setStatus] = useState('idle');
-  const [works, setWorks] = useState<ICredential[]>();
+  const [works, setWorks] = useState<ICredential[]>([]);
   const [actionStatus, setActionStatus] = useState('idle');
   const [currentWorkSelected, setCurrentWorkSelected] = useState<ICredential>();
   const [currentActionType, setCurrentActionType] = useState<string>();
@@ -53,6 +54,11 @@ export const Work = (props: IProps) => {
     if (isHidden) return;
 
     setStatus('pending');
+    // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
+    handleProfile(prevValues => ({
+      ...prevValues,
+      skills: undefined
+    }));
 
     const getInformation = async () => {
       try {
@@ -65,9 +71,10 @@ export const Work = (props: IProps) => {
         setWorks(workCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          skills: prevValues.skills.concat(
-            workCredentials.flatMap(credential => credential.skills)
-          )
+          skills:
+            (prevValues.skills || []).concat(
+              workCredentials.flatMap(credential => credential.skills)
+            ) || []
         }));
         setStatus('resolved');
       } catch (error) {
@@ -267,11 +274,30 @@ export const Work = (props: IProps) => {
             </p>
           )}
         </div>
-        {isLoading ? (
-          <h1>Loading...</h1>
-        ) : (
-          <div className="work-cards">
-            {works.map((work, index) => (
+        <div className="work-cards">
+          {isLoading ? (
+            <>
+              <div className="work-card-loading">
+                <Loading type="skeleton" />
+              </div>
+              <div className="work-card-loading">
+                <Loading type="skeleton" />
+              </div>
+            </>
+          ) : works?.length === 0 ? (
+            new Array(2)
+              .fill(constants.DEFAULT_EMPTY_CARD_WORK)
+              .map((personhood, index) => (
+                <Card
+                  key={index}
+                  type="long"
+                  id={`work_${index}`}
+                  isEmpty={true}
+                  {...personhood}
+                />
+              ))
+          ) : (
+            works.map((work, index) => (
               <Card
                 key={index}
                 type="long"
@@ -359,9 +385,9 @@ export const Work = (props: IProps) => {
                   } stamps`
                 }}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </Wrapper>
     </>
   );

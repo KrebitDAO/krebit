@@ -96,6 +96,14 @@ export const Wrapper = styled.div<IProps>`
       @media (min-width: ${theme.screens.lg}) {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .community-card-loading {
+        height: 145px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 155px;
+        }
+      }
     }
   `}
 `;

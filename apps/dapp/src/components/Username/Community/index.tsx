@@ -9,8 +9,9 @@ import { VerifyCredential } from './verifyCredential';
 import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
+import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
-import { checkCredentialsURLs } from 'utils';
+import { checkCredentialsURLs, constants } from 'utils';
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
@@ -38,7 +39,7 @@ export const Community = (props: IProps) => {
     handleProfile
   } = props;
   const [status, setStatus] = useState('idle');
-  const [communities, setCommunities] = useState<ICredential[]>();
+  const [communities, setCommunities] = useState<ICredential[]>([]);
   const [actionStatus, setActionStatus] = useState('idle');
   const [currentCommunitySelected, setCurrentCommunitySelected] =
     useState<ICredential>();
@@ -54,6 +55,11 @@ export const Community = (props: IProps) => {
     if (isHidden) return;
 
     setStatus('pending');
+    // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
+    handleProfile(prevValues => ({
+      ...prevValues,
+      skills: undefined
+    }));
 
     const getInformation = async () => {
       try {
@@ -66,9 +72,10 @@ export const Community = (props: IProps) => {
         setCommunities(communityCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          skills: prevValues.skills.concat(
-            communityCredentials.flatMap(credential => credential.skills)
-          )
+          skills:
+            (prevValues.skills || []).concat(
+              communityCredentials.flatMap(credential => credential.skills)
+            ) || []
         }));
         setStatus('resolved');
       } catch (error) {
@@ -258,11 +265,30 @@ export const Community = (props: IProps) => {
             </p>
           )}
         </div>
-        {isLoading ? (
-          <h1>Loading...</h1>
-        ) : (
-          <div className="community-cards">
-            {communities.map((community, index) => (
+        <div className="community-cards">
+          {isLoading ? (
+            <>
+              <div className="community-card-loading">
+                <Loading type="skeleton" />
+              </div>
+              <div className="community-card-loading">
+                <Loading type="skeleton" />
+              </div>
+            </>
+          ) : communities?.length === 0 ? (
+            new Array(2)
+              .fill(constants.DEFAULT_EMPTY_CARD_COMMUNITY)
+              .map((personhood, index) => (
+                <Card
+                  key={index}
+                  type="small"
+                  id={`community_${index}`}
+                  isEmpty={true}
+                  {...personhood}
+                />
+              ))
+          ) : (
+            communities.map((community, index) => (
               <Card
                 key={index}
                 type="small"
@@ -357,9 +383,9 @@ export const Community = (props: IProps) => {
                   } stamps`
                 }}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </Wrapper>
     </>
   );
