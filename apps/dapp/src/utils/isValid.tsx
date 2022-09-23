@@ -13,13 +13,5 @@ export const isValid = (type: string, value: string) => {
     return value.match(regexValidations.ens);
   }
 
-  if (type === 'all') {
-    return (
-      value.match(regexValidations.address) ||
-      value.match(regexValidations.did) ||
-      value.match(regexValidations.ens)
-    );
-  }
-
   return false;
 };

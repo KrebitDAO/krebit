@@ -142,6 +142,7 @@ export class Krebit {
   };
 
   getTypeSchema = async (type?: string, did?: string) => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       const content = await this.idx.get('claimTypes', did ? did : this.did);
 
@@ -159,7 +160,7 @@ export class Krebit {
 
   // get credential from ceramic
   getCredential = async (vcId: string) => {
-    if (!this.isConnected()) throw new Error('Not connected');
+    if (!this.idx) throw new Error('Not connected');
     if (!vcId.startsWith('ceramic://')) return null;
     const stream = await TileDocument.load(this.idx.ceramic, vcId);
     return stream.content as W3CCredential;
@@ -294,11 +295,6 @@ export class Krebit {
       } catch (err) {
         return { encrypted: '********' };
       }
-    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
-      const claimedCredential: W3CCredential = await this.getCredential(
-        w3cCredential.id
-      );
-      return this.decryptClaimValue(claimedCredential);
     }
   };
 
@@ -309,7 +305,18 @@ export class Krebit {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
       );
-      return this.getClaimValue(claimedCredential);
+      if (claimedCredential) {
+        const claimValue = this.getClaimValue(claimedCredential);
+        const hash = hashClaimValue({
+          did: w3cCredential.issuer.id,
+          value: claimValue
+        });
+        return w3cCredential.credentialSubject.value === hash
+          ? claimValue
+          : null;
+      } else {
+        return null;
+      }
     } else if (w3cCredential.credentialSubject.encrypted === 'none') {
       return JSON.parse(w3cCredential.credentialSubject.value);
     }

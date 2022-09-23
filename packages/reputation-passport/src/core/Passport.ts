@@ -7,8 +7,8 @@ import { W3CCredential } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
 import { krbToken } from '../schemas';
-import { ceramic, graph, ens } from '../lib';
-import { regexValidations } from '../utils';
+import { ceramic, graph, ens, uns } from '../lib';
+import { regexValidations, hashClaimValue } from '../utils';
 import { config, IConfigProps } from '../config';
 
 interface IProps extends IConfigProps {
@@ -27,6 +27,7 @@ export class Passport {
   public idx: DIDDataStore;
   public did: string;
   public ens: string;
+  public uns: string;
   public address: string;
   public ethProvider:
     | ethers.providers.Provider
@@ -59,7 +60,8 @@ export class Passport {
     }
 
     this.did = this.idx.id;
-    this.ens = await this.lookupAddress(this.address);
+    this.ens = await ens.lookupAddress(this.address);
+    this.uns = await uns.lookupAddress(this.address);
     return this.did;
   };
 
@@ -86,20 +88,23 @@ export class Passport {
   };
 
   read = async (value: string) => {
-    if (value.match(regexValidations.address)) {
+    if (value.startsWith('0x')) {
       this.address = value;
       this.did = `did:pkh:eip155:${
         krbToken[this.currentConfig.network]?.domain?.chainId
       }:${value}`;
-    }
-
-    if (value.match(regexValidations.did)) {
+      this.ens = await ens.lookupAddress(this.address);
+      this.uns = await uns.lookupAddress(this.address);
+    } else if (value.startsWith('did:pkh:eip155:')) {
       this.did = value;
       this.address = (value as string).match(regexValidations.address)[0];
-    }
-
-    if (value.match(regexValidations.ens)) {
+      this.ens = await ens.lookupAddress(this.address);
+      this.uns = await uns.lookupAddress(this.address);
+    } else if (value.endsWith('.eth')) {
       await this.readEns(value);
+      return;
+    } else {
+      await this.readUns(value);
       return;
     }
 
@@ -114,11 +119,22 @@ export class Passport {
     this.ceramic = ceramicClient;
   };
 
-  readEns = async (ens: string) => {
-    const address = await this.resolveName(ens);
+  readEns = async (name: string) => {
+    const address = await ens.resolveName(name);
 
     if (address) {
-      this.ens = ens;
+      this.ens = name;
+      this.read(address);
+    } else {
+      throw new Error('No resolved address for that ENS domain');
+    }
+  };
+
+  readUns = async (name: string) => {
+    const address = await uns.resolveName(name);
+
+    if (address) {
+      this.uns = name;
       this.read(address);
     } else {
       throw new Error('No resolved address for that ENS domain');
@@ -127,6 +143,7 @@ export class Passport {
 
   // basiProfile from ceramic
   getProfile = async () => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       const content = await this.idx.get('basicProfile', this.did);
       if (content) {
@@ -139,6 +156,7 @@ export class Passport {
 
   // basiProfile from ceramic
   updateProfile = async (profile: any) => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       const content = await this.idx.set('basicProfile', profile);
       if (content) {
@@ -179,9 +197,18 @@ export class Passport {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
       );
-      return claimedCredential
-        ? this.getClaimValue(claimedCredential)
-        : w3cCredential.credentialSubject.value;
+      if (claimedCredential) {
+        const claimValue = this.getClaimValue(claimedCredential);
+        const hash = hashClaimValue({
+          did: w3cCredential.issuer.id,
+          value: claimValue
+        });
+        return w3cCredential.credentialSubject.value === hash
+          ? claimValue
+          : null;
+      } else {
+        return null;
+      }
     } else if (w3cCredential.credentialSubject.encrypted === 'none') {
       return JSON.parse(w3cCredential.credentialSubject.value);
     }
@@ -355,6 +382,7 @@ export class Passport {
 
   // issuedCredentials from ceramic
   getIssued = async (type?: string) => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       let result = [];
       const content = await this.idx.get('issuedCredentials', this.did);
@@ -461,6 +489,7 @@ export class Passport {
 
   // claimedCredentials from ceramic, filter by type
   getClaims = async (type?: string) => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       let result = [];
       const content = await this.idx.get('claimedCredentials', this.did);
@@ -568,6 +597,7 @@ export class Passport {
 
   // heldCredentials from ceramic, filter by type
   getCredentials = async (type?: string, tag?: string) => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       let result = [];
       const content = await this.idx.get('heldCredentials', this.did);
@@ -609,8 +639,8 @@ export class Passport {
   getStamps = async (props: StampsProps) => {
     const { first, type, claimId } = props;
     const where = {
-      credentialSubjectDID: this.did,
-      credentialSubjectAddress: this.address
+      credentialSubjectDID: this.did.toLowerCase(),
+      credentialSubjectAddress: this.address.toLowerCase()
     };
 
     if (type) where['_type_contains_nocase'] = type;
@@ -623,29 +653,5 @@ export class Passport {
       orderDirection: 'desc',
       where
     });
-  };
-
-  // ensResolvedAddress from subgraph
-  resolveName = async (name: string) => {
-    const where = {
-      name: name
-    };
-
-    //Get ensResolvedAddress from subgraph
-    const addresses = await ens.resolvedAddressQuery({
-      first: 1,
-      orderBy: 'id',
-      orderDirection: 'desc',
-      where
-    });
-
-    return addresses.length > 0 ? addresses[0].resolvedAddress.id : null;
-  };
-
-  // domainNameQuery from subgraph
-  lookupAddress = async (address: string) => {
-    const domains = await ens.domainNameQuery(address);
-
-    return domains.length > 0 ? domains[0].name : null;
   };
 }
