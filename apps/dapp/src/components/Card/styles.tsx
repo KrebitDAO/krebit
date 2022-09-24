@@ -2,10 +2,11 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 interface ICardProps {
-  image: string;
+  isEmpty?: Boolean;
+  image?: string;
 }
 
-export const SimpleCardWrapper = styled.div`
+export const SimpleCardWrapper = styled.div<ICardProps>`
   ${({ theme }) => css`
     display: grid;
     grid-template-columns: auto 30px;
@@ -242,19 +243,19 @@ export const SmallCardWrapper = styled.div<ICardProps>`
 `;
 
 export const LongCardWrapper = styled.div<ICardProps>`
-  ${({ theme, image }) => css`
+  ${({ theme, image, isEmpty }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
     border-radius: 15px;
     padding: 16px 20px;
     display: grid;
-    grid-template-columns: 79px auto 48px;
+    grid-template-columns: ${isEmpty ? '79px auto 24px' : '79px auto 48px'};
     grid-gap: 15px;
     position: relative;
 
     @media (min-width: ${theme.screens.lg}) {
-      grid-template-columns: 134px auto 60px;
+      grid-template-columns: ${isEmpty ? '134px auto 30px' : '134px auto 60px'};
       grid-gap: 23px;
     }
 

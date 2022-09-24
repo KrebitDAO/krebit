@@ -211,16 +211,37 @@ export const Username = () => {
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>
                   </div>
-                  <div className="skills-box">
-                    {mergeArray(profile.skills).map((item, index) => (
-                      <div className="skills-box-item" key={index}>
-                        <p className="skills-box-item-text">
-                          {item[0]}{' '}
-                          {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  {profile.skills === undefined ? (
+                    <div className="skills-box-loading">
+                      <Loading type="skeleton" />
+                    </div>
+                  ) : profile.skills?.length === 0 ? (
+                    <div className="skills-not-elements">
+                      <img
+                        src="/imgs/images/skills_not_found.png"
+                        className="skills-not-elements-image"
+                        width={243}
+                        height={51}
+                      />
+                      <p className="skills-not-elements-title">
+                        No skills yet.
+                      </p>
+                      <p className="skills-not-elements-description">
+                        Explore skills list
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="skills-box">
+                      {mergeArray(profile.skills).map((item, index) => (
+                        <div className="skills-box-item" key={index}>
+                          <p className="skills-box-item-text">
+                            {item[0]}{' '}
+                            {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Skills>
                 <FilterMenu
                   currentFilter={currentFilterOption}

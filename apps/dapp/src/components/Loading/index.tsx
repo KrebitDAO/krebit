@@ -1,24 +1,26 @@
-import { Wrapper } from './styles';
+import { CircularProgressWrapper, SkeletonWrapper } from './styles';
 
-export const Loading = () => {
+import CircularProgress from '@mui/material/CircularProgress';
+import Skeleton from '@mui/material/Skeleton';
+
+interface IProps {
+  type?: string;
+}
+
+export const Loading = (props: IProps) => {
+  const { type } = props;
+
+  if (type === 'skeleton') {
+    return (
+      <SkeletonWrapper>
+        <Skeleton />
+      </SkeletonWrapper>
+    );
+  }
+
   return (
-    <Wrapper>
-      <div className="bx">
-        <div className="spinner"></div>
-        <div className="line">
-          <svg height="100" width="100">
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              stroke="#043CFC"
-              strokeWidth="10"
-              fill="none"
-              strokeLinecap="square"
-            />
-          </svg>
-        </div>
-      </div>
-    </Wrapper>
+    <CircularProgressWrapper>
+      <CircularProgress />
+    </CircularProgressWrapper>
   );
 };

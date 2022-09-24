@@ -92,6 +92,14 @@ export const Wrapper = styled.div<IProps>`
     .work-cards {
       display: grid;
       grid-gap: 17px;
+
+      .work-card-loading {
+        height: 139px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 119px;
+        }
+      }
     }
   `}
 `;

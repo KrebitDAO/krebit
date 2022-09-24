@@ -1,4 +1,5 @@
 import { Theme } from '@emotion/react';
+import { red } from '@mui/material/colors';
 
 export const theme: Theme = {
   colors: {
@@ -47,5 +48,23 @@ export const theme: Theme = {
     lg: '1024px',
     xl: '1280px',
     '2xl': '1536px'
+  },
+  // Material ui
+  palette: {
+    primary: {
+      main: '#C3D1FF'
+    },
+    secondary: {
+      main: '#00FFFE'
+    },
+    error: {
+      main: red.A400
+    },
+    text: {
+      primary: '#fff'
+    }
+  },
+  shape: {
+    borderRadius: 0
   }
 };
