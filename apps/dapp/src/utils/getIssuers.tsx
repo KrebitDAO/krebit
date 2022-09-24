@@ -100,6 +100,17 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
+    credentialType: 'githubRepoOwner',
+    entity: 'Github Repository Owner',
+    description: 'Krebit Verification Node',
+    icon: <Github />,
+    imageUrl:
+      'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+    verificationUrl: 'http://localhost:4000/github',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
     credentialType: 'spect',
     entity: 'Spect',
     description: 'Krebit Verification Node',

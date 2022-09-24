@@ -207,6 +207,10 @@ export const Work = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
+    if (value?.title && value?.entity) {
+      return value.entity.concat(' / ').concat(value.title);
+    }
+
     if (value?.username) {
       return '@'.concat(value.username);
     }

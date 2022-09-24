@@ -4,7 +4,11 @@ import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
 import { getIssuers, checkCredentialsURLs } from 'utils';
 import { GeneralContext } from 'context';
-import { useGithubProvider, useGithubFollowersProvider } from 'hooks';
+import {
+  useGithubProvider,
+  useGithubFollowersProvider,
+  useGithubRepoProvider
+} from 'hooks';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
@@ -19,6 +23,7 @@ export const VerifyCredential = (props: IProps) => {
   const { walletInformation } = useContext(GeneralContext);
   const githubProvider = useGithubProvider();
   const githubFollowersProvider = useGithubFollowersProvider();
+  const githubRepoProvider = useGithubRepoProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -219,6 +224,106 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubFollowersProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'githubRepoOwner' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  githubRepoProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your github repo'
+                }
+                form={{
+                  inputs:
+                    githubRepoProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you github username',
+                            value: githubRepoProvider.claimValues.username,
+                            onChange: githubRepoProvider.handleClaimValues
+                          },
+                          {
+                            name: 'repository',
+                            placeholder: 'Enter the github repository',
+                            value: githubRepoProvider.claimValues.repository,
+                            onChange: githubRepoProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    githubRepoProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !githubRepoProvider.claimValues.username ||
+                            githubRepoProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  githubRepoProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !githubRepoProvider.claimValues.username ||
+                            githubRepoProvider.claimValues.username === ''
+                        }
+                }}
+                isLoading={githubRepoProvider.status === 'credential_pending'}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  githubRepoProvider.currentStamp ||
+                  currentWork?.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    githubRepoProvider.currentStamp ||
+                    currentWork?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              githubRepoProvider.currentStamp ||
+                                currentWork?.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: githubRepoProvider.handleStampCredential
+                        }
+                }}
+                isLoading={githubRepoProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
             </>
