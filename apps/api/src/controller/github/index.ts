@@ -257,7 +257,7 @@ export const GithubController = async (
             entity: claimValue.entity,
             description: githubRepo.description,
             startDate: githubRepo.created_at,
-            endDate: githubRepo.updated_at,
+            endDate: githubRepo.pushed_at,
             skills: githubRepo.languages
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
