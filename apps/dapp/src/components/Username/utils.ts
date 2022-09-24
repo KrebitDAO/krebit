@@ -26,7 +26,7 @@ const getCredentials = async (props: IProps) => {
         credential.type.includes(issuer.credentialType)
       );
       const claimValue = await passport.getClaimValue(credential);
-      delete claimValue.proofs;
+      if (claimValue?.proofs) delete claimValue.proofs;
       const customCredential = {
         ...credential,
         visualInformation: {

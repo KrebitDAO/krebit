@@ -8,7 +8,6 @@ import { generateUID } from './generateUID';
 import { openOAuthUrl } from './openOAuthUrl';
 import { sortByDate } from './sortByDate';
 import { getWalletInformation } from './getWalletInformation';
-import { getDID } from './getDID';
 import { isValid } from './isValid';
 import { normalizeSchema } from './normalizeSchema';
 import { checkCredentialsURLs } from './checkCredentialsURLs';
@@ -26,7 +25,6 @@ export {
   openOAuthUrl,
   sortByDate,
   getWalletInformation,
-  getDID,
   isValid,
   normalizeSchema,
   checkCredentialsURLs,

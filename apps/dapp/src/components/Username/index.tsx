@@ -10,7 +10,7 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
-import { isValid, getDID, normalizeSchema, mergeArray } from 'utils';
+import { isValid, normalizeSchema, mergeArray } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -94,13 +94,6 @@ export const Username = () => {
 
     setStatus('pending');
 
-    const isValidID = isValid('all', query.id as string);
-
-    if (!isValidID) {
-      setStatus('rejected');
-      return;
-    }
-
     const getProfile = async () => {
       try {
         await publicPassport.read((query.id as string).toLowerCase());
@@ -109,10 +102,9 @@ export const Username = () => {
           publicPassport,
           orbis
         );
-        const currentDIDFromURL = await getDID(
-          query.id as string,
-          publicPassport
-        );
+
+        const currentDIDFromURL = publicPassport.did;
+        if (!isValid('did', currentDIDFromURL)) setStatus('rejected');
 
         setProfile({
           ...currentProfile,

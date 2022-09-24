@@ -1,6 +1,6 @@
 {
   "name": "@krebitdao/reputation-passport",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Krebit SDK for Verified Credentials",
   "type": "module",
   "main": "./dist/index.js",
@@ -39,6 +39,7 @@
     "@ceramicnetwork/stream-tile": "^2.4.0",
     "@glazed/datamodel": "^0.3.1",
     "@glazed/did-datastore": "^0.3.2",
+    "@unstoppabledomains/resolution": "^8.3.3",
     "ajv": "^8.11.0",
     "did-session": "^0.1.1",
     "isomorphic-fetch": "^3.0.0",
