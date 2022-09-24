@@ -192,6 +192,36 @@ const DynamicProvider = () => {
           data: { code: queryCode, state: queryState }
         });
       }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubRepoCollaborator-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'githubRepoCollaborator',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubOrgMember-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'githubOrgMember',
+          data: { code: queryCode, state: queryState }
+        });
+      }
     }
     // always close the redirected window
     window.close();

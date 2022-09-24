@@ -9,6 +9,7 @@ import { useEmailProvider } from './useEmailProvider';
 import { useGithubProvider } from './useGithubProvider';
 import { useGithubFollowersProvider } from './useGithubFollowersProvider';
 import { useGithubRepoProvider } from './useGithubRepoProvider';
+import { useGithubRepoCollaboratorProvider } from './useGithubRepoCollaboratorProvider';
 import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 
@@ -24,6 +25,7 @@ export {
   useGithubProvider,
   useGithubFollowersProvider,
   useGithubRepoProvider,
+  useGithubRepoCollaboratorProvider,
   usePersonaProvider,
   useOutsideClick
 };

@@ -152,15 +152,34 @@ export const getGithubRepoLanguages = async (
   }
 };
 
+export const getGithubOrg = async (
+  accessToken: string,
+  org: string
+): Promise<any> => {
+  try {
+    const response = await fetch(`${SERVER_GITHUB_API_URL}/orgs/${org}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `token ${accessToken}`
+      }
+    }).then(result => result.json());
+    console.log('response', response);
+    if (!response) throw new Error(response);
+
+    return response as GithubOrgResponse;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 export const getGithubOrgMember = async (
-  code: string,
+  accessToken: string,
   org: string,
   user: string
 ): Promise<any> => {
   try {
-    // retrieve user's auth bearer token to authenticate client
-    const accessToken = await requestAccessToken(code);
-
     const response = await fetch(
       `${SERVER_GITHUB_API_URL}/orgs/${org}/memberships/${user}`,
       {
@@ -171,7 +190,6 @@ export const getGithubOrgMember = async (
         }
       }
     ).then(result => result.json());
-    console.log('response', response);
     if (!response) throw new Error(response);
     console.log('response', response);
     return response as GithubOrgMemberResponse;
@@ -211,6 +229,7 @@ export const github = {
   requestAccessToken,
   getGithubUser,
   getGithubRepo,
+  getGithubOrg,
   getGithubOrgMember,
   isGithubRepoCollaborator
 };

@@ -278,6 +278,165 @@ export const GithubController = async (
       } else {
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
+    } else if (
+      claimedCredential?.credentialSubject?.type === 'githubRepoCollaborator' &&
+      claimedCredential?.credentialSubject?.typeSchema.includes(
+        'workExperience'
+      )
+    ) {
+      // Get evidence bearer token
+      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('claim value: ', claimValue);
+
+      // Connect to github and get user ID from code
+      const accessToken = await github.requestAccessToken(
+        claimValue.proofs.code
+      );
+      const githubUser = await github.getGithubUser(accessToken);
+      console.log('githubUser: ', githubUser);
+      const githubRepo = await github.getGithubRepo(
+        accessToken,
+        claimValue.entity,
+        claimValue.title
+      );
+      console.log('githubRepo: ', githubRepo);
+      const isCollaborator = await github.isGithubRepoCollaborator(
+        accessToken,
+        claimValue.entity,
+        claimValue.title,
+        claimValue.proofs.username
+      );
+      console.log('isCollaborator: ', isCollaborator);
+
+      // If valid github repo
+      if (
+        githubUser &&
+        githubUser.login.toLowerCase() ===
+          claimValue.proofs.username.toLowerCase() &&
+        githubRepo &&
+        githubRepo.owner.login.toLowerCase() ===
+          claimValue.entity.toLowerCase() &&
+        githubRepo.name.toLowerCase() === claimValue.title.toLowerCase() &&
+        !githubRepo.fork &&
+        isCollaborator
+      ) {
+        delete claimValue.proofs;
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        let tags = claimedCredential.type.slice(2);
+        if (githubRepo.topics && githubRepo.topics.length > 0)
+          tags = tags.concat(githubRepo.topics);
+        if (githubRepo.language) tags.push(githubRepo.language);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: tags,
+          value: {
+            title: claimValue.title,
+            entity: claimValue.entity,
+            description: githubRepo.description,
+            startDate: githubRepo.created_at,
+            endDate: githubRepo.pushed_at,
+            skills: githubRepo.languages
+          },
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        console.log('claim: ', claim);
+
+        // Issue Verifiable credential
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong github ID: ${githubUser}`);
+      }
+    } else if (
+      claimedCredential?.credentialSubject?.type === 'githubOrgMember' &&
+      claimedCredential?.credentialSubject?.typeSchema.includes('badge')
+    ) {
+      // Get evidence bearer token
+      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('claim value: ', claimValue);
+
+      // Connect to github and get user ID from code
+      const accessToken = await github.requestAccessToken(
+        claimValue.proofs.code
+      );
+      const githubUser = await github.getGithubUser(accessToken);
+      console.log('githubUser: ', githubUser);
+      const githubOrg = await github.getGithubOrgMember(
+        accessToken,
+        claimValue.entity,
+        claimValue.proofs.username
+      );
+      console.log('githubOrg: ', githubOrg);
+
+      // If valid github org
+      if (
+        githubUser &&
+        githubUser.login.toLowerCase() ===
+          claimValue.proofs.username.toLowerCase() &&
+        githubOrg &&
+        githubOrg.user.login.toLowerCase() ===
+          claimValue.proofs.username.toLowerCase() &&
+        githubOrg.organization.name.toLowerCase() ===
+          claimValue.entity.toLowerCase() &&
+        githubOrg.status === 'active'
+      ) {
+        delete claimValue.proofs;
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: {
+            entity: claimValue.entity,
+            name: githubOrg.status,
+            role: githubOrg.role,
+            description: githubOrg.organization.description,
+            imageUrl: githubOrg.organization.avatar_url
+          },
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        console.log('claim: ', claim);
+
+        // Issue Verifiable credential
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong github ID: ${githubUser}`);
+      }
     }
   } catch (err) {
     next(err);

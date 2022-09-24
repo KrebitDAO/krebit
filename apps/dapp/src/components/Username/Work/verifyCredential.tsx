@@ -7,7 +7,8 @@ import { GeneralContext } from 'context';
 import {
   useGithubProvider,
   useGithubFollowersProvider,
-  useGithubRepoProvider
+  useGithubRepoProvider,
+  useGithubRepoCollaboratorProvider
 } from 'hooks';
 
 // types
@@ -24,6 +25,7 @@ export const VerifyCredential = (props: IProps) => {
   const githubProvider = useGithubProvider();
   const githubFollowersProvider = useGithubFollowersProvider();
   const githubRepoProvider = useGithubRepoProvider();
+  const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -324,6 +326,130 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubRepoProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'githubRepoCollaborator' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  githubRepoCollaboratorProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that you are a github repo collaborator'
+                }
+                form={{
+                  inputs:
+                    githubRepoCollaboratorProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you github username',
+                            value:
+                              githubRepoCollaboratorProvider.claimValues
+                                .username,
+                            onChange:
+                              githubRepoCollaboratorProvider.handleClaimValues
+                          },
+
+                          {
+                            name: 'owner',
+                            placeholder: 'Enter the github repository owner',
+                            value:
+                              githubRepoCollaboratorProvider.claimValues.owner,
+                            onChange:
+                              githubRepoCollaboratorProvider.handleClaimValues
+                          },
+                          {
+                            name: 'repository',
+                            placeholder: 'Enter the github repository',
+                            value:
+                              githubRepoCollaboratorProvider.claimValues
+                                .repository,
+                            onChange:
+                              githubRepoCollaboratorProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    githubRepoCollaboratorProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              githubRepoCollaboratorProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !githubRepoCollaboratorProvider.claimValues
+                              .username ||
+                            githubRepoCollaboratorProvider.claimValues
+                              .username === ''
+                              ? undefined
+                              : () =>
+                                  githubRepoCollaboratorProvider.handleFetchOAuth(
+                                    walletInformation.address
+                                  ),
+                          isDisabled:
+                            !githubRepoCollaboratorProvider.claimValues
+                              .username ||
+                            githubRepoCollaboratorProvider.claimValues
+                              .username === ''
+                        }
+                }}
+                isLoading={
+                  githubRepoCollaboratorProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  githubRepoCollaboratorProvider.currentStamp ||
+                  currentWork?.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    githubRepoCollaboratorProvider.currentStamp ||
+                    currentWork?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              githubRepoCollaboratorProvider.currentStamp ||
+                                currentWork?.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick:
+                            githubRepoCollaboratorProvider.handleStampCredential
+                        }
+                }}
+                isLoading={
+                  githubRepoCollaboratorProvider.status === 'stamp_pending'
+                }
                 iconType="stamp"
               />
             </>
