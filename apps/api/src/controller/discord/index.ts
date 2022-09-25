@@ -113,7 +113,7 @@ export const DiscordController = async (
         throw new Error(`Wrong discord: ${discordUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'discordGuildMembers' &&
+      claimedCredential?.credentialSubject?.type === 'discordGuildOwner' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -134,45 +134,12 @@ export const DiscordController = async (
         guildId: claimValue.id
       });
       console.log('discordGuild: ', discordGuild);
-      const followers = discordGuild.approximate_member_count;
-      let valid = false;
-      switch (claimValue.followers) {
-        case 'gt100':
-          valid = followers > 100;
-          break;
-        case 'gt500':
-          valid = followers > 500;
-          break;
-        case 'gt1000':
-          valid = followers > 1000;
-          break;
-        case 'gt5K':
-          valid = followers > 5000;
-          break;
-        case 'gt10K':
-          valid = followers > 10000;
-          break;
-        case 'gt50K':
-          valid = followers > 50000;
-          break;
-        case 'gt100K':
-          valid = followers > 100000;
-          break;
-        case 'gt1M':
-          valid = followers > 1000000;
-          break;
-        default:
-          valid =
-            !claimValue.followers.startsWith('gt') &&
-            parseInt(claimValue.followers) > 0;
-      }
 
       // If discord userID == the VC userID
       if (
         discordGuild.id === claimValue.id &&
         discordUser.id === claimValue.proofs.ownerId &&
-        discordGuild.owner_id === claimValue.proofs.ownerId &&
-        valid
+        discordGuild.owner
       ) {
         // Issue Verifiable credential
         console.log('Valid discord guild:', discordGuild);

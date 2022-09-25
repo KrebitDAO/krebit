@@ -33,16 +33,14 @@ export const getDiscordGuild = async (props: IGuilgProps) => {
   const { tokenType, accessToken, guildId } = props;
 
   try {
-    const response = await fetch(
-      `${SERVER_DISCORD_API_URL}/guilds/${guildId}?with_counts=true`,
-      {
-        headers: {
-          authorization: `${tokenType} ${accessToken}`
-        }
+    const response = await fetch(`${SERVER_DISCORD_API_URL}/users/@me/guilds`, {
+      headers: {
+        authorization: `${tokenType} ${accessToken}`
       }
-    ).then(result => result.json());
-
-    return response;
+    }).then(result => result.json());
+    return response.filter(guild => {
+      return guild.id === guildId;
+    })[0];
   } catch (error) {
     console.error(error);
 

@@ -135,8 +135,8 @@ const WORK_CREDENTIALS = [
 
 const COMMUNITY_CREDENTIALS = [
   {
-    credentialType: 'discordGuildMembers',
-    entity: 'Discord Guild Members',
+    credentialType: 'discordGuildOwner',
+    entity: 'Discord Guild Owner',
     description: 'Krebit Verification Node',
     icon: <Discord />,
     imageUrl:

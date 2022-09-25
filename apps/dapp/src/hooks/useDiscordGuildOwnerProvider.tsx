@@ -17,13 +17,11 @@ const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 interface IClaimValues {
   guildId: string;
-  followers: string;
 }
 
-export const useDiscordGuildMembersProvider = () => {
+export const useDiscordGuildOwnerProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    guildId: '',
-    followers: ''
+    guildId: ''
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -52,7 +50,7 @@ export const useDiscordGuildMembersProvider = () => {
   }, [channel]);
 
   const handleFetchOAuth = () => {
-    const state = `discordGuildMembers-${generateUID(10)}`;
+    const state = `discordGuildOwner-${generateUID(10)}`;
 
     const authUrl = `https://discord.com/api/oauth2/authorize?response_type=token&scope=identify%20guilds%20guilds.members.read&client_id=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CLIENT_ID}&state=${state}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CALLBACK}`;
 
@@ -66,7 +64,6 @@ export const useDiscordGuildMembersProvider = () => {
       protocol: 'https',
       host: 'discord.com',
       id: claimValues.guildId,
-      followers: claimValues.followers,
       proofs: {
         ...proofs,
         ownerId: payload.id
@@ -81,7 +78,7 @@ export const useDiscordGuildMembersProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'discordGuildMembers',
+      type: 'discordGuildOwner',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['digitalProperty', 'community'],
       value: claimValue,
@@ -98,9 +95,9 @@ export const useDiscordGuildMembersProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'discordGuildMembers') {
+      if (e.target === 'discordGuildOwner') {
         console.log('Saving Stamp', {
-          type: 'discordGuildMembers',
+          type: 'discordGuildOwner',
           proof: e.data
         });
 
@@ -191,9 +188,9 @@ export const useDiscordGuildMembersProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('discordGuildMembers');
+      const credentials = await passport.getCredentials('discordGuildOwner');
       const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('discordGuildMembers'))
+        .filter(credential => credential.type.includes('discordGuildOwner'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

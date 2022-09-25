@@ -72,7 +72,7 @@ const DynamicProvider = () => {
     } else if (
       (queryError || accessToken) &&
       queryState &&
-      /^discordGuildMembers-.*/.test(queryState)
+      /^discordGuildOwner-.*/.test(queryState)
     ) {
       // shared message channel between windows (on the same domain)
       const channel = new BroadcastChannel(currentChannel);
@@ -80,7 +80,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (accessToken) {
         channel.postMessage({
-          target: 'discordGuildMembers',
+          target: 'discordGuildOwner',
           data: { accessToken, tokenType, state: queryState }
         });
       }

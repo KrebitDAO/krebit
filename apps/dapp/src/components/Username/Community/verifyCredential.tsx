@@ -4,7 +4,7 @@ import { getIssuers, checkCredentialsURLs } from 'utils';
 import {
   useIssuerProvider,
   useGithubOrgMemberProvider,
-  useDiscordGuildMembersProvider
+  useDiscordGuildOwnerProvider
 } from 'hooks';
 
 // types
@@ -19,7 +19,7 @@ export const VerifyCredential = (props: IProps) => {
   const { currentCommunity, onClose } = props;
   const issuerProvider = useIssuerProvider();
   const githubOrgMemberProvider = useGithubOrgMemberProvider();
-  const discordGuildMembersProvider = useDiscordGuildMembersProvider();
+  const discordGuildOwnerProvider = useDiscordGuildOwnerProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -279,7 +279,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'discordGuildMembers' && (
+          {currentVerify?.credentialType === 'discordGuildOwner' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -292,38 +292,28 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  discordGuildMembersProvider.currentCredential ||
+                  discordGuildOwnerProvider.currentCredential ||
                   currentCommunity.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim your discord guild member count ( i.e. more than 1,000 would be gt1000 )'
+                    : 'Claim your discord guild ownership'
                 }
                 form={{
                   inputs:
-                    discordGuildMembersProvider.currentCredential ||
+                    discordGuildOwnerProvider.currentCredential ||
                     currentCommunity.credential
                       ? undefined
                       : [
                           {
                             name: 'guildId',
-                            placeholder:
-                              'Enter your discord guild Id (you must be the owner)',
+                            placeholder: 'Enter your discord guild Id',
                             value:
-                              discordGuildMembersProvider.claimValues.guildId,
+                              discordGuildOwnerProvider.claimValues.guildId,
                             onChange:
-                              discordGuildMembersProvider.handleClaimValues
-                          },
-                          {
-                            name: 'followers',
-                            placeholder:
-                              'gt100 | gt500 | gt1000 | gt5K | gt10K | gt50K | gt100K | gt1M',
-                            value:
-                              discordGuildMembersProvider.claimValues.followers,
-                            onChange:
-                              discordGuildMembersProvider.handleClaimValues
+                              discordGuildOwnerProvider.handleClaimValues
                           }
                         ],
                   button:
-                    discordGuildMembersProvider.currentCredential ||
+                    discordGuildOwnerProvider.currentCredential ||
                     currentCommunity.credential
                       ? {
                           text: 'Check it',
@@ -331,43 +321,39 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'ceramic',
                               'credential',
-                              discordGuildMembersProvider.currentCredential ||
+                              discordGuildOwnerProvider.currentCredential ||
                                 currentCommunity.credential
                             )
                         }
                       : {
                           text: 'Verify',
                           onClick:
-                            !discordGuildMembersProvider.claimValues
-                              .followers ||
-                            discordGuildMembersProvider.claimValues
-                              .followers === ''
+                            !discordGuildOwnerProvider.claimValues.guildId ||
+                            discordGuildOwnerProvider.claimValues.guildId === ''
                               ? undefined
                               : () =>
-                                  discordGuildMembersProvider.handleFetchOAuth(),
+                                  discordGuildOwnerProvider.handleFetchOAuth(),
                           isDisabled:
-                            !discordGuildMembersProvider.claimValues
-                              .followers ||
-                            discordGuildMembersProvider.claimValues
-                              .followers === ''
+                            !discordGuildOwnerProvider.claimValues.guildId ||
+                            discordGuildOwnerProvider.claimValues.guildId === ''
                         }
                 }}
                 isLoading={
-                  discordGuildMembersProvider.status === 'credential_pending'
+                  discordGuildOwnerProvider.status === 'credential_pending'
                 }
                 iconType="credential"
               />
               <BoxStep
                 title="Step 2"
                 description={
-                  discordGuildMembersProvider.currentStamp ||
+                  discordGuildOwnerProvider.currentStamp ||
                   currentCommunity.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
-                    discordGuildMembersProvider.currentStamp ||
+                    discordGuildOwnerProvider.currentStamp ||
                     currentCommunity.stamps?.length !== 0
                       ? {
                           text: 'Check it',
@@ -375,19 +361,17 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'polygon',
                               'stamp',
-                              discordGuildMembersProvider.currentStamp ||
+                              discordGuildOwnerProvider.currentStamp ||
                                 currentCommunity.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
                           onClick:
-                            discordGuildMembersProvider.handleStampCredential
+                            discordGuildOwnerProvider.handleStampCredential
                         }
                 }}
-                isLoading={
-                  discordGuildMembersProvider.status === 'stamp_pending'
-                }
+                isLoading={discordGuildOwnerProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
             </>
