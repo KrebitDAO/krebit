@@ -69,6 +69,24 @@ const DynamicProvider = () => {
 
       // always close the redirected window
       window.close();
+    } else if (
+      (queryError || accessToken) &&
+      queryState &&
+      /^discordGuildMembers-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (accessToken) {
+        channel.postMessage({
+          target: 'discordGuildMembers',
+          data: { accessToken, tokenType, state: queryState }
+        });
+      }
+
+      // always close the redirected window
+      window.close();
     }
   };
 

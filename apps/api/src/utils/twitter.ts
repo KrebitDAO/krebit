@@ -88,3 +88,9 @@ export const getTwitterPostsCount = async (
     throw new Error(err);
   }
 };
+
+export const twitter = {
+  getTwitterUser,
+  getTwitterFollowersCount,
+  getTwitterPostsCount
+};

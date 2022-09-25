@@ -11,6 +11,7 @@ import { useGithubFollowersProvider } from './useGithubFollowersProvider';
 import { useGithubRepoProvider } from './useGithubRepoProvider';
 import { useGithubRepoCollaboratorProvider } from './useGithubRepoCollaboratorProvider';
 import { useGithubOrgMemberProvider } from './useGithubOrgMemberProvider';
+import { useDiscordGuildMembersProvider } from './useDiscordGuildMembersProvider';
 import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 
@@ -28,6 +29,7 @@ export {
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider,
   useGithubOrgMemberProvider,
+  useDiscordGuildMembersProvider,
   usePersonaProvider,
   useOutsideClick
 };

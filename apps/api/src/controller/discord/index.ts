@@ -1,7 +1,7 @@
 import express from 'express';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getDiscordUser } from '../../utils';
+import { connect, discord } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -63,35 +63,45 @@ export const DiscordController = async (
       console.log('claim value: ', claimValue);
 
       // Connect to discord and get user ID from token
-      const discord = await getDiscordUser({
+      const discordUser = await discord.getDiscordUser({
         tokenType: claimValue.proofs.tokenType,
         accessToken: claimValue.proofs.accessToken
       });
 
-      const expirationDate = new Date();
-      const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
-      expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
-      console.log('expirationDate: ', expirationDate);
-
-      const claim = {
-        id: claimedCredentialId,
-        ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-        did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
-        type: claimedCredential.credentialSubject.type,
-        typeSchema: claimedCredential.credentialSubject.typeSchema,
-        tags: claimedCredential.type.slice(2),
-        value: claimValue,
-        trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
-        stake: parseInt(SERVER_STAKE, 10), // In KRB
-        price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-        expirationDate: new Date(expirationDate).toISOString()
-      };
-      console.log('claim: ', claim);
-
       // If discord userID == the VC userID
-      if (discord.id === claimValue.id) {
+      if (discordUser.id === claimValue.id) {
         // Issue Verifiable credential
-        console.log('Valid discord:', discord);
+        console.log('Valid discord:', discordUser);
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: {
+            ...claimValue,
+            username: discordUser.username
+              .concat('#')
+              .concat(discordUser.discriminator),
+            imageUrl: 'https://cdn.discordapp.com/avatars/'
+              .concat(discordUser.id)
+              .concat('/')
+              .concat(discordUser.avatar)
+              .concat('.png')
+          },
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        console.log('claim: ', claim);
 
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
@@ -100,7 +110,109 @@ export const DiscordController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong discord: ${discord}`);
+        throw new Error(`Wrong discord: ${discordUser}`);
+      }
+    } else if (
+      claimedCredential?.credentialSubject?.type === 'discordGuildMembers' &&
+      claimedCredential?.credentialSubject?.typeSchema.includes(
+        'digitalProperty'
+      )
+    ) {
+      // Get evidence bearer token
+      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('claim value: ', claimValue);
+
+      // Connect to discord and get user ID from token
+      const discordUser = await discord.getDiscordUser({
+        tokenType: claimValue.proofs.tokenType,
+        accessToken: claimValue.proofs.accessToken
+      });
+      console.log('discordUser: ', discordUser);
+      const discordGuild = await discord.getDiscordGuild({
+        tokenType: claimValue.proofs.tokenType,
+        accessToken: claimValue.proofs.accessToken,
+        guildId: claimValue.id
+      });
+      console.log('discordGuild: ', discordGuild);
+      const followers = discordGuild.approximate_member_count;
+      let valid = false;
+      switch (claimValue.followers) {
+        case 'gt100':
+          valid = followers > 100;
+          break;
+        case 'gt500':
+          valid = followers > 500;
+          break;
+        case 'gt1000':
+          valid = followers > 1000;
+          break;
+        case 'gt5K':
+          valid = followers > 5000;
+          break;
+        case 'gt10K':
+          valid = followers > 10000;
+          break;
+        case 'gt50K':
+          valid = followers > 50000;
+          break;
+        case 'gt100K':
+          valid = followers > 100000;
+          break;
+        case 'gt1M':
+          valid = followers > 1000000;
+          break;
+        default:
+          valid =
+            !claimValue.followers.startsWith('gt') &&
+            parseInt(claimValue.followers) > 0;
+      }
+
+      // If discord userID == the VC userID
+      if (
+        discordGuild.id === claimValue.id &&
+        discordUser.id === claimValue.proofs.ownerId &&
+        discordGuild.owner_id === claimValue.proofs.ownerId &&
+        valid
+      ) {
+        // Issue Verifiable credential
+        console.log('Valid discord guild:', discordGuild);
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: {
+            ...claimValue,
+            username: discordGuild.name,
+            imageUrl: 'https://cdn.discordapp.com/icons/'
+              .concat(discordGuild.id)
+              .concat('/')
+              .concat(discordGuild.icon)
+              .concat('.png')
+          },
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        console.log('claim: ', claim);
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong discord: ${discordGuild}`);
       }
     }
   } catch (err) {

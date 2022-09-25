@@ -42,3 +42,8 @@ export const checkTwilioVerification = async (to: string, code: string) => {
     throw new Error(err);
   }
 };
+
+export const twilio = {
+  startTwilioVerification,
+  checkTwilioVerification
+};

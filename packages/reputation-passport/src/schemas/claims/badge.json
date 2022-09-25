@@ -22,5 +22,5 @@
     "proofs": { "type": "object" }
   },
   "required": ["entity", "name"],
-  "additionalProperties": false
+  "additionalProperties": true
 }

@@ -1,7 +1,11 @@
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
 import { getIssuers, checkCredentialsURLs } from 'utils';
-import { useIssuerProvider, useGithubOrgMemberProvider } from 'hooks';
+import {
+  useIssuerProvider,
+  useGithubOrgMemberProvider,
+  useDiscordGuildMembersProvider
+} from 'hooks';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
@@ -15,6 +19,7 @@ export const VerifyCredential = (props: IProps) => {
   const { currentCommunity, onClose } = props;
   const issuerProvider = useIssuerProvider();
   const githubOrgMemberProvider = useGithubOrgMemberProvider();
+  const discordGuildMembersProvider = useDiscordGuildMembersProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -270,6 +275,119 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubOrgMemberProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'discordGuildMembers' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  discordGuildMembersProvider.currentCredential ||
+                  currentCommunity.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your discord guild member count ( i.e. more than 1,000 would be gt1000 )'
+                }
+                form={{
+                  inputs:
+                    discordGuildMembersProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'guildId',
+                            placeholder:
+                              'Enter your discord guild Id (you must be the owner)',
+                            value:
+                              discordGuildMembersProvider.claimValues.guildId,
+                            onChange:
+                              discordGuildMembersProvider.handleClaimValues
+                          },
+                          {
+                            name: 'followers',
+                            placeholder:
+                              'gt100 | gt500 | gt1000 | gt5K | gt10K | gt50K | gt100K | gt1M',
+                            value:
+                              discordGuildMembersProvider.claimValues.followers,
+                            onChange:
+                              discordGuildMembersProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    discordGuildMembersProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              discordGuildMembersProvider.currentCredential ||
+                                currentCommunity.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !discordGuildMembersProvider.claimValues
+                              .followers ||
+                            discordGuildMembersProvider.claimValues
+                              .followers === ''
+                              ? undefined
+                              : () =>
+                                  discordGuildMembersProvider.handleFetchOAuth(),
+                          isDisabled:
+                            !discordGuildMembersProvider.claimValues
+                              .followers ||
+                            discordGuildMembersProvider.claimValues
+                              .followers === ''
+                        }
+                }}
+                isLoading={
+                  discordGuildMembersProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  discordGuildMembersProvider.currentStamp ||
+                  currentCommunity.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    discordGuildMembersProvider.currentStamp ||
+                    currentCommunity.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              discordGuildMembersProvider.currentStamp ||
+                                currentCommunity.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick:
+                            discordGuildMembersProvider.handleStampCredential
+                        }
+                }}
+                isLoading={
+                  discordGuildMembersProvider.status === 'stamp_pending'
+                }
                 iconType="stamp"
               />
             </>

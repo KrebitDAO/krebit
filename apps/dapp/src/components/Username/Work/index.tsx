@@ -382,7 +382,11 @@ export const Work = (props: IProps) => {
                   ]
                 }}
                 isIssued={work.credential && work.stamps?.length > 0}
-                image={work.credential?.visualInformation?.imageUrl}
+                image={
+                  work.credential?.value?.imageUrl
+                    ? work.credential?.value?.imageUrl
+                    : work.credential?.visualInformation?.imageUrl
+                }
                 tooltip={{
                   message: `This credential has ${
                     work.stamps?.length || 0
