@@ -2,7 +2,8 @@
   "title": "badge",
   "type": "object",
   "properties": {
-    "entity": { "type": "integer" },
+    "entity": { "type": "string" },
+    "username": { "type": "string" },
     "parentCredential": { "type": "string" },
     "onBehalveOfIssuer": { "type": "string" },
     "name": { "type": "string" },

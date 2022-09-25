@@ -21,7 +21,7 @@ export type GithubOrgResponse = {
 };
 
 export type GithubOrgMemberResponse = {
-  status: string;
+  state: string;
   role: string;
   organization?: GithubUserResponse;
   user?: GithubUserResponse;

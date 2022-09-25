@@ -15,13 +15,13 @@ const { NEXT_PUBLIC_GITHUB_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 interface IClaimValues {
   username: string;
-  repository: string;
+  organization: string;
 }
 
-export const useGithubRepoProvider = () => {
+export const useGithubOrgMemberProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     username: '',
-    repository: ''
+    organization: ''
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -50,7 +50,7 @@ export const useGithubRepoProvider = () => {
   }, [channel]);
 
   const handleFetchOAuth = () => {
-    const state = 'githubRepoOwner-' + generateUID(10);
+    const state = 'githubOrgMember-' + generateUID(10);
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CALLBACK}&state=${state}`;
 
@@ -61,8 +61,9 @@ export const useGithubRepoProvider = () => {
 
   const getClaim = async (address: string, proofs: any) => {
     const claimValue = {
-      title: claimValues.repository,
-      entity: claimValues.username,
+      name: 'Github Organization Member', //TODO take this from getIssuers()
+      username: claimValues.username,
+      entity: claimValues.organization,
       proofs: proofs
     };
 
@@ -74,10 +75,11 @@ export const useGithubRepoProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'githubRepoOwner',
-      typeSchema: 'krebit://schemas/workExperience',
+      type: 'githubOrgMember',
+      typeSchema: 'krebit://schemas/badge',
       tags: [
-        'digitalProperty',
+        'community',
+        'membership',
         'code',
         'programing',
         'development',
@@ -97,9 +99,9 @@ export const useGithubRepoProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'githubRepoOwner') {
+      if (e.target === 'githubOrgMember') {
         console.log('Saving Stamp', {
-          type: 'githubRepoOwner',
+          type: 'githubOrgMember',
           proof: e.data
         });
 
@@ -183,9 +185,9 @@ export const useGithubRepoProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('githubRepoOwner');
+      const credentials = await passport.getCredentials('githubOrgMember');
       const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('githubRepoOwner'))
+        .filter(credential => credential.type.includes('githubOrgMember'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

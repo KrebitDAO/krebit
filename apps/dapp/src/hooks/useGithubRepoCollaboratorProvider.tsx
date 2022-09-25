@@ -51,7 +51,7 @@ export const useGithubRepoCollaboratorProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string) => {
+  const handleFetchOAuth = () => {
     const state = 'githubRepoCollaborator-' + generateUID(10);
 
     const authUrl = `https://github.com/login/oauth/authorize?scope=repo%20read:user%20read:org&client_id=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CALLBACK}&state=${state}`;

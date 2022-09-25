@@ -1,7 +1,7 @@
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
 import { getIssuers, checkCredentialsURLs } from 'utils';
-import { useIssuerProvider } from 'hooks';
+import { useIssuerProvider, useGithubOrgMemberProvider } from 'hooks';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
@@ -14,6 +14,7 @@ interface IProps {
 export const VerifyCredential = (props: IProps) => {
   const { currentCommunity, onClose } = props;
   const issuerProvider = useIssuerProvider();
+  const githubOrgMemberProvider = useGithubOrgMemberProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -169,6 +170,107 @@ export const VerifyCredential = (props: IProps) => {
                 }}
                 iconType="stamp"
                 isLoading={issuerProvider.status === 'stamp_pending'}
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'githubOrgMember' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  githubOrgMemberProvider.currentCredential ||
+                  currentCommunity?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that you are a github organization member'
+                }
+                form={{
+                  inputs:
+                    githubOrgMemberProvider.currentCredential ||
+                    currentCommunity?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you github username',
+                            value: githubOrgMemberProvider.claimValues.username,
+                            onChange: githubOrgMemberProvider.handleClaimValues
+                          },
+                          {
+                            name: 'organization',
+                            placeholder: 'Enter the github organization',
+                            value:
+                              githubOrgMemberProvider.claimValues.organization,
+                            onChange: githubOrgMemberProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    githubOrgMemberProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              githubOrgMemberProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !githubOrgMemberProvider.claimValues.username ||
+                            githubOrgMemberProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  githubOrgMemberProvider.handleFetchOAuth(),
+                          isDisabled:
+                            !githubOrgMemberProvider.claimValues.username ||
+                            githubOrgMemberProvider.claimValues.username === ''
+                        }
+                }}
+                isLoading={
+                  githubOrgMemberProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  githubOrgMemberProvider.currentStamp ||
+                  currentCommunity?.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    githubOrgMemberProvider.currentStamp ||
+                    currentCommunity?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              githubOrgMemberProvider.currentStamp ||
+                                currentCommunity?.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: githubOrgMemberProvider.handleStampCredential
+                        }
+                }}
+                isLoading={githubOrgMemberProvider.status === 'stamp_pending'}
+                iconType="stamp"
               />
             </>
           )}

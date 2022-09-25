@@ -258,6 +258,7 @@ export const GithubController = async (
             description: githubRepo.description,
             startDate: githubRepo.created_at,
             endDate: githubRepo.pushed_at,
+            imageUrl: githubRepo.owner.avatar_url,
             skills: githubRepo.languages
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
@@ -345,6 +346,7 @@ export const GithubController = async (
             description: githubRepo.description,
             startDate: githubRepo.created_at,
             endDate: githubRepo.pushed_at,
+            imageUrl: githubRepo.owner.avatar_url,
             skills: githubRepo.languages
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
@@ -382,21 +384,20 @@ export const GithubController = async (
       const githubOrg = await github.getGithubOrgMember(
         accessToken,
         claimValue.entity,
-        claimValue.proofs.username
+        claimValue.username
       );
       console.log('githubOrg: ', githubOrg);
 
       // If valid github org
       if (
         githubUser &&
-        githubUser.login.toLowerCase() ===
-          claimValue.proofs.username.toLowerCase() &&
+        githubUser.login.toLowerCase() === claimValue.username.toLowerCase() &&
         githubOrg &&
         githubOrg.user.login.toLowerCase() ===
-          claimValue.proofs.username.toLowerCase() &&
-        githubOrg.organization.name.toLowerCase() ===
+          claimValue.username.toLowerCase() &&
+        githubOrg.organization.login.toLowerCase() ===
           claimValue.entity.toLowerCase() &&
-        githubOrg.status === 'active'
+        githubOrg.state === 'active'
       ) {
         delete claimValue.proofs;
 
@@ -414,7 +415,8 @@ export const GithubController = async (
           tags: claimedCredential.type.slice(2),
           value: {
             entity: claimValue.entity,
-            name: githubOrg.status,
+            username: claimValue.username,
+            name: claimValue.name,
             role: githubOrg.role,
             description: githubOrg.organization.description,
             imageUrl: githubOrg.organization.avatar_url

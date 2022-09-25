@@ -88,10 +88,7 @@ export const VerifyCredential = (props: IProps) => {
                             !githubProvider.claimValues.username ||
                             githubProvider.claimValues.username === ''
                               ? undefined
-                              : () =>
-                                  githubProvider.handleFetchOAuth(
-                                    walletInformation.address
-                                  ),
+                              : () => githubProvider.handleFetchOAuth(),
                           isDisabled:
                             !githubProvider.claimValues.username ||
                             githubProvider.claimValues.username === ''
@@ -185,9 +182,7 @@ export const VerifyCredential = (props: IProps) => {
                             githubFollowersProvider.claimValues.followers === ''
                               ? undefined
                               : () =>
-                                  githubFollowersProvider.handleFetchOAuth(
-                                    walletInformation.address
-                                  ),
+                                  githubFollowersProvider.handleFetchOAuth(),
                           isDisabled:
                             !githubFollowersProvider.claimValues.followers ||
                             githubFollowersProvider.claimValues.followers === ''
@@ -286,10 +281,7 @@ export const VerifyCredential = (props: IProps) => {
                             !githubRepoProvider.claimValues.username ||
                             githubRepoProvider.claimValues.username === ''
                               ? undefined
-                              : () =>
-                                  githubRepoProvider.handleFetchOAuth(
-                                    walletInformation.address
-                                  ),
+                              : () => githubRepoProvider.handleFetchOAuth(),
                           isDisabled:
                             !githubRepoProvider.claimValues.username ||
                             githubRepoProvider.claimValues.username === ''
@@ -404,9 +396,7 @@ export const VerifyCredential = (props: IProps) => {
                               .username === ''
                               ? undefined
                               : () =>
-                                  githubRepoCollaboratorProvider.handleFetchOAuth(
-                                    walletInformation.address
-                                  ),
+                                  githubRepoCollaboratorProvider.handleFetchOAuth(),
                           isDisabled:
                             !githubRepoCollaboratorProvider.claimValues
                               .username ||

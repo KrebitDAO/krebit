@@ -10,6 +10,7 @@ import { useGithubProvider } from './useGithubProvider';
 import { useGithubFollowersProvider } from './useGithubFollowersProvider';
 import { useGithubRepoProvider } from './useGithubRepoProvider';
 import { useGithubRepoCollaboratorProvider } from './useGithubRepoCollaboratorProvider';
+import { useGithubOrgMemberProvider } from './useGithubOrgMemberProvider';
 import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 
@@ -26,6 +27,7 @@ export {
   useGithubFollowersProvider,
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider,
+  useGithubOrgMemberProvider,
   usePersonaProvider,
   useOutsideClick
 };

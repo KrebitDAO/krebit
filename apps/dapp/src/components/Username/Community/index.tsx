@@ -212,6 +212,10 @@ export const Community = (props: IProps) => {
       return value.id;
     }
 
+    if (value?.entity && value?.role) {
+      return value.entity.concat(' / ').concat(value.role);
+    }
+
     return '';
   };
 
