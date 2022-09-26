@@ -48,7 +48,29 @@ export const getDiscordGuild = async (props: IGuilgProps) => {
   }
 };
 
+export const getDiscordGuildMember = async (props: IGuilgProps) => {
+  const { tokenType, accessToken, guildId } = props;
+
+  try {
+    const response = await fetch(
+      `${SERVER_DISCORD_API_URL}/users/@me/guilds/${guildId}/member`,
+      {
+        headers: {
+          authorization: `${tokenType} ${accessToken}`
+        }
+      }
+    ).then(result => result.json());
+
+    return response;
+  } catch (error) {
+    console.error(error);
+
+    return null;
+  }
+};
+
 export const discord = {
   getDiscordUser,
-  getDiscordGuild
+  getDiscordGuild,
+  getDiscordGuildMember
 };

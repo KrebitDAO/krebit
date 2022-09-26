@@ -4,7 +4,8 @@ import { getIssuers, checkCredentialsURLs } from 'utils';
 import {
   useIssuerProvider,
   useGithubOrgMemberProvider,
-  useDiscordGuildOwnerProvider
+  useDiscordGuildOwnerProvider,
+  useDiscordGuildMemberProvider
 } from 'hooks';
 
 // types
@@ -20,6 +21,7 @@ export const VerifyCredential = (props: IProps) => {
   const issuerProvider = useIssuerProvider();
   const githubOrgMemberProvider = useGithubOrgMemberProvider();
   const discordGuildOwnerProvider = useDiscordGuildOwnerProvider();
+  const discordGuildMemberProvider = useDiscordGuildMemberProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -372,6 +374,107 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordGuildOwnerProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'discordGuildMember' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  discordGuildMemberProvider.currentCredential ||
+                  currentCommunity.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your discord guild membership'
+                }
+                form={{
+                  inputs:
+                    discordGuildMemberProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'guildId',
+                            placeholder: 'Enter the discord guild Id',
+                            value:
+                              discordGuildMemberProvider.claimValues.guildId,
+                            onChange:
+                              discordGuildMemberProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    discordGuildMemberProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              discordGuildMemberProvider.currentCredential ||
+                                currentCommunity.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !discordGuildMemberProvider.claimValues.guildId ||
+                            discordGuildMemberProvider.claimValues.guildId ===
+                              ''
+                              ? undefined
+                              : () =>
+                                  discordGuildMemberProvider.handleFetchOAuth(),
+                          isDisabled:
+                            !discordGuildMemberProvider.claimValues.guildId ||
+                            discordGuildMemberProvider.claimValues.guildId ===
+                              ''
+                        }
+                }}
+                isLoading={
+                  discordGuildMemberProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  discordGuildMemberProvider.currentStamp ||
+                  currentCommunity.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    discordGuildMemberProvider.currentStamp ||
+                    currentCommunity.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              discordGuildMemberProvider.currentStamp ||
+                                currentCommunity.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick:
+                            discordGuildMemberProvider.handleStampCredential
+                        }
+                }}
+                isLoading={
+                  discordGuildMemberProvider.status === 'stamp_pending'
+                }
                 iconType="stamp"
               />
             </>

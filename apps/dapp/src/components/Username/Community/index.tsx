@@ -208,12 +208,16 @@ export const Community = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
-    if (value?.id) {
-      return value.id;
-    }
-
     if (value?.entity && value?.role) {
       return value.entity.concat(' / ').concat(value.role);
+    }
+
+    if (value?.username) {
+      return '@'.concat(value.username);
+    }
+
+    if (value?.id) {
+      return value.id;
     }
 
     return '';

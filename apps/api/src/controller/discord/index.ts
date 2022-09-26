@@ -70,6 +70,7 @@ export const DiscordController = async (
 
       // If discord userID == the VC userID
       if (discordUser.id === claimValue.id) {
+        delete claimValue.proofs;
         // Issue Verifiable credential
         console.log('Valid discord:', discordUser);
 
@@ -141,8 +142,8 @@ export const DiscordController = async (
         discordUser.id === claimValue.proofs.ownerId &&
         discordGuild.owner
       ) {
+        delete claimValue.proofs;
         // Issue Verifiable credential
-        console.log('Valid discord guild:', discordGuild);
 
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
@@ -159,6 +160,89 @@ export const DiscordController = async (
           value: {
             ...claimValue,
             username: discordGuild.name,
+            imageUrl: 'https://cdn.discordapp.com/icons/'
+              .concat(discordGuild.id)
+              .concat('/')
+              .concat(discordGuild.icon)
+              .concat('.png')
+          },
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        console.log('claim: ', claim);
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong discord: ${discordGuild}`);
+      }
+    } else if (
+      claimedCredential?.credentialSubject?.type === 'discordGuildMember' &&
+      claimedCredential?.credentialSubject?.typeSchema.includes('badge')
+    ) {
+      // Get evidence bearer token
+      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('claim value: ', claimValue);
+
+      // Connect to discord and get user ID from token
+      const discordUser = await discord.getDiscordUser({
+        tokenType: claimValue.proofs.tokenType,
+        accessToken: claimValue.proofs.accessToken
+      });
+      console.log('discordUser: ', discordUser);
+      const discordGuild = await discord.getDiscordGuild({
+        tokenType: claimValue.proofs.tokenType,
+        accessToken: claimValue.proofs.accessToken,
+        guildId: claimValue.proofs.guildId
+      });
+      console.log('discordGuild: ', discordGuild);
+      const discordGuildMember = await discord.getDiscordGuildMember({
+        tokenType: claimValue.proofs.tokenType,
+        accessToken: claimValue.proofs.accessToken,
+        guildId: claimValue.proofs.guildId
+      });
+      console.log('discordGuildMember: ', discordGuildMember);
+
+      // If discord userID == the VC userID
+      if (
+        !discordGuildMember.pending &&
+        discordGuildMember.user.id === claimValue.proofs.memberId
+      ) {
+        delete claimValue.proofs;
+        // Issue Verifiable credential
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: {
+            entity: claimValue.entity,
+            description: discordGuild.name,
+            username: discordGuildMember.nick
+              ? discordGuildMember.nick
+              : discordUser.username
+                  .concat('#')
+                  .concat(discordUser.discriminator),
+            name: claimValue.name,
+            role: discordGuild.owner ? 'owner' : 'member',
+            skills: discordGuildMember.roles.map(role => {
+              return { skillId: role, score: 100 };
+            }),
+            startDate: discordGuildMember.joined_at,
             imageUrl: 'https://cdn.discordapp.com/icons/'
               .concat(discordGuild.id)
               .concat('/')
