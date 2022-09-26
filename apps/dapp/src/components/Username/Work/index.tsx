@@ -207,6 +207,10 @@ export const Work = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
+    if (value?.title && value?.entity) {
+      return value.entity.concat(' / ').concat(value.title);
+    }
+
     if (value?.username) {
       return '@'.concat(value.username);
     }
@@ -378,7 +382,11 @@ export const Work = (props: IProps) => {
                   ]
                 }}
                 isIssued={work.credential && work.stamps?.length > 0}
-                image={work.credential?.visualInformation?.imageUrl}
+                image={
+                  work.credential?.value?.imageUrl
+                    ? work.credential?.value?.imageUrl
+                    : work.credential?.visualInformation?.imageUrl
+                }
                 tooltip={{
                   message: `This credential has ${
                     work.stamps?.length || 0

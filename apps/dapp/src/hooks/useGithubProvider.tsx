@@ -48,7 +48,7 @@ export const useGithubProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string) => {
+  const handleFetchOAuth = () => {
     const state = 'github-' + generateUID(10);
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CALLBACK}&state=${state}`;

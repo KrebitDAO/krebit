@@ -2,12 +2,7 @@ import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import {
-  connect,
-  getTwitterUser,
-  getTwitterFollowersCount,
-  getTwitterPostsCount
-} from '../../utils';
+import { connect, twitter } from '../../utils';
 
 // Twitter Oauth2
 import { Client, auth } from 'twitter-api-sdk';
@@ -78,7 +73,7 @@ export const TwitterController = async (
       console.log('claim value: ', claimValue);
 
       // Connect to twitter and get user ID from code
-      const twitterUser = await getTwitterUser({
+      const twitterUser = await twitter.getTwitterUser({
         client: authClient,
         state: claimValue.proofs.state,
         code_challenge: claimedCredential.credentialSubject.ethereumAddress,
@@ -139,7 +134,7 @@ export const TwitterController = async (
       console.log('claim value: ', claimValue);
 
       // Connect to twitter and get user ID from code
-      const followers = await getTwitterFollowersCount({
+      const followers = await twitter.getTwitterFollowersCount({
         client: authClient,
         state: claimValue.proofs.state,
         code_challenge: claimedCredential.credentialSubject.ethereumAddress,

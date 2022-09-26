@@ -2,11 +2,7 @@ import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import {
-  connect,
-  startTwilioVerification,
-  checkTwilioVerification
-} from '../../utils';
+import { connect, twilio } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -84,7 +80,7 @@ export const EmailController = async (
     ) {
       // Check Verification status
       console.log('proofs: ', claimValue.proofs);
-      const verification = await checkTwilioVerification(
+      const verification = await twilio.checkTwilioVerification(
         claimValue.username.concat('@').concat(claimValue.host),
         claimValue.proofs.nonce
       );
@@ -134,7 +130,7 @@ export const EmailController = async (
       }
     } else {
       // Start Twilio verification
-      const verificationId = await startTwilioVerification(
+      const verificationId = await twilio.startTwilioVerification(
         claimValue.username.concat('@').concat(claimValue.host),
         channel
       );

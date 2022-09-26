@@ -2,10 +2,12 @@
   "title": "badge",
   "type": "object",
   "properties": {
-    "entity": { "type": "integer" },
+    "entity": { "type": "string" },
+    "username": { "type": "string" },
     "parentCredential": { "type": "string" },
     "onBehalveOfIssuer": { "type": "string" },
     "name": { "type": "string" },
+    "startDate": { "type": "string" },
     "role": { "type": "string" },
     "level": { "type": "string" },
     "imageUrl": { "type": "string" },
@@ -21,5 +23,5 @@
     "proofs": { "type": "object" }
   },
   "required": ["entity", "name"],
-  "additionalProperties": false
+  "additionalProperties": true
 }

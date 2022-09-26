@@ -100,6 +100,28 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
+    credentialType: 'githubRepoOwner',
+    entity: 'Github Repository Owner',
+    description: 'Krebit Verification Node',
+    icon: <Github />,
+    imageUrl:
+      'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+    verificationUrl: 'http://localhost:4000/github',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
+    credentialType: 'githubRepoCollaborator',
+    entity: 'Github Repository Collaborator',
+    description: 'Krebit Verification Node',
+    icon: <Github />,
+    imageUrl:
+      'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+    verificationUrl: 'http://localhost:4000/github',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
     credentialType: 'spect',
     entity: 'Spect',
     description: 'Krebit Verification Node',
@@ -112,6 +134,39 @@ const WORK_CREDENTIALS = [
 ];
 
 const COMMUNITY_CREDENTIALS = [
+  {
+    credentialType: 'discordGuildOwner',
+    entity: 'Discord Guild Owner',
+    description: 'Krebit Verification Node',
+    icon: <Discord />,
+    imageUrl:
+      'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
+    verificationUrl: 'http://localhost:4000/discord',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
+    credentialType: 'discordGuildMember',
+    entity: 'Discord Guild Member',
+    description: 'Krebit Verification Node',
+    icon: <Discord />,
+    imageUrl:
+      'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
+    verificationUrl: 'http://localhost:4000/discord',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
+    credentialType: 'githubOrgMember',
+    entity: 'Github Organization Member',
+    description: 'Krebit Verification Node',
+    icon: <Github />,
+    imageUrl:
+      'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+    verificationUrl: 'http://localhost:4000/github',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
   {
     credentialType: 'issuer',
     entity: 'Issuer',

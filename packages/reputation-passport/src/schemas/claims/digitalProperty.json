@@ -6,6 +6,7 @@
     "host": { "type": "string" },
     "id": { "type": "string" },
     "username": { "type": "string" },
+    "imageUrl": { "type": "string" },
     "startDate": { "type": "string" },
     "followers": { "type": "string" },
     "posts": { "type": "string" },

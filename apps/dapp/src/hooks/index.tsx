@@ -8,6 +8,11 @@ import { useIssuerProvider } from './useIssuerProvider';
 import { useEmailProvider } from './useEmailProvider';
 import { useGithubProvider } from './useGithubProvider';
 import { useGithubFollowersProvider } from './useGithubFollowersProvider';
+import { useGithubRepoProvider } from './useGithubRepoProvider';
+import { useGithubRepoCollaboratorProvider } from './useGithubRepoCollaboratorProvider';
+import { useGithubOrgMemberProvider } from './useGithubOrgMemberProvider';
+import { useDiscordGuildOwnerProvider } from './useDiscordGuildOwnerProvider';
+import { useDiscordGuildMemberProvider } from './useDiscordGuildMemberProvider';
 import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 
@@ -22,6 +27,11 @@ export {
   useEmailProvider,
   useGithubProvider,
   useGithubFollowersProvider,
+  useGithubRepoProvider,
+  useGithubRepoCollaboratorProvider,
+  useGithubOrgMemberProvider,
+  useDiscordGuildOwnerProvider,
+  useDiscordGuildMemberProvider,
   usePersonaProvider,
   useOutsideClick
 };

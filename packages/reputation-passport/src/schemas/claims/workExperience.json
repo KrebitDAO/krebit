@@ -19,6 +19,6 @@
     },
     "proofs": { "type": "object" }
   },
-  "required": ["title", "entity", "startDate", "endDate"],
+  "required": ["title", "entity"],
   "additionalProperties": true
 }

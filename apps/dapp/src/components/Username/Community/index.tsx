@@ -208,6 +208,14 @@ export const Community = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
+    if (value?.entity && value?.role) {
+      return value.entity.concat(' / ').concat(value.role);
+    }
+
+    if (value?.username) {
+      return '@'.concat(value.username);
+    }
+
     if (value?.id) {
       return value.id;
     }
@@ -376,7 +384,11 @@ export const Community = (props: IProps) => {
                   ]
                 }}
                 isIssued={community.credential && community.stamps?.length > 0}
-                image={community.credential?.visualInformation?.imageUrl}
+                image={
+                  community.credential?.value?.imageUrl
+                    ? community.credential?.value?.imageUrl
+                    : community.credential?.visualInformation?.imageUrl
+                }
                 tooltip={{
                   message: `This credential has ${
                     community.stamps?.length || 0
