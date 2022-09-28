@@ -64,7 +64,7 @@ export const useEmailProvider = () => {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       console.log('Saving Stamp', { type: 'email' });
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
@@ -113,7 +113,7 @@ export const useEmailProvider = () => {
     setStatus('credential_pending');
 
     try {
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
@@ -188,7 +188,7 @@ export const useEmailProvider = () => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');

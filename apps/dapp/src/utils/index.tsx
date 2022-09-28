@@ -13,6 +13,8 @@ import { normalizeSchema } from './normalizeSchema';
 import { checkCredentialsURLs } from './checkCredentialsURLs';
 import { mergeArray } from './mergeArray';
 import { constants } from './constants';
+import { formatFilename } from './formatFilename';
+import { formatUrlImage } from './formatUrlImage';
 
 export {
   createEmotionCache,
@@ -29,5 +31,7 @@ export {
   normalizeSchema,
   checkCredentialsURLs,
   mergeArray,
-  constants
+  constants,
+  formatFilename,
+  formatUrlImage
 };

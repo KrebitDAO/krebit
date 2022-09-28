@@ -18,6 +18,7 @@ import {
 import { Bell, Explore, Home, Menu, Send } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { GeneralContext } from 'context';
+import { formatUrlImage } from 'utils';
 
 interface IProps {
   children: ReactNode;
@@ -77,7 +78,11 @@ export const Layout: FunctionComponent<IProps> = props => {
 
   return (
     <Wrapper>
-      <MenuMobile profilePicture={profile?.picture || '/imgs/logos/Krebit.svg'}>
+      <MenuMobile
+        profilePicture={
+          formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
+        }
+      >
         <div className="icon">
           <Menu />
         </div>
@@ -120,7 +125,9 @@ export const Layout: FunctionComponent<IProps> = props => {
         ))}
       </NavBarMobile>
       <NavBarDesktop
-        profilePicture={profile?.picture || '/imgs/logos/Krebit.svg'}
+        profilePicture={
+          formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
+        }
       >
         <div className="options">
           <div className="option-logo">

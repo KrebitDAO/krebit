@@ -22,6 +22,7 @@ import { MoreVert } from './MoreVert';
 import { Github } from './Github';
 import { Spect } from './Spect';
 import { OpenInNew } from './OpenInNew';
+import { Upload } from './Upload';
 
 export {
   Close,
@@ -47,5 +48,6 @@ export {
   MoreVert,
   Github,
   Spect,
-  OpenInNew
+  OpenInNew,
+  Upload
 };

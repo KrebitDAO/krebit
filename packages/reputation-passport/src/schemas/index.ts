@@ -4,4 +4,4 @@ import krbToken from './krbToken.json' assert { type: 'json' };
 import * as claims from './claims';
 import { orbis } from './orbis';
 
-export { datamodel, encodedModel, krbToken, claims, orbis};
+export { datamodel, encodedModel, krbToken, claims, orbis };

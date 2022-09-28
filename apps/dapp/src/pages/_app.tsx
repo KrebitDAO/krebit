@@ -44,7 +44,7 @@ const App = (props: MyAppProps) => {
         <link rel="icon" type="image/png" href="/imgs/logos/favicon.ico"></link>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme as any}>
         <GeneralProvider>
           <Component {...pageProps} />
         </GeneralProvider>

@@ -3,7 +3,7 @@ import {
   issueCredential,
   validateSchema,
   ClaimProps,
-  hashClaimValue,
+  hashClaimValue
 } from './issueCredential';
 import { base64 } from './base64';
 import { regexValidations } from './regexValidations';
@@ -14,6 +14,6 @@ export {
   validateSchema,
   base64,
   hashClaimValue,
-  regexValidations,
+  regexValidations
 };
 export type { ClaimProps };

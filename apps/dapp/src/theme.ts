@@ -1,7 +1,9 @@
 import { Theme } from '@emotion/react';
-import { red } from '@mui/material/colors';
+import { createTheme } from '@mui/material';
 
-export const theme: Theme = {
+const materialTheme = createTheme({});
+
+export const systemTheme: Theme = {
   colors: {
     bunting: '#0F1837',
     rose: '#FF0087',
@@ -48,23 +50,11 @@ export const theme: Theme = {
     lg: '1024px',
     xl: '1280px',
     '2xl': '1536px'
-  },
-  // Material ui
-  palette: {
-    primary: {
-      main: '#C3D1FF'
-    },
-    secondary: {
-      main: '#00FFFE'
-    },
-    error: {
-      main: red.A400
-    },
-    text: {
-      primary: '#fff'
-    }
-  },
-  shape: {
-    borderRadius: 0
   }
+};
+
+delete materialTheme.shadows;
+export const theme = {
+  ...systemTheme,
+  ...materialTheme
 };

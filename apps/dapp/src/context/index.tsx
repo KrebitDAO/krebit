@@ -2,6 +2,7 @@ import { FunctionComponent, createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import LitJsSdk from 'lit-js-sdk';
+import { Web3Storage } from 'web3.storage';
 import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
 import {
@@ -24,6 +25,8 @@ export interface IWalletInformation {
   wallet: ethers.providers.JsonRpcSigner;
 }
 
+const { NEXT_PUBLIC_WEB3_STORAGE } = process.env;
+
 export const GeneralContext = createContext(undefined);
 
 export const GeneralProvider: FunctionComponent<IProps> = props => {
@@ -39,6 +42,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     IWalletInformation | undefined
   >();
   const { push } = useRouter();
+  const storage = new Web3Storage({ token: NEXT_PUBLIC_WEB3_STORAGE });
 
   useEffect(() => {
     const isAuthenticated = async () => {
@@ -78,11 +82,13 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         address: information.address,
         wallet: information.wallet,
         litSdk: LitJsSdk,
-        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL1
       });
       const isIssuerConnected = await issuer.isConnected();
 
-      if (isPassportConnected && isIssuerConnected) {
+      const isOrbisConnected = await orbis.isConnected();
+
+      if (isPassportConnected && isIssuerConnected && isOrbisConnected) {
         const currentProfile = await normalizeSchema.profile(passport, orbis);
 
         setPassport(passport);
@@ -121,6 +127,9 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       });
       const passportConnection = await passport.connect();
 
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
       const issuer = new Krebit.core.Krebit({
         network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
         ethProvider: information.ethProvider,
@@ -129,7 +138,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         litSdk: LitJsSdk,
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
-      const issuerConnection = await issuer.connect();
+      const issuerConnection = await issuer.connect(currentSession);
 
       if (passportConnection && issuerConnection) {
         setPassport(passport);
@@ -138,7 +147,9 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         const orbis = new Orbis();
         setOrbis(orbis);
 
-        if (orbis) {
+        const orbisConnection = orbis.connect();
+
+        if (orbisConnection) {
           const currentProfile = await normalizeSchema.profile(passport, orbis);
 
           setProfile(currentProfile);
@@ -156,7 +167,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     if (!window) return;
 
     window.localStorage.removeItem('auth-type');
-    window.localStorage.removeItem('ceramic-session');
+    window.localStorage.removeItem('did-session');
+    orbis.logout();
     setProfile(undefined);
     setPassport(undefined);
   };
@@ -185,7 +197,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         profileInformation: {
           handleSetProfile,
           profile
-        }
+        },
+        storage
       }}
     >
       {children}
