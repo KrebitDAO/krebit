@@ -10,6 +10,7 @@ export const CircularProgressWrapper = styled.div`
     & > .MuiCircularProgress-root {
       width: 100% !important;
       height: 100% !important;
+      color: ${theme.colors.white};
     }
   `}
 `;
@@ -24,6 +25,7 @@ export const SkeletonWrapper = styled.div`
       height: 100% !important;
       transform: initial !important;
       border-radius: 15px;
+      background-color: ${theme.colors.white}26;
     }
   `}
 `;

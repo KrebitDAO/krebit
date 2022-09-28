@@ -33,11 +33,11 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
   if (orbisProfile?.data?.did) {
     currentProfile = {
       did,
-      background: orbisProfile?.data?.details?.profile?.background,
+      background: orbisProfile?.data?.details?.profile?.cover,
       picture: orbisProfile?.data?.details?.profile?.pfp,
       name:
-        orbisProfile?.data?.details?.metadata?.ensName ||
-        orbisProfile?.data?.details?.profile?.username,
+        orbisProfile?.data?.details?.profile?.username ||
+        orbisProfile?.data?.details?.metadata?.ensName,
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,
       countFollowers: orbisProfile?.data?.count_followers || 0,

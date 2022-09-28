@@ -7,7 +7,7 @@ interface ICardProps {
 }
 
 export const SimpleCardWrapper = styled.div<ICardProps>`
-  ${({ theme }) => css`
+  ${({ theme, isEmpty }) => css`
     display: grid;
     grid-template-columns: auto 30px;
     background-color: ${theme.colors.ebonyClay};
@@ -18,6 +18,11 @@ export const SimpleCardWrapper = styled.div<ICardProps>`
     @media (min-width: ${theme.screens.lg}) {
       padding: 16px 20px;
     }
+
+    ${isEmpty &&
+    css`
+      opacity: 0.7;
+    `}
 
     .card-item-content-left {
       .card-item-content-title {
@@ -127,7 +132,7 @@ export const SimpleCardWrapper = styled.div<ICardProps>`
 `;
 
 export const SmallCardWrapper = styled.div<ICardProps>`
-  ${({ theme, image }) => css`
+  ${({ theme, image, isEmpty }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
@@ -137,6 +142,11 @@ export const SmallCardWrapper = styled.div<ICardProps>`
     grid-template-areas: 'information top-icon' 'dates bottom-icon';
     grid-gap: 47px 0;
     position: relative;
+
+    ${isEmpty &&
+    css`
+      opacity: 0.7;
+    `}
 
     .card-information {
       .card-information-title {
@@ -258,6 +268,11 @@ export const LongCardWrapper = styled.div<ICardProps>`
       grid-template-columns: ${isEmpty ? '134px auto 30px' : '134px auto 60px'};
       grid-gap: 23px;
     }
+
+    ${isEmpty &&
+    css`
+      opacity: 0.7;
+    `}
 
     .card-image-container {
       height: 63px;

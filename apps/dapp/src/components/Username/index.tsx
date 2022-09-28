@@ -6,11 +6,12 @@ import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
 import { Work } from './Work';
+import { EditProfile } from './EditProfile';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
-import { isValid, normalizeSchema, mergeArray } from 'utils';
+import { isValid, normalizeSchema, mergeArray, formatUrlImage } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -77,11 +78,13 @@ export const Username = () => {
   const [profile, setProfile] = useState<IProfile | undefined>();
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const { query, push } = useRouter();
   const {
     auth,
     walletInformation: { publicPassport, passport, issuer, orbis },
-    walletModal: { openConnectWallet, handleOpenConnectWallet }
+    walletModal: { openConnectWallet, handleOpenConnectWallet },
+    storage
   } = useContext(GeneralContext);
   const windowSize = useWindowSize();
   const isDesktop = windowSize.width >= 1024;
@@ -130,6 +133,12 @@ export const Username = () => {
     setCurrentFilterOption(value);
   };
 
+  const handleEditProfile = () => {
+    if (!auth?.isAuthenticated) return;
+
+    setIsEditProfileOpen(prevState => !prevState);
+  };
+
   const handleSendMessage = () => {
     if (!auth?.isAuthenticated) {
       handleOpenConnectWallet();
@@ -156,6 +165,15 @@ export const Username = () => {
         isOpen={openConnectWallet}
         onClose={handleOpenConnectWallet}
       />
+      {isEditProfileOpen && (
+        <EditProfile
+          profile={profile}
+          onClose={handleEditProfile}
+          passport={passport}
+          orbis={orbis}
+          storage={storage}
+        />
+      )}
       <Layout>
         {isLoading ? (
           <LoadingWrapper>
@@ -163,19 +181,27 @@ export const Username = () => {
           </LoadingWrapper>
         ) : (
           <Wrapper
-            profilePicture={profile.picture || '/imgs/logos/Krebit.svg'}
-            isCurrentProfile={currentDIDFromURL === auth?.did}
+            profilePicture={
+              formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
+            }
           >
             <div className="profile-container">
-              <Background image={profile.background} />
+              <Background image={formatUrlImage(profile?.background)} />
               <div className="profile">
                 <div className="profile-photo"></div>
                 <div className="profile-info">
-                  <div className="profile-info-naming">
-                    <p className="profile-info-name">{profile.name}</p>{' '}
-                    <span className="profile-info-token">
-                      KRB {profile.reputation}
-                    </span>
+                  <div className="profile-info-naming-container">
+                    <div className="profile-info-naming">
+                      <p className="profile-info-name">{profile.name}</p>{' '}
+                      <span className="profile-info-token">
+                        KRB {profile.reputation}
+                      </span>
+                    </div>
+                    {profile.description && (
+                      <p className="profile-info-description">
+                        {profile.description}
+                      </p>
+                    )}
                   </div>
                   <div className="profile-info-follow">
                     <span className="profile-info-followers">
@@ -193,12 +219,20 @@ export const Username = () => {
                     </span>
                   </div>
                 </div>
-                {currentDIDFromURL !== auth?.did && (
+                {currentDIDFromURL !== auth?.did ? (
                   <div className="profile-buttons">
                     <Button text="Follow" onClick={() => {}} />
                     <Button
                       text="Send Message"
                       onClick={handleSendMessage}
+                      styleType="border"
+                    />
+                  </div>
+                ) : (
+                  <div className="profile-button">
+                    <Button
+                      text="Edit profile"
+                      onClick={handleEditProfile}
                       styleType="border"
                     />
                   </div>

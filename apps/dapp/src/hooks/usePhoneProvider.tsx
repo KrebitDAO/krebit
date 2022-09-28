@@ -65,7 +65,7 @@ export const usePhoneProvider = () => {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       console.log('Saving Stamp', { type: 'phoneNumber' });
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
@@ -114,7 +114,7 @@ export const usePhoneProvider = () => {
     setStatus('credential_pending');
 
     try {
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
@@ -189,7 +189,7 @@ export const usePhoneProvider = () => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');

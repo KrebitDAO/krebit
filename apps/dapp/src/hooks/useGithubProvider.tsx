@@ -100,7 +100,7 @@ export const useGithubProvider = () => {
       if (e.target === 'github') {
         console.log('Saving Stamp', { type: 'github', proof: e.data });
 
-        const session = window.localStorage.getItem('ceramic-session');
+        const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
@@ -168,7 +168,7 @@ export const useGithubProvider = () => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');

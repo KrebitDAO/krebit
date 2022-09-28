@@ -89,7 +89,7 @@ export const useDiscordProvider = () => {
       if (e.target === 'discord') {
         console.log('Saving Stamp', { type: 'discord', proof: e.data });
 
-        const session = window.localStorage.getItem('ceramic-session');
+        const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
@@ -163,7 +163,7 @@ export const useDiscordProvider = () => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');

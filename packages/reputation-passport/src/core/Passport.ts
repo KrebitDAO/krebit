@@ -66,7 +66,7 @@ export class Passport {
   };
 
   isConnected = async () => {
-    const currentSession = localStore.get('ceramic-session');
+    const currentSession = localStore.get('did-session');
 
     if (!currentSession) return false;
 

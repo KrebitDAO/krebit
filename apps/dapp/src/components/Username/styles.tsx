@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 
 interface IProps {
   profilePicture: string;
-  isCurrentProfile: boolean;
 }
 
 interface IBackgrounProps {
@@ -11,16 +10,16 @@ interface IBackgrounProps {
 }
 
 export const Wrapper = styled.div<IProps>`
-  ${({ theme, profilePicture, isCurrentProfile }) => css`
+  ${({ theme, profilePicture }) => css`
     max-width: 1238px;
     margin: 0 auto;
 
     .profile-container {
-      position: relative;
-      height: ${isCurrentProfile ? '318px' : '390px'};
+      display: grid;
+      grid-template-rows: 100px 1fr;
 
       @media (min-width: ${theme.screens.lg}) {
-        height: 365px;
+        grid-template-rows: 200px 1fr;
         margin-top: 30px;
       }
 
@@ -28,14 +27,6 @@ export const Wrapper = styled.div<IProps>`
         display: grid;
         grid-template-areas: 'photo' 'info' 'buttons';
         justify-content: center;
-        position: relative;
-        bottom: 63px;
-        left: 0;
-        right: 0;
-
-        @media (min-width: ${theme.screens.lg}) {
-          bottom: 80px;
-        }
 
         @media (min-width: ${theme.screens.lg}) {
           grid-template-areas: 'photo info buttons';
@@ -75,33 +66,53 @@ export const Wrapper = styled.div<IProps>`
             justify-self: initial;
             margin: 0;
             margin-left: 12px;
-            margin-bottom: 12px;
           }
 
-          .profile-info-naming {
-            display: flex;
-            align-items: center;
-
-            .profile-info-name {
-              margin: 0;
-              font-size: ${theme.fonts.xl};
-              color: ${theme.colors.white};
-              max-width: 250px;
-              overflow: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
+          .profile-info-naming-container {
+            .profile-info-naming {
+              display: flex;
+              align-items: center;
+              justify-content: center;
 
               @media (min-width: ${theme.screens.lg}) {
-                font-size: ${theme.fonts['2xl']};
-                max-width: 600px;
+                justify-content: initial;
+              }
+
+              .profile-info-name {
+                margin: 0;
+                font-size: ${theme.fonts.xl};
+                color: ${theme.colors.white};
+                max-width: 250px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
+                @media (min-width: ${theme.screens.lg}) {
+                  font-size: ${theme.fonts['2xl']};
+                  max-width: 600px;
+                }
+              }
+
+              .profile-info-token {
+                margin: 0;
+                margin-left: 10px;
+                font-size: ${theme.fonts.sm};
+                color: ${theme.colors.cyan};
               }
             }
 
-            .profile-info-token {
+            .profile-info-description {
               margin: 0;
-              margin-left: 10px;
+              margin-top: 5px;
               font-size: ${theme.fonts.sm};
-              color: ${theme.colors.cyan};
+              color: ${theme.colors.white};
+              width: 300px;
+              text-align: center;
+
+              @media (min-width: ${theme.screens.lg}) {
+                width: 500px;
+                text-align: initial;
+              }
             }
           }
 
@@ -145,13 +156,33 @@ export const Wrapper = styled.div<IProps>`
           display: grid;
           grid-template-columns: repeat(2, 150px);
           grid-gap: 8px;
-          margin-top: 30px;
+          margin-top: 20px;
 
           & > button {
             height: 44px;
           }
 
           @media (min-width: ${theme.screens.lg}) {
+            & > button {
+              height: 50px;
+            }
+          }
+        }
+
+        .profile-button {
+          margin: 0 auto;
+          margin-top: 20px;
+
+          & > button {
+            height: 44px;
+            width: 150px;
+            float: right;
+          }
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin: 0;
+            margin-bottom: 35px;
+
             & > button {
               height: 50px;
             }
@@ -238,7 +269,6 @@ export const Background = styled.div<IBackgrounProps>`
   ${({ theme, image }) => css`
     width: 100%;
     height: 165px;
-    position: relative;
     ${image
       ? css`
           background-image: url(${image});
@@ -249,9 +279,9 @@ export const Background = styled.div<IBackgrounProps>`
       : css`
           background: linear-gradient(
             90deg,
-            rgba(2, 0, 36, 1) 0%,
-            rgba(50, 50, 128, 1) 41%,
-            rgba(0, 212, 255, 1) 100%
+            ${theme.colors.bunting} 0%,
+            ${theme.colors.blueRibbon} 41%,
+            ${theme.colors.cyan} 100%
           );
         `}
 

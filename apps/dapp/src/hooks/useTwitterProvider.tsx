@@ -103,7 +103,7 @@ export const useTwitterProvider = () => {
       if (e.target === 'twitter') {
         console.log('Saving Stamp', { type: 'twitter', proof: e.data });
 
-        const session = window.localStorage.getItem('ceramic-session');
+        const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
@@ -171,7 +171,7 @@ export const useTwitterProvider = () => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');

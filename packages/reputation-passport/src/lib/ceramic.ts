@@ -44,7 +44,7 @@ const authDIDSession = async (props: AuthProviderProps) => {
       domain: DOMAIN
     });
 
-    localStore.set('ceramic-session', newSession.serialize());
+    localStore.set('did-session', newSession.serialize());
 
     currentSession = newSession;
   }
