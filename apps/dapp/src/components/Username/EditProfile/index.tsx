@@ -6,6 +6,7 @@ import { Passport } from '@krebitdao/reputation-passport/dist/core';
 import { Background, Picture, Wrapper } from './styles';
 import { Input } from 'components/Input';
 import { Button } from 'components/Button';
+import { Loading } from 'components/Loading';
 import { Close, Upload } from 'components/Icons';
 import { formatFilename, formatUrlImage } from 'utils';
 
@@ -128,61 +129,81 @@ export const EditProfile = (props: IProps) => {
         <div className="edit-box">
           <div className="edit-box-header">
             <p className="edit-box-header-title">Edit your profile</p>
-            <div className="edit-box-header-close" onClick={onClose}>
+            <div
+              className="edit-box-header-close"
+              onClick={status === 'pending' ? undefined : onClose}
+            >
               <Close />
             </div>
           </div>
-          <form method="post" onSubmit={handleSubmit} className="edit-box-list">
-            <p className="edit-box-list-text">Upload your background image:</p>
-            <Background image={formatUrlImage(values?.background)}>
-              <input
-                type="file"
-                id="background-file"
-                accept="image/*"
-                name="background"
-                onChange={handleValues}
-              />
-              <label
-                className="edit-box-list-background"
-                htmlFor="background-file"
-              >
-                <Upload />
-              </label>
-            </Background>
-            <p className="edit-box-list-text">Upload your picture:</p>
-            <Picture image={formatUrlImage(values?.picture)}>
-              <input
-                type="file"
-                id="picture-file"
-                accept="image/*"
-                name="picture"
-                onChange={handleValues}
-              />
-              <label className="edit-box-list-picture" htmlFor="picture-file">
-                <Upload />
-              </label>
-            </Picture>
-            <p className="edit-box-list-text">Update your name:</p>
-            <Input
-              name="name"
-              placeholder="name"
-              value={values?.name}
-              onChange={handleValues}
-              isRequired={true}
-            />
-            <p className="edit-box-list-text">Update your description:</p>
-            <Input
-              name="description"
-              placeholder="Description"
-              value={values?.description}
-              onChange={handleValues}
-              isRequired={true}
-              isMultiline={true}
-            />
-            <div className="edit-box-button">
-              <Button type="submit" text="Save" onClick={() => {}} />
+          {status === 'pending' ? (
+            <div className="edit-box-loading">
+              <Loading />
             </div>
-          </form>
+          ) : (
+            <form
+              method="post"
+              onSubmit={status === 'pending' ? undefined : handleSubmit}
+              className="edit-box-list"
+            >
+              <p className="edit-box-list-text">
+                Upload your background image:
+              </p>
+              <Background image={formatUrlImage(values?.background)}>
+                <input
+                  type="file"
+                  id="background-file"
+                  accept="image/*"
+                  name="background"
+                  onChange={handleValues}
+                />
+                <label
+                  className="edit-box-list-background"
+                  htmlFor="background-file"
+                >
+                  <Upload />
+                </label>
+              </Background>
+              <p className="edit-box-list-text">Upload your picture:</p>
+              <Picture image={formatUrlImage(values?.picture)}>
+                <input
+                  type="file"
+                  id="picture-file"
+                  accept="image/*"
+                  name="picture"
+                  onChange={handleValues}
+                />
+                <label className="edit-box-list-picture" htmlFor="picture-file">
+                  <Upload />
+                </label>
+              </Picture>
+              <p className="edit-box-list-text">Update your name:</p>
+              <Input
+                name="name"
+                placeholder="name"
+                value={values?.name}
+                onChange={handleValues}
+                isRequired={true}
+              />
+              <p className="edit-box-list-text">Update your description:</p>
+              <Input
+                name="description"
+                placeholder="Description"
+                value={values?.description}
+                onChange={handleValues}
+                isRequired={true}
+                isMultiline={true}
+              />
+              <div className="edit-box-button">
+                <Button
+                  type="submit"
+                  text="Save"
+                  onClick={() => {}}
+                  isDisabled={status === 'pending'}
+                />
+              </div>
+            </form>
+          )}
         </div>
       </Wrapper>
     </>

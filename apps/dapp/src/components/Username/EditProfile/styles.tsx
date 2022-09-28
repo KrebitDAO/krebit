@@ -66,6 +66,13 @@ export const Wrapper = styled.div<IProps>`
         }
       }
 
+      .edit-box-loading {
+        margin: 0 auto;
+        margin-top: 20px;
+        width: 60px;
+        height: 60px;
+      }
+
       .edit-box-list {
         display: grid;
         grid-gap: 20px;
