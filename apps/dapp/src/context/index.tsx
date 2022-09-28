@@ -168,7 +168,6 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
 
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
-    window.localStorage.removeItem('lit-auth-signature');
     orbis.logout();
     setProfile(undefined);
     setPassport(undefined);
