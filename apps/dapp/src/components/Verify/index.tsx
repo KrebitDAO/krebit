@@ -69,63 +69,73 @@ export const Verify = (props: IProps) => {
   };
 
   return (
-    <Wrapper>
-      <div className="verify-box">
-        <div className="verify-box-header">
-          <div className="verify-box-header-content">
-            {viewStatus === 'steps' && !verifyId ? (
-              <div
-                className="verify-box-header-content-icon"
-                onClick={() => handleViewStatus('init')}
-              >
-                <ArrowForward />
-              </div>
-            ) : null}
-            <p className="verify-box-header-content-title">
-              {viewStatus === 'steps'
-                ? `Verify ${currentVerify.entity}`
-                : 'Verify your credentials'}
-            </p>
+    <>
+      <style global jsx>{`
+        html,
+        body {
+          overflow: hidden;
+        }
+      `}</style>
+      <Wrapper>
+        <div className="verify-box">
+          <div className="verify-box-header">
+            <div className="verify-box-header-content">
+              {viewStatus === 'steps' && !verifyId ? (
+                <div
+                  className="verify-box-header-content-icon"
+                  onClick={() => handleViewStatus('init')}
+                >
+                  <ArrowForward />
+                </div>
+              ) : null}
+              <p className="verify-box-header-content-title">
+                {viewStatus === 'steps'
+                  ? `Verify ${currentVerify.entity}`
+                  : 'Verify your credentials'}
+              </p>
+            </div>
+            <div className="verify-box-header-close" onClick={onClose}>
+              <Close />
+            </div>
           </div>
-          <div className="verify-box-header-close" onClick={onClose}>
-            <Close />
-          </div>
-        </div>
-        {viewStatus === 'init' && (
-          <div className="verify-box-list">
-            {initialList.map((item, index) => (
-              <div className="verify-box-item" key={index}>
-                <div className="verify-box-item-content">
-                  <div className="verify-box-item-content-icon">
-                    {item.icon}
+          {viewStatus === 'init' && (
+            <div className="verify-box-list">
+              {initialList.map((item, index) => (
+                <div className="verify-box-item" key={index}>
+                  <div className="verify-box-item-content">
+                    <div className="verify-box-item-content-icon">
+                      {item.icon}
+                    </div>
+                    <p className="verify-box-item-content-text">
+                      {item.entity}
+                    </p>
                   </div>
-                  <p className="verify-box-item-content-text">{item.entity}</p>
+                  <div className="verify-box-item-button">
+                    <Button
+                      text={item.isDisabled ? 'Soon' : 'Verify'}
+                      onClick={
+                        item.isDisabled
+                          ? undefined
+                          : () => handleCurrentVerify(item)
+                      }
+                      styleType="border"
+                      borderBackgroundColor="bunting"
+                    />
+                  </div>
                 </div>
-                <div className="verify-box-item-button">
-                  <Button
-                    text={item.isDisabled ? 'Soon' : 'Verify'}
-                    onClick={
-                      item.isDisabled
-                        ? undefined
-                        : () => handleCurrentVerify(item)
-                    }
-                    styleType="border"
-                    borderBackgroundColor="bunting"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {viewStatus === 'steps' && (
-          <div className="verify-box-steps">
-            {component({
-              currentVerify,
-              handleCurrentVerify
-            })}
-          </div>
-        )}
-      </div>
-    </Wrapper>
+              ))}
+            </div>
+          )}
+          {viewStatus === 'steps' && (
+            <div className="verify-box-steps">
+              {component({
+                currentVerify,
+                handleCurrentVerify
+              })}
+            </div>
+          )}
+        </div>
+      </Wrapper>
+    </>
   );
 };

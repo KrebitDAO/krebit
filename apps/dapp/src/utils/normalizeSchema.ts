@@ -49,7 +49,6 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
     if (profile) {
       currentProfile = {
         did,
-        // TODO: THESE IMAGES MIGHT BE IPFS FILES, WHAT CAN WE DO?
         background: profile?.background?.original?.src,
         picture: profile?.image?.original?.src,
         name:

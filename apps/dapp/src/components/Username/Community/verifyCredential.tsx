@@ -56,7 +56,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Become an Issuer'
                 }
                 form={{
-                  inputs:
+                  fields:
                     issuerProvider.currentCredential ||
                     currentCommunity?.credential
                       ? undefined
@@ -199,7 +199,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim that you are a github organization member'
                 }
                 form={{
-                  inputs:
+                  fields:
                     githubOrgMemberProvider.currentCredential ||
                     currentCommunity?.credential
                       ? undefined
@@ -300,7 +300,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your discord guild ownership'
                 }
                 form={{
-                  inputs:
+                  fields:
                     discordGuildOwnerProvider.currentCredential ||
                     currentCommunity.credential
                       ? undefined
@@ -397,7 +397,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your discord guild membership'
                 }
                 form={{
-                  inputs:
+                  fields:
                     discordGuildMemberProvider.currentCredential ||
                     currentCommunity.credential
                       ? undefined

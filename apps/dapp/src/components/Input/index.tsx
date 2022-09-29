@@ -1,7 +1,9 @@
 import { ChangeEvent } from 'react';
 
-import { TextField } from '@mui/material';
 import { InputWrapper } from './styles';
+
+import { StyledEngineProvider } from '@mui/material';
+import { TextField } from '@mui/material';
 
 interface IProps {
   name: string;
@@ -37,25 +39,27 @@ export const Input = (props: IProps) => {
   } = props;
 
   return (
-    <InputWrapper>
-      <TextField
-        name={name}
-        label={placeholder}
-        value={value}
-        onChange={onChange}
-        variant="outlined"
-        multiline={isMultiline}
-        autoComplete="off"
-        autoCorrect="off"
-        spellCheck="false"
-        disabled={isDisabled}
-        required={isRequired}
-        rows={isMultiline ? 4 : 0}
-        inputProps={{
-          inputMode: type,
-          pattern
-        }}
-      />
-    </InputWrapper>
+    <StyledEngineProvider injectFirst>
+      <InputWrapper>
+        <TextField
+          name={name}
+          label={placeholder}
+          value={value}
+          onChange={onChange}
+          variant="outlined"
+          multiline={isMultiline}
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
+          disabled={isDisabled}
+          required={isRequired}
+          rows={isMultiline ? 4 : 0}
+          inputProps={{
+            inputMode: type,
+            pattern
+          }}
+        />
+      </InputWrapper>
+    </StyledEngineProvider>
   );
 };
