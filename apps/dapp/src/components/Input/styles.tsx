@@ -31,7 +31,7 @@ export const InputWrapper = styled.div`
 
     .MuiOutlinedInput-root {
       fieldset {
-        border-color: ${theme.colors.white}B3;
+        border-color: ${theme.colors.white}B3 !important;
       }
 
       &:hover fieldset {
@@ -41,6 +41,11 @@ export const InputWrapper = styled.div`
       &.Mui-focused fieldset {
         border-color: ${theme.colors.white}B3;
       }
+    }
+
+    .Mui-disabled {
+      color: ${theme.colors.white}B3 !important;
+      -webkit-text-fill-color: ${theme.colors.white}B3 !important;
     }
   `}
 `;

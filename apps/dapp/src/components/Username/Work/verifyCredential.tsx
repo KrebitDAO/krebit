@@ -59,7 +59,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your github profile'
                 }
                 form={{
-                  inputs:
+                  fields:
                     githubProvider.currentCredential || currentWork?.credential
                       ? undefined
                       : [
@@ -148,7 +148,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your github follower count ( i.e. more than 1,000 would be gt1000 )'
                 }
                 form={{
-                  inputs:
+                  fields:
                     githubFollowersProvider.currentCredential ||
                     currentWork.credential
                       ? undefined
@@ -244,7 +244,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your github repo'
                 }
                 form={{
-                  inputs:
+                  fields:
                     githubRepoProvider.currentCredential ||
                     currentWork?.credential
                       ? undefined
@@ -341,7 +341,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim that you are a github repo collaborator'
                 }
                 form={{
-                  inputs:
+                  fields:
                     githubRepoCollaboratorProvider.currentCredential ||
                     currentWork?.credential
                       ? undefined

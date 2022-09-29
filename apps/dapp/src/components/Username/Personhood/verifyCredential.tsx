@@ -140,7 +140,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your twitter profile'
                 }
                 form={{
-                  inputs:
+                  fields:
                     twitterProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
@@ -234,7 +234,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your twitter follower count ( i.e. more than 1,000 would be gt1000 )'
                 }
                 form={{
-                  inputs:
+                  fields:
                     twitterFollowersProvider.currentCredential ||
                     currentPersonhood.credential
                       ? undefined
@@ -335,7 +335,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your full legal name'
                 }
                 form={{
-                  inputs:
+                  fields:
                     veriffProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
@@ -435,7 +435,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your full legal name'
                 }
                 form={{
-                  inputs:
+                  fields:
                     personaProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
@@ -532,7 +532,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your phone number'
                 }
                 form={{
-                  inputs:
+                  fields:
                     phoneProvider.currentVerificationId ||
                     currentPersonhood?.credential
                       ? undefined
@@ -581,7 +581,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Get phone number credential via Twilio'
                 }
                 form={{
-                  inputs:
+                  fields:
                     phoneProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
@@ -667,7 +667,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your email address'
                 }
                 form={{
-                  inputs:
+                  fields:
                     emailProvider.currentVerificationId ||
                     currentPersonhood?.credential
                       ? undefined
@@ -703,7 +703,7 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Get email credential via Twilio'
                 }
                 form={{
-                  inputs:
+                  fields:
                     emailProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
