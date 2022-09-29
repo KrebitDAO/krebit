@@ -103,7 +103,8 @@ export const Community = (props: IProps) => {
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentCommunitySelected({
       credential: undefined,
-      stamps: []
+      stamps: [],
+      isMinted: false
     });
   };
 

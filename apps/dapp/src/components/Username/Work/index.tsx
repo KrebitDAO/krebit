@@ -102,7 +102,8 @@ export const Work = (props: IProps) => {
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentWorkSelected({
       credential: undefined,
-      stamps: []
+      stamps: [],
+      isMinted: false
     });
   };
 

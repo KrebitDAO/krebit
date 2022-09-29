@@ -6,6 +6,7 @@ export interface ICredential {
   credential: any;
   stamps: any[];
   skills?: string[];
+  isMinted: boolean;
 }
 
 export interface IProfile {

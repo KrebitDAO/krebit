@@ -186,9 +186,9 @@ export const useTwitterFollowersProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('twitter');
+      const credentials = await passport.getCredentials('Twitter');
       const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('twitter'))
+        .filter(credential => credential.type.includes('Twitter'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

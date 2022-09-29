@@ -22,6 +22,10 @@ const getCredentials = async (props: IProps) => {
         type: type,
         claimId: credential.id
       });
+
+      //const isMinted = await passport.isMinted(credential);
+      const isMinted = false;
+
       const visualInformation = getIssuers(type).find(issuer =>
         credential.type.includes(issuer.credentialType)
       );
@@ -39,6 +43,7 @@ const getCredentials = async (props: IProps) => {
       return {
         credential: customCredential,
         stamps,
+        isMinted,
         skills: credential.type
       };
     })

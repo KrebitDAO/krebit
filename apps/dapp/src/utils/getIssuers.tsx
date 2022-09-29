@@ -20,7 +20,7 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'twitter',
+    credentialType: 'Twitter',
     entity: 'Twitter',
     description: 'Krebit Verification Node',
     icon: <Twitter />,

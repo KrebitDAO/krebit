@@ -63,7 +63,7 @@ export const TwitterController = async (
 
     // If claim is digitalProperty "twitter"
     if (
-      claimedCredential?.credentialSubject?.type === 'twitter' &&
+      claimedCredential?.credentialSubject?.type === 'Twitter' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )

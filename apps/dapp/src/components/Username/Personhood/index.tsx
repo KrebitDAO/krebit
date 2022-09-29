@@ -103,7 +103,8 @@ export const Personhood = (props: IProps) => {
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentPersonhoodSelected({
       credential: undefined,
-      stamps: []
+      stamps: [],
+      isMinted: false
     });
   };
 
@@ -124,6 +125,10 @@ export const Personhood = (props: IProps) => {
     setCurrentActionType(type);
 
     if (type === 'add_stamp') {
+      setIsVerifyCredentialOpen(true);
+    }
+
+    if (type === 'mint_nft') {
       setIsVerifyCredentialOpen(true);
     }
 
@@ -358,6 +363,13 @@ export const Personhood = (props: IProps) => {
                           title: 'Add stamp',
                           onClick: () =>
                             handleCurrentPersonhood('add_stamp', personhood)
+                        }
+                      : undefined,
+                    isAuthenticated && personhood.stamps?.length !== 0
+                      ? {
+                          title: 'Mint NFT',
+                          onClick: () =>
+                            handleCurrentPersonhood('mint_nft', personhood)
                         }
                       : undefined,
                     isAuthenticated &&

@@ -23,6 +23,7 @@ import { Github } from './Github';
 import { Spect } from './Spect';
 import { OpenInNew } from './OpenInNew';
 import { Upload } from './Upload';
+import { Token } from './Token';
 
 export {
   Close,
@@ -49,5 +50,6 @@ export {
   Github,
   Spect,
   OpenInNew,
-  Upload
+  Upload,
+  Token
 };

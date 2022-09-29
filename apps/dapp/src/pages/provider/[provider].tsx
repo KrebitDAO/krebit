@@ -129,7 +129,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'twitter',
+          target: 'Twitter',
           data: { code: queryCode, state: queryState }
         });
       }
