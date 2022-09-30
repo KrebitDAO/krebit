@@ -1,8 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import {
-  Passport,
-  Krebit as Issuer
-} from '@krebitdao/reputation-passport/dist/core';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -14,6 +10,8 @@ import { getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
 
 // types
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
+import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 import { IProfile, ICredential } from 'utils/normalizeSchema';
 
 interface IProps {

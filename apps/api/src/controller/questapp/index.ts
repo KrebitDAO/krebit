@@ -5,7 +5,6 @@ import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, generateUID } from '../../utils';
-import { passport } from '@krebitdao/reputation-passport/dist/schemas/claims';
 
 const {
   SERVER_EXPIRES_YEARS,

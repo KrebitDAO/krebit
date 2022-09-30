@@ -1,4 +1,7 @@
-import { Krebit } from './Krebit';
-import { Passport } from './Passport';
+import { Krebit } from './Krebit.js';
+import { Passport } from './Passport.js';
 
-export { Krebit, Passport };
+export const core = {
+  Krebit,
+  Passport
+};

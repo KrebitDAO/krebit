@@ -1,8 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import {
-  Passport,
-  Krebit as Issuer
-} from '@krebitdao/reputation-passport/dist/core';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -15,6 +11,8 @@ import { checkCredentialsURLs, constants } from 'utils';
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
+import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 
 interface IProps {
   isAuthenticated: boolean;

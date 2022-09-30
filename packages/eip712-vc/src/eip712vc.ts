@@ -24,7 +24,7 @@ import {
   VerifyTypedData,
   EIP712TypedData,
   Proof
-} from './types';
+} from './types.js';
 
 export type {
   EIP712Config,
