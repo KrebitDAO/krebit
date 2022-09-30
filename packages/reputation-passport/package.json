@@ -5,10 +5,13 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "source": "./src/index.ts",
+  "directories": {
+    "dist": "./dist"
+  },
   "files": [
-    "dist/**"
+    "dist"
   ],
+  "sideEffects": false,
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc",

@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 import { SiweMessage } from 'siwe';
 
-import { krbToken } from '../schemas';
-import { base64 } from '../utils';
-import { config, IConfigProps } from '../config';
+import { schemas } from '../schemas/index.js';
+import { utils } from '../utils/index.js';
+import { config, IConfigProps } from '../config/index.js';
 
 interface ISignAuthMessageProps {
   wallet: ethers.Signer;
@@ -25,7 +25,7 @@ const signAuthMessage = async (props: ISignAuthMessageProps) => {
     statement,
     uri: config.publicUrl,
     version: '1',
-    chainId: Number(krbToken[config.network].domain.chainId)
+    chainId: Number(schemas.krbToken[config.network].domain.chainId)
   };
 
   if (resources && resources.length > 0) {
@@ -119,7 +119,9 @@ export class Lit {
       message
     );
 
-    const encryptedStringBase64 = await base64.blobToBase64(encryptedString);
+    const encryptedStringBase64 = await utils.base64.blobToBase64(
+      encryptedString
+    );
     const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
       accessControlConditions,
       symmetricKey,
@@ -156,7 +158,7 @@ export class Lit {
     const newEncryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey(
       {
         accessControlConditions: newAccessControlConditions,
-        encryptedSymmetricKey: base64.decodeb64(encryptedSymmetricKey),
+        encryptedSymmetricKey: utils.base64.decodeb64(encryptedSymmetricKey),
         authSig,
         chain: this.currentConfig.network,
         permanant: false
@@ -189,7 +191,7 @@ export class Lit {
     });
 
     const decryptedString = await this.litSdk.decryptString(
-      new Blob([base64.decodeb64(encryptedString)]),
+      new Blob([utils.base64.decodeb64(encryptedString)]),
       decryptedSymmKey
     );
 

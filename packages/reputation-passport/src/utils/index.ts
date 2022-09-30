@@ -1,14 +1,14 @@
-import { WalletProvider } from './WalletProvider';
+import { WalletProvider } from './WalletProvider.js';
 import {
   issueCredential,
   validateSchema,
   ClaimProps,
   hashClaimValue
-} from './issueCredential';
-import { base64 } from './base64';
-import { regexValidations } from './regexValidations';
+} from './issueCredential.js';
+import { base64 } from './base64.js';
+import { regexValidations } from './regexValidations.js';
 
-export {
+export const utils = {
   WalletProvider,
   issueCredential,
   validateSchema,

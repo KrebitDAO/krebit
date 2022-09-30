@@ -8,16 +8,16 @@ import localStore from 'store2';
 import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
 import { DIDSession } from 'did-session';
 
-import { datamodel } from '../schemas';
+import { schemas } from '../schemas/index.js';
 
 const DID_ERROR = 'DID session not authenticated';
 const DOMAIN = 'krebit.id';
 
-interface PublicIDXProps {
+export interface PublicIDXProps {
   client: CeramicClient;
 }
 
-interface AuthProviderProps {
+export interface AuthProviderProps {
   client: CeramicClient;
   address?: string;
   ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
@@ -27,7 +27,7 @@ interface AuthProviderProps {
 const publicIDX = (props: PublicIDXProps) => {
   const { client } = props;
 
-  const model = new DataModel({ ceramic: client, aliases: datamodel });
+  const model = new DataModel({ ceramic: client, aliases: schemas.datamodel });
   const store = new DIDDataStore({ ceramic: client, model });
 
   return store;
@@ -53,7 +53,7 @@ const authDIDSession = async (props: AuthProviderProps) => {
   await client.setDID(did);
 
   // Creating model and store
-  const model = new DataModel({ ceramic: client, aliases: datamodel });
+  const model = new DataModel({ ceramic: client, aliases: schemas.datamodel });
   const store = new DIDDataStore({ ceramic: client, model });
 
   if (store.authenticated) {

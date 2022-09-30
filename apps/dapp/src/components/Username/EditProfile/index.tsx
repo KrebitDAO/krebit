@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Web3Storage, File } from 'web3.storage';
 import Orbis from '@orbisclub/orbis-sdk';
-import { Passport } from '@krebitdao/reputation-passport/dist/core';
 
 import { Background, Picture, Wrapper } from './styles';
 import { Input } from 'components/Input';
@@ -12,6 +11,7 @@ import { formatFilename, formatUrlImage } from 'utils';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 
 interface IValues {
   background: string | File;

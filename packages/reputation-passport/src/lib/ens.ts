@@ -1,21 +1,21 @@
 import 'isomorphic-fetch';
 
-import { ensResolvedAddress, ensDomains } from '../queries';
-import { config } from '../config';
+import { ensResolvedAddress, ensDomains } from '../queries/index.js';
+import { config } from '../config/index.js';
 
-interface ClientProps {
+export interface ClientProps {
   query: string;
   variables: GetProps | ListProps;
 }
 
-interface ListProps {
+export interface ListProps {
   first?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: object;
 }
 
-interface GetProps {
+export interface GetProps {
   id: string;
 }
 

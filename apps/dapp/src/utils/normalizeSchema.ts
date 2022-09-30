@@ -1,6 +1,8 @@
 import { Orbis } from '@orbisclub/orbis-sdk';
-import { Passport } from '@krebitdao/reputation-passport/dist/core';
 import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
+
+// types
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 
 export interface ICredential {
   credential: any;

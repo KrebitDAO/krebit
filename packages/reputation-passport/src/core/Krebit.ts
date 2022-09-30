@@ -12,15 +12,12 @@ import {
 } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
-import { ceramic, graph, Lit } from '../lib';
-import {
-  issueCredential,
-  validateSchema,
-  ClaimProps,
-  hashClaimValue
-} from '../utils';
-import { krbToken, krebitNFT } from '../schemas';
-import { config, IConfigProps } from '../config';
+
+import { lib } from '../lib/index.js';
+import { utils, ClaimProps } from '../utils/index.js';
+import { schemas } from '../schemas/index.js';
+import { config, IConfigProps } from '../config/index.js';
+
 
 interface IProps extends IConfigProps {
   wallet: ethers.Signer;
@@ -75,8 +72,8 @@ export class Krebit {
     this.ceramic = ceramicClient;
     this.wallet = props.wallet;
     this.krbContract = new ethers.Contract(
-      krbToken[this.currentConfig.network].address,
-      krbToken.abi,
+      schemas.krbToken[this.currentConfig.network].address,
+      schemas.krbToken.abi,
       props.wallet
     );
     this.nftContract = new ethers.Contract(
@@ -90,12 +87,12 @@ export class Krebit {
     if (currentSession) {
       const session = await DIDSession.fromSession(currentSession);
 
-      this.idx = await ceramic.authDIDSession({
+      this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         session
       });
     } else {
-      this.idx = await ceramic.authDIDSession({
+      this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         address: this.address,
         ethProvider: this.ethProvider
@@ -116,7 +113,10 @@ export class Krebit {
 
     if (session.hasSession && session.isExpired) return false;
 
-    this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
+    this.idx = await lib.ceramic.authDIDSession({
+      client: this.ceramic,
+      session
+    });
     this.did = this.idx.id;
 
     return this.idx.authenticated;
@@ -228,7 +228,7 @@ export class Krebit {
 
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-      const lit = new Lit();
+      const lit = new lib.Lit();
       const stream = await TileDocument.load(
         this.idx.ceramic,
         encrypted.accessControlConditions
@@ -259,7 +259,7 @@ export class Krebit {
 
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-      const lit = new Lit();
+      const lit = new lib.Lit();
       const stream = await TileDocument.load(
         this.idx.ceramic,
         encrypted.accessControlConditions
@@ -283,7 +283,7 @@ export class Krebit {
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       try {
         const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-        const lit = new Lit();
+        const lit = new lib.Lit();
         const stream = await TileDocument.load(
           this.idx.ceramic,
           encrypted.accessControlConditions
@@ -313,7 +313,7 @@ export class Krebit {
       );
       if (claimedCredential) {
         const claimValue = this.getClaimValue(claimedCredential);
-        const hash = hashClaimValue({
+        const hash = utils.hashClaimValue({
           did: w3cCredential.issuer.id,
           value: claimValue
         });
@@ -331,7 +331,7 @@ export class Krebit {
   // Check if the plain claimed value matches the hashed credential value
   compareClaimValueHash = (claimValue: any, w3cCredential: W3CCredential) => {
     if (w3cCredential.credentialSubject.encrypted === 'hash') {
-      const hash = hashClaimValue({
+      const hash = utils.hashClaimValue({
         did: w3cCredential.issuer.id,
         value: claimValue
       });
@@ -351,7 +351,7 @@ export class Krebit {
     if (type) where['_type_contains_nocase'] = type;
 
     //Get verifications from subgraph
-    return await graph.verifiableCredentialsQuery({
+    return await lib.graph.verifiableCredentialsQuery({
       first: first ? first : 100,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',
@@ -367,12 +367,12 @@ export class Krebit {
     // Check the types of the claim before issuing
 
     try {
-      await validateSchema({ idx: this.idx, claim });
+      await utils.validateSchema({ idx: this.idx, claim });
     } catch (err) {
       throw new Error(err);
     }
 
-    return await issueCredential({
+    return await utils.issueCredential({
       wallet: this.wallet as ethers.Wallet,
       idx: this.idx,
       claim
@@ -406,8 +406,8 @@ export class Krebit {
 
           // Initialize your dapp here like getting user accounts etc
           const metaContract = new ethers.Contract(
-            krbToken[this.currentConfig.network].address,
-            krbToken.abi,
+            schemas.krbToken[this.currentConfig.network].address,
+            schemas.krbToken.abi,
             biconomy.getSignerByAddress(this.address)
           );
 
@@ -419,7 +419,7 @@ export class Krebit {
           );
           let txParams = {
             data: data,
-            to: krbToken[this.currentConfig.network].address,
+            to: schemas.krbToken[this.currentConfig.network].address,
             from: this.address,
             signatureType: 'EIP712_SIGN'
           };
@@ -585,7 +585,7 @@ export class Krebit {
     if (claimId) where['claimId'] = claimId;
 
     //Get verifications from subgraph
-    return await graph.verifiableCredentialsQuery({
+    return await lib.graph.verifiableCredentialsQuery({
       first: first ? first : 100,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',
