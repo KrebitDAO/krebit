@@ -86,7 +86,7 @@ export const useTwitterFollowersProvider = () => {
       ethereumAddress: address,
       type: 'TwitterFollowersGT1K',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['DigitalProperty', 'Social', 'Personhood'],
+      tags: ['DigitalProperty', 'Influencer', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };

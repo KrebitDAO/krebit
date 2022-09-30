@@ -86,7 +86,7 @@ export const useTwitterProvider = () => {
       ethereumAddress: address,
       type: 'Twitter',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['DigitalProperty', 'Social', 'Personhood'],
+      tags: ['DigitalProperty', 'Influencer', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };

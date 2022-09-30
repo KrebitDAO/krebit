@@ -111,7 +111,7 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'GithubRepoMergedPullsGT10',
+    credentialType: 'GithubRepoCollaborator',
     entity: 'Github Repo Merged Pull-Requests > 10',
     description: 'Krebit Verification Node',
     icon: <Github />,

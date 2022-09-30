@@ -129,40 +129,13 @@ export const GithubController = async (
       const followers = githubUser.followers;
       console.log('githubFollowersCount: ', followers);
 
-      let valid = false;
-      switch (claimValue.followers) {
-        case 'gt100':
-          valid = followers > 100;
-          break;
-        case 'gt500':
-          valid = followers > 500;
-          break;
-        case 'gt1000':
-          valid = followers > 1000;
-          break;
-        case 'gt5K':
-          valid = followers > 5000;
-          break;
-        case 'gt10K':
-          valid = followers > 10000;
-          break;
-        case 'gt50K':
-          valid = followers > 50000;
-          break;
-        case 'gt100K':
-          valid = followers > 100000;
-          break;
-        case 'gt1M':
-          valid = followers > 1000000;
-          break;
-        default:
-          valid =
-            !claimValue.followers.startsWith('gt') &&
-            parseInt(claimValue.followers) > 0;
-      }
-
       // If valid follower count
-      if (claimValue.host === 'github.com' && valid) {
+      if (
+        claimValue.host === 'github.com' &&
+        githubUser &&
+        githubUser.login.toLowerCase() === claimValue.username.toLowerCase() &&
+        followers > 10
+      ) {
         delete claimValue.proofs;
 
         const expirationDate = new Date();
@@ -177,11 +150,7 @@ export const GithubController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
-          value: {
-            host: claimValue.host,
-            protocol: claimValue.protocol,
-            followers: claimValue.followers
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
@@ -231,7 +200,8 @@ export const GithubController = async (
         githubRepo.owner.login.toLowerCase() ===
           claimValue.entity.toLowerCase() &&
         githubRepo.name.toLowerCase() === claimValue.title.toLowerCase() &&
-        !githubRepo.fork
+        !githubRepo.fork &&
+        githubRepo.stargazers_count > 10
       ) {
         delete claimValue.proofs;
 
@@ -280,8 +250,7 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type ===
-        'GithubRepoMergedPullsGT10' &&
+      claimedCredential?.credentialSubject?.type === 'GithubRepoCollaborator' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'WorkExperience'
       )

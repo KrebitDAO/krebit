@@ -14,12 +14,12 @@ import {
 const { NEXT_PUBLIC_GITHUB_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 interface IClaimValues {
-  followers: string;
+  username: string;
 }
 
 export const useGithubFollowersProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    followers: ''
+    username: ''
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -62,7 +62,7 @@ export const useGithubFollowersProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'github.com',
-      followers: claimValues.followers,
+      username: claimValues.username,
       proofs
     };
 
@@ -76,14 +76,7 @@ export const useGithubFollowersProvider = () => {
       ethereumAddress: address,
       type: 'GithubFollowersGT10',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: [
-        'DigitalProperty',
-        'Social',
-        'code',
-        'programing',
-        'development',
-        'WorkExperience'
-      ],
+      tags: ['DigitalProperty', 'Influencer', 'Developer', 'WorkExperience'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };

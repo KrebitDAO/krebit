@@ -178,22 +178,20 @@ export const VerifyCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   githubFollowersProvider.currentCredential ||
-                  currentWork.credential
+                  currentWork?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim your github follower count ( i.e. more than 1,000 would be gt1000 )'
+                    : 'Claim that your github profile has more than 10 followers'
                 }
                 form={{
                   fields:
                     githubFollowersProvider.currentCredential ||
-                    currentWork.credential
+                    currentWork?.credential
                       ? undefined
                       : [
                           {
-                            name: 'followers',
-                            placeholder:
-                              'gt100 | gt500 | gt1000 | gt5K | gt10K | gt50K | gt100K | gt1M',
-                            value:
-                              githubFollowersProvider.claimValues.followers,
+                            name: 'username',
+                            placeholder: 'Enter you github username',
+                            value: githubFollowersProvider.claimValues.username,
                             onChange: githubFollowersProvider.handleClaimValues
                           }
                         ],
@@ -207,20 +205,20 @@ export const VerifyCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               githubFollowersProvider.currentCredential ||
-                                currentWork.credential
+                                currentWork?.credential
                             )
                         }
                       : {
                           text: 'Verify',
                           onClick:
-                            !githubFollowersProvider.claimValues.followers ||
-                            githubFollowersProvider.claimValues.followers === ''
+                            !githubFollowersProvider.claimValues.username ||
+                            githubFollowersProvider.claimValues.username === ''
                               ? undefined
                               : () =>
                                   githubFollowersProvider.handleFetchOAuth(),
                           isDisabled:
-                            !githubFollowersProvider.claimValues.followers ||
-                            githubFollowersProvider.claimValues.followers === ''
+                            !githubFollowersProvider.claimValues.username ||
+                            githubFollowersProvider.claimValues.username === ''
                         }
                 }}
                 isLoading={
@@ -427,7 +425,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'GithubRepoMergedPullsGT10' && (
+          {currentVerify?.credentialType === 'GithubRepoCollaborator' && (
             <>
               <BoxStep
                 title="Issuer Details:"

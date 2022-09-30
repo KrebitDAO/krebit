@@ -27,7 +27,7 @@ const CREDENTIAL_TYPES = [
   'GithubRepoWatchersGT10',
   'GithubRepoCollaborator',
   'GithubRepoMergedPullsGT1',
-  'GithubRepoMergedPullsGT10',
+  'GithubRepoCollaborator',
   'StackOverflowReputationGT1K',
   'StackOverflowReputationGT10K',
   'StackOverflowBronzeBadgesGT10',

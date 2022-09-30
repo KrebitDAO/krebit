@@ -239,7 +239,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'GithubRepoMergedPullsGT10',
+          target: 'GithubRepoCollaborator',
           data: { code: queryCode, state: queryState }
         });
       }

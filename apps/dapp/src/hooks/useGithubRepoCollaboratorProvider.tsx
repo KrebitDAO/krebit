@@ -80,7 +80,7 @@ export const useGithubRepoCollaboratorProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'GithubRepoMergedPullsGT10',
+      type: 'GithubRepoCollaborator',
       typeSchema: 'krebit://schemas/workExperience',
       tags: ['code', 'programing', 'development', 'WorkExperience'],
       value: claimValue,
@@ -97,9 +97,9 @@ export const useGithubRepoCollaboratorProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'GithubRepoMergedPullsGT10') {
+      if (e.target === 'GithubRepoCollaborator') {
         console.log('Saving Stamp', {
-          type: 'GithubRepoMergedPullsGT10',
+          type: 'GithubRepoCollaborator',
           proof: e.data
         });
 
