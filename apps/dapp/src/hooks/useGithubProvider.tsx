@@ -74,7 +74,7 @@ export const useGithubProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'github',
+      type: 'Github',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: [
         'digitalProperty',
@@ -97,8 +97,8 @@ export const useGithubProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'github') {
-        console.log('Saving Stamp', { type: 'github', proof: e.data });
+      if (e.target === 'Github') {
+        console.log('Saving Stamp', { type: 'Github', proof: e.data });
 
         const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
@@ -180,9 +180,9 @@ export const useGithubProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('github');
+      const credentials = await passport.getCredentials('Github');
       const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('github'))
+        .filter(credential => credential.type.includes('Github'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

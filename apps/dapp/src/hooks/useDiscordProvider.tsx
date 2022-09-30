@@ -71,7 +71,7 @@ export const useDiscordProvider = () => {
       ethereumAddress: address,
       type: 'discord',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['digitalProperty', 'social', 'personhood'],
+      tags: ['digitalProperty', 'personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -86,8 +86,8 @@ export const useDiscordProvider = () => {
 
     try {
       // when receiving discord oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'discord') {
-        console.log('Saving Stamp', { type: 'discord', proof: e.data });
+      if (e.target === 'Discord') {
+        console.log('Saving Stamp', { type: 'Discord', proof: e.data });
 
         const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
@@ -176,9 +176,9 @@ export const useDiscordProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('discord');
+      const credentials = await passport.getCredentials('Discord');
       const getLatestDiscordCredential = credentials
-        .filter(credential => credential.type.includes('discord'))
+        .filter(credential => credential.type.includes('Discord'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

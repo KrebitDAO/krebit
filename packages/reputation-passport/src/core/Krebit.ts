@@ -346,7 +346,7 @@ export class Krebit {
     //Get verifications from subgraph
     let where = {};
     where['credentialStatus'] = 'Issued';
-    where['credentialSubject_'] = { _type: 'issuer' };
+    where['credentialSubject_'] = { _type: 'Issuer' };
     where['claimId_starts_with'] = 'ceramic://';
     if (type) where['_type_contains_nocase'] = type;
 

@@ -73,7 +73,7 @@ export const useGithubFollowersProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'githubFollowers',
+      type: 'GithubFollowersGT10',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: [
         'digitalProperty',
@@ -97,9 +97,9 @@ export const useGithubFollowersProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'githubFollowers') {
+      if (e.target === 'GithubFollowersGT10') {
         console.log('Saving Stamp', {
-          type: 'githubFollowers',
+          type: 'GithubFollowersGT10',
           proof: e.data
         });
 
@@ -183,9 +183,9 @@ export const useGithubFollowersProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('githubFollowers');
+      const credentials = await passport.getCredentials('GithubFollowersGT10');
       const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('githubFollowers'))
+        .filter(credential => credential.type.includes('GithubFollowersGT10'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

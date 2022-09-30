@@ -48,7 +48,7 @@ export const PersonaController = async (
       claimedCredential
     );
 
-    if (claimedCredential?.credentialSubject?.type !== 'legalName') {
+    if (claimedCredential?.credentialSubject?.type !== 'LegalName') {
       throw new Error(`claimedCredential type is not legalName`);
     }
 
@@ -69,7 +69,7 @@ export const PersonaController = async (
     }
 
     // If claim is persona
-    if (claimedCredential?.credentialSubject?.type === 'legalName') {
+    if (claimedCredential?.credentialSubject?.type === 'LegalName') {
       // Connect to persona and get decision status for the session ID (claimedCredential.id)
       const personaDecision = await getPersonaDecision(claimValue.proofs.id);
       console.log('personaDecision: ', personaDecision);

@@ -213,7 +213,7 @@ export const Personhood = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
-    if (value?.protocol === 'email') {
+    if (value?.protocol === 'Email') {
       return value.username.concat('@').concat(value.host);
     }
 

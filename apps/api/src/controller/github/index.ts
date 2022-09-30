@@ -50,7 +50,7 @@ export const GithubController = async (
 
     // If claim is digitalProperty "github"
     if (
-      claimedCredential?.credentialSubject?.type === 'github' &&
+      claimedCredential?.credentialSubject?.type === 'Github' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -112,7 +112,7 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'githubFollowers' &&
+      claimedCredential?.credentialSubject?.type === 'GithubFollowersGT10' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -201,7 +201,7 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${followers}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'githubRepoOwner' &&
+      claimedCredential?.credentialSubject?.type === 'GithubRepoStarsGT10' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'workExperience'
       )
@@ -280,7 +280,8 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'githubRepoCollaborator' &&
+      claimedCredential?.credentialSubject?.type ===
+        'GithubRepoMergedPullsGT10' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'workExperience'
       )
@@ -368,7 +369,7 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'githubOrgMember' &&
+      claimedCredential?.credentialSubject?.type === 'GithubOrgMember' &&
       claimedCredential?.credentialSubject?.typeSchema.includes('badge')
     ) {
       // Get evidence bearer token

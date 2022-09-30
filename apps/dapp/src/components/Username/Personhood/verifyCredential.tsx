@@ -49,7 +49,7 @@ export const VerifyCredential = (props: IProps) => {
       }
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.credentialType === 'discord' && (
+          {currentVerify?.credentialType === 'Discord' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -245,7 +245,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'twitterFollowers' && (
+          {currentVerify?.credentialType === 'TwitterFollowersGT1K' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -678,7 +678,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'email' && (
+          {currentVerify?.credentialType === 'Email' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -703,8 +703,8 @@ export const VerifyCredential = (props: IProps) => {
                       ? undefined
                       : [
                           {
-                            type: 'email',
-                            name: 'email',
+                            type: 'Email',
+                            name: 'Email',
                             placeholder: 'username@example.com',
                             value: emailProvider.claimValues.email,
                             onChange: emailProvider.handleClaimValues

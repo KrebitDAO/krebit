@@ -39,11 +39,11 @@ export const useEmailProvider = () => {
     return {
       id: `email-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'email',
+      type: 'Email',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['digitalProperty', 'contact', 'personhood'],
       value: {
-        protocol: 'email',
+        protocol: 'Email',
         host: claimValues.email.split('@')[1],
         username: claimValues.email.split('@')[0],
         proofs: {
@@ -62,7 +62,7 @@ export const useEmailProvider = () => {
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      console.log('Saving Stamp', { type: 'email' });
+      console.log('Saving Stamp', { type: 'Email' });
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -201,9 +201,9 @@ export const useEmailProvider = () => {
 
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('email');
+      const credentials = await passport.getCredentials('Email');
       const getLatestEmailCredential = credentials
-        .filter(credential => credential.type.includes('email'))
+        .filter(credential => credential.type.includes('Email'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

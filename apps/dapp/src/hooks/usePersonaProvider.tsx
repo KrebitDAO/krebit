@@ -72,7 +72,7 @@ export const usePersonaProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'legalName',
+      type: 'LegalName',
       typeSchema: 'krebit://schemas/legalName',
       tags: ['persona', 'fullName', 'kyc', 'personhood'],
       value: {
@@ -101,7 +101,7 @@ export const usePersonaProvider = () => {
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       if (e.target === 'persona') {
-        console.log('Saving Stamp', { type: 'legalName', proof: e.data });
+        console.log('Saving Stamp', { type: 'LegalName', proof: e.data });
 
         const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);

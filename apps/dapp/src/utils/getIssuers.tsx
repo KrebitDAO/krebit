@@ -11,7 +11,7 @@ import {
 
 const PERSONHOOD_CREDENTIALS = [
   {
-    credentialType: 'discord',
+    credentialType: 'Discord',
     entity: 'Discord',
     description: 'Krebit Verification Node',
     icon: <Discord />,
@@ -29,8 +29,8 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'twitterFollowers',
-    entity: 'Twitter Followers',
+    credentialType: 'TwitterFollowersGT1K',
+    entity: 'Twitter Followers > 1K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
     verificationUrl: 'http://localhost:4000/twitter',
@@ -47,7 +47,7 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'email',
+    credentialType: 'Email',
     entity: 'Email (Twilio)',
     description: 'Krebit Verification Node',
     icon: <Email />,
@@ -78,7 +78,7 @@ const PERSONHOOD_CREDENTIALS = [
 
 const WORK_CREDENTIALS = [
   {
-    credentialType: 'github',
+    credentialType: 'Github',
     entity: 'Github',
     description: 'Krebit Verification Node',
     icon: <Github />,
@@ -89,8 +89,8 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'githubFollowers',
-    entity: 'Github Followers',
+    credentialType: 'GithubFollowersGT10',
+    entity: 'Github Followers > 10',
     description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
@@ -100,8 +100,8 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'githubRepoOwner',
-    entity: 'Github Repository Owner',
+    credentialType: 'GithubRepoStarsGT10',
+    entity: 'Github Repository Stars > 10',
     description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
@@ -111,8 +111,8 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'githubRepoCollaborator',
-    entity: 'Github Repository Collaborator',
+    credentialType: 'GithubRepoMergedPullsGT10',
+    entity: 'Github Repo Merged Pull-Requests > 10',
     description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
@@ -135,7 +135,7 @@ const WORK_CREDENTIALS = [
 
 const COMMUNITY_CREDENTIALS = [
   {
-    credentialType: 'discordGuildOwner',
+    credentialType: 'DiscordGuildOwner',
     entity: 'Discord Guild Owner',
     description: 'Krebit Verification Node',
     icon: <Discord />,
@@ -146,7 +146,7 @@ const COMMUNITY_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'discordGuildMember',
+    credentialType: 'DiscordGuildMember',
     entity: 'Discord Guild Member',
     description: 'Krebit Verification Node',
     icon: <Discord />,
@@ -157,7 +157,7 @@ const COMMUNITY_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'githubOrgMember',
+    credentialType: 'GithubOrgMember',
     entity: 'Github Organization Member',
     description: 'Krebit Verification Node',
     icon: <Github />,
@@ -168,7 +168,7 @@ const COMMUNITY_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'issuer',
+    credentialType: 'Issuer',
     entity: 'Issuer',
     description: 'Krebit Verification Node',
     icon: <Approval />,

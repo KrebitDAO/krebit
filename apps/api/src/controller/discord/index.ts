@@ -53,7 +53,7 @@ export const DiscordController = async (
 
     // If claim is digitalProperty "Discord"
     if (
-      claimedCredential?.credentialSubject?.type === 'discord' &&
+      claimedCredential?.credentialSubject?.type === 'Discord' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -114,7 +114,7 @@ export const DiscordController = async (
         throw new Error(`Wrong discord: ${discordUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'discordGuildOwner' &&
+      claimedCredential?.credentialSubject?.type === 'DiscordGuildOwner' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -183,7 +183,7 @@ export const DiscordController = async (
         throw new Error(`Wrong discord: ${discordGuild}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'discordGuildMember' &&
+      claimedCredential?.credentialSubject?.type === 'DiscordGuildMember' &&
       claimedCredential?.credentialSubject?.typeSchema.includes('badge')
     ) {
       // Get evidence bearer token

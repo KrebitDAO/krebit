@@ -75,7 +75,7 @@ export const useGithubOrgMemberProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'githubOrgMember',
+      type: 'GithubOrgMember',
       typeSchema: 'krebit://schemas/badge',
       tags: [
         'community',
@@ -99,9 +99,9 @@ export const useGithubOrgMemberProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'githubOrgMember') {
+      if (e.target === 'GithubOrgMember') {
         console.log('Saving Stamp', {
-          type: 'githubOrgMember',
+          type: 'GithubOrgMember',
           proof: e.data
         });
 
@@ -185,9 +185,9 @@ export const useGithubOrgMemberProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('githubOrgMember');
+      const credentials = await passport.getCredentials('GithubOrgMember');
       const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('githubOrgMember'))
+        .filter(credential => credential.type.includes('GithubOrgMember'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

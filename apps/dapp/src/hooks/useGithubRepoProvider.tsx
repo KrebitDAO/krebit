@@ -74,7 +74,7 @@ export const useGithubRepoProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'githubRepoOwner',
+      type: 'GithubRepoStarsGT10',
       typeSchema: 'krebit://schemas/workExperience',
       tags: [
         'digitalProperty',
@@ -97,9 +97,9 @@ export const useGithubRepoProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'githubRepoOwner') {
+      if (e.target === 'GithubRepoStarsGT10') {
         console.log('Saving Stamp', {
-          type: 'githubRepoOwner',
+          type: 'GithubRepoStarsGT10',
           proof: e.data
         });
 
@@ -183,9 +183,9 @@ export const useGithubRepoProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('githubRepoOwner');
+      const credentials = await passport.getCredentials('GithubRepoStarsGT10');
       const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('githubRepoOwner'))
+        .filter(credential => credential.type.includes('GithubRepoStarsGT10'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

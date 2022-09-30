@@ -51,7 +51,7 @@ export const IssuerController = async (
 
     // If claim is digitalProperty "twitter"
     if (
-      claimedCredential?.credentialSubject?.type === 'issuer' &&
+      claimedCredential?.credentialSubject?.type === 'Issuer' &&
       claimedCredential?.credentialSubject?.value.includes('credentialType')
     ) {
       // Get evidence bearer token

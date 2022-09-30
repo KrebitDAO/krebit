@@ -83,7 +83,7 @@ export const useTwitterFollowersProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'twitterFollowers',
+      type: 'TwitterFollowersGT1K',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['digitalProperty', 'social', 'personhood'],
       value: claimValue,
@@ -100,9 +100,9 @@ export const useTwitterFollowersProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'twitterFollowers') {
+      if (e.target === 'TwitterFollowersGT1K') {
         console.log('Saving Stamp', {
-          type: 'twitterFollowers',
+          type: 'TwitterFollowersGT1K',
           proof: e.data
         });
 

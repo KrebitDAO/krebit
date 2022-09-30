@@ -79,7 +79,7 @@ export const useVeriffProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'legalName',
+      type: 'LegalName',
       typeSchema: 'krebit://schemas/legalName',
       tags: ['veriff', 'fullName', 'kyc', 'personhood'],
       value: {
@@ -108,7 +108,7 @@ export const useVeriffProvider = () => {
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       if (e.target === 'veriff') {
-        console.log('Saving Stamp', { type: 'legalName', proof: e.data });
+        console.log('Saving Stamp', { type: 'LegalName', proof: e.data });
 
         const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
@@ -193,7 +193,7 @@ export const useVeriffProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('legalName');
+      const credentials = await passport.getCredentials('LegalName');
       const getLatestVeriffCredential = credentials
         .filter(credential => credential.type.includes('veriff'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
