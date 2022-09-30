@@ -79,7 +79,7 @@ export const useGithubRepoCollaboratorProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'githubRepoCollaborator',
+      type: 'GithubRepoMergedPullsGT10',
       typeSchema: 'krebit://schemas/workExperience',
       tags: ['code', 'programing', 'development', 'workExperience'],
       value: claimValue,
@@ -96,9 +96,9 @@ export const useGithubRepoCollaboratorProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'githubRepoCollaborator') {
+      if (e.target === 'GithubRepoMergedPullsGT10') {
         console.log('Saving Stamp', {
-          type: 'githubRepoCollaborator',
+          type: 'GithubRepoMergedPullsGT10',
           proof: e.data
         });
 
@@ -183,11 +183,11 @@ export const useGithubRepoCollaboratorProvider = () => {
       await passport.read(walletInformation.address);
 
       const credentials = await passport.getCredentials(
-        'githubRepoCollaborator'
+        'GithubRepoMergedPullsGT10'
       );
       const getLatestGithubCredential = credentials
         .filter(credential =>
-          credential.type.includes('githubRepoCollaborator')
+          credential.type.includes('GithubRepoMergedPullsGT10')
         )
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);

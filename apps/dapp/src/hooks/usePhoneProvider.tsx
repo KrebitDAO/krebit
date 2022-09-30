@@ -41,7 +41,7 @@ export const usePhoneProvider = () => {
     return {
       id: `phone-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'phoneNumber',
+      type: 'PhoneNumber',
       typeSchema: 'krebit://schemas/phoneNumber',
       tags: ['phone', 'contact', 'personhood'],
       value: {
@@ -63,7 +63,7 @@ export const usePhoneProvider = () => {
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      console.log('Saving Stamp', { type: 'phoneNumber' });
+      console.log('Saving Stamp', { type: 'PhoneNumber' });
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -201,9 +201,9 @@ export const usePhoneProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('phoneNumber');
+      const credentials = await passport.getCredentials('PhoneNumber');
       const getLatestPhoneCredential = credentials
-        .filter(credential => credential.type.includes('phoneNumber'))
+        .filter(credential => credential.type.includes('PhoneNumber'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

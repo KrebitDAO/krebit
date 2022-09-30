@@ -63,7 +63,7 @@ export const TwitterController = async (
 
     // If claim is digitalProperty "twitter"
     if (
-      claimedCredential?.credentialSubject?.type === 'twitter' &&
+      claimedCredential?.credentialSubject?.type === 'Twitter' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
         'digitalProperty'
       )
@@ -127,7 +127,7 @@ export const TwitterController = async (
         throw new Error(`Wrong twitter ID: ${twitterUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'twitterFollowers'
+      claimedCredential?.credentialSubject?.type === 'TwitterFollowersGT1K'
     ) {
       // Get evidence bearer token
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);

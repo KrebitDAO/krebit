@@ -1,6 +1,6 @@
 # reputation-passport
 
-# <img src="../../krebit-icon.png" alt="Krebit" height="40px" align="left"> Krebit Reputation Passport SDK
+# <img src="https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png" alt="Krebit" height="40px" align="left"> Krebit Reputation Passport SDK
 
 [![Docs](https://img.shields.io/badge/docs-%F0%9F%93%84-blue)](https://docs.krebit.id)
 

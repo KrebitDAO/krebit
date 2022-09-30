@@ -78,7 +78,7 @@ export const useDiscordGuildOwnerProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'discordGuildOwner',
+      type: 'DiscordGuildOwner',
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['digitalProperty', 'community'],
       value: claimValue,
@@ -95,9 +95,9 @@ export const useDiscordGuildOwnerProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'discordGuildOwner') {
+      if (e.target === 'DiscordGuildOwner') {
         console.log('Saving Stamp', {
-          type: 'discordGuildOwner',
+          type: 'DiscordGuildOwner',
           proof: e.data
         });
 
@@ -188,9 +188,9 @@ export const useDiscordGuildOwnerProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('discordGuildOwner');
+      const credentials = await passport.getCredentials('DiscordGuildOwner');
       const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('discordGuildOwner'))
+        .filter(credential => credential.type.includes('DiscordGuildOwner'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

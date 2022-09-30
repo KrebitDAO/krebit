@@ -37,7 +37,7 @@ export const VerifyCredential = (props: IProps) => {
       verifyId={currentCommunity?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.credentialType === 'issuer' && (
+          {currentVerify?.credentialType === 'Issuer' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -180,7 +180,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'githubOrgMember' && (
+          {currentVerify?.credentialType === 'GithubOrgMember' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -281,7 +281,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'discordGuildOwner' && (
+          {currentVerify?.credentialType === 'DiscordGuildOwner' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -378,7 +378,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'discordGuildMember' && (
+          {currentVerify?.credentialType === 'DiscordGuildMember' && (
             <>
               <BoxStep
                 title="Issuer Details:"

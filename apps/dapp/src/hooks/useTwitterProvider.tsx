@@ -34,6 +34,7 @@ export const useTwitterProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
@@ -83,9 +84,9 @@ export const useTwitterProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'twitter',
+      type: 'Twitter',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['digitalProperty', 'social', 'personhood'],
+      tags: ['DigitalProperty', 'Social', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -100,8 +101,8 @@ export const useTwitterProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'twitter') {
-        console.log('Saving Stamp', { type: 'twitter', proof: e.data });
+      if (e.target === 'Twitter') {
+        console.log('Saving Stamp', { type: 'Twitter', proof: e.data });
 
         const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
@@ -183,9 +184,10 @@ export const useTwitterProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('twitter');
+      //TODO: instead of ths why not pass provider.currentCredential as parameter?
+      const credentials = await passport.getCredentials('Twitter');
       const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('twitter'))
+        .filter(credential => credential.type.includes('Twitter'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 
@@ -206,6 +208,46 @@ export const useTwitterProvider = () => {
     }
   };
 
+  const handleMintCredential = async () => {
+    try {
+      setStatus('mint_pending');
+
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      //TODO: instead of ths why not pass provider.currentCredential as parameter?
+      const credentials = await passport.getCredentials('Twitter');
+      const getLatestTwitterCredential = credentials
+        .filter(credential => credential.type.includes('Twitter'))
+        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
+        .at(-1);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const mintTx = await Issuer.mintNFT(getLatestTwitterCredential);
+      console.log('mintTx: ', mintTx);
+
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
+    } catch (error) {
+      setStatus('mint_rejected');
+    }
+  };
+
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setClaimValues(prevValues => ({
@@ -219,9 +261,11 @@ export const useTwitterProvider = () => {
     handleFetchOAuth,
     handleStampCredential,
     handleClaimValues,
+    handleMintCredential,
     claimValues,
     status,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

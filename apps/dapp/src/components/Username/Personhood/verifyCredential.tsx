@@ -49,7 +49,7 @@ export const VerifyCredential = (props: IProps) => {
       }
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.credentialType === 'discord' && (
+          {currentVerify?.credentialType === 'Discord' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -121,7 +121,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'twitter' && (
+          {currentVerify?.credentialType === 'Twitter' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -213,9 +213,39 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={twitterProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
+              <BoxStep
+                title="Step 3"
+                description={
+                  emailProvider.currentStamp ||
+                  currentPersonhood?.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    emailProvider.currentStamp ||
+                    currentPersonhood?.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'stamp',
+                              emailProvider.currentStamp ||
+                                currentPersonhood?.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: emailProvider.handleStampCredential
+                        }
+                }}
+                iconType="stamp"
+                isLoading={emailProvider.status === 'stamp_pending'}
+              />
             </>
           )}
-          {currentVerify?.credentialType === 'twitterFollowers' && (
+          {currentVerify?.credentialType === 'TwitterFollowersGT1K' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -648,7 +678,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'email' && (
+          {currentVerify?.credentialType === 'Email' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -673,8 +703,8 @@ export const VerifyCredential = (props: IProps) => {
                       ? undefined
                       : [
                           {
-                            type: 'email',
-                            name: 'email',
+                            type: 'Email',
+                            name: 'Email',
                             placeholder: 'username@example.com',
                             value: emailProvider.claimValues.email,
                             onChange: emailProvider.handleClaimValues

@@ -45,7 +45,7 @@ export const VeriffController = async (
 
     console.log('Verifying veriff with claimedCredential: ', claimedCredential);
 
-    if (claimedCredential?.credentialSubject?.type !== 'legalName') {
+    if (claimedCredential?.credentialSubject?.type !== 'LegalName') {
       throw new Error(`claimedCredential type is not legalName`);
     }
 
@@ -66,7 +66,7 @@ export const VeriffController = async (
     }
 
     // If claim is digitalProperty "veriff"
-    if (claimedCredential?.credentialSubject?.type === 'legalName') {
+    if (claimedCredential?.credentialSubject?.type === 'LegalName') {
       // Connect to veriff and get decision status for the session ID (claimedCredential.id)
       const veriffDecision = await getVeriffDecision(claimValue.proofs.id);
       console.log('veriffDecision: ', veriffDecision);

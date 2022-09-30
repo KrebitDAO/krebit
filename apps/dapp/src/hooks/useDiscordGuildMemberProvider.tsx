@@ -78,7 +78,7 @@ export const useDiscordGuildMemberProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'discordGuildMember',
+      type: 'DiscordGuildMember',
       typeSchema: 'krebit://schemas/badge',
       tags: ['community', 'membership'],
       value: claimValue,
@@ -95,9 +95,9 @@ export const useDiscordGuildMemberProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'discordGuildMember') {
+      if (e.target === 'DiscordGuildMember') {
         console.log('Saving Stamp', {
-          type: 'discordGuildMember',
+          type: 'DiscordGuildMember',
           proof: e.data
         });
 
@@ -188,9 +188,9 @@ export const useDiscordGuildMemberProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('discordGuildMember');
+      const credentials = await passport.getCredentials('DiscordGuildMember');
       const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('discordGuildMember'))
+        .filter(credential => credential.type.includes('DiscordGuildMember'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

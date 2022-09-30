@@ -53,7 +53,7 @@ export const useIssuerProvider = () => {
     return {
       id: `issuer-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'issuer',
+      type: 'Issuer',
       typeSchema: typeSchemaUrl,
       tags: [claimValues.credentialType],
       value: claimValues,
@@ -83,10 +83,10 @@ export const useIssuerProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      let typeSchemaUrl = await Issuer.getTypeSchema('issuer');
+      let typeSchemaUrl = await Issuer.getTypeSchema('Issuer');
       if (!typeSchemaUrl) {
         const issuerSchema = Krebit.schemas.claims.issuer;
-        typeSchemaUrl = await Issuer.setTypeSchema('issuer', issuerSchema);
+        typeSchemaUrl = await Issuer.setTypeSchema('Issuer', issuerSchema);
       }
 
       const claim = await getClaim(walletInformation.address, typeSchemaUrl);
@@ -148,9 +148,9 @@ export const useIssuerProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('issuer');
+      const credentials = await passport.getCredentials('Issuer');
       const getLatestIssuerCredential = credentials
-        .filter(credential => credential.type.includes('issuer'))
+        .filter(credential => credential.type.includes('Issuer'))
         .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
         .at(-1);
 

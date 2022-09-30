@@ -41,7 +41,7 @@ export const VerifyCredential = (props: IProps) => {
       verifyId={currentWork?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.credentialType === 'github' && (
+          {currentVerify?.credentialType === 'Github' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -129,7 +129,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'githubFollowers' && (
+          {currentVerify?.credentialType === 'GithubFollowersGT10' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -225,7 +225,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'githubRepoOwner' && (
+          {currentVerify?.credentialType === 'GithubRepoStarsGT10' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -322,7 +322,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'githubRepoCollaborator' && (
+          {currentVerify?.credentialType === 'GithubRepoMergedPullsGT10' && (
             <>
               <BoxStep
                 title="Issuer Details:"
