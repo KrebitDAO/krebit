@@ -16,7 +16,7 @@ interface IProps {
     | 'none'
     | 'tel'
     | 'url'
-    | 'Email'
+    | 'email'
     | 'numeric'
     | 'decimal';
   pattern?: string;
