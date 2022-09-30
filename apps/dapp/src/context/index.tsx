@@ -5,15 +5,13 @@ import LitJsSdk from 'lit-js-sdk';
 import { Web3Storage } from 'web3.storage';
 import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
-import {
-  Passport,
-  Krebit as Issuer
-} from '@krebitdao/reputation-passport/dist/core';
 
 import { getWalletInformation, normalizeSchema } from 'utils';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
+import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 
 interface IProps {
   children: JSX.Element;

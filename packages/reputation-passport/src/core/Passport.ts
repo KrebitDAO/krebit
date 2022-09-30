@@ -6,10 +6,10 @@ import { DIDSession } from 'did-session';
 import { W3CCredential } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
-import { krbToken } from '../schemas';
-import { ceramic, graph, ens, uns } from '../lib';
-import { regexValidations, hashClaimValue } from '../utils';
-import { config, IConfigProps } from '../config';
+import { schemas } from '../schemas/index.js';
+import { lib } from '../lib/index.js';
+import { utils } from '../utils/index.js';
+import { config, IConfigProps } from '../config/index.js';
 
 interface IProps extends IConfigProps {
   ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
@@ -47,12 +47,12 @@ export class Passport {
     if (currentSession) {
       const session = await DIDSession.fromSession(currentSession);
 
-      this.idx = await ceramic.authDIDSession({
+      this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         session
       });
     } else {
-      this.idx = await ceramic.authDIDSession({
+      this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         address: this.address,
         ethProvider: this.ethProvider
@@ -60,8 +60,8 @@ export class Passport {
     }
 
     this.did = this.idx.id;
-    this.ens = await ens.lookupAddress(this.address);
-    this.uns = await uns.lookupAddress(this.address);
+    this.ens = await lib.ens.lookupAddress(this.address);
+    this.uns = await lib.uns.lookupAddress(this.address);
     return this.did;
   };
 
@@ -74,7 +74,10 @@ export class Passport {
 
     if (session.hasSession && session.isExpired) return false;
 
-    this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
+    this.idx = await lib.ceramic.authDIDSession({
+      client: this.ceramic,
+      session
+    });
     this.did = this.idx.id;
 
     return this.idx.authenticated;
@@ -82,7 +85,7 @@ export class Passport {
 
   getReputation = async () => {
     //from subgraph
-    const balance = await graph.erc20BalanceQuery(this.address);
+    const balance = await lib.graph.erc20BalanceQuery(this.address);
 
     return balance ? balance.value : 0;
   };
@@ -91,15 +94,15 @@ export class Passport {
     if (value.startsWith('0x')) {
       this.address = value;
       this.did = `did:pkh:eip155:${
-        krbToken[this.currentConfig.network]?.domain?.chainId
+        schemas.krbToken[this.currentConfig.network]?.domain?.chainId
       }:${value}`;
-      this.ens = await ens.lookupAddress(this.address);
-      this.uns = await uns.lookupAddress(this.address);
+      this.ens = await lib.ens.lookupAddress(this.address);
+      this.uns = await lib.uns.lookupAddress(this.address);
     } else if (value.startsWith('did:pkh:eip155:')) {
       this.did = value;
-      this.address = (value as string).match(regexValidations.address)[0];
-      this.ens = await ens.lookupAddress(this.address);
-      this.uns = await uns.lookupAddress(this.address);
+      this.address = (value as string).match(utils.regexValidations.address)[0];
+      this.ens = await lib.ens.lookupAddress(this.address);
+      this.uns = await lib.uns.lookupAddress(this.address);
     } else if (value.endsWith('.eth')) {
       await this.readEns(value);
       return;
@@ -113,14 +116,14 @@ export class Passport {
     }
 
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.idx = ceramic.publicIDX({
+    this.idx = lib.ceramic.publicIDX({
       client: ceramicClient
     });
     this.ceramic = ceramicClient;
   };
 
   readEns = async (name: string) => {
-    const address = await ens.resolveName(name);
+    const address = await lib.ens.resolveName(name);
 
     if (address) {
       this.ens = name;
@@ -131,7 +134,7 @@ export class Passport {
   };
 
   readUns = async (name: string) => {
-    const address = await uns.resolveName(name);
+    const address = await lib.uns.resolveName(name);
 
     if (address) {
       this.uns = name;
@@ -199,7 +202,7 @@ export class Passport {
       );
       if (claimedCredential) {
         const claimValue = this.getClaimValue(claimedCredential);
-        const hash = hashClaimValue({
+        const hash = utils.hashClaimValue({
           did: w3cCredential.issuer.id,
           value: claimValue
         });
@@ -647,7 +650,7 @@ export class Passport {
     if (claimId) where['claimId'] = claimId;
 
     //Get verifications from subgraph
-    return await graph.verifiableCredentialsQuery({
+    return await lib.graph.verifiableCredentialsQuery({
       first: first ? first : 10,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',

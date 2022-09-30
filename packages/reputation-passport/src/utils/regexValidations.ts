@@ -1,4 +1,4 @@
-import { config } from '../config';
+import { config } from '../config/index.js';
 import krbTokenSchema from '../schemas/krbToken.json' assert { type: 'json' };
 
 const currentConfig = config.get();

@@ -1,6 +1,6 @@
 import 'isomorphic-fetch';
 
-import { krbToken } from '../schemas';
+import { schemas } from '../schemas/index.js';
 import {
   verifiableCredentials,
   verifiableCredential,
@@ -9,22 +9,22 @@ import {
   credentialRegistry,
   erc20Balance,
   erc20Balances
-} from '../queries';
-import { config } from '../config';
+} from '../queries/index.js';
+import { config } from '../config/index.js';
 
-interface ClientProps {
+export interface ClientProps {
   query: string;
   variables: GetProps | ListProps;
 }
 
-interface ListProps {
+export interface ListProps {
   first?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: object;
 }
 
-interface GetProps {
+export interface GetProps {
   id: string;
 }
 
@@ -103,7 +103,7 @@ const erc20BalancesQuery = async (props: ListProps) => {
 };
 
 const erc20BalanceQuery = async (address: string) => {
-  const contract = krbToken[currentConfig.network].address;
+  const contract = schemas.krbToken[currentConfig.network].address;
   const id = contract.toLowerCase() + '/' + address.toLowerCase();
 
   const response = await client({

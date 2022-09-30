@@ -1,6 +1,7 @@
-import { Passport } from '@krebitdao/reputation-passport/dist/core';
-
 import { getIssuers, sortByDate } from 'utils';
+
+// types
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 
 interface IProps {
   type: string;

@@ -1,12 +1,12 @@
-import { credentialRegistries } from './credentialRegistries';
-import { credentialRegistry } from './credentialRegistry';
-import { erc20Balance } from './erc20Balance';
-import { erc20Balances } from './erc20Balances';
-import { erc20Contract } from './erc20Contract';
-import { verifiableCredential } from './verifiableCredential';
-import { verifiableCredentials } from './verifiableCredentials';
-import { ensResolvedAddress } from './ensResolvedAddress';
-import { ensDomains } from './ensDomains';
+import { credentialRegistries } from './credentialRegistries.js';
+import { credentialRegistry } from './credentialRegistry.js';
+import { erc20Balance } from './erc20Balance.js';
+import { erc20Balances } from './erc20Balances.js';
+import { erc20Contract } from './erc20Contract.js';
+import { verifiableCredential } from './verifiableCredential.js';
+import { verifiableCredentials } from './verifiableCredentials.js';
+import { ensResolvedAddress } from './ensResolvedAddress.js';
+import { ensDomains } from './ensDomains.js';
 
 export {
   credentialRegistries,
