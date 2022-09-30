@@ -74,7 +74,7 @@ export const Wrapper = styled.div<IProps>`
       grid-gap: 17px;
 
       @media (min-width: ${theme.screens.lg}) {
-        ${currentFilterOption === 'personhood' &&
+        ${currentFilterOption === 'Personhood' &&
         css`
           grid-template-columns: repeat(2, auto);
         `}

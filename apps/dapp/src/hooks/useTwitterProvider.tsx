@@ -168,7 +168,7 @@ export const useTwitterProvider = () => {
     }
   };
 
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
 
@@ -179,17 +179,11 @@ export const useTwitterProvider = () => {
       const walletInformation = await getWalletInformation(currentType);
 
       const passport = new Krebit.core.Passport({
-        ...walletInformation,
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address,
         ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       await passport.read(walletInformation.address);
-
-      //TODO: instead of ths why not pass provider.currentCredential as parameter?
-      const credentials = await passport.getCredentials('Twitter');
-      const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('Twitter'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
@@ -198,7 +192,7 @@ export const useTwitterProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestTwitterCredential);
+      const stampTx = await Issuer.stampCredential(credential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });
@@ -208,7 +202,7 @@ export const useTwitterProvider = () => {
     }
   };
 
-  const handleMintCredential = async () => {
+  const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
 
@@ -224,13 +218,6 @@ export const useTwitterProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      //TODO: instead of ths why not pass provider.currentCredential as parameter?
-      const credentials = await passport.getCredentials('Twitter');
-      const getLatestTwitterCredential = credentials
-        .filter(credential => credential.type.includes('Twitter'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
-
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
         litSdk: LitJsSdk,
@@ -238,7 +225,7 @@ export const useTwitterProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const mintTx = await Issuer.mintNFT(getLatestTwitterCredential);
+      const mintTx = await Issuer.mintNFT(credential);
       console.log('mintTx: ', mintTx);
 
       setCurrentMint({ transaction: mintTx });

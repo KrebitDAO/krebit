@@ -28,6 +28,7 @@ export const useGithubOrgMemberProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const channel = new BroadcastChannel('github_oauth_channel');
 
   useEffect(() => {
@@ -78,12 +79,12 @@ export const useGithubOrgMemberProvider = () => {
       type: 'GithubOrgMember',
       typeSchema: 'krebit://schemas/badge',
       tags: [
-        'community',
+        'Community',
         'membership',
         'code',
         'programing',
         'development',
-        'workExperience'
+        'WorkExperience'
       ],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
@@ -169,9 +170,43 @@ export const useGithubOrgMemberProvider = () => {
     }
   };
 
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
+
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const stampTx = await Issuer.stampCredential(credential);
+      console.log('stampTx: ', stampTx);
+
+      setCurrentStamp({ transaction: stampTx });
+      setStatus('stamp_resolved');
+    } catch (error) {
+      setStatus('stamp_rejected');
+    }
+  };
+
+  const handleMintCredential = async credential => {
+    try {
+      setStatus('mint_pending');
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -185,12 +220,6 @@ export const useGithubOrgMemberProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('GithubOrgMember');
-      const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('GithubOrgMember'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
-
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
         litSdk: LitJsSdk,
@@ -198,13 +227,13 @@ export const useGithubOrgMemberProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestGithubCredential);
-      console.log('stampTx: ', stampTx);
+      const mintTx = await Issuer.mintNFT(credential);
+      console.log('mintTx: ', mintTx);
 
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
     } catch (error) {
-      setStatus('stamp_rejected');
+      setStatus('mint_rejected');
     }
   };
 
@@ -221,9 +250,11 @@ export const useGithubOrgMemberProvider = () => {
     handleFetchOAuth,
     handleStampCredential,
     handleClaimValues,
+    handleMintCredential,
     claimValues,
     status,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

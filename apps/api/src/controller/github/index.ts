@@ -52,7 +52,7 @@ export const GithubController = async (
     if (
       claimedCredential?.credentialSubject?.type === 'Github' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
-        'digitalProperty'
+        'DigitalProperty'
       )
     ) {
       // Get evidence bearer token
@@ -114,7 +114,7 @@ export const GithubController = async (
     } else if (
       claimedCredential?.credentialSubject?.type === 'GithubFollowersGT10' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
-        'digitalProperty'
+        'DigitalProperty'
       )
     ) {
       // Get evidence bearer token
@@ -203,7 +203,7 @@ export const GithubController = async (
     } else if (
       claimedCredential?.credentialSubject?.type === 'GithubRepoStarsGT10' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
-        'workExperience'
+        'WorkExperience'
       )
     ) {
       // Get evidence bearer token
@@ -283,7 +283,7 @@ export const GithubController = async (
       claimedCredential?.credentialSubject?.type ===
         'GithubRepoMergedPullsGT10' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
-        'workExperience'
+        'WorkExperience'
       )
     ) {
       // Get evidence bearer token

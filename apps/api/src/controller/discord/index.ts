@@ -55,7 +55,7 @@ export const DiscordController = async (
     if (
       claimedCredential?.credentialSubject?.type === 'Discord' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
-        'digitalProperty'
+        'DigitalProperty'
       )
     ) {
       // Get evidence bearer token
@@ -116,7 +116,7 @@ export const DiscordController = async (
     } else if (
       claimedCredential?.credentialSubject?.type === 'DiscordGuildOwner' &&
       claimedCredential?.credentialSubject?.typeSchema.includes(
-        'digitalProperty'
+        'DigitalProperty'
       )
     ) {
       // Get evidence bearer token

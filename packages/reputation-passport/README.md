@@ -41,7 +41,7 @@ console.log('credentials: ', credentials);
 const reputation = await passport.getReputation();
 console.log('reputation: ', reputation);
 
-const stamps = await passport.getStamps(10, 'digitalProperty');
+const stamps = await passport.getStamps(10, 'DigitalProperty');
 console.log('stamps: ', stamps);
 ```
 
@@ -133,7 +133,7 @@ const getClaim = async (toAddress: string) => {
     did: `did:pkh:eip155:1:${toAddress}`
     type: 'questBadge',
     value: badgeValue,
-    tags: ['quest', 'badge', 'community'],
+    tags: ['quest', 'badge', 'Community'],
     typeSchema: 'https://github.com/KrebitDAO/schemas/questBadge',
     expirationDate: new Date(expirationDate).toISOString()
   };

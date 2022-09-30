@@ -62,7 +62,7 @@ export const Community = (props: IProps) => {
     const getInformation = async () => {
       try {
         const communityCredentials = await getCredentials({
-          type: 'community',
+          type: 'Community',
           passport: publicPassport,
           limit: currentFilterOption === 'overview' ? 4 : 100
         });
@@ -257,7 +257,7 @@ export const Community = (props: IProps) => {
             {currentFilterOption === 'overview' && (
               <div
                 className="community-header-text-open-new"
-                onClick={() => onFilterOption('community')}
+                onClick={() => onFilterOption('Community')}
               >
                 <OpenInNew />
               </div>
@@ -335,7 +335,7 @@ export const Community = (props: IProps) => {
                           onClick: () =>
                             handleCheckCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               community.stamps[0]
                             )
                         }
@@ -345,6 +345,13 @@ export const Community = (props: IProps) => {
                           title: 'Add stamp',
                           onClick: () =>
                             handleCurrentCommunity('add_stamp', community)
+                        }
+                      : undefined,
+                    isAuthenticated && community.stamps?.length !== 0
+                      ? {
+                          title: 'Mint NFT',
+                          onClick: () =>
+                            handleCurrentCommunity('mint_nft', community)
                         }
                       : undefined,
                     isAuthenticated &&

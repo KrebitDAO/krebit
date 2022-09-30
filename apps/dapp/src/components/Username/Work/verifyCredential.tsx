@@ -36,7 +36,7 @@ export const VerifyCredential = (props: IProps) => {
 
   return (
     <Verify
-      initialList={getIssuers('workExperience')}
+      initialList={getIssuers('WorkExperience')}
       onClose={handleClose}
       verifyId={currentWork?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
@@ -114,18 +114,53 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               githubProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: githubProvider.handleStampCredential
+                          onClick: () =>
+                            githubProvider.handleMintCredential(
+                              githubProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={githubProvider.status === 'stamp_pending'}
                 iconType="stamp"
+              />
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubProvider.handleMintCredential(
+                              githubProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={githubProvider.status === 'mint_pending'}
+                iconType="nft"
               />
             </>
           )}
@@ -210,18 +245,53 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               githubFollowersProvider.currentStamp ||
                                 currentWork.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: githubFollowersProvider.handleStampCredential
+                          onClick: () =>
+                            githubFollowersProvider.handleMintCredential(
+                              githubFollowersProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={githubFollowersProvider.status === 'stamp_pending'}
                 iconType="stamp"
+              />{' '}
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubFollowersProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubFollowersProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubFollowersProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubFollowersProvider.handleMintCredential(
+                              githubFollowersProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={githubFollowersProvider.status === 'mint_pending'}
+                iconType="nft"
               />
             </>
           )}
@@ -307,18 +377,53 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               githubRepoProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: githubRepoProvider.handleStampCredential
+                          onClick: () =>
+                            githubRepoProvider.handleMintCredential(
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={githubRepoProvider.status === 'stamp_pending'}
                 iconType="stamp"
+              />{' '}
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubRepoProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubRepoProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubRepoProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubRepoProvider.handleMintCredential(
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={githubRepoProvider.status === 'mint_pending'}
+                iconType="nft"
               />
             </>
           )}
@@ -426,21 +531,59 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
-                              githubRepoCollaboratorProvider.currentStamp ||
+                              'tx',
+                              githubRepoProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick:
-                            githubRepoCollaboratorProvider.handleStampCredential
+                          onClick: () =>
+                            githubRepoProvider.handleMintCredential(
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={
                   githubRepoCollaboratorProvider.status === 'stamp_pending'
                 }
                 iconType="stamp"
+              />{' '}
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubRepoCollaboratorProvider.currentMint ||
+                  currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubRepoCollaboratorProvider.currentMint ||
+                    currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubRepoCollaboratorProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubRepoCollaboratorProvider.handleMintCredential(
+                              githubRepoCollaboratorProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={
+                  githubRepoCollaboratorProvider.status === 'mint_pending'
+                }
+                iconType="nft"
               />
             </>
           )}

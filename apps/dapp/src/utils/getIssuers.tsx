@@ -38,7 +38,7 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'phone',
+    credentialType: 'Phone',
     entity: 'Phone (Twilio)',
     description: 'Krebit Verification Node',
     icon: <Phone />,
@@ -183,11 +183,11 @@ const COMMUNITY_CREDENTIALS = [
 const getIssuers = (type: string): any[] => {
   //TODO: call Krebit.call.getIssuers(type);
   switch (type) {
-    case 'personhood':
+    case 'Personhood':
       return PERSONHOOD_CREDENTIALS;
-    case 'workExperience':
+    case 'WorkExperience':
       return WORK_CREDENTIALS;
-    case 'community':
+    case 'Community':
       return COMMUNITY_CREDENTIALS;
     default:
       return [];

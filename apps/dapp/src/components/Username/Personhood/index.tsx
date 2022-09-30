@@ -62,7 +62,7 @@ export const Personhood = (props: IProps) => {
     const getInformation = async () => {
       try {
         const personhoodCredentials = await getCredentials({
-          type: 'personhood',
+          type: 'Personhood',
           passport: publicPassport,
           limit: currentFilterOption === 'overview' ? 3 : 100
         });
@@ -275,7 +275,7 @@ export const Personhood = (props: IProps) => {
             {currentFilterOption === 'overview' && personhoods?.length !== 0 ? (
               <div
                 className="person-header-text-open-new"
-                onClick={() => onFilterOption('personhood')}
+                onClick={() => onFilterOption('Personhood')}
               >
                 <OpenInNew />
               </div>
@@ -351,7 +351,7 @@ export const Personhood = (props: IProps) => {
                           onClick: () =>
                             handleCheckCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               personhood.stamps[0]
                             )
                         }

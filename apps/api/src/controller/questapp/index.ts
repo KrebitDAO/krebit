@@ -94,7 +94,7 @@ export const QuestappController = async (
       //did: `did:pkh:eip155:1:0xd6eeF6A4ceB9270776d6b388cFaBA62f5Bc3357f`,
       type: delegateCredentialValue.credentialType,
       value: badgeValue,
-      tags: ['quest', 'krebit', 'community'],
+      tags: ['quest', 'krebit', 'Community'],
       typeSchema: delegateCredentialValue.credentialSchema,
       expirationDate: new Date(expirationDate).toISOString()
     };

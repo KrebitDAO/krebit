@@ -12,12 +12,10 @@ import {
 } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
-
 import { lib } from '../lib/index.js';
 import { utils, ClaimProps } from '../utils/index.js';
 import { schemas } from '../schemas/index.js';
 import { config, IConfigProps } from '../config/index.js';
-
 
 interface IProps extends IConfigProps {
   wallet: ethers.Signer;
@@ -77,8 +75,8 @@ export class Krebit {
       props.wallet
     );
     this.nftContract = new ethers.Contract(
-      krebitNFT[this.currentConfig.network].address,
-      krebitNFT.abi,
+      schemas.krebitNFT[this.currentConfig.network].address,
+      schemas.krebitNFT.abi,
       props.wallet
     );
   }
@@ -457,8 +455,8 @@ export class Krebit {
 
           // Initialize your dapp here like getting user accounts etc
           const metaContract = new ethers.Contract(
-            krebitNFT[this.currentConfig.network].address,
-            krebitNFT.abi,
+            schemas.krebitNFT[this.currentConfig.network].address,
+            schemas.krebitNFT.abi,
             biconomy.getSignerByAddress(this.address)
           );
 
@@ -472,7 +470,7 @@ export class Krebit {
             );
           let txParams = {
             data: data,
-            to: krebitNFT[this.currentConfig.network].address,
+            to: schemas.krebitNFT[this.currentConfig.network].address,
             from: this.address,
             signatureType: 'EIP712_SIGN'
           };

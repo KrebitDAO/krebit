@@ -43,29 +43,29 @@ const FilterMenu = (props: IFilterMenuProps) => {
       </p>
       <p
         className={`content-filter-menu-item ${
-          currentFilter === 'personhood'
+          currentFilter === 'Personhood'
             ? 'content-filter-menu-item-active'
             : ''
         }`}
-        onClick={() => onClick('personhood')}
+        onClick={() => onClick('Personhood')}
       >
         Personhood Credentials
       </p>
       <p
         className={`content-filter-menu-item ${
-          currentFilter === 'workExperience'
+          currentFilter === 'WorkExperience'
             ? 'content-filter-menu-item-active'
             : ''
         }`}
-        onClick={() => onClick('workExperience')}
+        onClick={() => onClick('WorkExperience')}
       >
         Work Credentials
       </p>
       <p
         className={`content-filter-menu-item ${
-          currentFilter === 'community' ? 'content-filter-menu-item-active' : ''
+          currentFilter === 'Community' ? 'content-filter-menu-item-active' : ''
         }`}
-        onClick={() => onClick('community')}
+        onClick={() => onClick('Community')}
       >
         Community Credentials
       </p>
@@ -306,7 +306,7 @@ export const Username = () => {
                   issuer={issuer}
                   currentFilterOption={currentFilterOption}
                   onFilterOption={handleFilterOption}
-                  isHidden={currentFilterOption !== 'personhood'}
+                  isHidden={currentFilterOption !== 'Personhood'}
                   handleProfile={handleProfile}
                 />
                 <Work
@@ -318,7 +318,7 @@ export const Username = () => {
                   onFilterOption={handleFilterOption}
                   isHidden={
                     currentFilterOption !== 'overview' &&
-                    currentFilterOption !== 'workExperience'
+                    currentFilterOption !== 'WorkExperience'
                   }
                   handleProfile={handleProfile}
                 />
@@ -331,7 +331,7 @@ export const Username = () => {
                   onFilterOption={handleFilterOption}
                   isHidden={
                     currentFilterOption !== 'overview' &&
-                    currentFilterOption !== 'community'
+                    currentFilterOption !== 'Community'
                   }
                   handleProfile={handleProfile}
                 />
