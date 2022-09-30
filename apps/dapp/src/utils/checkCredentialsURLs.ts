@@ -40,8 +40,7 @@ export const checkCredentialsURLs = (
 
   if (type === 'rarible') {
     let contract = krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address;
-    let tokenId =
-      (currentUrl = `https://testnet.rarible.com/token/polygon/${contract}:${tokenId}`);
+    currentUrl = `https://testnet.rarible.com/token/polygon/${contract}:${value}`;
   }
 
   window.open(currentUrl, '_blank');
