@@ -61,17 +61,19 @@ export const TwitterController = async (
     // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
-    // If claim is digitalProperty "twitter"
-    if (
-      claimedCredential?.credentialSubject?.type === 'Twitter' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'DigitalProperty'
-      )
-    ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
+    // get the claimValue
+    let claimValue = null;
+    //Decrypt
+    if (claimedCredential.credentialSubject.encrypted === 'lit') {
+      claimValue = await Issuer.decryptCredential(claimedCredential);
+      console.log('Decrypted claim value: ', claimValue);
+    } else {
+      claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('Claim value: ', claimValue);
+    }
 
+    // If claim is digitalProperty "twitter"
+    if (claimedCredential?.credentialSubject?.type === 'Twitter') {
       // Connect to twitter and get user ID from code
       const twitterUser = await twitter.getTwitterUser({
         client: authClient,
@@ -87,8 +89,6 @@ export const TwitterController = async (
         twitterUser &&
         twitterUser.username.toLowerCase() === claimValue.username.toLowerCase()
       ) {
-        delete claimValue.proofs;
-
         console.log('Valid twitter ID:', twitterUser);
 
         const expirationDate = new Date();
@@ -129,10 +129,6 @@ export const TwitterController = async (
     } else if (
       claimedCredential?.credentialSubject?.type === 'TwitterFollowersGT1K'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to twitter and get user ID from code
       const twitterUser = await twitter.getTwitterFollowersCount({
         client: authClient,
@@ -150,8 +146,6 @@ export const TwitterController = async (
           claimValue.username.toLowerCase() &&
         twitterUser.followers > 1000
       ) {
-        delete claimValue.proofs;
-
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -168,7 +162,8 @@ export const TwitterController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 

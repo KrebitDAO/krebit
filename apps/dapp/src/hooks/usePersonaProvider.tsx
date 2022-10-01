@@ -7,23 +7,24 @@ import {
   openOAuthUrl,
   sortByDate,
   getWalletInformation,
-  generateUID
+  generateUID,
+  IIsuerParams
 } from 'utils';
 import { debounce } from 'ts-debounce';
 
 interface IClaimValues {
   firstName: string;
   lastName: string;
+  private: boolean;
 }
 
-const { NEXT_PUBLIC_PERSONA_NODE_URL } = process.env;
-const { NEXT_PUBLIC_PERSONA_NODE_ADDRESS } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 export const usePersonaProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     firstName: '',
-    lastName: ''
+    lastName: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -31,6 +32,7 @@ export const usePersonaProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const channel = new BroadcastChannel('persona_oauth_channel');
 
   useEffect(() => {
@@ -52,7 +54,8 @@ export const usePersonaProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = () => {
+  const handleFetchOAuth = (issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const authUrl = `https://krebit.withpersona.com/verify?template-id=${
       process.env.NEXT_PUBLIC_PASSPORT_PERSONA_API_TEMPLATE
     }&environment=sandbox&reference-id=persona-${generateUID(
@@ -86,9 +89,7 @@ export const usePersonaProvider = () => {
           nonce: `${generateUID(10)}`
         }
       },
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit',
-      shareEncryptedWith: NEXT_PUBLIC_PERSONA_NODE_ADDRESS
+      expirationDate: new Date(expirationDate).toISOString()
     };
   };
 
@@ -116,6 +117,10 @@ export const usePersonaProvider = () => {
 
         // Issue self-signed credential claiming the legalName
         const claim = await getClaim(walletInformation.address, e.data);
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -145,7 +150,7 @@ export const usePersonaProvider = () => {
           // Step 1-B: Send self-signed credential to the Issuer for verification
 
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_PERSONA_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 

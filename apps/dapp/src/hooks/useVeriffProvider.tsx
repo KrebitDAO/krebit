@@ -8,24 +8,25 @@ import {
   getVeriffSession,
   sortByDate,
   getWalletInformation,
-  generateUID
+  generateUID,
+  IIsuerParams
 } from 'utils';
 import { debounce } from 'ts-debounce';
 
 interface IClaimValues {
   firstName: string;
   lastName: string;
+  private: boolean;
 }
 
-const { NEXT_PUBLIC_VERIFF_NODE_URL } = process.env;
-const { NEXT_PUBLIC_VERIFF_NODE_ADDRESS } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 export const useVeriffProvider = () => {
   const [veriffSession, setVeriffSession] = useState({});
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     firstName: '',
-    lastName: ''
+    lastName: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -33,6 +34,7 @@ export const useVeriffProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const channel = new BroadcastChannel('veriff_oauth_channel');
 
   useEffect(() => {
@@ -54,7 +56,8 @@ export const useVeriffProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = async (address: string) => {
+  const handleFetchOAuth = async (address: string, issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
         person: {
@@ -93,9 +96,7 @@ export const useVeriffProvider = () => {
           nonce: `${generateUID(10)}`
         }
       },
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit',
-      shareEncryptedWith: NEXT_PUBLIC_VERIFF_NODE_ADDRESS
+      expirationDate: new Date(expirationDate).toISOString()
     };
   };
 
@@ -123,6 +124,10 @@ export const useVeriffProvider = () => {
 
         // Issue self-signed credential claiming the veriff
         const claim = await getClaim(walletInformation.address, e.data);
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -152,7 +157,7 @@ export const useVeriffProvider = () => {
           // Step 1-B: Send self-signed credential to the Issuer for verification
 
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 

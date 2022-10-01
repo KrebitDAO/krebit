@@ -12,6 +12,7 @@ interface IInitialListProps {
   imageUrl: string;
   verificationUrl: string;
   did: string;
+  address: string;
   price: string;
   isDisabled?: boolean;
 }
@@ -24,6 +25,7 @@ type ICurrentIssuerProps = {
   imageUrl: string;
   verificationUrl: string;
   did: string;
+  address: string;
   price: string;
 };
 

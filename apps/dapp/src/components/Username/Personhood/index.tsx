@@ -70,6 +70,7 @@ export const Personhood = (props: IProps) => {
         setPersonhoods(personhoodCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
+          personhoods: personhoodCredentials,
           skills:
             (prevValues.skills || []).concat(
               personhoodCredentials.flatMap(credential => credential.skills)
@@ -178,38 +179,35 @@ export const Personhood = (props: IProps) => {
   const handleClaimValue = async (type: string, credential: any) => {
     const claimValue =
       type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential)
-        : { encrypted: '********' };
+        ? await issuer.decryptClaimValue(credential.value)
+        : credential.value;
 
     const currentCredentialPosition = personhoods.findIndex(
       personhood => personhood.credential.vcId === credential.vcId
     );
-
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      delete claimValue?.proofs;
-
       handleProfile(prevValues => {
-        const updatedPersnohoods = [...prevValues.personhoods];
-        updatedPersnohoods[currentCredentialPosition] = {
-          ...updatedPersnohoods[currentCredentialPosition],
+        const updatedPersonhoods = [...prevValues.personhoods];
+        updatedPersonhoods[currentCredentialPosition] = {
+          ...updatedPersonhoods[currentCredentialPosition],
           credential: {
-            ...updatedPersnohoods[currentCredentialPosition].credential,
+            ...updatedPersonhoods[currentCredentialPosition].credential,
             value: claimValue
           }
         };
-
+        setPersonhoods(updatedPersonhoods);
         return {
           ...prevValues,
-          personhoods: updatedPersnohoods
+          personhoods: updatedPersonhoods
         };
       });
     }
   };
 
   const formatCredentialName = (value: any) => {
-    if (value?.encrypted) return value.encrypted;
+    if (value?.encryptedString) return '******';
 
     if (value?.protocol === 'Email') {
       return value.username.concat('@').concat(value.host);
@@ -373,7 +371,7 @@ export const Personhood = (props: IProps) => {
                     isAuthenticated &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
-                      ? personhood.credential?.value?.encrypted
+                      ? personhood.credential?.value?.encryptedString
                         ? {
                             title: 'Decrypt',
                             onClick: () =>

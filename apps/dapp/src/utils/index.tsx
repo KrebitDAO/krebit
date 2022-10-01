@@ -1,5 +1,5 @@
 import { createEmotionCache } from './createEmotionCache';
-import { getIssuers } from './getIssuers';
+import { getIssuers, IIsuerParams } from './getIssuers';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getCredential } from './getCredential';
@@ -35,3 +35,4 @@ export {
   formatFilename,
   formatUrlImage
 };
+export type { IIsuerParams };

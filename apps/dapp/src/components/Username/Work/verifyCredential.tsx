@@ -68,6 +68,15 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'Enter you github username',
                             value: githubProvider.claimValues.username,
                             onChange: githubProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: githubProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: githubProvider.claimValues.private,
+                            onChange: githubProvider.handleClaimValues
                           }
                         ],
                   button:
@@ -192,6 +201,16 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'username',
                             placeholder: 'Enter you github username',
                             value: githubFollowersProvider.claimValues.username,
+                            onChange: githubFollowersProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: githubFollowersProvider.claimValues
+                              .private
+                              ? 'private'
+                              : 'public',
+                            value: githubFollowersProvider.claimValues.private,
                             onChange: githubFollowersProvider.handleClaimValues
                           }
                         ],
@@ -327,6 +346,15 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'repository',
                             placeholder: 'Enter the github repository',
                             value: githubRepoProvider.claimValues.repository,
+                            onChange: githubRepoProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: githubRepoProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: githubRepoProvider.claimValues.private,
                             onChange: githubRepoProvider.handleClaimValues
                           }
                         ],
@@ -473,6 +501,19 @@ export const VerifyCredential = (props: IProps) => {
                             value:
                               githubRepoCollaboratorProvider.claimValues
                                 .repository,
+                            onChange:
+                              githubRepoCollaboratorProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: githubRepoCollaboratorProvider
+                              .claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value:
+                              githubRepoCollaboratorProvider.claimValues
+                                .private,
                             onChange:
                               githubRepoCollaboratorProvider.handleClaimValues
                           }

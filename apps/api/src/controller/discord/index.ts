@@ -1,4 +1,5 @@
 import express from 'express';
+import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, discord } from '../../utils';
@@ -34,6 +35,7 @@ export const DiscordController = async (
       wallet,
       ethProvider,
       address: wallet.address,
+      litSdk: LitJsSdk,
       ceramicUrl: SERVER_CERAMIC_URL
     });
     const did = await Issuer.connect();
@@ -49,19 +51,21 @@ export const DiscordController = async (
     // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
+    // get the claimValue
+    let claimValue = null;
+    //Decrypt
+    if (claimedCredential.credentialSubject.encrypted === 'lit') {
+      claimValue = await Issuer.decryptCredential(claimedCredential);
+      console.log('Decrypted claim value: ', claimValue);
+    } else {
+      claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('Claim value: ', claimValue);
+    }
+
     // TODO: Check if the claim already has verifications by me?
 
     // If claim is digitalProperty "Discord"
-    if (
-      claimedCredential?.credentialSubject?.type === 'Discord' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'DigitalProperty'
-      )
-    ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
+    if (claimedCredential?.credentialSubject?.type === 'Discord') {
       // Connect to discord and get user ID from token
       const discordUser = await discord.getDiscordUser({
         tokenType: claimValue.proofs.tokenType,
@@ -70,7 +74,6 @@ export const DiscordController = async (
 
       // If discord userID == the VC userID
       if (discordUser.id === claimValue.id) {
-        delete claimValue.proofs;
         // Issue Verifiable credential
         console.log('Valid discord:', discordUser);
 
@@ -86,21 +89,12 @@ export const DiscordController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
-          value: {
-            ...claimValue,
-            username: discordUser.username
-              .concat('#')
-              .concat(discordUser.discriminator),
-            imageUrl: 'https://cdn.discordapp.com/avatars/'
-              .concat(discordUser.id)
-              .concat('/')
-              .concat(discordUser.avatar)
-              .concat('.png')
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 
@@ -114,15 +108,8 @@ export const DiscordController = async (
         throw new Error(`Wrong discord: ${discordUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'DiscordGuildOwner' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'DigitalProperty'
-      )
+      claimedCredential?.credentialSubject?.type === 'DiscordGuildOwner'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to discord and get user ID from token
       const discordUser = await discord.getDiscordUser({
         tokenType: claimValue.proofs.tokenType,
@@ -142,7 +129,6 @@ export const DiscordController = async (
         discordUser.id === claimValue.proofs.ownerId &&
         discordGuild.owner
       ) {
-        delete claimValue.proofs;
         // Issue Verifiable credential
 
         const expirationDate = new Date();
@@ -169,7 +155,8 @@ export const DiscordController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 
@@ -183,13 +170,8 @@ export const DiscordController = async (
         throw new Error(`Wrong discord: ${discordGuild}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'DiscordGuildMember' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes('badge')
+      claimedCredential?.credentialSubject?.type === 'DiscordGuildMember'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to discord and get user ID from token
       const discordUser = await discord.getDiscordUser({
         tokenType: claimValue.proofs.tokenType,
@@ -214,7 +196,6 @@ export const DiscordController = async (
         !discordGuildMember.pending &&
         discordGuildMember.user.id === claimValue.proofs.memberId
       ) {
-        delete claimValue.proofs;
         // Issue Verifiable credential
 
         const expirationDate = new Date();
@@ -252,7 +233,8 @@ export const DiscordController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 

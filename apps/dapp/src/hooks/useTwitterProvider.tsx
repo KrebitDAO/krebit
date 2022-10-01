@@ -9,10 +9,10 @@ import {
   getCredential,
   getWalletInformation,
   openOAuthUrl,
-  sortByDate
+  sortByDate,
+  IIsuerParams
 } from 'utils';
 
-const { NEXT_PUBLIC_TWITTER_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const authClient = new auth.OAuth2User({
@@ -23,11 +23,13 @@ const authClient = new auth.OAuth2User({
 
 interface IClaimValues {
   username: string;
+  private: boolean;
 }
 
 export const useTwitterProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    username: ''
+    username: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -35,6 +37,7 @@ export const useTwitterProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
@@ -56,7 +59,8 @@ export const useTwitterProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string) => {
+  const handleFetchOAuth = (address: string, issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const authUrl = authClient.generateAuthURL({
       state: `twitter-${generateUID(10)}`,
       code_challenge: address,
@@ -116,6 +120,10 @@ export const useTwitterProvider = () => {
 
         //Issue self-signed credential claiming the Twitter
         const claim = await getClaim(walletInformation.address, e.data);
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -142,7 +150,7 @@ export const useTwitterProvider = () => {
           console.log('claimedCredentialId: ', claimedCredentialId);
           // Step 1-B: Send self-signed credential to the Issuer for verification
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_TWITTER_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 

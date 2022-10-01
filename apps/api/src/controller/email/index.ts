@@ -63,7 +63,7 @@ export const EmailController = async (
     let claimValue = null;
     //Decrypt
     if (claimedCredential.credentialSubject.encrypted === 'lit') {
-      claimValue = await Issuer.decryptClaimValue(claimedCredential);
+      claimValue = await Issuer.decryptCredential(claimedCredential);
       console.log('Decrypted claim value: ', claimValue);
     } else {
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);

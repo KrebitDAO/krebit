@@ -173,8 +173,8 @@ export const Work = (props: IProps) => {
   const handleClaimValue = async (type: string, credential: any) => {
     const claimValue =
       type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential)
-        : { encrypted: '********' };
+        ? await issuer.decryptClaimValue(credential.value)
+        : credential.value;
 
     const currentCredentialPosition = works.findIndex(
       work => work.credential.vcId === credential.vcId
@@ -183,8 +183,6 @@ export const Work = (props: IProps) => {
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      delete claimValue?.proofs;
-
       handleProfile(prevValues => {
         const updatedWorks = [...prevValues.works];
         updatedWorks[currentCredentialPosition] = {
@@ -194,7 +192,7 @@ export const Work = (props: IProps) => {
             value: claimValue
           }
         };
-
+        setWorks(updatedWorks);
         return {
           ...prevValues,
           works: updatedWorks
@@ -204,7 +202,7 @@ export const Work = (props: IProps) => {
   };
 
   const formatCredentialName = (value: any) => {
-    if (value?.encrypted) return value.encrypted;
+    if (value?.encryptedString) return '******';
 
     if (value?.title && value?.entity) {
       return value.entity.concat(' / ').concat(value.title);
@@ -359,7 +357,7 @@ export const Work = (props: IProps) => {
                       : undefined,
                     isAuthenticated &&
                     work.credential?.visualInformation.isEncryptedByDefault
-                      ? work.credential?.value?.encrypted
+                      ? work.credential?.value?.encryptedString
                         ? {
                             title: 'Decrypt',
                             onClick: () => handleCurrentWork('decrypt', work)

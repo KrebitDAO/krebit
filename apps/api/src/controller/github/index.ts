@@ -48,17 +48,19 @@ export const GithubController = async (
     // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
-    // If claim is digitalProperty "github"
-    if (
-      claimedCredential?.credentialSubject?.type === 'Github' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'DigitalProperty'
-      )
-    ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
+    // get the claimValue
+    let claimValue = null;
+    //Decrypt
+    if (claimedCredential.credentialSubject.encrypted === 'lit') {
+      claimValue = await Issuer.decryptCredential(claimedCredential);
+      console.log('Decrypted claim value: ', claimValue);
+    } else {
+      claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('Claim value: ', claimValue);
+    }
 
+    // If claim is digitalProperty "github"
+    if (claimedCredential?.credentialSubject?.type === 'Github') {
       // Connect to github and get user ID from code
       const accessToken = await github.requestAccessToken(
         claimValue.proofs.code
@@ -72,8 +74,6 @@ export const GithubController = async (
         githubUser &&
         githubUser.login.toLowerCase() === claimValue.username.toLowerCase()
       ) {
-        delete claimValue.proofs;
-
         console.log('Valid github ID:', githubUser);
 
         const expirationDate = new Date();
@@ -112,15 +112,8 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'GithubFollowersGT10' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'DigitalProperty'
-      )
+      claimedCredential?.credentialSubject?.type === 'GithubFollowersGT10'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to github and get user ID from code
       const accessToken = await github.requestAccessToken(
         claimValue.proofs.code
@@ -136,8 +129,6 @@ export const GithubController = async (
         githubUser.login.toLowerCase() === claimValue.username.toLowerCase() &&
         followers > 10
       ) {
-        delete claimValue.proofs;
-
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -154,7 +145,8 @@ export const GithubController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 
@@ -170,15 +162,8 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${followers}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'GithubRepoStarsGT10' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'WorkExperience'
-      )
+      claimedCredential?.credentialSubject?.type === 'GithubRepoStarsGT10'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to github and get user ID from code
       const accessToken = await github.requestAccessToken(
         claimValue.proofs.code
@@ -203,8 +188,6 @@ export const GithubController = async (
         !githubRepo.fork &&
         githubRepo.stargazers_count > 10
       ) {
-        delete claimValue.proofs;
-
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -234,7 +217,8 @@ export const GithubController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 
@@ -250,15 +234,8 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'GithubRepoCollaborator' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'WorkExperience'
-      )
+      claimedCredential?.credentialSubject?.type === 'GithubRepoCollaborator'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to github and get user ID from code
       const accessToken = await github.requestAccessToken(
         claimValue.proofs.code
@@ -291,8 +268,6 @@ export const GithubController = async (
         !githubRepo.fork &&
         isCollaborator
       ) {
-        delete claimValue.proofs;
-
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -322,7 +297,8 @@ export const GithubController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 
@@ -338,13 +314,8 @@ export const GithubController = async (
         throw new Error(`Wrong github ID: ${githubUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'GithubOrgMember' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes('badge')
+      claimedCredential?.credentialSubject?.type === 'GithubOrgMember'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to github and get user ID from code
       const accessToken = await github.requestAccessToken(
         claimValue.proofs.code
@@ -369,8 +340,6 @@ export const GithubController = async (
           claimValue.entity.toLowerCase() &&
         githubOrg.state === 'active'
       ) {
-        delete claimValue.proofs;
-
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -394,7 +363,8 @@ export const GithubController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: new Date(expirationDate).toISOString(),
+          encrypt: 'hash' as 'hash'
         };
         console.log('claim: ', claim);
 

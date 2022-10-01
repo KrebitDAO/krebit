@@ -251,6 +251,16 @@ export const VerifyCredential = (props: IProps) => {
                             value:
                               githubOrgMemberProvider.claimValues.organization,
                             onChange: githubOrgMemberProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: githubOrgMemberProvider.claimValues
+                              .private
+                              ? 'private'
+                              : 'public',
+                            value: githubOrgMemberProvider.claimValues.private,
+                            onChange: githubOrgMemberProvider.handleClaimValues
                           }
                         ],
                   button:
@@ -384,6 +394,18 @@ export const VerifyCredential = (props: IProps) => {
                               discordGuildOwnerProvider.claimValues.guildId,
                             onChange:
                               discordGuildOwnerProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: discordGuildOwnerProvider.claimValues
+                              .private
+                              ? 'private'
+                              : 'public',
+                            value:
+                              discordGuildOwnerProvider.claimValues.private,
+                            onChange:
+                              discordGuildOwnerProvider.handleClaimValues
                           }
                         ],
                   button:
@@ -515,6 +537,18 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'Enter the discord guild Id',
                             value:
                               discordGuildMemberProvider.claimValues.guildId,
+                            onChange:
+                              discordGuildMemberProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: discordGuildMemberProvider.claimValues
+                              .private
+                              ? 'private'
+                              : 'public',
+                            value:
+                              discordGuildMemberProvider.claimValues.private,
                             onChange:
                               discordGuildMemberProvider.handleClaimValues
                           }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState, ReactNode } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 import { debounce } from 'ts-debounce';
@@ -9,24 +9,31 @@ import {
   getDiscordUser,
   openOAuthUrl,
   sortByDate,
+  IIsuerParams,
   getWalletInformation
 } from 'utils';
 
-const { NEXT_PUBLIC_DISCORD_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
+interface IClaimValues {
+  private: boolean;
+}
+
 export const useDiscordProvider = () => {
+  const [claimValues, setClaimValues] = useState<IClaimValues>({
+    private: true
+  });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
+  const channel = new BroadcastChannel('discord_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('discord_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -42,9 +49,10 @@ export const useDiscordProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
-  const handleFetchOAuth = () => {
+  const handleFetchOAuth = (issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const state = `discord-${generateUID(10)}`;
 
     const authUrl = `https://discord.com/api/oauth2/authorize?response_type=token&scope=identify&client_id=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CLIENT_ID}&state=${state}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CALLBACK}`;
@@ -59,6 +67,7 @@ export const useDiscordProvider = () => {
       protocol: 'https',
       host: 'discord.com',
       id: payload.id,
+      username: payload.username.concat('#').concat(payload.discriminator),
       proofs
     };
 
@@ -66,6 +75,7 @@ export const useDiscordProvider = () => {
     const expiresSeconds = 300;
     expirationDate.setSeconds(expirationDate.getSeconds() + expiresSeconds);
     console.log('expirationDate: ', expirationDate);
+    console.log('claimValue: ', claimValue);
 
     return {
       id: proofs.state,
@@ -109,6 +119,10 @@ export const useDiscordProvider = () => {
           discordUser,
           e.data
         );
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -134,7 +148,7 @@ export const useDiscordProvider = () => {
           console.log('claimedCredentialId: ', claimedCredentialId);
           // Step 1-B: Send self-signed credential to the Issuer for verification
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_DISCORD_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 
@@ -227,11 +241,21 @@ export const useDiscordProvider = () => {
     }
   };
 
+  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked } = event.target;
+    setClaimValues(prevValues => ({
+      ...prevValues,
+      [name]: event.type === 'change' ? checked : value
+    }));
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
+    handleClaimValues,
     handleStampCredential,
     handleMintCredential,
+    claimValues,
     status,
     currentCredential,
     currentStamp,

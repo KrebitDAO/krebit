@@ -194,25 +194,16 @@ export class Passport {
   };
 
   getClaimValue = async (w3cCredential: W3CCredential) => {
-    if (w3cCredential.credentialSubject.encrypted === 'lit') {
-      return { encrypted: '********' };
-    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+    if (w3cCredential.credentialSubject.encrypted === 'hash') {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
       );
       if (claimedCredential) {
-        const claimValue = this.getClaimValue(claimedCredential);
-        const hash = utils.hashClaimValue({
-          did: w3cCredential.issuer.id,
-          value: claimValue
-        });
-        return w3cCredential.credentialSubject.value === hash
-          ? claimValue
-          : null;
+        return await this.getClaimValue(claimedCredential);
       } else {
-        return null;
+        throw new Error(`Could not retrieve claimed credential value`);
       }
-    } else if (w3cCredential.credentialSubject.encrypted === 'none') {
+    } else {
       return JSON.parse(w3cCredential.credentialSubject.value);
     }
   };

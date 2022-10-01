@@ -34,6 +34,12 @@ interface StampsProps {
   claimId?: string;
 }
 
+interface EncryptedProps {
+  encryptedSymmetricKey: string;
+  encryptedString?: string;
+  accessControlConditions?: string;
+}
+
 const getEIP712CredentialFromStamp = (stamp: any) =>
   ({
     ...stamp,
@@ -276,20 +282,45 @@ export class Krebit {
     }
   };
 
-  decryptClaimValue = async (w3cCredential: W3CCredential) => {
+  decryptCredential = async (w3cCredential: W3CCredential) => {
+    console.log('decrypting', w3cCredential);
     if (!this.isConnected()) throw new Error('Not connected');
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       try {
         const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
+        return await this.decryptClaimValue(encrypted);
+      } catch (err) {
+        throw new Error(`Could not decrypt: ${err.message}`);
+      }
+    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const claimedCredential: W3CCredential = await this.getCredential(
+        w3cCredential.id
+      );
+      if (claimedCredential) {
+        return await this.decryptCredential(claimedCredential);
+      } else {
+        throw new Error(`Could not retrieve claimed credential value`);
+      }
+    }
+  };
+
+  decryptClaimValue = async (encryptedClaimValue: EncryptedProps) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    if (
+      encryptedClaimValue.encryptedString &&
+      encryptedClaimValue.encryptedSymmetricKey &&
+      encryptedClaimValue.accessControlConditions
+    ) {
+      try {
         const lit = new lib.Lit();
         const stream = await TileDocument.load(
           this.idx.ceramic,
-          encrypted.accessControlConditions
+          encryptedClaimValue.accessControlConditions
         );
         const accessControlConditions = stream.content as any;
         const result = await lit.decrypt(
-          encrypted.encryptedString,
-          encrypted.encryptedSymmetricKey,
+          encryptedClaimValue.encryptedString,
+          encryptedClaimValue.encryptedSymmetricKey,
           accessControlConditions,
           this.wallet
         );
@@ -297,31 +328,23 @@ export class Krebit {
           return JSON.parse(result);
         }
       } catch (err) {
-        return { encrypted: '********' };
+        throw new Error(`Could not decrypt: ${err.message}`);
       }
+    } else {
     }
   };
 
   getClaimValue = async (w3cCredential: W3CCredential) => {
-    if (w3cCredential.credentialSubject.encrypted === 'lit') {
-      return { encrypted: '********' };
-    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+    if (w3cCredential.credentialSubject.encrypted === 'hash') {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
       );
       if (claimedCredential) {
-        const claimValue = this.getClaimValue(claimedCredential);
-        const hash = utils.hashClaimValue({
-          did: w3cCredential.issuer.id,
-          value: claimValue
-        });
-        return w3cCredential.credentialSubject.value === hash
-          ? claimValue
-          : null;
+        return await this.getClaimValue(claimedCredential);
       } else {
-        return null;
+        throw new Error(`Could not retrieve claimed credential value`);
       }
-    } else if (w3cCredential.credentialSubject.encrypted === 'none') {
+    } else {
       return JSON.parse(w3cCredential.credentialSubject.value);
     }
   };

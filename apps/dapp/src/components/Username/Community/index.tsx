@@ -174,38 +174,36 @@ export const Community = (props: IProps) => {
   const handleClaimValue = async (type: string, credential: any) => {
     const claimValue =
       type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential)
-        : { encrypted: '********' };
+        ? await issuer.decryptClaimValue(credential.value)
+        : credential.value;
 
     const currentCredentialPosition = communities.findIndex(
-      personhood => personhood.credential.vcId === credential.vcId
+      community => community.credential.vcId === credential.vcId
     );
 
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      delete claimValue?.proofs;
-
       handleProfile(prevValues => {
-        const updatedPersnohoods = [...prevValues.personhoods];
-        updatedPersnohoods[currentCredentialPosition] = {
-          ...updatedPersnohoods[currentCredentialPosition],
+        const updatedCommunities = [...prevValues.communities];
+        updatedCommunities[currentCredentialPosition] = {
+          ...updatedCommunities[currentCredentialPosition],
           credential: {
-            ...updatedPersnohoods[currentCredentialPosition].credential,
+            ...updatedCommunities[currentCredentialPosition].credential,
             value: claimValue
           }
         };
-
+        setCommunities(updatedCommunities);
         return {
           ...prevValues,
-          personhoods: updatedPersnohoods
+          communities: updatedCommunities
         };
       });
     }
   };
 
   const formatCredentialName = (value: any) => {
-    if (value?.encrypted) return value.encrypted;
+    if (value?.encryptedString) return '******';
 
     if (value?.entity && value?.role) {
       return value.entity.concat(' / ').concat(value.role);
@@ -285,13 +283,13 @@ export const Community = (props: IProps) => {
           ) : communities?.length === 0 ? (
             new Array(2)
               .fill(constants.DEFAULT_EMPTY_CARD_COMMUNITY)
-              .map((personhood, index) => (
+              .map((community, index) => (
                 <Card
                   key={index}
                   type="small"
                   id={`community_${index}`}
                   isEmpty={true}
-                  {...personhood}
+                  {...community}
                 />
               ))
           ) : (
@@ -356,7 +354,7 @@ export const Community = (props: IProps) => {
                       : undefined,
                     isAuthenticated &&
                     community.credential?.visualInformation.isEncryptedByDefault
-                      ? community.credential?.value?.encrypted
+                      ? community.credential?.value?.encryptedString
                         ? {
                             title: 'Decrypt',
                             onClick: () =>

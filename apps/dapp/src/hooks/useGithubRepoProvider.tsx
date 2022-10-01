@@ -8,20 +8,21 @@ import {
   getCredential,
   getWalletInformation,
   openOAuthUrl,
-  sortByDate
+  IIsuerParams
 } from 'utils';
 
-const { NEXT_PUBLIC_GITHUB_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 interface IClaimValues {
   username: string;
   repository: string;
+  private: boolean;
 }
 
 export const useGithubRepoProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     username: '',
-    repository: ''
+    repository: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
@@ -29,6 +30,7 @@ export const useGithubRepoProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const channel = new BroadcastChannel('github_oauth_channel');
 
   useEffect(() => {
@@ -50,7 +52,8 @@ export const useGithubRepoProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = () => {
+  const handleFetchOAuth = (issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const state = 'githubRepoOwner-' + generateUID(10);
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CALLBACK}&state=${state}`;
@@ -116,6 +119,10 @@ export const useGithubRepoProvider = () => {
 
         //Issue self-signed credential claiming the Github
         const claim = await getClaim(walletInformation.address, e.data);
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -142,7 +149,7 @@ export const useGithubRepoProvider = () => {
           console.log('claimedCredentialId: ', claimedCredentialId);
           // Step 1-B: Send self-signed credential to the Issuer for verification
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_GITHUB_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 

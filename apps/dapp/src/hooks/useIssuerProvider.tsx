@@ -6,6 +6,7 @@ import {
   getCredential,
   generateUID,
   sortByDate,
+  IIsuerParams,
   getWalletInformation
 } from 'utils';
 
@@ -22,7 +23,6 @@ interface IClaimValues {
   price: number;
 }
 
-const { NEXT_PUBLIC_ISSUER_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 export const useIssuerProvider = () => {
@@ -44,6 +44,7 @@ export const useIssuerProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
 
   const getClaim = async (address: string, typeSchemaUrl: string) => {
     const expirationDate = new Date();
@@ -108,7 +109,7 @@ export const useIssuerProvider = () => {
 
         // Step 1-B: Send self-signed credential to the Issuer for verification
         const issuedCredential = await getCredential({
-          verifyUrl: NEXT_PUBLIC_ISSUER_NODE_URL,
+          verifyUrl: currentIssuer.verificationUrl,
           claimedCredentialId
         });
 

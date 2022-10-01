@@ -31,12 +31,12 @@ const getCredentials = async (props: IProps) => {
         credential.type.includes(issuer.credentialType)
       );
       const claimValue = await passport.getClaimValue(credential);
-      if (claimValue?.proofs) delete claimValue.proofs;
+
       const customCredential = {
         ...credential,
         visualInformation: {
           ...visualInformation,
-          isEncryptedByDefault: !!claimValue?.encrypted
+          isEncryptedByDefault: !!claimValue?.encryptedString
         },
         value: claimValue
       };
@@ -48,8 +48,8 @@ const getCredentials = async (props: IProps) => {
         skills: credential.type
       };
     })
-  ).then(personhoods =>
-    personhoods.sort((a, b) =>
+  ).then(credentials =>
+    credentials.sort((a, b) =>
       sortByDate(a.credential.issuanceDate, b.credential.issuanceDate, 'des')
     )
   );

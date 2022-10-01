@@ -8,6 +8,19 @@ import {
   Github,
   Spect
 } from 'components/Icons';
+import { ReactNode } from 'react';
+
+interface IIsuerParams {
+  credentialType: string;
+  entity: string;
+  description: string;
+  icon: ReactNode;
+  imageUrl: string;
+  verificationUrl: string;
+  did: string;
+  address: string;
+  price: string;
+}
 
 const PERSONHOOD_CREDENTIALS = [
   {
@@ -17,6 +30,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Discord />,
     verificationUrl: 'http://localhost:4000/discord',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -26,6 +40,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Twitter />,
     verificationUrl: 'http://localhost:4000/twitter',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -35,6 +50,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Twitter />,
     verificationUrl: 'http://localhost:4000/twitter',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -44,6 +60,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Phone />,
     verificationUrl: 'http://localhost:4000/phone',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -53,6 +70,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Email />,
     verificationUrl: 'http://localhost:4000/email',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -62,6 +80,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Badge />,
     verificationUrl: 'http://localhost:4000/veriff',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '1.5',
     isDisabled: true
   },
@@ -72,6 +91,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Badge />,
     verificationUrl: 'http://localhost:4000/persona',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '2.5'
   }
 ];
@@ -86,6 +106,7 @@ const WORK_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: 'http://localhost:4000/github',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -97,6 +118,7 @@ const WORK_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: 'http://localhost:4000/github',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -108,6 +130,7 @@ const WORK_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: 'http://localhost:4000/github',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -119,6 +142,7 @@ const WORK_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: 'http://localhost:4000/github',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -128,6 +152,7 @@ const WORK_CREDENTIALS = [
     icon: <Spect />,
     verificationUrl: 'http://localhost:4000/spect',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0',
     isDisabled: true
   }
@@ -143,6 +168,7 @@ const COMMUNITY_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
     verificationUrl: 'http://localhost:4000/discord',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -154,6 +180,7 @@ const COMMUNITY_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
     verificationUrl: 'http://localhost:4000/discord',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
   {
@@ -165,6 +192,8 @@ const COMMUNITY_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: 'http://localhost:4000/github',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+
     price: '0'
   },
   {
@@ -176,6 +205,7 @@ const COMMUNITY_CREDENTIALS = [
       'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
     verificationUrl: 'http://localhost:4000/issuer',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   }
 ];
@@ -195,3 +225,4 @@ const getIssuers = (type: string): any[] => {
 };
 
 export { getIssuers };
+export type { IIsuerParams };

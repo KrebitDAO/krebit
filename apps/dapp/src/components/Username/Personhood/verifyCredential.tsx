@@ -68,6 +68,21 @@ export const VerifyCredential = (props: IProps) => {
                     : 'Claim your Discord profile'
                 }
                 form={{
+                  fields:
+                    discordProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: discordProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: discordProvider.claimValues.private,
+                            onChange: discordProvider.handleClaimValues
+                          }
+                        ],
                   button:
                     discordProvider.currentCredential ||
                     currentPersonhood?.credential
@@ -83,7 +98,8 @@ export const VerifyCredential = (props: IProps) => {
                         }
                       : {
                           text: 'Verify',
-                          onClick: discordProvider.handleFetchOAuth
+                          onClick: () =>
+                            discordProvider.handleFetchOAuth(currentVerify)
                         }
                 }}
                 isLoading={discordProvider.status === 'credential_pending'}
@@ -184,6 +200,15 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'username',
                             placeholder: 'Enter you twitter handle',
                             value: twitterProvider.claimValues.username,
+                            onChange: twitterProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: twitterProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: twitterProvider.claimValues.private,
                             onChange: twitterProvider.handleClaimValues
                           }
                         ],
@@ -314,6 +339,16 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'Enter you twitter handle',
                             value:
                               twitterFollowersProvider.claimValues.username,
+                            onChange: twitterFollowersProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: twitterFollowersProvider.claimValues
+                              .private
+                              ? 'private'
+                              : 'public',
+                            value: twitterFollowersProvider.claimValues.private,
                             onChange: twitterFollowersProvider.handleClaimValues
                           }
                         ],
@@ -455,6 +490,15 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'Enter you last name',
                             value: veriffProvider.claimValues.lastName,
                             onChange: veriffProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: veriffProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: veriffProvider.claimValues.private,
+                            onChange: veriffProvider.handleClaimValues
                           }
                         ],
                   button:
@@ -589,6 +633,15 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'lastName',
                             placeholder: 'Enter you last name',
                             value: personaProvider.claimValues.lastName,
+                            onChange: personaProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: personaProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: personaProvider.claimValues.private,
                             onChange: personaProvider.handleClaimValues
                           }
                         ],
@@ -726,6 +779,15 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'Enter phone number',
                             value: phoneProvider.claimValues.number,
                             onChange: phoneProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: phoneProvider.claimValues.private
+                              ? 'private'
+                              : 'public',
+                            value: phoneProvider.claimValues.private,
+                            onChange: phoneProvider.handleClaimValues
                           }
                         ],
                   button:
@@ -738,7 +800,7 @@ export const VerifyCredential = (props: IProps) => {
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
                               ? undefined
-                              : phoneProvider.handleStartVerification,
+                              : () => phoneProvider.handleStartVerification(),
                           isDisabled:
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
@@ -887,6 +949,16 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'username@example.com',
                             value: emailProvider.claimValues.email,
                             onChange: emailProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: githubOrgMemberProvider.claimValues
+                              .private
+                              ? 'private'
+                              : 'public',
+                            value: githubOrgMemberProvider.claimValues.private,
+                            onChange: githubOrgMemberProvider.handleClaimValues
                           }
                         ],
                   button:
@@ -897,7 +969,10 @@ export const VerifyCredential = (props: IProps) => {
                           text: 'Send Verification Code',
                           onClick: !emailProvider.claimValues.email
                             ? undefined
-                            : emailProvider.handleStartVerification,
+                            : () =>
+                                emailProvider.handleStartVerification(
+                                  currentVerify
+                                ),
                           isDisabled: !emailProvider.claimValues.email
                         }
                 }}
