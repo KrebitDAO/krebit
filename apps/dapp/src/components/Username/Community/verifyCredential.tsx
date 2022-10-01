@@ -283,7 +283,9 @@ export const VerifyCredential = (props: IProps) => {
                             githubOrgMemberProvider.claimValues.username === ''
                               ? undefined
                               : () =>
-                                  githubOrgMemberProvider.handleFetchOAuth(),
+                                  githubOrgMemberProvider.handleFetchOAuth(
+                                    currentVerify
+                                  ),
                           isDisabled:
                             !githubOrgMemberProvider.claimValues.username ||
                             githubOrgMemberProvider.claimValues.username === ''
@@ -428,7 +430,9 @@ export const VerifyCredential = (props: IProps) => {
                             discordGuildOwnerProvider.claimValues.guildId === ''
                               ? undefined
                               : () =>
-                                  discordGuildOwnerProvider.handleFetchOAuth(),
+                                  discordGuildOwnerProvider.handleFetchOAuth(
+                                    currentVerify
+                                  ),
                           isDisabled:
                             !discordGuildOwnerProvider.claimValues.guildId ||
                             discordGuildOwnerProvider.claimValues.guildId === ''
@@ -574,7 +578,9 @@ export const VerifyCredential = (props: IProps) => {
                               ''
                               ? undefined
                               : () =>
-                                  discordGuildMemberProvider.handleFetchOAuth(),
+                                  discordGuildMemberProvider.handleFetchOAuth(
+                                    currentVerify
+                                  ),
                           isDisabled:
                             !discordGuildMemberProvider.claimValues.guildId ||
                             discordGuildMemberProvider.claimValues.guildId ===

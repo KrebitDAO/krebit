@@ -233,7 +233,8 @@ export const VerifyCredential = (props: IProps) => {
                               ? undefined
                               : () =>
                                   twitterProvider.handleFetchOAuth(
-                                    walletInformation.address
+                                    walletInformation.address,
+                                    currentVerify
                                   ),
                           isDisabled:
                             !twitterProvider.claimValues.username ||
@@ -373,7 +374,8 @@ export const VerifyCredential = (props: IProps) => {
                               ? undefined
                               : () =>
                                   twitterFollowersProvider.handleFetchOAuth(
-                                    walletInformation.address
+                                    walletInformation.address,
+                                    currentVerify
                                   ),
                           isDisabled:
                             !twitterFollowersProvider.claimValues.username ||
@@ -522,7 +524,8 @@ export const VerifyCredential = (props: IProps) => {
                               ? undefined
                               : () =>
                                   veriffProvider.handleFetchOAuth(
-                                    walletInformation.address
+                                    walletInformation.address,
+                                    currentVerify
                                   ),
                           isDisabled:
                             !veriffProvider.claimValues.firstName ||
@@ -664,7 +667,10 @@ export const VerifyCredential = (props: IProps) => {
                             !personaProvider.claimValues.firstName ||
                             !personaProvider.claimValues.lastName
                               ? undefined
-                              : () => personaProvider.handleFetchOAuth(),
+                              : () =>
+                                  personaProvider.handleFetchOAuth(
+                                    currentVerify
+                                  ),
                           isDisabled:
                             !personaProvider.claimValues.firstName ||
                             !personaProvider.claimValues.lastName
@@ -800,7 +806,10 @@ export const VerifyCredential = (props: IProps) => {
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
                               ? undefined
-                              : () => phoneProvider.handleStartVerification(),
+                              : () =>
+                                  phoneProvider.handleStartVerification(
+                                    currentVerify
+                                  ),
                           isDisabled:
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
@@ -953,12 +962,11 @@ export const VerifyCredential = (props: IProps) => {
                           {
                             name: 'private',
                             type: 'switch',
-                            placeholder: githubOrgMemberProvider.claimValues
-                              .private
+                            placeholder: emailProvider.claimValues.private
                               ? 'private'
                               : 'public',
-                            value: githubOrgMemberProvider.claimValues.private,
-                            onChange: githubOrgMemberProvider.handleClaimValues
+                            value: emailProvider.claimValues.private,
+                            onChange: emailProvider.handleClaimValues
                           }
                         ],
                   button:
