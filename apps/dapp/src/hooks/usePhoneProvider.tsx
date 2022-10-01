@@ -31,6 +31,7 @@ export const usePhoneProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
 
   const getClaim = async (address: string, issuerAddres: string) => {
     const expirationDate = new Date();
@@ -41,9 +42,9 @@ export const usePhoneProvider = () => {
     return {
       id: `phone-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'phoneNumber',
+      type: 'PhoneNumber',
       typeSchema: 'krebit://schemas/phoneNumber',
-      tags: ['phone', 'contact', 'personhood'],
+      tags: ['Phone', 'contact', 'Personhood'],
       value: {
         countryCode: Number(claimValues.countryCode),
         number: Number(claimValues.number),
@@ -63,7 +64,7 @@ export const usePhoneProvider = () => {
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      console.log('Saving Stamp', { type: 'phoneNumber' });
+      console.log('Saving Stamp', { type: 'PhoneNumber' });
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -184,10 +185,43 @@ export const usePhoneProvider = () => {
       setStatus('credential_rejected');
     }
   };
-
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
+
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const stampTx = await Issuer.stampCredential(credential);
+      console.log('stampTx: ', stampTx);
+
+      setCurrentStamp({ transaction: stampTx });
+      setStatus('stamp_resolved');
+    } catch (error) {
+      setStatus('stamp_rejected');
+    }
+  };
+
+  const handleMintCredential = async credential => {
+    try {
+      setStatus('mint_pending');
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -201,12 +235,6 @@ export const usePhoneProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('phoneNumber');
-      const getLatestPhoneCredential = credentials
-        .filter(credential => credential.type.includes('phoneNumber'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
-
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
         litSdk: LitJsSdk,
@@ -214,13 +242,13 @@ export const usePhoneProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestPhoneCredential);
-      console.log('stampTx: ', stampTx);
+      const mintTx = await Issuer.mintNFT(credential);
+      console.log('mintTx: ', mintTx);
 
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
     } catch (error) {
-      setStatus('stamp_rejected');
+      setStatus('mint_rejected');
     }
   };
 
@@ -238,10 +266,12 @@ export const usePhoneProvider = () => {
     handleGetCredential,
     handleStampCredential,
     handleClaimValues,
+    handleMintCredential,
     claimValues,
     status,
     currentVerificationId,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

@@ -36,12 +36,12 @@ export const VerifyCredential = (props: IProps) => {
 
   return (
     <Verify
-      initialList={getIssuers('workExperience')}
+      initialList={getIssuers('WorkExperience')}
       onClose={handleClose}
       verifyId={currentWork?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.credentialType === 'github' && (
+          {currentVerify?.credentialType === 'Github' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -114,22 +114,57 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               githubProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: githubProvider.handleStampCredential
+                          onClick: () =>
+                            githubProvider.handleMintCredential(
+                              githubProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={githubProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubProvider.handleMintCredential(
+                              githubProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={githubProvider.status === 'mint_pending'}
+                iconType="nft"
+              />
             </>
           )}
-          {currentVerify?.credentialType === 'githubFollowers' && (
+          {currentVerify?.credentialType === 'GithubFollowersGT10' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -143,22 +178,20 @@ export const VerifyCredential = (props: IProps) => {
                 title="Step 1"
                 description={
                   githubFollowersProvider.currentCredential ||
-                  currentWork.credential
+                  currentWork?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim your github follower count ( i.e. more than 1,000 would be gt1000 )'
+                    : 'Claim that your github profile has more than 10 followers'
                 }
                 form={{
                   fields:
                     githubFollowersProvider.currentCredential ||
-                    currentWork.credential
+                    currentWork?.credential
                       ? undefined
                       : [
                           {
-                            name: 'followers',
-                            placeholder:
-                              'gt100 | gt500 | gt1000 | gt5K | gt10K | gt50K | gt100K | gt1M',
-                            value:
-                              githubFollowersProvider.claimValues.followers,
+                            name: 'username',
+                            placeholder: 'Enter you github username',
+                            value: githubFollowersProvider.claimValues.username,
                             onChange: githubFollowersProvider.handleClaimValues
                           }
                         ],
@@ -172,20 +205,20 @@ export const VerifyCredential = (props: IProps) => {
                               'ceramic',
                               'credential',
                               githubFollowersProvider.currentCredential ||
-                                currentWork.credential
+                                currentWork?.credential
                             )
                         }
                       : {
                           text: 'Verify',
                           onClick:
-                            !githubFollowersProvider.claimValues.followers ||
-                            githubFollowersProvider.claimValues.followers === ''
+                            !githubFollowersProvider.claimValues.username ||
+                            githubFollowersProvider.claimValues.username === ''
                               ? undefined
                               : () =>
                                   githubFollowersProvider.handleFetchOAuth(),
                           isDisabled:
-                            !githubFollowersProvider.claimValues.followers ||
-                            githubFollowersProvider.claimValues.followers === ''
+                            !githubFollowersProvider.claimValues.username ||
+                            githubFollowersProvider.claimValues.username === ''
                         }
                 }}
                 isLoading={
@@ -210,22 +243,57 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               githubFollowersProvider.currentStamp ||
                                 currentWork.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: githubFollowersProvider.handleStampCredential
+                          onClick: () =>
+                            githubFollowersProvider.handleMintCredential(
+                              githubFollowersProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={githubFollowersProvider.status === 'stamp_pending'}
                 iconType="stamp"
+              />{' '}
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubFollowersProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubFollowersProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubFollowersProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubFollowersProvider.handleMintCredential(
+                              githubFollowersProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={githubFollowersProvider.status === 'mint_pending'}
+                iconType="nft"
               />
             </>
           )}
-          {currentVerify?.credentialType === 'githubRepoOwner' && (
+          {currentVerify?.credentialType === 'GithubRepoStarsGT10' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -307,22 +375,57 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               githubRepoProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick: githubRepoProvider.handleStampCredential
+                          onClick: () =>
+                            githubRepoProvider.handleMintCredential(
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={githubRepoProvider.status === 'stamp_pending'}
                 iconType="stamp"
+              />{' '}
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubRepoProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubRepoProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubRepoProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubRepoProvider.handleMintCredential(
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={githubRepoProvider.status === 'mint_pending'}
+                iconType="nft"
               />
             </>
           )}
-          {currentVerify?.credentialType === 'githubRepoCollaborator' && (
+          {currentVerify?.credentialType === 'GithubRepoCollaborator' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -426,21 +529,59 @@ export const VerifyCredential = (props: IProps) => {
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
-                              'stamp',
-                              githubRepoCollaboratorProvider.currentStamp ||
+                              'tx',
+                              githubRepoProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
-                          onClick:
-                            githubRepoCollaboratorProvider.handleStampCredential
+                          onClick: () =>
+                            githubRepoProvider.handleMintCredential(
+                              githubRepoProvider.currentCredential ||
+                                currentWork?.credential
+                            )
                         }
                 }}
                 isLoading={
                   githubRepoCollaboratorProvider.status === 'stamp_pending'
                 }
                 iconType="stamp"
+              />{' '}
+              <BoxStep
+                title="Step 3"
+                description={
+                  githubRepoCollaboratorProvider.currentMint ||
+                  currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    githubRepoCollaboratorProvider.currentMint ||
+                    currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              githubRepoCollaboratorProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            githubRepoCollaboratorProvider.handleMintCredential(
+                              githubRepoCollaboratorProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={
+                  githubRepoCollaboratorProvider.status === 'mint_pending'
+                }
+                iconType="nft"
               />
             </>
           )}

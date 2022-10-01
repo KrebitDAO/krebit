@@ -62,7 +62,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (accessToken) {
         channel.postMessage({
-          target: 'discord',
+          target: 'Discord',
           data: { accessToken, tokenType, state: queryState }
         });
       }
@@ -80,7 +80,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (accessToken) {
         channel.postMessage({
-          target: 'discordGuildOwner',
+          target: 'DiscordGuildOwner',
           data: { accessToken, tokenType, state: queryState }
         });
       }
@@ -98,7 +98,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (accessToken) {
         channel.postMessage({
-          target: 'discordGuildMember',
+          target: 'DiscordGuildMember',
           data: { accessToken, tokenType, state: queryState }
         });
       }
@@ -129,7 +129,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'twitter',
+          target: 'Twitter',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -144,7 +144,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'twitterFollowers',
+          target: 'TwitterFollowersGT1K',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -194,7 +194,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'github',
+          target: 'Github',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -209,7 +209,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'githubFollowers',
+          target: 'GithubFollowersGT10',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -224,7 +224,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'githubRepoOwner',
+          target: 'GithubRepoStarsGT10',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -239,7 +239,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'githubRepoCollaborator',
+          target: 'GithubRepoCollaborator',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -254,7 +254,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'githubOrgMember',
+          target: 'GithubOrgMember',
           data: { code: queryCode, state: queryState }
         });
       }

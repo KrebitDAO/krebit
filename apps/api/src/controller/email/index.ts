@@ -22,7 +22,7 @@ export const EmailController = async (
       throw new Error('Body not defined');
     }
 
-    const channel = 'email';
+    const channel = 'Email';
 
     // Check and decrypt claimed credential
 
@@ -48,14 +48,14 @@ export const EmailController = async (
       );
     }
 
-    console.log('Verifying phone with claimedCredential: ', claimedCredential);
+    console.log('Verifying email with claimedCredential: ', claimedCredential);
 
     console.log(
       'checkCredential: ',
       await Issuer.checkCredential(claimedCredential)
     );
 
-    if (claimedCredential?.credentialSubject?.type !== 'email') {
+    if (claimedCredential?.credentialSubject?.type !== 'Email') {
       throw new Error(`claimedCredential type is not email`);
     }
 
@@ -70,7 +70,7 @@ export const EmailController = async (
       console.log('Claim value: ', claimValue);
     }
 
-    if (claimValue?.protocol !== 'email') {
+    if (claimValue?.protocol !== 'Email') {
       throw new Error(`claimedCredential type is not email`);
     }
 

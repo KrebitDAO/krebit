@@ -61,7 +61,7 @@ export const Work = (props: IProps) => {
     const getInformation = async () => {
       try {
         const workCredentials = await getCredentials({
-          type: 'workExperience',
+          type: 'WorkExperience',
           passport: publicPassport,
           limit: currentFilterOption === 'overview' ? 2 : 100
         });
@@ -100,7 +100,8 @@ export const Work = (props: IProps) => {
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentWorkSelected({
       credential: undefined,
-      stamps: []
+      stamps: [],
+      isMinted: false
     });
   };
 
@@ -261,7 +262,7 @@ export const Work = (props: IProps) => {
             {currentFilterOption === 'overview' && (
               <div
                 className="work-header-text-open-new"
-                onClick={() => onFilterOption('workExperience')}
+                onClick={() => onFilterOption('WorkExperience')}
               >
                 <OpenInNew />
               </div>
@@ -339,7 +340,7 @@ export const Work = (props: IProps) => {
                           onClick: () =>
                             handleCheckCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               work.stamps[0]
                             )
                         }
@@ -348,6 +349,12 @@ export const Work = (props: IProps) => {
                       ? {
                           title: 'Add stamp',
                           onClick: () => handleCurrentWork('add_stamp', work)
+                        }
+                      : undefined,
+                    isAuthenticated && work.stamps?.length !== 0
+                      ? {
+                          title: 'Mint NFT',
+                          onClick: () => handleCurrentWork('mint_nft', work)
                         }
                       : undefined,
                     isAuthenticated &&

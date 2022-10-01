@@ -62,7 +62,7 @@ export const Personhood = (props: IProps) => {
     const getInformation = async () => {
       try {
         const personhoodCredentials = await getCredentials({
-          type: 'personhood',
+          type: 'Personhood',
           passport: publicPassport,
           limit: currentFilterOption === 'overview' ? 3 : 100
         });
@@ -101,7 +101,8 @@ export const Personhood = (props: IProps) => {
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentPersonhoodSelected({
       credential: undefined,
-      stamps: []
+      stamps: [],
+      isMinted: false
     });
   };
 
@@ -122,6 +123,10 @@ export const Personhood = (props: IProps) => {
     setCurrentActionType(type);
 
     if (type === 'add_stamp') {
+      setIsVerifyCredentialOpen(true);
+    }
+
+    if (type === 'mint_nft') {
       setIsVerifyCredentialOpen(true);
     }
 
@@ -206,7 +211,7 @@ export const Personhood = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encrypted) return value.encrypted;
 
-    if (value?.protocol === 'email') {
+    if (value?.protocol === 'Email') {
       return value.username.concat('@').concat(value.host);
     }
 
@@ -270,7 +275,7 @@ export const Personhood = (props: IProps) => {
             {currentFilterOption === 'overview' && personhoods?.length !== 0 ? (
               <div
                 className="person-header-text-open-new"
-                onClick={() => onFilterOption('personhood')}
+                onClick={() => onFilterOption('Personhood')}
               >
                 <OpenInNew />
               </div>
@@ -346,7 +351,7 @@ export const Personhood = (props: IProps) => {
                           onClick: () =>
                             handleCheckCredentialsURLs(
                               'polygon',
-                              'stamp',
+                              'tx',
                               personhood.stamps[0]
                             )
                         }
@@ -356,6 +361,13 @@ export const Personhood = (props: IProps) => {
                           title: 'Add stamp',
                           onClick: () =>
                             handleCurrentPersonhood('add_stamp', personhood)
+                        }
+                      : undefined,
+                    isAuthenticated && personhood.stamps?.length !== 0
+                      ? {
+                          title: 'Mint NFT',
+                          onClick: () =>
+                            handleCurrentPersonhood('mint_nft', personhood)
                         }
                       : undefined,
                     isAuthenticated &&

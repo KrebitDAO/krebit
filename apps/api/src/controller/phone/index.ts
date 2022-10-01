@@ -55,7 +55,7 @@ export const PhoneController = async (
       await Issuer.checkCredential(claimedCredential)
     );
 
-    if (claimedCredential?.credentialSubject?.type !== 'phoneNumber') {
+    if (claimedCredential?.credentialSubject?.type !== 'PhoneNumber') {
       throw new Error(`claimedCredential type is not phoneNumber`);
     }
 
