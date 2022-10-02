@@ -242,10 +242,10 @@ export const useDiscordProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked } = event.target;
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: event.type === 'change' ? checked : value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

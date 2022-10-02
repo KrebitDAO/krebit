@@ -85,7 +85,7 @@ export const useDiscordGuildMemberProvider = () => {
       ethereumAddress: address,
       type: 'DiscordGuildMember',
       typeSchema: 'krebit://schemas/badge',
-      tags: ['Community', 'membership'],
+      tags: ['Community', 'Membership'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -247,11 +247,12 @@ export const useDiscordGuildMemberProvider = () => {
       setStatus('mint_rejected');
     }
   };
+
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

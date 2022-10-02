@@ -90,7 +90,7 @@ export const useTwitterProvider = () => {
       ethereumAddress: address,
       type: 'Twitter',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['DigitalProperty', 'Influencer', 'Personhood'],
+      tags: ['DigitalProperty', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -244,10 +244,10 @@ export const useTwitterProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

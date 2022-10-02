@@ -204,25 +204,25 @@ export const Work = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encryptedString) return '******';
 
-    if (value?.title && value?.entity) {
-      return value.entity.concat(' / ').concat(value.title);
-    }
+    let formattedValue = '';
+
+    if (value?.entity)
+      formattedValue = formattedValue.concat(' / ').concat(value.entity);
+    if (value?.title)
+      formattedValue = formattedValue.concat(' / ').concat(value.title);
 
     if (value?.username) {
-      return '@'.concat(value.username);
+      formattedValue = formattedValue
+        .concat(' / ')
+        .concat('@')
+        .concat(value.username);
     }
 
     if (value?.id) {
-      return value.id;
+      formattedValue = formattedValue.concat(' / ').concat(value.id);
     }
 
-    if (value?.followers) {
-      return value.followers.startsWith('gt')
-        ? value.followers.replace('gt', '> ')
-        : value.followers;
-    }
-
-    return '';
+    return formattedValue;
   };
 
   const handleCheckCredentialsURLs = (

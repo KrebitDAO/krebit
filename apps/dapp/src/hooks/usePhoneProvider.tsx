@@ -78,6 +78,10 @@ export const usePhoneProvider = () => {
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the phone
       const claim = await getClaim(walletInformation.address);
+      if (claimValues.private) {
+        claim['encrypt'] = 'lit' as 'lit';
+        claim['shareEncryptedWith'] = currentIssuer.address;
+      }
       console.log('claim: ', claim);
 
       const Issuer = new Krebit.core.Krebit({
@@ -252,11 +256,10 @@ export const usePhoneProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

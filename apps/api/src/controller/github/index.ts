@@ -58,6 +58,8 @@ export const GithubController = async (
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('Claim value: ', claimValue);
     }
+    const publicClaim: boolean =
+      claimedCredential.credentialSubject.encrypted === 'none';
 
     // If claim is digitalProperty "github"
     if (claimedCredential?.credentialSubject?.type === 'Github') {
@@ -88,16 +90,17 @@ export const GithubController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
-          value: {
-            ...claimValue,
-            id: githubUser.id.toString()
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          claim.value['id'] = githubUser.id.toString();
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential (githubUsername)
@@ -145,9 +148,11 @@ export const GithubController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential (githubUsername)
@@ -205,21 +210,21 @@ export const GithubController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: tags,
-          value: {
-            title: claimValue.title,
-            entity: claimValue.entity,
-            description: githubRepo.description,
-            startDate: githubRepo.created_at,
-            endDate: githubRepo.pushed_at,
-            imageUrl: githubRepo.owner.avatar_url,
-            skills: githubRepo.languages
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          claim.value['description'] = githubRepo.description;
+          claim.value['startDate'] = githubRepo.created_at;
+          claim.value['endDate'] = githubRepo.pushed_at;
+          claim.value['imageUrl'] = githubRepo.owner.avatar_url;
+          claim.value['skills'] = githubRepo.languages;
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential
@@ -285,21 +290,21 @@ export const GithubController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: tags,
-          value: {
-            title: claimValue.title,
-            entity: claimValue.entity,
-            description: githubRepo.description,
-            startDate: githubRepo.created_at,
-            endDate: githubRepo.pushed_at,
-            imageUrl: githubRepo.owner.avatar_url,
-            skills: githubRepo.languages
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          claim.value['description'] = githubRepo.description;
+          claim.value['startDate'] = githubRepo.created_at;
+          claim.value['endDate'] = githubRepo.pushed_at;
+          claim.value['imageUrl'] = githubRepo.owner.avatar_url;
+          claim.value['skills'] = githubRepo.languages;
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential
@@ -355,17 +360,20 @@ export const GithubController = async (
           value: {
             entity: claimValue.entity,
             username: claimValue.username,
-            name: claimValue.name,
-            role: githubOrg.role,
-            description: githubOrg.organization.description,
-            imageUrl: githubOrg.organization.avatar_url
+            name: claimValue.name
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          claim.value['role'] = githubOrg.role;
+          claim.value['description'] = githubOrg.organization.description;
+          claim.value['imageUrl'] = githubOrg.organization.avatar_url;
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential

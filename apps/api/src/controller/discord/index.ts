@@ -61,6 +61,8 @@ export const DiscordController = async (
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('Claim value: ', claimValue);
     }
+    const publicClaim: boolean =
+      claimedCredential.credentialSubject.encrypted === 'none';
 
     // TODO: Check if the claim already has verifications by me?
 
@@ -93,9 +95,11 @@ export const DiscordController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
         console.log('claim: ', claim);
 
         const issuedCredential = await Issuer.issue(claim);
@@ -143,21 +147,22 @@ export const DiscordController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
-          value: {
-            ...claimValue,
-            username: discordGuild.name,
-            imageUrl: 'https://cdn.discordapp.com/icons/'
-              .concat(discordGuild.id)
-              .concat('/')
-              .concat(discordGuild.icon)
-              .concat('.png')
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          claim.value['username'] = discordGuild.name;
+          claim.value['imageUrl'] = 'https://cdn.discordapp.com/icons/'
+            .concat(discordGuild.id)
+            .concat('/')
+            .concat(discordGuild.icon)
+            .concat('.png');
+        }
         console.log('claim: ', claim);
 
         const issuedCredential = await Issuer.issue(claim);
@@ -210,32 +215,32 @@ export const DiscordController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
-          value: {
-            entity: claimValue.entity,
-            description: discordGuild.name,
-            username: discordGuildMember.nick
-              ? discordGuildMember.nick
-              : discordUser.username
-                  .concat('#')
-                  .concat(discordUser.discriminator),
-            name: claimValue.name,
-            role: discordGuild.owner ? 'owner' : 'member',
-            skills: discordGuildMember.roles.map(role => {
-              return { skillId: role, score: 100 };
-            }),
-            startDate: discordGuildMember.joined_at,
-            imageUrl: 'https://cdn.discordapp.com/icons/'
-              .concat(discordGuild.id)
-              .concat('/')
-              .concat(discordGuild.icon)
-              .concat('.png')
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          claim.value['description'] = discordGuild.name;
+          claim.value['username'] = discordGuildMember.nick
+            ? discordGuildMember.nick
+            : discordUser.username
+                .concat('#')
+                .concat(discordUser.discriminator);
+          claim.value['role'] = discordGuild.owner ? 'owner' : 'member';
+          claim.value['skills'] = discordGuildMember.roles.map(role => {
+            return { skillId: role, score: 100 };
+          });
+          claim.value['startDate'] = discordGuildMember.joined_at;
+          claim.value['imageUrl'] = 'https://cdn.discordapp.com/icons/'
+            .concat(discordGuild.id)
+            .concat('/')
+            .concat(discordGuild.icon)
+            .concat('.png');
+        }
         console.log('claim: ', claim);
 
         const issuedCredential = await Issuer.issue(claim);

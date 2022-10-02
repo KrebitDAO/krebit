@@ -7,11 +7,11 @@ import { GeneralContext } from 'context';
 import {
   useDiscordProvider,
   useTwitterProvider,
-  useTwitterFollowersProvider,
   useVeriffProvider,
   usePhoneProvider,
   useEmailProvider,
-  usePersonaProvider
+  usePersonaProvider,
+  useGithubProvider
 } from 'hooks';
 
 // types
@@ -27,11 +27,12 @@ export const VerifyCredential = (props: IProps) => {
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
-  const twitterFollowersProvider = useTwitterFollowersProvider();
+
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
   const emailProvider = useEmailProvider();
   const personaProvider = usePersonaProvider();
+  const githubProvider = useGithubProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -77,8 +78,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: discordProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: discordProvider.claimValues.private,
                             onChange: discordProvider.handleClaimValues
                           }
@@ -206,8 +207,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: twitterProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: twitterProvider.claimValues.private,
                             onChange: twitterProvider.handleClaimValues
                           }
@@ -311,7 +312,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'TwitterFollowersGT1K' && (
+          {currentVerify?.credentialType === 'Github' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -324,37 +325,35 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  twitterFollowersProvider.currentCredential ||
+                  githubProvider.currentCredential ||
                   currentPersonhood?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim that your twitter follower count is more than 1,000'
+                    : 'Claim your github profile'
                 }
                 form={{
                   fields:
-                    twitterFollowersProvider.currentCredential ||
+                    githubProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
                       : [
                           {
                             name: 'username',
-                            placeholder: 'Enter you twitter handle',
-                            value:
-                              twitterFollowersProvider.claimValues.username,
-                            onChange: twitterFollowersProvider.handleClaimValues
+                            placeholder: 'Enter you github username',
+                            value: githubProvider.claimValues.username,
+                            onChange: githubProvider.handleClaimValues
                           },
                           {
                             name: 'private',
                             type: 'switch',
-                            placeholder: twitterFollowersProvider.claimValues
-                              .private
-                              ? 'private'
-                              : 'public',
-                            value: twitterFollowersProvider.claimValues.private,
-                            onChange: twitterFollowersProvider.handleClaimValues
+                            placeholder: githubProvider.claimValues.private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: githubProvider.claimValues.private,
+                            onChange: githubProvider.handleClaimValues
                           }
                         ],
                   button:
-                    twitterFollowersProvider.currentCredential ||
+                    githubProvider.currentCredential ||
                     currentPersonhood.credential
                       ? {
                           text: 'Check it',
@@ -362,101 +361,96 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'ceramic',
                               'credential',
-                              twitterFollowersProvider.currentCredential ||
+                              githubProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
                         }
                       : {
                           text: 'Verify',
                           onClick:
-                            !twitterFollowersProvider.claimValues.username ||
-                            twitterFollowersProvider.claimValues.username === ''
+                            !githubProvider.claimValues.username ||
+                            githubProvider.claimValues.username === ''
                               ? undefined
                               : () =>
-                                  twitterFollowersProvider.handleFetchOAuth(
-                                    walletInformation.address,
+                                  githubProvider.handleFetchOAuth(
                                     currentVerify
                                   ),
                           isDisabled:
-                            !twitterFollowersProvider.claimValues.username ||
-                            twitterFollowersProvider.claimValues.username === ''
+                            !githubProvider.claimValues.username ||
+                            githubProvider.claimValues.username === ''
                         }
                 }}
-                isLoading={
-                  twitterFollowersProvider.status === 'credential_pending'
-                }
+                isLoading={githubProvider.status === 'credential_pending'}
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={
-                  twitterFollowersProvider.currentStamp ||
-                  currentPersonhood.stamps?.length !== 0
+                  githubProvider.currentStamp ||
+                  currentPersonhood?.stamps?.length !== 0
                     ? 'Step completed, you can now check your stamp'
                     : 'Add an on-chain stamp to your credential'
                 }
                 form={{
                   button:
-                    twitterFollowersProvider.currentStamp ||
-                    currentPersonhood.stamps?.length !== 0
+                    githubProvider.currentStamp ||
+                    currentPersonhood?.stamps?.length !== 0
                       ? {
                           text: 'Check it',
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
                               'tx',
-                              twitterFollowersProvider.currentStamp ||
-                                currentPersonhood.stamps[0]
+                              githubProvider.currentStamp ||
+                                currentPersonhood?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            twitterFollowersProvider.handleStampCredential(
-                              twitterFollowersProvider.currentCredential ||
+                            githubProvider.handleMintCredential(
+                              githubProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
                         }
                 }}
-                isLoading={twitterFollowersProvider.status === 'stamp_pending'}
+                isLoading={githubProvider.status === 'stamp_pending'}
                 iconType="stamp"
               />
               <BoxStep
                 title="Step 3"
                 description={
-                  twitterFollowersProvider.currentMint ||
-                  currentPersonhood?.isMinted
+                  githubProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
                     : 'Mint the credential as NFT'
                 }
                 form={{
                   button:
-                    twitterFollowersProvider.currentMint ||
-                    currentPersonhood?.isMinted
+                    githubProvider.currentMint || currentPersonhood?.isMinted
                       ? {
                           text: 'Check it',
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
                               'tx',
-                              twitterFollowersProvider.currentMint
+                              githubProvider.currentMint
                             )
                         }
                       : {
                           text: 'Mint NFT',
                           onClick: () =>
-                            twitterFollowersProvider.handleMintCredential(
-                              twitterFollowersProvider.currentCredential ||
+                            githubProvider.handleMintCredential(
+                              githubProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
                         }
                 }}
-                isLoading={twitterFollowersProvider.status === 'mint_pending'}
+                isLoading={githubProvider.status === 'mint_pending'}
                 iconType="nft"
               />
             </>
           )}
+
           {currentVerify?.credentialType === 'veriff' && (
             <>
               <BoxStep
@@ -497,8 +491,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: veriffProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: veriffProvider.claimValues.private,
                             onChange: veriffProvider.handleClaimValues
                           }
@@ -642,8 +636,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: personaProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: personaProvider.claimValues.private,
                             onChange: personaProvider.handleClaimValues
                           }
@@ -790,8 +784,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: phoneProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: phoneProvider.claimValues.private,
                             onChange: phoneProvider.handleClaimValues
                           }
@@ -801,7 +795,7 @@ export const VerifyCredential = (props: IProps) => {
                     currentPersonhood?.credential
                       ? undefined
                       : {
-                          text: 'Send SMS code',
+                          text: 'Send code',
                           onClick:
                             !phoneProvider.claimValues.countryCode ||
                             !phoneProvider.claimValues.number
@@ -953,8 +947,8 @@ export const VerifyCredential = (props: IProps) => {
                       ? undefined
                       : [
                           {
-                            type: 'Email',
-                            name: 'Email',
+                            type: 'email',
+                            name: 'email',
                             placeholder: 'username@example.com',
                             value: emailProvider.claimValues.email,
                             onChange: emailProvider.handleClaimValues
@@ -963,8 +957,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: emailProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: emailProvider.claimValues.private,
                             onChange: emailProvider.handleClaimValues
                           }
@@ -974,7 +968,7 @@ export const VerifyCredential = (props: IProps) => {
                     currentPersonhood?.credential
                       ? undefined
                       : {
-                          text: 'Send Verification Code',
+                          text: 'Send Code',
                           onClick: !emailProvider.claimValues.email
                             ? undefined
                             : () =>

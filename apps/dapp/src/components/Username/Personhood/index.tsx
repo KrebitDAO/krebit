@@ -209,33 +209,38 @@ export const Personhood = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encryptedString) return '******';
 
+    let formattedValue = '';
+
     if (value?.protocol === 'Email') {
-      return value.username.concat('@').concat(value.host);
+      formattedValue = formattedValue
+        .concat(' / ')
+        .concat(value.username)
+        .concat('@')
+        .concat(value.host);
     }
 
     if (value?.username) {
-      return '@'.concat(value.username);
+      formattedValue = formattedValue
+        .concat(' / ')
+        .concat('@')
+        .concat(value.username);
     }
 
     if (value?.fullName) {
-      return value.fullName;
+      formattedValue = formattedValue.concat(' / ').concat(value.fullName);
     }
 
     if (value?.id) {
-      return value.id;
+      formattedValue = formattedValue.concat(' / ').concat(value.id);
     }
 
     if (value?.countryCode) {
-      return `+${value?.countryCode}${value?.number}`;
+      formattedValue = formattedValue
+        .concat(' / ')
+        .concat(`+${value?.countryCode}${value?.number}`);
     }
 
-    if (value?.followers) {
-      return value.followers.startsWith('gt')
-        ? value.followers.replace('gt', '> ')
-        : value.followers;
-    }
-
-    return '';
+    return formattedValue;
   };
 
   const handleCheckCredentialsURLs = (

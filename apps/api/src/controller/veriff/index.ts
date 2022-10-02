@@ -65,6 +65,9 @@ export const VeriffController = async (
       console.log('Claim value: ', claimValue);
     }
 
+    const publicClaim: boolean =
+      claimedCredential.credentialSubject.encrypted === 'none';
+
     // If claim is digitalProperty "veriff"
     if (claimedCredential?.credentialSubject?.type === 'LegalName') {
       // Connect to veriff and get decision status for the session ID (claimedCredential.id)
@@ -97,9 +100,11 @@ export const VeriffController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential

@@ -58,9 +58,9 @@ export const SpectController = async (
           let claim = {
             id: spect.cardDetails[task].id,
             ethereumAddress: address,
-            type: 'WorkExperience',
+            type: 'SpectCompletedTask',
             typeSchema: 'krebit://schemas/workExperience',
-            tags: ['spect', 'task', 'circle', 'Community'],
+            tags: ['WorkExperience', 'Community'],
             value: {
               title: spect.cardDetails[task].title,
               entity: spect.cardDetails[task].circle.name,

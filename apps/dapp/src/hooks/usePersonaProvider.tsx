@@ -78,9 +78,10 @@ export const usePersonaProvider = () => {
       ethereumAddress: address,
       type: 'LegalName',
       typeSchema: 'krebit://schemas/legalName',
-      tags: ['persona', 'fullName', 'kyc', 'Personhood'],
+      tags: ['Persona', 'KYC', 'Personhood'],
       value: {
-        ...claimValues,
+        firstName: claimValues.firstName,
+        lastName: claimValues.lastName,
         fullName: claimValues.firstName
           .concat(' ')
           .concat(claimValues.lastName),
@@ -244,11 +245,10 @@ export const usePersonaProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

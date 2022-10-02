@@ -205,19 +205,26 @@ export const Community = (props: IProps) => {
   const formatCredentialName = (value: any) => {
     if (value?.encryptedString) return '******';
 
-    if (value?.entity && value?.role) {
-      return value.entity.concat(' / ').concat(value.role);
-    }
+    let formattedValue = '';
+    if (value?.entity)
+      formattedValue = formattedValue.concat(' / ').concat(value.entity);
+    if (value?.description)
+      formattedValue = formattedValue.concat(' / ').concat(value.description);
+    if (value?.role)
+      formattedValue = formattedValue.concat(' / ').concat(value.role);
 
     if (value?.username) {
-      return '@'.concat(value.username);
+      formattedValue = formattedValue
+        .concat(' / ')
+        .concat('@')
+        .concat(value.username);
     }
 
     if (value?.id) {
-      return value.id;
+      formattedValue = formattedValue.concat(' / ').concat(value.id);
     }
 
-    return '';
+    return formattedValue;
   };
 
   const handleCheckCredentialsURLs = (

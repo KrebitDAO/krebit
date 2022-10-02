@@ -85,9 +85,10 @@ export const useVeriffProvider = () => {
       ethereumAddress: address,
       type: 'LegalName',
       typeSchema: 'krebit://schemas/legalName',
-      tags: ['veriff', 'fullName', 'kyc', 'Personhood'],
+      tags: ['Veriff', 'KYC', 'Personhood'],
       value: {
-        ...claimValues,
+        firstName: claimValues.firstName,
+        lastName: claimValues.lastName,
         fullName: claimValues.firstName
           .concat(' ')
           .concat(claimValues.lastName),
@@ -251,11 +252,10 @@ export const useVeriffProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

@@ -5,7 +5,6 @@ import { BoxStep } from 'components/Verify/boxStep';
 import { getIssuers, checkCredentialsURLs } from 'utils';
 import { GeneralContext } from 'context';
 import {
-  useGithubProvider,
   useGithubFollowersProvider,
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider
@@ -22,7 +21,7 @@ interface IProps {
 export const VerifyCredential = (props: IProps) => {
   const { currentWork, onClose } = props;
   const { walletInformation } = useContext(GeneralContext);
-  const githubProvider = useGithubProvider();
+
   const githubFollowersProvider = useGithubFollowersProvider();
   const githubRepoProvider = useGithubRepoProvider();
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
@@ -41,141 +40,6 @@ export const VerifyCredential = (props: IProps) => {
       verifyId={currentWork?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
-          {currentVerify?.credentialType === 'Github' && (
-            <>
-              <BoxStep
-                title="Issuer Details:"
-                description={currentVerify.description}
-                did={currentVerify.did}
-                icon={currentVerify.icon}
-                verificationUrl={currentVerify.verificationUrl}
-                price={currentVerify.price}
-              />
-              <BoxStep
-                title="Step 1"
-                description={
-                  githubProvider.currentCredential || currentWork?.credential
-                    ? 'Step completed, you can now check your credential'
-                    : 'Claim your github profile'
-                }
-                form={{
-                  fields:
-                    githubProvider.currentCredential || currentWork?.credential
-                      ? undefined
-                      : [
-                          {
-                            name: 'username',
-                            placeholder: 'Enter you github username',
-                            value: githubProvider.claimValues.username,
-                            onChange: githubProvider.handleClaimValues
-                          },
-                          {
-                            name: 'private',
-                            type: 'switch',
-                            placeholder: githubProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
-                            value: githubProvider.claimValues.private,
-                            onChange: githubProvider.handleClaimValues
-                          }
-                        ],
-                  button:
-                    githubProvider.currentCredential || currentWork.credential
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'ceramic',
-                              'credential',
-                              githubProvider.currentCredential ||
-                                currentWork?.credential
-                            )
-                        }
-                      : {
-                          text: 'Verify',
-                          onClick:
-                            !githubProvider.claimValues.username ||
-                            githubProvider.claimValues.username === ''
-                              ? undefined
-                              : () =>
-                                  githubProvider.handleFetchOAuth(
-                                    currentVerify
-                                  ),
-                          isDisabled:
-                            !githubProvider.claimValues.username ||
-                            githubProvider.claimValues.username === ''
-                        }
-                }}
-                isLoading={githubProvider.status === 'credential_pending'}
-                iconType="credential"
-              />
-              <BoxStep
-                title="Step 2"
-                description={
-                  githubProvider.currentStamp ||
-                  currentWork?.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Add an on-chain stamp to your credential'
-                }
-                form={{
-                  button:
-                    githubProvider.currentStamp ||
-                    currentWork?.stamps?.length !== 0
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              githubProvider.currentStamp ||
-                                currentWork?.stamps[0]
-                            )
-                        }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            githubProvider.handleMintCredential(
-                              githubProvider.currentCredential ||
-                                currentWork?.credential
-                            )
-                        }
-                }}
-                isLoading={githubProvider.status === 'stamp_pending'}
-                iconType="stamp"
-              />
-              <BoxStep
-                title="Step 3"
-                description={
-                  githubProvider.currentMint || currentWork?.isMinted
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Mint the credential as NFT'
-                }
-                form={{
-                  button:
-                    githubProvider.currentMint || currentWork?.isMinted
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              githubProvider.currentMint
-                            )
-                        }
-                      : {
-                          text: 'Mint NFT',
-                          onClick: () =>
-                            githubProvider.handleMintCredential(
-                              githubProvider.currentCredential ||
-                                currentWork?.credential
-                            )
-                        }
-                }}
-                isLoading={githubProvider.status === 'mint_pending'}
-                iconType="nft"
-              />
-            </>
-          )}
           {currentVerify?.credentialType === 'GithubFollowersGT10' && (
             <>
               <BoxStep
@@ -211,8 +75,8 @@ export const VerifyCredential = (props: IProps) => {
                             type: 'switch',
                             placeholder: githubFollowersProvider.claimValues
                               .private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: githubFollowersProvider.claimValues.private,
                             onChange: githubFollowersProvider.handleClaimValues
                           }
@@ -357,8 +221,8 @@ export const VerifyCredential = (props: IProps) => {
                             name: 'private',
                             type: 'switch',
                             placeholder: githubRepoProvider.claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: githubRepoProvider.claimValues.private,
                             onChange: githubRepoProvider.handleClaimValues
                           }
@@ -517,8 +381,8 @@ export const VerifyCredential = (props: IProps) => {
                             type: 'switch',
                             placeholder: githubRepoCollaboratorProvider
                               .claimValues.private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value:
                               githubRepoCollaboratorProvider.claimValues
                                 .private,

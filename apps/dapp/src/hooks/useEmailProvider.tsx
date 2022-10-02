@@ -44,7 +44,7 @@ export const useEmailProvider = () => {
       ethereumAddress: address,
       type: 'Email',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['DigitalProperty', 'contact', 'Personhood'],
+      tags: ['DigitalProperty', 'Contact', 'Personhood'],
       value: {
         protocol: 'Email',
         host: claimValues.email.split('@')[1],
@@ -77,6 +77,10 @@ export const useEmailProvider = () => {
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the email
       const claim = await getClaim(walletInformation.address);
+      if (claimValues.private) {
+        claim['encrypt'] = 'lit' as 'lit';
+        claim['shareEncryptedWith'] = currentIssuer.address;
+      }
       console.log('claim: ', claim);
 
       const Issuer = new Krebit.core.Krebit({
@@ -252,11 +256,10 @@ export const useEmailProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

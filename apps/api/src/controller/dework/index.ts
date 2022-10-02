@@ -58,9 +58,9 @@ export const DeworkController = async (
           let claim = {
             id: task.permalink,
             ethereumAddress: address,
-            type: 'WorkExperience',
+            type: 'DeworkCompletedTask',
             typeSchema: 'krebit://schemas/workExperience',
-            tags: ['dework', 'task', 'Community'],
+            tags: ['WorkExperience', 'Community'],
             value: {
               ...task,
               issuingEntity: 'Dework',

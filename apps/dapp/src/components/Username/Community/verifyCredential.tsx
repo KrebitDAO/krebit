@@ -1,11 +1,15 @@
+import { useContext } from 'react';
+
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
 import { getIssuers, checkCredentialsURLs } from 'utils';
+import { GeneralContext } from 'context';
 import {
   useIssuerProvider,
   useGithubOrgMemberProvider,
   useDiscordGuildOwnerProvider,
-  useDiscordGuildMemberProvider
+  useDiscordGuildMemberProvider,
+  useTwitterFollowersProvider
 } from 'hooks';
 
 // types
@@ -18,10 +22,12 @@ interface IProps {
 
 export const VerifyCredential = (props: IProps) => {
   const { currentCommunity, onClose } = props;
+  const { walletInformation } = useContext(GeneralContext);
   const issuerProvider = useIssuerProvider();
   const githubOrgMemberProvider = useGithubOrgMemberProvider();
   const discordGuildOwnerProvider = useDiscordGuildOwnerProvider();
   const discordGuildMemberProvider = useDiscordGuildMemberProvider();
+  const twitterFollowersProvider = useTwitterFollowersProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -37,6 +43,152 @@ export const VerifyCredential = (props: IProps) => {
       verifyId={currentCommunity?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
+          {currentVerify?.credentialType === 'TwitterFollowersGT1K' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  twitterFollowersProvider.currentCredential ||
+                  currentCommunity?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that your twitter follower count is more than 1,000'
+                }
+                form={{
+                  fields:
+                    twitterFollowersProvider.currentCredential ||
+                    currentCommunity?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you twitter handle',
+                            value:
+                              twitterFollowersProvider.claimValues.username,
+                            onChange: twitterFollowersProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: twitterFollowersProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: twitterFollowersProvider.claimValues.private,
+                            onChange: twitterFollowersProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    twitterFollowersProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              twitterFollowersProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !twitterFollowersProvider.claimValues.username ||
+                            twitterFollowersProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  twitterFollowersProvider.handleFetchOAuth(
+                                    walletInformation.address,
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !twitterFollowersProvider.claimValues.username ||
+                            twitterFollowersProvider.claimValues.username === ''
+                        }
+                }}
+                isLoading={
+                  twitterFollowersProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+
+              <BoxStep
+                title="Step 2"
+                description={
+                  twitterFollowersProvider.currentStamp ||
+                  currentCommunity.stamps?.length !== 0
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Add an on-chain stamp to your credential'
+                }
+                form={{
+                  button:
+                    twitterFollowersProvider.currentStamp ||
+                    currentCommunity.stamps?.length !== 0
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              twitterFollowersProvider.currentStamp ||
+                                currentCommunity.stamps[0]
+                            )
+                        }
+                      : {
+                          text: 'Stamp',
+                          onClick: () =>
+                            twitterFollowersProvider.handleStampCredential(
+                              twitterFollowersProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                }}
+                isLoading={twitterFollowersProvider.status === 'stamp_pending'}
+                iconType="stamp"
+              />
+              <BoxStep
+                title="Step 3"
+                description={
+                  twitterFollowersProvider.currentMint ||
+                  currentCommunity?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential as NFT'
+                }
+                form={{
+                  button:
+                    twitterFollowersProvider.currentMint ||
+                    currentCommunity?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              twitterFollowersProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint NFT',
+                          onClick: () =>
+                            twitterFollowersProvider.handleMintCredential(
+                              twitterFollowersProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                }}
+                isLoading={twitterFollowersProvider.status === 'mint_pending'}
+                iconType="nft"
+              />
+            </>
+          )}
           {currentVerify?.credentialType === 'Issuer' && (
             <>
               <BoxStep
@@ -257,8 +409,8 @@ export const VerifyCredential = (props: IProps) => {
                             type: 'switch',
                             placeholder: githubOrgMemberProvider.claimValues
                               .private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: githubOrgMemberProvider.claimValues.private,
                             onChange: githubOrgMemberProvider.handleClaimValues
                           }
@@ -402,8 +554,8 @@ export const VerifyCredential = (props: IProps) => {
                             type: 'switch',
                             placeholder: discordGuildOwnerProvider.claimValues
                               .private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value:
                               discordGuildOwnerProvider.claimValues.private,
                             onChange:
@@ -549,8 +701,8 @@ export const VerifyCredential = (props: IProps) => {
                             type: 'switch',
                             placeholder: discordGuildMemberProvider.claimValues
                               .private
-                              ? 'private'
-                              : 'public',
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value:
                               discordGuildMemberProvider.claimValues.private,
                             onChange:

@@ -80,13 +80,7 @@ export const useGithubProvider = () => {
       ethereumAddress: address,
       type: 'Github',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: [
-        'DigitalProperty',
-        'code',
-        'programing',
-        'development',
-        'WorkExperience'
-      ],
+      tags: ['DigitalProperty', 'Developer', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -240,10 +234,10 @@ export const useGithubProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

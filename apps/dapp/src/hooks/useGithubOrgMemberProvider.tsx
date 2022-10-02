@@ -82,14 +82,7 @@ export const useGithubOrgMemberProvider = () => {
       ethereumAddress: address,
       type: 'GithubOrgMember',
       typeSchema: 'krebit://schemas/badge',
-      tags: [
-        'Community',
-        'membership',
-        'code',
-        'programing',
-        'development',
-        'WorkExperience'
-      ],
+      tags: ['Community', 'Membership', 'Developer'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -246,10 +239,10 @@ export const useGithubOrgMemberProvider = () => {
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 

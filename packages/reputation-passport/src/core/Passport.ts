@@ -174,7 +174,7 @@ export class Passport {
   addVerifiableCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    console.log('Saving VerifiableCredentialn on Ceramic...');
+    console.log('Saving VerifiableCredential on Ceramic...');
 
     const stream = await TileDocument.create(this.idx.ceramic, w3cCredential, {
       schema: this.idx.model.getSchemaURL('VerifiableCredential'),
@@ -211,7 +211,7 @@ export class Passport {
   // claimedCredentials from ceramic
   checkCredentialStatus = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
-    console.log('Checking VerifiableCredentialn from Ceramic...');
+    console.log('Checking VerifiableCredential from Ceramic...');
     const w3cCredential: W3CCredential = await this.getCredential(vcId);
     let result = null;
 
@@ -253,16 +253,11 @@ export class Passport {
     w3cCredential: W3CCredential
   ) => {
     if (!this.isConnected()) throw new Error('Not connected');
-    console.log('Saving VerifiableCredentialn on Ceramic...');
+    console.debug('Updating VerifiableCredential on Ceramic...', w3cCredential);
 
     const stream = await TileDocument.load(this.idx.ceramic, credentialId);
 
-    return await stream.update({
-      schema: this.idx.model.getSchemaURL('VerifiableCredential'),
-      family: 'krebit',
-      controllers: [this.idx.id],
-      tags: w3cCredential.type
-    });
+    return await stream.update(w3cCredential);
   };
 
   // issuedCredentials in ceramic
@@ -352,9 +347,12 @@ export class Passport {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
-      let result = null;
-      const content = await this.idx.get('issuedCredentials');
+      const credential: W3CCredential = await this.getCredential(vcId);
+      credential.credentialSubject.value = '{"removed":true}';
+      await this.updateVerifiableCredential(vcId, credential);
 
+      let result = null;
+      const content: W3CCredential = await this.idx.get('issuedCredentials');
       if (content && content.issued) {
         const current = content.issued ? content.issued : [];
 
@@ -460,6 +458,9 @@ export class Passport {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
+      const credential: W3CCredential = await this.getCredential(vcId);
+      credential.credentialSubject.value = '{"removed":true}';
+      await this.updateVerifiableCredential(vcId, credential);
       let result = null;
       const content = await this.idx.get('claimedCredentials');
 
@@ -567,6 +568,11 @@ export class Passport {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
+      const credential: W3CCredential = await this.getCredential(vcId);
+      if (credential.id.startsWith('ceramic://')) {
+        await this.removeClaim(credential.id);
+      }
+
       let result = null;
       const content = await this.idx.get('heldCredentials');
 

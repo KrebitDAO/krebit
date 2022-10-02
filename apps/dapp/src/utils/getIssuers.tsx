@@ -44,60 +44,6 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'TwitterFollowersGT1K',
-    entity: 'Twitter Followers > 1K',
-    description: 'Krebit Verification Node',
-    icon: <Twitter />,
-    verificationUrl: 'http://localhost:4000/twitter',
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    price: '0'
-  },
-  {
-    credentialType: 'Phone',
-    entity: 'Phone (Twilio)',
-    description: 'Krebit Verification Node',
-    icon: <Phone />,
-    verificationUrl: 'http://localhost:4000/phone',
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    price: '0'
-  },
-  {
-    credentialType: 'Email',
-    entity: 'Email (Twilio)',
-    description: 'Krebit Verification Node',
-    icon: <Email />,
-    verificationUrl: 'http://localhost:4000/email',
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    price: '0'
-  },
-  {
-    credentialType: 'veriff',
-    entity: 'Legal Name (Veriff)',
-    description: 'Krebit Verification Node',
-    icon: <Badge />,
-    verificationUrl: 'http://localhost:4000/veriff',
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    price: '1.5',
-    isDisabled: true
-  },
-  {
-    credentialType: 'persona',
-    entity: 'Legal Name (Persona)',
-    description: 'Krebit Verification Node',
-    icon: <Badge />,
-    verificationUrl: 'http://localhost:4000/persona',
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    price: '2.5'
-  }
-];
-
-const WORK_CREDENTIALS = [
-  {
     credentialType: 'Github',
     entity: 'Github',
     description: 'Krebit Verification Node',
@@ -109,6 +55,51 @@ const WORK_CREDENTIALS = [
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
   },
+
+  {
+    credentialType: 'Phone',
+    entity: 'Phone',
+    description: 'Krebit Verification Node',
+    icon: <Phone />,
+    verificationUrl: 'http://localhost:4000/phone',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
+    credentialType: 'Email',
+    entity: 'Email',
+    description: 'Krebit Verification Node',
+    icon: <Email />,
+    verificationUrl: 'http://localhost:4000/email',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
+    credentialType: 'Veriff',
+    entity: 'Legal Name (Veriff)',
+    description: 'Krebit Verification Node',
+    icon: <Badge />,
+    verificationUrl: 'http://localhost:4000/veriff',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '1.5',
+    isDisabled: true
+  },
+  {
+    credentialType: 'Persona',
+    entity: 'Legal Name (Persona)',
+    description: 'Krebit Verification Node',
+    icon: <Badge />,
+    verificationUrl: 'http://localhost:4000/persona',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '2.5'
+  }
+];
+
+const WORK_CREDENTIALS = [
   {
     credentialType: 'GithubFollowersGT10',
     entity: 'Github Followers > 10',
@@ -135,7 +126,7 @@ const WORK_CREDENTIALS = [
   },
   {
     credentialType: 'GithubRepoCollaborator',
-    entity: 'Github Repo Merged Pull-Requests > 10',
+    entity: 'Github Repo Collaborator',
     description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
@@ -159,6 +150,16 @@ const WORK_CREDENTIALS = [
 ];
 
 const COMMUNITY_CREDENTIALS = [
+  {
+    credentialType: 'TwitterFollowersGT1K',
+    entity: 'Twitter Followers > 1K',
+    description: 'Krebit Verification Node',
+    icon: <Twitter />,
+    verificationUrl: 'http://localhost:4000/twitter',
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
   {
     credentialType: 'DiscordGuildOwner',
     entity: 'Discord Guild Owner',
@@ -206,7 +207,8 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: 'http://localhost:4000/issuer',
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    price: '0'
+    price: '0',
+    isDisabled: true
   }
 ];
 
