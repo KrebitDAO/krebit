@@ -12,7 +12,8 @@ import {
   PhoneController,
   EmailController,
   GithubController,
-  PersonaController
+  PersonaController,
+  MetadataController
 } from './controller';
 
 const { SERVER_PORT } = process.env;
@@ -21,6 +22,8 @@ const app = express();
 const router = express.Router();
 
 router.use(cors()).use(express.json());
+
+router.get('/metadata/:tokenId', MetadataController);
 
 router
   .post('/questapp', QuestappController)

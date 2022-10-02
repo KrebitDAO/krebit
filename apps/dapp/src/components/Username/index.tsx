@@ -6,18 +6,12 @@ import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
 import { Work } from './Work';
+import { EditProfile } from './EditProfile';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
-import {
-  constants,
-  sortByDate,
-  isValid,
-  getDID,
-  normalizeSchema,
-  mergeArray
-} from 'utils';
+import { isValid, normalizeSchema, mergeArray, formatUrlImage } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -49,29 +43,31 @@ const FilterMenu = (props: IFilterMenuProps) => {
       </p>
       <p
         className={`content-filter-menu-item ${
-          currentFilter === 'community' ? 'content-filter-menu-item-active' : ''
+          currentFilter === 'Personhood'
+            ? 'content-filter-menu-item-active'
+            : ''
         }`}
-        onClick={() => onClick('community')}
+        onClick={() => onClick('Personhood')}
       >
-        Community Credentials
+        Personhood Credentials
       </p>
       <p
         className={`content-filter-menu-item ${
-          currentFilter === 'work' ? 'content-filter-menu-item-active' : ''
+          currentFilter === 'WorkExperience'
+            ? 'content-filter-menu-item-active'
+            : ''
         }`}
-        onClick={() => onClick('work')}
+        onClick={() => onClick('WorkExperience')}
       >
         Work Credentials
       </p>
       <p
         className={`content-filter-menu-item ${
-          currentFilter === 'personhood'
-            ? 'content-filter-menu-item-active'
-            : ''
+          currentFilter === 'Community' ? 'content-filter-menu-item-active' : ''
         }`}
-        onClick={() => onClick('personhood')}
+        onClick={() => onClick('Community')}
       >
-        Personhood Credentials
+        Community Credentials
       </p>
     </div>
   );
@@ -82,11 +78,13 @@ export const Username = () => {
   const [profile, setProfile] = useState<IProfile | undefined>();
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const { query, push } = useRouter();
   const {
     auth,
     walletInformation: { publicPassport, passport, issuer, orbis },
-    walletModal: { openConnectWallet, handleOpenConnectWallet }
+    walletModal: { openConnectWallet, handleOpenConnectWallet },
+    storage
   } = useContext(GeneralContext);
   const windowSize = useWindowSize();
   const isDesktop = windowSize.width >= 1024;
@@ -99,184 +97,23 @@ export const Username = () => {
 
     setStatus('pending');
 
-    const isValidID = isValid('all', query.id as string);
-
-    if (!isValidID) {
-      setStatus('rejected');
-      return;
-    }
-
     const getProfile = async () => {
       try {
         await publicPassport.read((query.id as string).toLowerCase());
 
-        let currentProfile = await normalizeSchema.profile(
+        const currentProfile = await normalizeSchema.profile(
           publicPassport,
           orbis
         );
 
-        const currentDIDFromURL = await getDID(
-          query.id as string,
-          publicPassport
-        );
+        const currentDIDFromURL = publicPassport.did;
+        if (!isValid('did', currentDIDFromURL)) setStatus('rejected');
 
-        setCurrentDIDFromURL(currentDIDFromURL);
-
-        const currentPersonhoodCredentials =
-          await publicPassport.getCredentials(undefined, 'personhood');
-        const currentWorkCredentials = await publicPassport.getCredentials(
-          undefined,
-          'workExperience'
-        );
-        const currentCommunityCredentials = await publicPassport.getCredentials(
-          undefined,
-          'community'
-        );
-
-        if (currentPersonhoodCredentials?.length === 0) {
-          currentProfile = {
-            ...currentProfile,
-            personhoods: []
-          };
-        }
-
-        if (currentWorkCredentials?.length === 0) {
-          currentProfile = {
-            ...currentProfile,
-            works: []
-          };
-        }
-
-        if (currentCommunityCredentials?.length === 0) {
-          currentProfile = {
-            ...currentProfile,
-            communities: []
-          };
-        }
-
-        let currentSkills = [];
-
-        const currentPersonhoodsPromise = Promise.all(
-          currentPersonhoodCredentials.map(async credential => {
-            const stamps = await publicPassport.getStamps({
-              type: 'personhood',
-              claimId: credential.id
-            });
-            const visualInformation = constants.PERSONHOOD_CREDENTIALS.find(
-              constant => credential.type.includes(constant.id)
-            );
-            const claimValue = await publicPassport.getClaimValue(credential);
-            delete claimValue.proofs;
-            const customCredential = {
-              ...credential,
-              visualInformation: {
-                ...visualInformation,
-                isEncryptedByDefault: !!claimValue?.encrypted
-              },
-              value: claimValue
-            };
-            currentSkills = currentSkills.concat(credential.type);
-            return {
-              credential: customCredential,
-              stamps
-            };
-          })
-        ).then(personhoods =>
-          personhoods.sort((a, b) =>
-            sortByDate(
-              a.credential.issuanceDate,
-              b.credential.issuanceDate,
-              'des'
-            )
-          )
-        );
-
-        const currentWorksPromise = Promise.all(
-          currentWorkCredentials.map(async credential => {
-            const stamps = await publicPassport.getStamps({
-              type: 'workExperience',
-              claimId: credential.id
-            });
-            const visualInformation = constants.WORK_CREDENTIALS.find(
-              constant => credential.type.includes(constant.id)
-            );
-            const claimValue = await publicPassport.getClaimValue(credential);
-            delete claimValue.proofs;
-            const customCredential = {
-              ...credential,
-              visualInformation: {
-                ...visualInformation,
-                isEncryptedByDefault: !!claimValue?.encrypted
-              },
-              value: claimValue
-            };
-            currentSkills = currentSkills.concat(credential.type);
-            return {
-              credential: customCredential,
-              stamps
-            };
-          })
-        ).then(works =>
-          works.sort((a, b) =>
-            sortByDate(
-              a.credential.issuanceDate,
-              b.credential.issuanceDate,
-              'des'
-            )
-          )
-        );
-
-        const currentCommunitiesPromise = Promise.all(
-          currentCommunityCredentials.map(async credential => {
-            const stamps = await publicPassport.getStamps({
-              type: 'community',
-              claimId: credential.id
-            });
-            const visualInformation = constants.COMMUNITY_CREDENTIALS.find(
-              constant => credential.type.includes(constant.id)
-            );
-            const claimValue = await publicPassport.getClaimValue(credential);
-            delete claimValue.proofs;
-            const customCredential = {
-              ...credential,
-              visualInformation: {
-                ...visualInformation,
-                isEncryptedByDefault: !!claimValue?.encrypted
-              },
-              value: claimValue
-            };
-            currentSkills = currentSkills.concat(credential.type);
-            return {
-              credential: customCredential,
-              stamps
-            };
-          })
-        ).then(works =>
-          works.sort((a, b) =>
-            sortByDate(
-              a.credential.issuanceDate,
-              b.credential.issuanceDate,
-              'des'
-            )
-          )
-        );
-
-        const [currentPersonhoods, currentWorks, currentCommunities] =
-          await Promise.all([
-            currentPersonhoodsPromise,
-            currentWorksPromise,
-            currentCommunitiesPromise
-          ]);
-
-        currentProfile = {
+        setProfile({
           ...currentProfile,
-          personhoods: currentPersonhoods,
-          works: currentWorks,
-          communities: currentCommunities,
-          skills: mergeArray(currentSkills)
-        };
-
-        setProfile(currentProfile);
+          skills: []
+        });
+        setCurrentDIDFromURL(currentDIDFromURL);
         setStatus('resolved');
       } catch (error) {
         console.error(error);
@@ -285,14 +122,21 @@ export const Username = () => {
     };
 
     getProfile();
-  }, [publicPassport, query.id, currentDIDFromURL]);
+  }, [publicPassport, query.id]);
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
   };
 
   const handleFilterOption = (value: string) => {
+    setProfile({ ...profile, skills: [] });
     setCurrentFilterOption(value);
+  };
+
+  const handleEditProfile = () => {
+    if (!auth?.isAuthenticated) return;
+
+    setIsEditProfileOpen(prevState => !prevState);
   };
 
   const handleSendMessage = () => {
@@ -321,6 +165,15 @@ export const Username = () => {
         isOpen={openConnectWallet}
         onClose={handleOpenConnectWallet}
       />
+      {isEditProfileOpen && (
+        <EditProfile
+          profile={profile}
+          onClose={handleEditProfile}
+          passport={passport}
+          orbis={orbis}
+          storage={storage}
+        />
+      )}
       <Layout>
         {isLoading ? (
           <LoadingWrapper>
@@ -328,19 +181,27 @@ export const Username = () => {
           </LoadingWrapper>
         ) : (
           <Wrapper
-            profilePicture={profile.picture || '/imgs/logos/Krebit.svg'}
-            isCurrentProfile={currentDIDFromURL === auth?.did}
+            profilePicture={
+              formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
+            }
           >
             <div className="profile-container">
-              <Background image={profile.background} />
+              <Background image={formatUrlImage(profile?.background)} />
               <div className="profile">
                 <div className="profile-photo"></div>
                 <div className="profile-info">
-                  <div className="profile-info-naming">
-                    <p className="profile-info-name">{profile.name}</p>{' '}
-                    <span className="profile-info-token">
-                      KRB {profile.reputation}
-                    </span>
+                  <div className="profile-info-naming-container">
+                    <div className="profile-info-naming">
+                      <p className="profile-info-name">{profile.name}</p>{' '}
+                      <span className="profile-info-token">
+                        KRB {profile.reputation}
+                      </span>
+                    </div>
+                    {profile.description && (
+                      <p className="profile-info-description">
+                        {profile.description}
+                      </p>
+                    )}
                   </div>
                   <div className="profile-info-follow">
                     <span className="profile-info-followers">
@@ -358,12 +219,20 @@ export const Username = () => {
                     </span>
                   </div>
                 </div>
-                {currentDIDFromURL !== auth?.did && (
+                {currentDIDFromURL !== auth?.did ? (
                   <div className="profile-buttons">
                     <Button text="Follow" onClick={() => {}} />
                     <Button
                       text="Send Message"
                       onClick={handleSendMessage}
+                      styleType="border"
+                    />
+                  </div>
+                ) : (
+                  <div className="profile-button">
+                    <Button
+                      text="Edit profile"
+                      onClick={handleEditProfile}
                       styleType="border"
                     />
                   </div>
@@ -376,13 +245,37 @@ export const Username = () => {
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>
                   </div>
-                  <div className="skills-box">
-                    {profile.skills.map((item, index) => (
-                      <div className="skills-box-item" key={index}>
-                        <p className="skills-box-item-text">{item}</p>
-                      </div>
-                    ))}
-                  </div>
+                  {profile.skills === undefined ? (
+                    <div className="skills-box-loading">
+                      <Loading type="skeleton" />
+                    </div>
+                  ) : profile.skills?.length === 0 ? (
+                    <div className="skills-not-elements">
+                      <img
+                        src="/imgs/images/skills_not_found.png"
+                        className="skills-not-elements-image"
+                        width={243}
+                        height={51}
+                      />
+                      <p className="skills-not-elements-title">
+                        No skills yet.
+                      </p>
+                      <p className="skills-not-elements-description">
+                        Explore skills list
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="skills-box">
+                      {mergeArray(profile.skills).map((item, index) => (
+                        <div className="skills-box-item" key={index}>
+                          <p className="skills-box-item-text">
+                            {item[0]}{' '}
+                            {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Skills>
                 <FilterMenu
                   currentFilter={currentFilterOption}
@@ -391,9 +284,12 @@ export const Username = () => {
                 />
                 <Personhood
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  personhoods={profile.personhoods}
                   passport={passport}
+                  publicPassport={publicPassport}
                   issuer={issuer}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={currentFilterOption !== 'overview'}
                   handleProfile={handleProfile}
                 />
               </div>
@@ -403,18 +299,40 @@ export const Username = () => {
                   isHidden={!isDesktop}
                   onClick={handleFilterOption}
                 />
+                <Personhood
+                  isAuthenticated={currentDIDFromURL === auth?.did}
+                  passport={passport}
+                  publicPassport={publicPassport}
+                  issuer={issuer}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={currentFilterOption !== 'Personhood'}
+                  handleProfile={handleProfile}
+                />
                 <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  works={profile.works}
                   passport={passport}
+                  publicPassport={publicPassport}
                   issuer={issuer}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={
+                    currentFilterOption !== 'overview' &&
+                    currentFilterOption !== 'WorkExperience'
+                  }
                   handleProfile={handleProfile}
                 />
                 <Community
                   isAuthenticated={currentDIDFromURL === auth?.did}
-                  communities={profile.communities}
                   passport={passport}
+                  publicPassport={publicPassport}
                   issuer={issuer}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={
+                    currentFilterOption !== 'overview' &&
+                    currentFilterOption !== 'Community'
+                  }
                   handleProfile={handleProfile}
                 />
               </div>

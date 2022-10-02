@@ -1,7 +1,15 @@
-import { ceramic } from './ceramic';
-import { ethereum } from './ethereum';
-import { graph } from './graph';
-import { Lit } from './lit';
-import { ens } from './ens';
+import { ceramic } from './ceramic.js';
+import { ethereum } from './ethereum.js';
+import { graph } from './graph.js';
+import { Lit } from './lit.js';
+import { ens } from './ens.js';
+import { uns } from './uns.js';
 
-export { ceramic, ethereum, graph, Lit, ens };
+export const lib = {
+  ceramic,
+  ethereum,
+  graph,
+  Lit,
+  ens,
+  uns
+};

@@ -35,7 +35,9 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
               Connecting to decentralized identity
             </p>
             <div className="loading-view">
-              <Loading />
+              <div className="loading-view-container">
+                <Loading />
+              </div>
               <p className="loading-view-text">Authorizing your wallet</p>
             </div>
           </>

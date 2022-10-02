@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 
-import { WalletProvider } from '../utils';
-import { krbToken } from '../schemas';
-import { config } from '../config';
+import { utils } from '../utils/index.js';
+import { schemas } from '../schemas/index.js';
+import { config } from '../config/index.js';
 
 const currentConfig = config.get();
 
@@ -14,7 +14,7 @@ const getWeb3Provider = async () => {
         params: [
           {
             chainId: `0x${Number(
-              krbToken[currentConfig.network].domain.chainId
+              schemas.krbToken[currentConfig.network].domain.chainId
             ).toString(16)}`
           }
         ]
@@ -27,16 +27,18 @@ const getWeb3Provider = async () => {
             params: [
               {
                 chainId: `0x${Number(
-                  krbToken[currentConfig.network].domain.chainId
+                  schemas.krbToken[currentConfig.network].domain.chainId
                 ).toString(16)}`,
                 rpcUrls: [currentConfig.rpcUrl],
-                chainName: krbToken[currentConfig.network].name,
+                chainName: schemas.krbToken[currentConfig.network].name,
                 nativeCurrency: {
-                  name: krbToken[currentConfig.network].token,
-                  symbol: krbToken[currentConfig.network].token,
+                  name: schemas.krbToken[currentConfig.network].token,
+                  symbol: schemas.krbToken[currentConfig.network].token,
                   decimals: 18
                 },
-                blockExplorerUrls: [krbToken[currentConfig.network].blockUrl]
+                blockExplorerUrls: [
+                  schemas.krbToken[currentConfig.network].blockUrl
+                ]
               }
             ]
           });
@@ -54,9 +56,9 @@ const getWeb3Provider = async () => {
       (window as any).ethereum.on('chainChanged', (newNetwork: string) => {
         if (
           newNetwork !=
-          `0x${Number(krbToken[currentConfig.network].domain.chainId).toString(
-            16
-          )}`
+          `0x${Number(
+            schemas.krbToken[currentConfig.network].domain.chainId
+          ).toString(16)}`
         ) {
           window.location.reload();
         }
@@ -68,7 +70,7 @@ const getWeb3Provider = async () => {
 };
 
 const getProvider = () => {
-  return new WalletProvider(currentConfig.rpcUrl, currentConfig.network);
+  return new utils.WalletProvider(currentConfig.rpcUrl, currentConfig.network);
 };
 
 export const ethereum = {

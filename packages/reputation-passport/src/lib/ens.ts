@@ -1,21 +1,21 @@
 import 'isomorphic-fetch';
 
-import { ensResolvedAddress, ensDomains } from '../queries';
-import { config } from '../config';
+import { ensResolvedAddress, ensDomains } from '../queries/index.js';
+import { config } from '../config/index.js';
 
-interface ClientProps {
+export interface ClientProps {
   query: string;
   variables: GetProps | ListProps;
 }
 
-interface ListProps {
+export interface ListProps {
   first?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: object;
 }
 
-interface GetProps {
+export interface GetProps {
   id: string;
 }
 
@@ -58,9 +58,33 @@ const domainNameQuery = async (address: string) => {
 
   return response.data?.account ? response.data.account.domains : [];
 };
+// ensResolvedAddress from subgraph
+const resolveName = async (name: string) => {
+  const where = {
+    name: name
+  };
+
+  //Get ensResolvedAddress from subgraph
+  const addresses = await resolvedAddressQuery({
+    first: 1,
+    orderBy: 'id',
+    orderDirection: 'desc',
+    where
+  });
+
+  return addresses.length > 0 ? addresses[0].resolvedAddress.id : null;
+};
+
+// domainNameQuery from subgraph
+const lookupAddress = async (address: string) => {
+  const domains = await domainNameQuery(address);
+  const domain = domains.length > 0 ? domains[0].name : null;
+  //console.debug('ENS:', domain);
+  return domain;
+};
 
 export const ens = {
   client,
-  resolvedAddressQuery,
-  domainNameQuery
+  resolveName,
+  lookupAddress
 };

@@ -7,7 +7,7 @@ import {
   Wrapper,
   PrivateOptionQuestion,
   Footer,
-  DecentralizedUsersItem,
+  DecentralizedUsersItem
 } from './styles';
 import { Button } from 'components/Button';
 import { Arrow, Krebit, Logo } from 'components/Icons';
@@ -18,32 +18,32 @@ const BOXES = [
     box: 'KRB 180',
     username: 'fuano.eth',
     image: '/imgs/images/rare-buddies-1.png',
-    skills: ['Illustrator', 'NFT Creator', 'UI'],
+    skills: ['Illustrator', 'NFT Creator', 'UI']
   },
   {
     box: 'KRB 171',
     username: 'alerios.eth',
     image: '/imgs/images/alerios.jpg',
-    skills: ['Developer', 'Product'],
+    skills: ['Developer', 'Product']
   },
   {
     box: 'KRB 152',
     username: 'texasfr.eth',
     image: '/imgs/images/texasfr.png',
-    skills: ['Talent', 'Software', 'QA'],
+    skills: ['Talent', 'Software', 'QA']
   },
   {
     box: 'KRB 150',
     username: 'andresmontoya.eth',
     image: '/imgs/images/andresmontoya.jpeg',
-    skills: ['Javascript', 'UX', 'Frontend'],
+    skills: ['Javascript', 'UX', 'Frontend']
   },
   {
     box: 'KRB 143',
     username: 'piraseligman.eth',
     image: '/imgs/images/piraseligman.png',
-    skills: ['Growth', 'Innovation', 'Design'],
-  },
+    skills: ['Growth', 'Innovation', 'Design']
+  }
 ];
 
 export const Home = () => {
@@ -142,8 +142,13 @@ export const Home = () => {
               <SwitchTransition mode="out-in">
                 <CSSTransition
                   key={BOXES[currentUser].username}
-                  addEndListener={(node, done) =>
-                    node.addEventListener('transitionend', done, false)
+                  addEndListener={
+                    ((node: HTMLElement, done: () => void) =>
+                      node.addEventListener(
+                        'transitionend',
+                        done,
+                        false
+                      )) as any
                   }
                   classNames="fade"
                 >

@@ -1,34 +1,88 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import {
-  Passport,
-  Krebit as Issuer
-} from '@krebitdao/reputation-passport/dist/core';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
 import { QuestionModal } from 'components/QuestionModal';
+import { OpenInNew } from 'components/Icons';
 import { Card } from 'components/Card';
-import { checkCredentialsURLs } from 'utils';
+import { Loading } from 'components/Loading';
+import { getCredentials } from '../utils';
+import { checkCredentialsURLs, constants } from 'utils';
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
+import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 
 interface IProps {
   isAuthenticated: boolean;
-  works: ICredential[];
   passport: Passport;
+  publicPassport: Passport;
   issuer: Issuer;
+  currentFilterOption: string;
+  onFilterOption: (value: string) => void;
+  isHidden: boolean;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
 }
 
 export const Work = (props: IProps) => {
-  const { works, isAuthenticated, passport, issuer, handleProfile } = props;
+  const {
+    isAuthenticated,
+    passport,
+    publicPassport,
+    issuer,
+    currentFilterOption,
+    onFilterOption,
+    isHidden,
+    handleProfile
+  } = props;
+  const [status, setStatus] = useState('idle');
+  const [works, setWorks] = useState<ICredential[]>([]);
+  const [actionStatus, setActionStatus] = useState('idle');
   const [currentWorkSelected, setCurrentWorkSelected] = useState<ICredential>();
   const [currentActionType, setCurrentActionType] = useState<string>();
-  const [status, setStatus] = useState('idle');
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const isLoading = status === 'idle' || status === 'pending';
+
+  useEffect(() => {
+    if (!window) return;
+    if (!publicPassport) return;
+    if (isHidden) return;
+
+    setStatus('pending');
+    // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
+    handleProfile(prevValues => ({
+      ...prevValues,
+      skills: undefined
+    }));
+
+    const getInformation = async () => {
+      try {
+        const workCredentials = await getCredentials({
+          type: 'WorkExperience',
+          passport: publicPassport,
+          limit: currentFilterOption === 'overview' ? 2 : 100
+        });
+
+        setWorks(workCredentials);
+        handleProfile(prevValues => ({
+          ...prevValues,
+          skills:
+            (prevValues.skills || []).concat(
+              workCredentials.flatMap(credential => credential.skills)
+            ) || []
+        }));
+        setStatus('resolved');
+      } catch (error) {
+        console.error(error);
+        setStatus('rejected');
+      }
+    };
+
+    getInformation();
+  }, [publicPassport, currentFilterOption, isHidden]);
 
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
@@ -46,7 +100,8 @@ export const Work = (props: IProps) => {
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentWorkSelected({
       credential: undefined,
-      stamps: []
+      stamps: [],
+      isMinted: false
     });
   };
 
@@ -86,7 +141,7 @@ export const Work = (props: IProps) => {
 
     try {
       if (currentActionType === 'remove_credential') {
-        setStatus('remove_pending');
+        setActionStatus('remove_pending');
 
         const response = await passport.removeCredential(
           currentWorkSelected.credential?.vcId
@@ -98,7 +153,7 @@ export const Work = (props: IProps) => {
       }
 
       if (currentActionType === 'remove_stamp') {
-        setStatus('remove_pending');
+        setActionStatus('remove_pending');
 
         const response = await issuer.removeStamp(
           currentWorkSelected.stamps[0],
@@ -111,15 +166,15 @@ export const Work = (props: IProps) => {
       }
     } catch (error) {
       console.error(error);
-      setStatus('rejected');
+      setActionStatus('rejected');
     }
   };
 
   const handleClaimValue = async (type: string, credential: any) => {
     const claimValue =
       type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential)
-        : { encrypted: '********' };
+        ? await issuer.decryptClaimValue(credential.value)
+        : credential.value;
 
     const currentCredentialPosition = works.findIndex(
       work => work.credential.vcId === credential.vcId
@@ -128,8 +183,6 @@ export const Work = (props: IProps) => {
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      delete claimValue?.proofs;
-
       handleProfile(prevValues => {
         const updatedWorks = [...prevValues.works];
         updatedWorks[currentCredentialPosition] = {
@@ -139,7 +192,7 @@ export const Work = (props: IProps) => {
             value: claimValue
           }
         };
-
+        setWorks(updatedWorks);
         return {
           ...prevValues,
           works: updatedWorks
@@ -149,23 +202,27 @@ export const Work = (props: IProps) => {
   };
 
   const formatCredentialName = (value: any) => {
-    if (value?.encrypted) return value.encrypted;
+    if (value?.encryptedString) return '******';
+
+    let formattedValue = '';
+
+    if (value?.entity)
+      formattedValue = formattedValue.concat(' / ').concat(value.entity);
+    if (value?.title)
+      formattedValue = formattedValue.concat(' / ').concat(value.title);
 
     if (value?.username) {
-      return '@'.concat(value.username);
+      formattedValue = formattedValue
+        .concat(' / ')
+        .concat('@')
+        .concat(value.username);
     }
 
     if (value?.id) {
-      return value.id;
+      formattedValue = formattedValue.concat(' / ').concat(value.id);
     }
 
-    if (value?.followers) {
-      return value.followers.startsWith('gt')
-        ? value.followers.replace('gt', '> ')
-        : value.followers;
-    }
-
-    return '';
+    return formattedValue;
   };
 
   const handleCheckCredentialsURLs = (
@@ -193,12 +250,22 @@ export const Work = (props: IProps) => {
             onClick: handleRemoveAction
           }}
           cancelButton={{ text: 'Cancel', onClick: handleIsRemoveModalOpen }}
-          isLoading={status === 'remove_pending'}
+          isLoading={actionStatus === 'remove_pending'}
         />
       ) : null}
-      <Wrapper>
+      <Wrapper isHidden={isHidden}>
         <div className="work-header">
-          <p className="work-header-text">Work credentials</p>
+          <div className="work-header-text-container">
+            <p className="work-header-text">Work credentials</p>
+            {currentFilterOption === 'overview' && (
+              <div
+                className="work-header-text-open-new"
+                onClick={() => onFilterOption('WorkExperience')}
+              >
+                <OpenInNew />
+              </div>
+            )}
+          </div>
           {isAuthenticated && (
             <p
               className="work-header-verify"
@@ -209,95 +276,128 @@ export const Work = (props: IProps) => {
           )}
         </div>
         <div className="work-cards">
-          {works.map((work, index) => (
-            <Card
-              key={index}
-              type="long"
-              id={`work_${index}`}
-              icon={work.credential?.visualInformation?.icon}
-              title={work.credential?.visualInformation?.text}
-              description={formatCredentialName(work.credential?.value)}
-              dates={{
-                issuanceDate: {
-                  text: 'ISSUED',
-                  value: work.credential?.issuanceDate
-                },
-                expirationDate: {
-                  text: 'EXPIRES',
-                  value: work.credential?.expirationDate
-                }
-              }}
-              dropdown={{
-                isDropdownOpen,
-                onClick: () => handleIsDropdownOpen(`work_${index}`),
-                onClose: () => handleIsDropdownOpen(undefined),
-                items: [
-                  !isAuthenticated
-                    ? {
-                        title: 'Credential details',
-                        onClick: () =>
-                          handleCheckCredentialsURLs(
-                            'ceramic',
-                            'credential',
-                            work.credential
-                          )
-                      }
-                    : undefined,
-                  !isAuthenticated && work.stamps?.length !== 0
-                    ? {
-                        title: 'Stamp details',
-                        onClick: () =>
-                          handleCheckCredentialsURLs(
-                            'polygon',
-                            'stamp',
-                            work.stamps[0]
-                          )
-                      }
-                    : undefined,
-                  isAuthenticated && work.stamps?.length === 0
-                    ? {
-                        title: 'Add stamp',
-                        onClick: () => handleCurrentWork('add_stamp', work)
-                      }
-                    : undefined,
-                  isAuthenticated &&
-                  work.credential?.visualInformation.isEncryptedByDefault
-                    ? work.credential?.value?.encrypted
+          {isLoading ? (
+            <>
+              <div className="work-card-loading">
+                <Loading type="skeleton" />
+              </div>
+              <div className="work-card-loading">
+                <Loading type="skeleton" />
+              </div>
+            </>
+          ) : works?.length === 0 ? (
+            new Array(2)
+              .fill(constants.DEFAULT_EMPTY_CARD_WORK)
+              .map((personhood, index) => (
+                <Card
+                  key={index}
+                  type="long"
+                  id={`work_${index}`}
+                  isEmpty={true}
+                  {...personhood}
+                />
+              ))
+          ) : (
+            works.map((work, index) => (
+              <Card
+                key={index}
+                type="long"
+                id={`work_${index}`}
+                icon={work.credential?.visualInformation?.icon}
+                title={work.credential?.visualInformation?.entity}
+                description={formatCredentialName(work.credential?.value)}
+                dates={{
+                  issuanceDate: {
+                    text: 'ISSUED',
+                    value: work.credential?.issuanceDate
+                  },
+                  expirationDate: {
+                    text: 'EXPIRES',
+                    value: work.credential?.expirationDate
+                  }
+                }}
+                dropdown={{
+                  isDropdownOpen,
+                  onClick: () => handleIsDropdownOpen(`work_${index}`),
+                  onClose: () => handleIsDropdownOpen(undefined),
+                  items: [
+                    !isAuthenticated
                       ? {
-                          title: 'Decrypt',
-                          onClick: () => handleCurrentWork('decrypt', work)
+                          title: 'Credential details',
+                          onClick: () =>
+                            handleCheckCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              work.credential
+                            )
                         }
-                      : {
-                          title: 'Encrypt',
-                          onClick: () => handleCurrentWork('encrypt', work)
+                      : undefined,
+                    !isAuthenticated && work.stamps?.length !== 0
+                      ? {
+                          title: 'Stamp details',
+                          onClick: () =>
+                            handleCheckCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              work.stamps[0]
+                            )
                         }
-                    : undefined,
-                  isAuthenticated && work.stamps?.length === 0
-                    ? {
-                        title: 'Remove credential',
-                        onClick: () =>
-                          handleCurrentWork('remove_credential', work)
-                      }
-                    : undefined,
-                  isAuthenticated &&
-                  work.credential &&
-                  work.stamps?.length !== 0
-                    ? {
-                        title: 'Remove stamp',
-                        onClick: () => handleCurrentWork('remove_stamp', work)
-                      }
-                    : undefined
-                ]
-              }}
-              isIssued={work.credential && work.stamps?.length > 0}
-              image={work.credential?.visualInformation?.image}
-              tooltip={{
-                message: `This credential has ${
-                  work.stamps?.length || 0
-                } stamps`
-              }}
-            />
-          ))}
+                      : undefined,
+                    isAuthenticated && work.stamps?.length === 0
+                      ? {
+                          title: 'Add stamp',
+                          onClick: () => handleCurrentWork('add_stamp', work)
+                        }
+                      : undefined,
+                    isAuthenticated && work.stamps?.length !== 0
+                      ? {
+                          title: 'Mint NFT',
+                          onClick: () => handleCurrentWork('mint_nft', work)
+                        }
+                      : undefined,
+                    isAuthenticated &&
+                    work.credential?.visualInformation.isEncryptedByDefault
+                      ? work.credential?.value?.encryptedString
+                        ? {
+                            title: 'Decrypt',
+                            onClick: () => handleCurrentWork('decrypt', work)
+                          }
+                        : {
+                            title: 'Encrypt',
+                            onClick: () => handleCurrentWork('encrypt', work)
+                          }
+                      : undefined,
+                    isAuthenticated && work.stamps?.length === 0
+                      ? {
+                          title: 'Remove credential',
+                          onClick: () =>
+                            handleCurrentWork('remove_credential', work)
+                        }
+                      : undefined,
+                    isAuthenticated &&
+                    work.credential &&
+                    work.stamps?.length !== 0
+                      ? {
+                          title: 'Remove stamp',
+                          onClick: () => handleCurrentWork('remove_stamp', work)
+                        }
+                      : undefined
+                  ]
+                }}
+                isIssued={work.credential && work.stamps?.length > 0}
+                image={
+                  work.credential?.value?.imageUrl
+                    ? work.credential?.value?.imageUrl
+                    : work.credential?.visualInformation?.imageUrl
+                }
+                tooltip={{
+                  message: `This credential has ${
+                    work.stamps?.length || 0
+                  } stamps`
+                }}
+              />
+            ))
+          )}
         </div>
       </Wrapper>
     </>

@@ -1,7 +1,7 @@
-import * as lib from './lib';
-import * as utils from './utils';
-import * as schemas from './schemas';
-import * as core from './core';
+import { lib } from './lib/index.js';
+import { utils } from './utils/index.js';
+import { schemas } from './schemas/index.js';
+import { core } from './core/index.js';
 
 const krebit = {
   lib,

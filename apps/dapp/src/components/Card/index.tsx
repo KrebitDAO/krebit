@@ -16,7 +16,8 @@ interface IProps {
       value: string;
     };
   };
-  dropdown: {
+  isEmpty?: boolean;
+  dropdown?: {
     isDropdownOpen: string;
     onClick: (id: string) => void;
     onClose: () => void;
@@ -40,6 +41,7 @@ export const Card = (props: IProps) => {
     title,
     description,
     dates,
+    isEmpty,
     dropdown,
     icon,
     image,
@@ -69,7 +71,7 @@ export const Card = (props: IProps) => {
 
   if (type === 'simple') {
     return (
-      <SimpleCardWrapper id={id}>
+      <SimpleCardWrapper id={id} isEmpty={isEmpty}>
         <div className="card-item-content-left">
           <div className="card-item-content-title">
             <div className="card-icon">{icon}</div>
@@ -113,19 +115,21 @@ export const Card = (props: IProps) => {
           >
             <Krebit />
           </div>
-          <div
-            className="card-more-vert"
-            ref={parentDropdownRef}
-            onClick={() => dropdown.onClick(id)}
-          >
-            <MoreVert />
-          </div>
-          {dropdown.isDropdownOpen === id && (
+          {dropdown && (
+            <div
+              className="card-more-vert"
+              ref={parentDropdownRef}
+              onClick={() => dropdown?.onClick(id)}
+            >
+              <MoreVert />
+            </div>
+          )}
+          {dropdown?.isDropdownOpen === id && (
             <div className="card-more-vert-inline-dropdown">
               <InlineDropdown
-                items={dropdown.items}
+                items={dropdown?.items}
                 parentRef={parentDropdownRef}
-                onClose={dropdown.onClose}
+                onClose={dropdown?.onClose}
               />
             </div>
           )}
@@ -141,7 +145,7 @@ export const Card = (props: IProps) => {
 
   if (type === 'small') {
     return (
-      <SmallCardWrapper id={id} image={image}>
+      <SmallCardWrapper id={id} image={image} isEmpty={isEmpty}>
         <div className="card-information">
           <p className="card-information-title">{title}</p>
           <p className="card-information-company">{description}</p>
@@ -156,20 +160,22 @@ export const Card = (props: IProps) => {
           >
             <Krebit />
           </div>
-          <div
-            className="card-top-more-vert"
-            ref={parentDropdownRef}
-            onClick={() => dropdown.onClick(id)}
-          >
-            <MoreVert />
-          </div>
+          {dropdown && (
+            <div
+              className="card-top-more-vert"
+              ref={parentDropdownRef}
+              onClick={() => dropdown?.onClick(id)}
+            >
+              <MoreVert />
+            </div>
+          )}
         </div>
-        {dropdown.isDropdownOpen === id && (
+        {dropdown?.isDropdownOpen === id && (
           <div className="card-more-vert-inline-dropdown">
             <InlineDropdown
-              items={dropdown.items}
+              items={dropdown?.items}
               parentRef={parentDropdownRef}
-              onClose={dropdown.onClose}
+              onClose={dropdown?.onClose}
             />
           </div>
         )}
@@ -205,8 +211,10 @@ export const Card = (props: IProps) => {
 
   if (type === 'long') {
     return (
-      <LongCardWrapper image={image}>
-        <div className="card-image"></div>
+      <LongCardWrapper image={image} isEmpty={isEmpty}>
+        <div className="card-image-container">
+          <div className="card-image"></div>
+        </div>
         <div className="card-information">
           <p className="card-information-title">{title}</p>
           <p className="card-information-description">{description}</p>
@@ -241,20 +249,22 @@ export const Card = (props: IProps) => {
           >
             <Krebit />
           </div>
-          <div
-            className="card-more-vert"
-            ref={parentDropdownRef}
-            onClick={() => dropdown.onClick(id)}
-          >
-            <MoreVert />
-          </div>
+          {dropdown && (
+            <div
+              className="card-more-vert"
+              ref={parentDropdownRef}
+              onClick={() => dropdown?.onClick(id)}
+            >
+              <MoreVert />
+            </div>
+          )}
         </div>
-        {dropdown.isDropdownOpen === id && (
+        {dropdown?.isDropdownOpen === id && (
           <div className="card-more-vert-inline-dropdown">
             <InlineDropdown
-              items={dropdown.items}
+              items={dropdown?.items}
               parentRef={parentDropdownRef}
-              onClose={dropdown.onClose}
+              onClose={dropdown?.onClose}
             />
           </div>
         )}

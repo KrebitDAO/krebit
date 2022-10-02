@@ -1,5 +1,5 @@
 export interface IConfigProps {
-  network?: 'mumbai' | 'polygon' | 'goerli' | 'mainnet' | 'xdai';
+  network?: 'mumbai' | 'polygon' | 'goerli' | 'mainnet';
   rpcUrl?: string;
   graphUrl?: string;
   ensGraphUrl?: string;

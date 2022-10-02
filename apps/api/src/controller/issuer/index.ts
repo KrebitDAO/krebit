@@ -51,17 +51,18 @@ export const IssuerController = async (
 
     // If claim is digitalProperty "twitter"
     if (
-      claimedCredential?.credentialSubject?.type === 'issuer' &&
+      claimedCredential?.credentialSubject?.type === 'Issuer' &&
       claimedCredential?.credentialSubject?.value.includes('credentialType')
     ) {
       // Get evidence bearer token
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('claim value: ', claimValue);
 
-      // Is this a valid Issuer, let'ssee if they have enough KRB balance or something.
+      // Is this a valid Issuer?, let'see if they have enough KRB balance or something.
+      const valid = true;
 
       // If valid issuer
-      if (true) {
+      if (valid) {
         console.log(
           'Valid issuer:',
           claimedCredential.credentialSubject.ethereumAddress

@@ -2,11 +2,12 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 interface ICardProps {
-  image: string;
+  isEmpty?: Boolean;
+  image?: string;
 }
 
-export const SimpleCardWrapper = styled.div`
-  ${({ theme }) => css`
+export const SimpleCardWrapper = styled.div<ICardProps>`
+  ${({ theme, isEmpty }) => css`
     display: grid;
     grid-template-columns: auto 30px;
     background-color: ${theme.colors.ebonyClay};
@@ -17,6 +18,11 @@ export const SimpleCardWrapper = styled.div`
     @media (min-width: ${theme.screens.lg}) {
       padding: 16px 20px;
     }
+
+    ${isEmpty &&
+    css`
+      opacity: 0.7;
+    `}
 
     .card-item-content-left {
       .card-item-content-title {
@@ -126,7 +132,7 @@ export const SimpleCardWrapper = styled.div`
 `;
 
 export const SmallCardWrapper = styled.div<ICardProps>`
-  ${({ theme, image }) => css`
+  ${({ theme, image, isEmpty }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
@@ -136,6 +142,11 @@ export const SmallCardWrapper = styled.div<ICardProps>`
     grid-template-areas: 'information top-icon' 'dates bottom-icon';
     grid-gap: 47px 0;
     position: relative;
+
+    ${isEmpty &&
+    css`
+      opacity: 0.7;
+    `}
 
     .card-information {
       .card-information-title {
@@ -242,37 +253,52 @@ export const SmallCardWrapper = styled.div<ICardProps>`
 `;
 
 export const LongCardWrapper = styled.div<ICardProps>`
-  ${({ theme, image }) => css`
+  ${({ theme, image, isEmpty }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
     border-radius: 15px;
     padding: 16px 20px;
     display: grid;
-    grid-template-columns: 79px auto 48px;
+    grid-template-columns: ${isEmpty ? '79px auto 24px' : '79px auto 48px'};
     grid-gap: 15px;
     position: relative;
 
     @media (min-width: ${theme.screens.lg}) {
-      grid-template-columns: 134px auto 60px;
+      grid-template-columns: ${isEmpty ? '134px auto 30px' : '134px auto 60px'};
       grid-gap: 23px;
     }
 
-    .card-image {
-      width: 100%;
+    ${isEmpty &&
+    css`
+      opacity: 0.7;
+    `}
+
+    .card-image-container {
       height: 63px;
-      background-image: url('${image}');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: contain;
-      border-radius: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
       align-self: center;
+      border-radius: 10px;
+      background-color: ${theme.colors.gray};
 
       @media (min-width: ${theme.screens.lg}) {
         height: 85px;
+      }
+
+      .card-image {
+        width: 48px;
+        height: 18px;
+        background-image: url('${image}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 85px;
+          height: 31px;
+        }
       }
     }
 

@@ -5,23 +5,24 @@ import LitJsSdk from 'lit-js-sdk';
 import {
   getCredential,
   generateUID,
-  sortByDate,
+  getIssuers,
+  IIsuerParams,
   getWalletInformation
 } from 'utils';
 
 interface IClaimValues {
   email: string;
   code: string;
+  private: boolean;
 }
 
-const { NEXT_PUBLIC_EMAIL_NODE_URL } = process.env;
-const { NEXT_PUBLIC_EMAIL_NODE_ADDRESS } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 export const useEmailProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     email: '',
-    code: ''
+    code: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentVerificationId, setCurrentVerificationId] = useState('');
@@ -29,8 +30,10 @@ export const useEmailProvider = () => {
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
 
-  const getClaim = async (address: string, issuerAddres: string) => {
+  const getClaim = async (address: string) => {
     const expirationDate = new Date();
     const expiresYears = 1;
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -39,11 +42,11 @@ export const useEmailProvider = () => {
     return {
       id: `email-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'email',
+      type: 'Email',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['digitalProperty', 'contact', 'personhood'],
+      tags: ['DigitalProperty', 'Contact', 'Personhood'],
       value: {
-        protocol: 'email',
+        protocol: 'Email',
         host: claimValues.email.split('@')[1],
         username: claimValues.email.split('@')[0],
         proofs: {
@@ -51,20 +54,19 @@ export const useEmailProvider = () => {
           nonce: claimValues.code
         }
       },
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit',
-      shareEncryptedWith: issuerAddres
+      expirationDate: new Date(expirationDate).toISOString()
     };
   };
 
-  const handleStartVerification = async () => {
+  const handleStartVerification = async (issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     setStatus('verification_pending');
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      console.log('Saving Stamp', { type: 'email' });
+      console.log('Saving Stamp', { type: 'Email' });
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
@@ -74,10 +76,11 @@ export const useEmailProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the email
-      const claim = await getClaim(
-        walletInformation.address,
-        NEXT_PUBLIC_EMAIL_NODE_ADDRESS
-      );
+      const claim = await getClaim(walletInformation.address);
+      if (claimValues.private) {
+        claim['encrypt'] = 'lit' as 'lit';
+        claim['shareEncryptedWith'] = currentIssuer.address;
+      }
       console.log('claim: ', claim);
 
       const Issuer = new Krebit.core.Krebit({
@@ -94,7 +97,7 @@ export const useEmailProvider = () => {
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
       const result = await getCredential({
-        verifyUrl: NEXT_PUBLIC_EMAIL_NODE_URL,
+        verifyUrl: currentIssuer.verificationUrl,
         claimedCredential
       });
       console.log('verificationId: ', result);
@@ -113,7 +116,7 @@ export const useEmailProvider = () => {
     setStatus('credential_pending');
 
     try {
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
@@ -123,10 +126,11 @@ export const useEmailProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the email
-      const claim = await getClaim(
-        walletInformation.address,
-        NEXT_PUBLIC_EMAIL_NODE_ADDRESS
-      );
+      const claim = await getClaim(walletInformation.address);
+      if (claimValues.private) {
+        claim['encrypt'] = 'lit' as 'lit';
+        claim['shareEncryptedWith'] = currentIssuer.address;
+      }
       console.log('claim: ', claim);
 
       const Issuer = new Krebit.core.Krebit({
@@ -152,7 +156,7 @@ export const useEmailProvider = () => {
 
         // Step 1-B: Send self-signed credential to the Issuer for verification
         const issuedCredential = await getCredential({
-          verifyUrl: NEXT_PUBLIC_EMAIL_NODE_URL,
+          verifyUrl: currentIssuer.verificationUrl,
           claimedCredentialId
         });
 
@@ -184,28 +188,22 @@ export const useEmailProvider = () => {
     }
   };
 
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
 
       const passport = new Krebit.core.Passport({
-        ...walletInformation,
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address,
         ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
-
       await passport.read(walletInformation.address);
-
-      const credentials = await passport.getCredentials('email');
-      const getLatestEmailCredential = credentials
-        .filter(credential => credential.type.includes('email'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
@@ -214,7 +212,7 @@ export const useEmailProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestEmailCredential);
+      const stampTx = await Issuer.stampCredential(credential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });
@@ -224,12 +222,44 @@ export const useEmailProvider = () => {
     }
   };
 
-  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+  const handleMintCredential = async credential => {
+    try {
+      setStatus('mint_pending');
 
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const mintTx = await Issuer.mintNFT(credential);
+      console.log('mintTx: ', mintTx);
+
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
+    } catch (error) {
+      setStatus('mint_rejected');
+    }
+  };
+
+  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -238,10 +268,12 @@ export const useEmailProvider = () => {
     handleGetCredential,
     handleStampCredential,
     handleClaimValues,
+    handleMintCredential,
     claimValues,
     status,
     currentVerificationId,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

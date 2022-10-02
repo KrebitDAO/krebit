@@ -2,11 +2,7 @@ import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import {
-  connect,
-  startTwilioVerification,
-  checkTwilioVerification
-} from '../../utils';
+import { connect, twilio } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -52,14 +48,14 @@ export const EmailController = async (
       );
     }
 
-    console.log('Verifying phone with claimedCredential: ', claimedCredential);
+    console.log('Verifying email with claimedCredential: ', claimedCredential);
 
     console.log(
       'checkCredential: ',
       await Issuer.checkCredential(claimedCredential)
     );
 
-    if (claimedCredential?.credentialSubject?.type !== 'email') {
+    if (claimedCredential?.credentialSubject?.type !== 'Email') {
       throw new Error(`claimedCredential type is not email`);
     }
 
@@ -67,14 +63,16 @@ export const EmailController = async (
     let claimValue = null;
     //Decrypt
     if (claimedCredential.credentialSubject.encrypted === 'lit') {
-      claimValue = await Issuer.decryptClaimValue(claimedCredential);
+      claimValue = await Issuer.decryptCredential(claimedCredential);
       console.log('Decrypted claim value: ', claimValue);
     } else {
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('Claim value: ', claimValue);
     }
+    const publicClaim: boolean =
+      claimedCredential.credentialSubject.encrypted === 'none';
 
-    if (claimValue?.protocol !== 'email') {
+    if (claimValue?.protocol !== 'Email') {
       throw new Error(`claimedCredential type is not email`);
     }
 
@@ -84,7 +82,7 @@ export const EmailController = async (
     ) {
       // Check Verification status
       console.log('proofs: ', claimValue.proofs);
-      const verification = await checkTwilioVerification(
+      const verification = await twilio.checkTwilioVerification(
         claimValue.username.concat('@').concat(claimValue.host),
         claimValue.proofs.nonce
       );
@@ -111,9 +109,11 @@ export const EmailController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential
@@ -134,7 +134,7 @@ export const EmailController = async (
       }
     } else {
       // Start Twilio verification
-      const verificationId = await startTwilioVerification(
+      const verificationId = await twilio.startTwilioVerification(
         claimValue.username.concat('@').concat(claimValue.host),
         channel
       );

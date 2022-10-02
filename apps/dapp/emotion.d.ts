@@ -12,6 +12,8 @@ import {
   Keyframes,
   SerializedStyles
 } from '@emotion/serialize';
+import { TransitionsOptions } from '@mui/material';
+import { TypographyOptions } from '@mui/material/styles/createTypography';
 import {
   ClassAttributes,
   Context,

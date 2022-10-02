@@ -1,6 +1,6 @@
 # reputation-passport
 
-# <img src="../../krebit-icon.png" alt="Krebit" height="40px" align="left"> Krebit Reputation Passport SDK
+# <img src="https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png" alt="Krebit" height="40px" align="left"> Krebit Reputation Passport SDK
 
 [![Docs](https://img.shields.io/badge/docs-%F0%9F%93%84-blue)](https://docs.krebit.id)
 
@@ -41,7 +41,7 @@ console.log('credentials: ', credentials);
 const reputation = await passport.getReputation();
 console.log('reputation: ', reputation);
 
-const stamps = await passport.getStamps(10, 'digitalProperty');
+const stamps = await passport.getStamps(10, 'DigitalProperty');
 console.log('stamps: ', stamps);
 ```
 
@@ -133,7 +133,7 @@ const getClaim = async (toAddress: string) => {
     did: `did:pkh:eip155:1:${toAddress}`
     type: 'questBadge',
     value: badgeValue,
-    tags: ['quest', 'badge', 'community'],
+    tags: ['quest', 'badge', 'Community'],
     typeSchema: 'https://github.com/KrebitDAO/schemas/questBadge',
     expirationDate: new Date(expirationDate).toISOString()
   };

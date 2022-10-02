@@ -13,5 +13,19 @@ import phoneNumber from './phoneNumber.json' assert { type: 'json' };
 import workExperience from './workExperience.json' assert { type: 'json' };
 import recommendation from './recommendation.json' assert { type: 'json' };
 
-export { badge, birthDate, certificate, digitalProperty, education, issuer, legalName, 
-location, nationalID, olderThan, passport, phoneNumber, workExperience, recommendation };
+export const claims = {
+  badge,
+  birthDate,
+  certificate,
+  digitalProperty,
+  education,
+  issuer,
+  legalName,
+  location,
+  nationalID,
+  olderThan,
+  passport,
+  phoneNumber,
+  workExperience,
+  recommendation
+};

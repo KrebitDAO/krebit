@@ -1,6 +1,9 @@
 import { Theme } from '@emotion/react';
+import { createTheme } from '@mui/material';
 
-export const theme: Theme = {
+const materialTheme = createTheme({});
+
+export const systemTheme: Theme = {
   colors: {
     bunting: '#0F1837',
     rose: '#FF0087',
@@ -48,4 +51,10 @@ export const theme: Theme = {
     xl: '1280px',
     '2xl': '1536px'
   }
+};
+
+delete materialTheme.shadows;
+export const theme = {
+  ...systemTheme,
+  ...materialTheme
 };

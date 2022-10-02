@@ -33,7 +33,9 @@ export const QuestionModal = (props: IProps) => {
         </div>
         <div className="question-modal-content">
           {isLoading ? (
-            <Loading />
+            <div className="question-modal-content-loading">
+              <Loading />
+            </div>
           ) : (
             <p className="question-modal-content-text">{text}</p>
           )}

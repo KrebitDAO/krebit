@@ -62,7 +62,43 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (accessToken) {
         channel.postMessage({
-          target: 'discord',
+          target: 'Discord',
+          data: { accessToken, tokenType, state: queryState }
+        });
+      }
+
+      // always close the redirected window
+      window.close();
+    } else if (
+      (queryError || accessToken) &&
+      queryState &&
+      /^discordGuildOwner-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (accessToken) {
+        channel.postMessage({
+          target: 'DiscordGuildOwner',
+          data: { accessToken, tokenType, state: queryState }
+        });
+      }
+
+      // always close the redirected window
+      window.close();
+    } else if (
+      (queryError || accessToken) &&
+      queryState &&
+      /^discordGuildMember-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (accessToken) {
+        channel.postMessage({
+          target: 'DiscordGuildMember',
           data: { accessToken, tokenType, state: queryState }
         });
       }
@@ -93,7 +129,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'twitter',
+          target: 'Twitter',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -108,7 +144,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'twitterFollowers',
+          target: 'TwitterFollowersGT1K',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -158,7 +194,7 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'github',
+          target: 'Github',
           data: { code: queryCode, state: queryState }
         });
       }
@@ -173,7 +209,52 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (queryCode) {
         channel.postMessage({
-          target: 'githubFollowers',
+          target: 'GithubFollowersGT10',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubRepoOwner-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'GithubRepoStarsGT10',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubRepoCollaborator-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'GithubRepoCollaborator',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
+      /^githubOrgMember-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'GithubOrgMember',
           data: { code: queryCode, state: queryState }
         });
       }

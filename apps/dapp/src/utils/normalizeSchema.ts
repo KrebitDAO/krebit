@@ -1,11 +1,14 @@
 import { Orbis } from '@orbisclub/orbis-sdk';
-import { Passport } from '@krebitdao/reputation-passport/dist/core';
 import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
+
+// types
+import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 
 export interface ICredential {
   credential: any;
   stamps: any[];
   skills?: string[];
+  isMinted: boolean;
 }
 
 export interface IProfile {
@@ -33,11 +36,11 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
   if (orbisProfile?.data?.did) {
     currentProfile = {
       did,
-      background: orbisProfile?.data?.details?.profile?.background,
+      background: orbisProfile?.data?.details?.profile?.cover,
       picture: orbisProfile?.data?.details?.profile?.pfp,
       name:
-        orbisProfile?.data?.details?.metadata?.ensName ||
-        orbisProfile?.data?.details?.profile?.username,
+        orbisProfile?.data?.details?.profile?.username ||
+        orbisProfile?.data?.details?.metadata?.ensName,
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,
       countFollowers: orbisProfile?.data?.count_followers || 0,
@@ -49,7 +52,6 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
     if (profile) {
       currentProfile = {
         did,
-        // TODO: THESE IMAGES MIGHT BE IPFS FILES, WHAT CAN WE DO?
         background: profile?.background?.original?.src,
         picture: profile?.image?.original?.src,
         name:

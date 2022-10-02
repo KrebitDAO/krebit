@@ -1,7 +1,6 @@
 import 'isomorphic-fetch';
 import { createHash } from 'crypto';
 import { ethers } from 'ethers';
-import { base64 } from 'ethers/lib/utils';
 import { DIDDataStore } from '@glazed/did-datastore';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import Ajv, { str } from 'ajv';
@@ -10,10 +9,11 @@ import {
   getEIP712Credential,
   getKrebitCredentialTypes
 } from '@krebitdao/eip712-vc';
+import { base64 } from 'ethers/lib/utils.js';
 
-import { krbToken, claims } from '../schemas';
-import { Lit } from '../lib';
-import { config } from '../config';
+import { schemas } from '../schemas/index.js';
+import { lib } from '../lib/index.js';
+import { config } from '../config/index.js';
 
 export interface ClaimProps {
   id: string;
@@ -31,18 +31,18 @@ export interface ClaimProps {
   shareEncryptedWith?: string;
 }
 
-interface IssueProps {
+export interface IssueProps {
   wallet: ethers.Wallet;
   idx: DIDDataStore;
   claim: ClaimProps;
 }
 
-interface ValidateProps {
+export interface ValidateProps {
   idx: DIDDataStore;
   claim: ClaimProps;
 }
 
-interface HashProps {
+export interface HashProps {
   did: string;
   value: any;
 }
@@ -81,8 +81,8 @@ export const validateSchema = async (props: ValidateProps) => {
     const krebitSchema = claim.typeSchema.substring(
       claim.typeSchema.lastIndexOf('/') + 1
     );
-    console.log('schema: ', claims[krebitSchema]);
-    schema = claims[krebitSchema];
+    console.log('schema: ', schemas.claims[krebitSchema]);
+    schema = schemas.claims[krebitSchema];
   } else if (claim.typeSchema.startsWith('https://')) {
     const response = await fetch(claim.typeSchema);
     schema = await response.json();
@@ -120,7 +120,7 @@ export const issueCredential = async (props: IssueProps) => {
     throw new Error('No expiration date defined');
   }
 
-  const lit = new Lit();
+  const lit = new lib.Lit();
 
   if (typeof claim.value === 'object') {
     if (claim.encrypt == 'hash') {
@@ -171,9 +171,9 @@ export const issueCredential = async (props: IssueProps) => {
       ...claim,
       id: claim.did
         ? claim.did
-        : `did:pkh:eip155:${krbToken[currentConfig.network].domain.chainId}:${
-            claim.ethereumAddress
-          }`,
+        : `did:pkh:eip155:${
+            schemas.krbToken[currentConfig.network].domain.chainId
+          }:${claim.ethereumAddress}`,
       trust: claim.trust ? claim.trust : 100, // How much we trust the evidence to sign this?
       stake: claim.stake ? claim.stake : 1, // In KRB
       price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
@@ -191,13 +191,15 @@ export const issueCredential = async (props: IssueProps) => {
   const eip712credential = getEIP712Credential(credential);
   console.debug('eip712credential: ', eip712credential);
   const krebitTypes = getKrebitCredentialTypes();
-  const eip712_vc = new EIP712VC(krbToken[currentConfig.network].domain);
+  const eip712_vc = new EIP712VC(
+    schemas.krbToken[currentConfig.network].domain
+  );
   const verifiableCredential = await eip712_vc.createEIP712VerifiableCredential(
     eip712credential,
     krebitTypes,
     async () => {
       return await wallet._signTypedData(
-        krbToken[currentConfig.network].domain,
+        schemas.krbToken[currentConfig.network].domain,
         krebitTypes,
         eip712credential
       );

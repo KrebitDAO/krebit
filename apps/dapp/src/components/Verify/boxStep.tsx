@@ -1,21 +1,32 @@
-import { ChangeEvent, MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 
 import { BoxStepWrapper } from './styles';
 import { Button } from 'components/Button';
-import { Approval, Fingerprint } from 'components/Icons';
+import { Input } from 'components/Input';
+import { Select, IItems } from 'components/Select';
+import { Switch } from 'components/Switch';
+import { Approval, Fingerprint, Token } from 'components/Icons';
+import { useWindowSize } from 'hooks';
+
+// types
+import { SelectChangeEvent } from '@mui/material';
 
 interface IProps {
   title: string;
   description: string;
   form?: {
-    inputs?: {
+    fields?: {
       name: string;
       placeholder: string;
-      value: string | number;
-      onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+      value: string | number | boolean;
+      onChange: (
+        event: ChangeEvent<HTMLInputElement> | SelectChangeEvent
+      ) => void;
       type?: string;
       pattern?: string;
       isDisabled?: boolean;
+      isRequired?: boolean;
+      items?: IItems[];
     }[];
     button?: {
       text: string;
@@ -25,13 +36,28 @@ interface IProps {
   };
   isLoading?: Boolean;
   iconType?: string;
+  icon?: ReactNode;
+  did?: string;
+  verificationUrl?: string;
+  price?: string;
 }
 
 export const BoxStep = (props: IProps) => {
-  const { title, description, form, isLoading = false, iconType } = props;
+  const {
+    title,
+    description,
+    form,
+    isLoading = false,
+    iconType,
+    icon,
+    did,
+    verificationUrl,
+    price
+  } = props;
+  const { width } = useWindowSize();
 
   return (
-    <BoxStepWrapper hasInputs={!!form?.inputs}>
+    <BoxStepWrapper>
       {isLoading ? (
         <p className="verify-box-loading">
           Approve signature on your Wallet...
@@ -39,40 +65,88 @@ export const BoxStep = (props: IProps) => {
       ) : (
         <>
           <div className="verify-box-step-content">
-            <div className="verify-box-step-content-texts">
+            <div className="verify-box-step-content-titles">
               <p className="verify-box-step-content-title">{title}</p>
               <p className="verify-box-step-content-description">
                 {description}
               </p>
             </div>
-            {iconType && (
+            {iconType || icon ? (
               <div className="verify-box-step-content-icon">
                 {iconType === 'credential' ? (
                   <Fingerprint />
                 ) : iconType === 'stamp' ? (
                   <Approval />
+                ) : iconType === 'nft' ? (
+                  <Token />
+                ) : icon ? (
+                  icon
                 ) : null}
               </div>
-            )}
+            ) : null}
           </div>
-          {form?.inputs && (
-            <div className="verify-box-step-inputs">
-              {form.inputs.map((input, index) => (
-                <input
-                  key={index}
-                  className="verify-box-step-input"
-                  type={input.type || 'text'}
-                  pattern={input.pattern}
-                  name={input.name}
-                  placeholder={input.placeholder}
-                  disabled={input.isDisabled}
-                  value={input.value}
-                  onChange={input.onChange}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck="false"
-                />
-              ))}
+          {did && verificationUrl && price ? (
+            <ul className="verify-box-step-content-list">
+              <li className="verify-box-step-content-description">
+                <a
+                  href={'/' + did}
+                  target="_blank"
+                  className="verify-box-step-content-description verify-box-step-content-dots"
+                >
+                  {did.substring(0, width > 640 ? 50 : 30) + '...'}
+                </a>
+              </li>
+              <li className="verify-box-step-content-description">
+                {verificationUrl}
+              </li>
+              <li className="verify-box-step-content-description">${price}</li>
+            </ul>
+          ) : null}
+          {form?.fields && (
+            <div className="verify-box-step-fields">
+              {form.fields.map((input, index) => {
+                if (input.type === 'select') {
+                  return (
+                    <Select
+                      key={index}
+                      id={input.name}
+                      name={input.name}
+                      label={input.placeholder}
+                      value={input.value as string}
+                      onChange={input.onChange}
+                      items={input.items}
+                      isDisabled={input.isDisabled}
+                      isRequired={input.isRequired}
+                    />
+                  );
+                }
+
+                if (input.type === 'switch') {
+                  return (
+                    <Switch
+                      key={index}
+                      name={input.name}
+                      label={input.placeholder}
+                      value={input.value as boolean}
+                      onChange={input.onChange}
+                    />
+                  );
+                }
+
+                return (
+                  <Input
+                    key={index}
+                    type={(input.type as any) || 'text'}
+                    name={input.name}
+                    placeholder={input.placeholder}
+                    value={input.value as string | number}
+                    onChange={input.onChange}
+                    isDisabled={input.isDisabled}
+                    isRequired={input.isRequired}
+                    pattern={input.pattern}
+                  />
+                );
+              })}
             </div>
           )}
           {form?.button && (

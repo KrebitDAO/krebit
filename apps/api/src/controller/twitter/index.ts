@@ -2,12 +2,7 @@ import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
-import {
-  connect,
-  getTwitterUser,
-  getTwitterFollowersCount,
-  getTwitterPostsCount
-} from '../../utils';
+import { connect, twitter } from '../../utils';
 
 // Twitter Oauth2
 import { Client, auth } from 'twitter-api-sdk';
@@ -66,19 +61,23 @@ export const TwitterController = async (
     // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
 
-    // If claim is digitalProperty "twitter"
-    if (
-      claimedCredential?.credentialSubject?.type === 'twitter' &&
-      claimedCredential?.credentialSubject?.typeSchema.includes(
-        'digitalProperty'
-      )
-    ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
+    // get the claimValue
+    let claimValue = null;
+    //Decrypt
+    if (claimedCredential.credentialSubject.encrypted === 'lit') {
+      claimValue = await Issuer.decryptCredential(claimedCredential);
+      console.log('Decrypted claim value: ', claimValue);
+    } else {
+      claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('Claim value: ', claimValue);
+    }
+    const publicClaim: boolean =
+      claimedCredential.credentialSubject.encrypted === 'none';
 
+    // If claim is digitalProperty "twitter"
+    if (claimedCredential?.credentialSubject?.type === 'Twitter') {
       // Connect to twitter and get user ID from code
-      const twitterUser = await getTwitterUser({
+      const twitterUser = await twitter.getTwitterUser({
         client: authClient,
         state: claimValue.proofs.state,
         code_challenge: claimedCredential.credentialSubject.ethereumAddress,
@@ -92,8 +91,6 @@ export const TwitterController = async (
         twitterUser &&
         twitterUser.username.toLowerCase() === claimValue.username.toLowerCase()
       ) {
-        delete claimValue.proofs;
-
         console.log('Valid twitter ID:', twitterUser);
 
         const expirationDate = new Date();
@@ -115,9 +112,11 @@ export const TwitterController = async (
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString(),
-          encrypt: 'hash' as 'hash'
+          expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential (twitterUsername)
@@ -132,57 +131,25 @@ export const TwitterController = async (
         throw new Error(`Wrong twitter ID: ${twitterUser}`);
       }
     } else if (
-      claimedCredential?.credentialSubject?.type === 'twitterFollowers'
+      claimedCredential?.credentialSubject?.type === 'TwitterFollowersGT1K'
     ) {
-      // Get evidence bearer token
-      const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('claim value: ', claimValue);
-
       // Connect to twitter and get user ID from code
-      const followers = await getTwitterFollowersCount({
+      const twitterUser = await twitter.getTwitterFollowersCount({
         client: authClient,
         state: claimValue.proofs.state,
         code_challenge: claimedCredential.credentialSubject.ethereumAddress,
         code: claimValue.proofs.code
       });
-      console.log('twitterFollowersCount: ', followers);
-
-      let valid = false;
-      switch (claimValue.followers) {
-        case 'gt100':
-          valid = followers > 100;
-          break;
-        case 'gt500':
-          valid = followers > 500;
-          break;
-        case 'gt1000':
-          valid = followers > 1000;
-          break;
-        case 'gt5K':
-          valid = followers > 5000;
-          break;
-        case 'gt10K':
-          valid = followers > 10000;
-          break;
-        case 'gt50K':
-          valid = followers > 50000;
-          break;
-        case 'gt100K':
-          valid = followers > 100000;
-          break;
-        case 'gt1M':
-          valid = followers > 1000000;
-          break;
-        default:
-          valid =
-            !claimValue.followers.startsWith('gt') &&
-            parseInt(claimValue.followers) > 0;
-      }
+      console.log('twitterFollowersCount: ', twitterUser.followers);
 
       // If valid follower count
-      if (claimValue.host === 'twitter.com' && valid) {
-        delete claimValue.proofs;
-
+      if (
+        claimValue.host === 'twitter.com' &&
+        twitterUser &&
+        twitterUser.username.toLowerCase() ===
+          claimValue.username.toLowerCase() &&
+        twitterUser.followers > 1000
+      ) {
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -195,16 +162,15 @@ export const TwitterController = async (
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
-          value: {
-            host: claimValue.host,
-            protocol: claimValue.protocol,
-            followers: claimValue.followers
-          },
+          value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
           expirationDate: new Date(expirationDate).toISOString()
         };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
         console.log('claim: ', claim);
 
         // Issue Verifiable credential (twitterUsername)
@@ -216,7 +182,9 @@ export const TwitterController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong twitter ID: ${followers}`);
+        throw new Error(
+          `Wrong twitter follower count: ${twitterUser.followers}`
+        );
       }
     }
   } catch (err) {

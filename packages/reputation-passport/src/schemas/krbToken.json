@@ -1,23 +1,4 @@
 {
-  "xdai": {
-    "contractName": "Krebit",
-    "symbol": "xKRB",
-    "token": "xDAI",
-    "name": "Gnosis Chain",
-    "address": "0x3F01060d9c5ddC855B5DD1db5aE70204D37e3E7E",
-    "block": 21197346,
-    "implementation": "0x6628511A835dc37dbd3Ea92F9F1e80F868860319",
-    "network": "xdai",
-    "blockUrl": "https://blockscout.com/poa/xdai",
-    "txUrl": "https://blockscout.com/poa/xdai/tx/",
-    "addressUrl": "https://blockscout.com/poa/xdai/address/",
-    "domain": {
-      "name": "Krebit",
-      "version": "0.1",
-      "chainId": 100,
-      "verifyingContract": "0x3F01060d9c5ddC855B5DD1db5aE70204D37e3E7E"
-    }
-  },
   "mumbai": {
     "contractName": "Krebit",
     "symbol": "KRB",

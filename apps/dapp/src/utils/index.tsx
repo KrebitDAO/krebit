@@ -1,4 +1,5 @@
-import { constants } from './constants';
+import { createEmotionCache } from './createEmotionCache';
+import { getIssuers, IIsuerParams } from './getIssuers';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getCredential } from './getCredential';
@@ -7,14 +8,17 @@ import { generateUID } from './generateUID';
 import { openOAuthUrl } from './openOAuthUrl';
 import { sortByDate } from './sortByDate';
 import { getWalletInformation } from './getWalletInformation';
-import { getDID } from './getDID';
 import { isValid } from './isValid';
 import { normalizeSchema } from './normalizeSchema';
 import { checkCredentialsURLs } from './checkCredentialsURLs';
 import { mergeArray } from './mergeArray';
+import { constants } from './constants';
+import { formatFilename } from './formatFilename';
+import { formatUrlImage } from './formatUrlImage';
 
 export {
-  constants,
+  createEmotionCache,
+  getIssuers,
   getDeworkUser,
   getDiscordUser,
   getCredential,
@@ -23,9 +27,12 @@ export {
   openOAuthUrl,
   sortByDate,
   getWalletInformation,
-  getDID,
   isValid,
   normalizeSchema,
   checkCredentialsURLs,
-  mergeArray
+  mergeArray,
+  constants,
+  formatFilename,
+  formatUrlImage
 };
+export type { IIsuerParams };

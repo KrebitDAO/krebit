@@ -8,25 +8,28 @@ import {
   getCredential,
   getWalletInformation,
   openOAuthUrl,
-  sortByDate
+  IIsuerParams
 } from 'utils';
 
-const { NEXT_PUBLIC_GITHUB_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 interface IClaimValues {
   username: string;
+  private: boolean;
 }
 
 export const useGithubProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>({
-    username: ''
+    username: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const channel = new BroadcastChannel('github_oauth_channel');
 
   useEffect(() => {
@@ -48,7 +51,8 @@ export const useGithubProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string) => {
+  const handleFetchOAuth = (issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const state = 'github-' + generateUID(10);
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_GITHUB_CALLBACK}&state=${state}`;
@@ -74,15 +78,9 @@ export const useGithubProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'github',
+      type: 'Github',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: [
-        'digitalProperty',
-        'code',
-        'programing',
-        'development',
-        'workExperience'
-      ],
+      tags: ['DigitalProperty', 'Developer', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -97,10 +95,10 @@ export const useGithubProvider = () => {
 
     try {
       // when receiving Github oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'github') {
-        console.log('Saving Stamp', { type: 'github', proof: e.data });
+      if (e.target === 'Github') {
+        console.log('Saving Stamp', { type: 'Github', proof: e.data });
 
-        const session = window.localStorage.getItem('ceramic-session');
+        const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
@@ -112,6 +110,10 @@ export const useGithubProvider = () => {
 
         //Issue self-signed credential claiming the Github profile
         const claim = await getClaim(walletInformation.address, e.data);
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -138,7 +140,7 @@ export const useGithubProvider = () => {
           console.log('claimedCredentialId: ', claimedCredentialId);
           // Step 1-B: Send self-signed credential to the Issuer for verification
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_GITHUB_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 
@@ -164,11 +166,45 @@ export const useGithubProvider = () => {
     }
   };
 
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const stampTx = await Issuer.stampCredential(credential);
+      console.log('stampTx: ', stampTx);
+
+      setCurrentStamp({ transaction: stampTx });
+      setStatus('stamp_resolved');
+    } catch (error) {
+      setStatus('stamp_rejected');
+    }
+  };
+
+  const handleMintCredential = async credential => {
+    try {
+      setStatus('mint_pending');
+
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');
@@ -180,12 +216,6 @@ export const useGithubProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('github');
-      const getLatestGithubCredential = credentials
-        .filter(credential => credential.type.includes('github'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
-
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
         litSdk: LitJsSdk,
@@ -193,21 +223,21 @@ export const useGithubProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestGithubCredential);
-      console.log('stampTx: ', stampTx);
+      const mintTx = await Issuer.mintNFT(credential);
+      console.log('mintTx: ', mintTx);
 
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
     } catch (error) {
-      setStatus('stamp_rejected');
+      setStatus('mint_rejected');
     }
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -216,9 +246,11 @@ export const useGithubProvider = () => {
     handleFetchOAuth,
     handleStampCredential,
     handleClaimValues,
+    handleMintCredential,
     claimValues,
     status,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState, ReactNode } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';
 import { debounce } from 'ts-debounce';
@@ -9,23 +9,31 @@ import {
   getDiscordUser,
   openOAuthUrl,
   sortByDate,
+  IIsuerParams,
   getWalletInformation
 } from 'utils';
 
-const { NEXT_PUBLIC_DISCORD_NODE_URL } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
+interface IClaimValues {
+  private: boolean;
+}
+
 export const useDiscordProvider = () => {
+  const [claimValues, setClaimValues] = useState<IClaimValues>({
+    private: true
+  });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
+  const channel = new BroadcastChannel('discord_oauth_channel');
 
   useEffect(() => {
     if (!window) return;
-
-    const channel = new BroadcastChannel('discord_oauth_channel');
 
     const handler = async (msg: MessageEvent) => {
       const asyncFunction = async () =>
@@ -41,14 +49,13 @@ export const useDiscordProvider = () => {
       channel.removeEventListener('message', handler);
       channel.close();
     };
-  }, []);
+  }, [channel]);
 
-  const handleFetchOAuth = () => {
-    const authUrl = `https://discord.com/api/oauth2/authorize?response_type=token&scope=identify&client_id=${
-      process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CLIENT_ID
-    }&state=discord-${generateUID(10)}&redirect_uri=${
-      process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CALLBACK
-    }`;
+  const handleFetchOAuth = (issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
+    const state = `discord-${generateUID(10)}`;
+
+    const authUrl = `https://discord.com/api/oauth2/authorize?response_type=token&scope=identify&client_id=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CLIENT_ID}&state=${state}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CALLBACK}`;
 
     openOAuthUrl({
       url: authUrl
@@ -60,6 +67,7 @@ export const useDiscordProvider = () => {
       protocol: 'https',
       host: 'discord.com',
       id: payload.id,
+      username: payload.username.concat('#').concat(payload.discriminator),
       proofs
     };
 
@@ -67,13 +75,14 @@ export const useDiscordProvider = () => {
     const expiresSeconds = 300;
     expirationDate.setSeconds(expirationDate.getSeconds() + expiresSeconds);
     console.log('expirationDate: ', expirationDate);
+    console.log('claimValue: ', claimValue);
 
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'discord',
+      type: 'Discord',
       typeSchema: 'krebit://schemas/digitalProperty',
-      tags: ['digitalProperty', 'social', 'personhood'],
+      tags: ['DigitalProperty', 'Personhood'],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -88,10 +97,10 @@ export const useDiscordProvider = () => {
 
     try {
       // when receiving discord oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'discord') {
-        console.log('Saving Stamp', { type: 'discord', proof: e.data });
+      if (e.target === 'Discord') {
+        console.log('Saving Stamp', { type: 'Discord', proof: e.data });
 
-        const session = window.localStorage.getItem('ceramic-session');
+        const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
@@ -110,6 +119,10 @@ export const useDiscordProvider = () => {
           discordUser,
           e.data
         );
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -135,7 +148,7 @@ export const useDiscordProvider = () => {
           console.log('claimedCredentialId: ', claimedCredentialId);
           // Step 1-B: Send self-signed credential to the Issuer for verification
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_DISCORD_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 
@@ -161,11 +174,11 @@ export const useDiscordProvider = () => {
     }
   };
 
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');
@@ -178,12 +191,6 @@ export const useDiscordProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('discord');
-      const getLatestDiscordCredential = credentials
-        .filter(credential => credential.type.includes('discord'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
-
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
         litSdk: LitJsSdk,
@@ -191,7 +198,7 @@ export const useDiscordProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestDiscordCredential);
+      const stampTx = await Issuer.stampCredential(credential);
       console.log('stampTx: ', stampTx);
 
       setCurrentStamp({ transaction: stampTx });
@@ -201,12 +208,57 @@ export const useDiscordProvider = () => {
     }
   };
 
+  const handleMintCredential = async credential => {
+    try {
+      setStatus('mint_pending');
+
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const mintTx = await Issuer.mintNFT(credential);
+      console.log('mintTx: ', mintTx);
+
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
+    } catch (error) {
+      setStatus('mint_rejected');
+    }
+  };
+
+  const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = event.target;
+    setClaimValues(prevValues => ({
+      ...prevValues,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
+    handleClaimValues,
     handleStampCredential,
+    handleMintCredential,
+    claimValues,
     status,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

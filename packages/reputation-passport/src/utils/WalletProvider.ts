@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import { krbToken } from '../schemas';
+
+import { schemas } from '../schemas/index.js';
 
 export class WalletProvider extends ethers.providers.JsonRpcProvider {
   _wallet: ethers.Wallet;
@@ -37,7 +38,7 @@ export class WalletProvider extends ethers.providers.JsonRpcProvider {
     } else if (method == 'eth_chainId' || method.method == 'eth_chainId') {
       params(null, {
         result: `0x${Number(
-          krbToken[this.networkish.toString()].domain.chainId
+          schemas.krbToken[this.networkish.toString()].domain.chainId
         ).toString(16)}`
       });
     } else {

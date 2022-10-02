@@ -4,6 +4,8 @@ export type TwitterUserResponse = {
   id?: string;
   name?: string;
   username?: string;
+  followers?: number;
+  posts?: number;
 };
 
 interface TwitterAuthProps {
@@ -39,7 +41,7 @@ export const getTwitterUser = async (
 
 export const getTwitterFollowersCount = async (
   props: TwitterAuthProps
-): Promise<number> => {
+): Promise<TwitterUserResponse> => {
   const { client, state, code_challenge, code } = props;
   try {
     client.generateAuthURL({
@@ -56,7 +58,10 @@ export const getTwitterFollowersCount = async (
     const myUser = await twitterClient.users.findMyUser({
       'user.fields': ['public_metrics']
     });
-    return myUser.data.public_metrics.followers_count;
+    return {
+      ...myUser.data,
+      followers: myUser.data.public_metrics.followers_count
+    };
   } catch (err) {
     console.log('err: ', err);
     throw new Error(err);
@@ -65,7 +70,7 @@ export const getTwitterFollowersCount = async (
 
 export const getTwitterPostsCount = async (
   props: TwitterAuthProps
-): Promise<number> => {
+): Promise<TwitterUserResponse> => {
   const { client, state, code_challenge, code } = props;
   try {
     client.generateAuthURL({
@@ -82,9 +87,19 @@ export const getTwitterPostsCount = async (
     const myUser = await twitterClient.users.findMyUser({
       'user.fields': ['public_metrics']
     });
-    return myUser.data.public_metrics.tweet_count;
+
+    return {
+      ...myUser.data,
+      posts: myUser.data.public_metrics.tweet_count
+    };
   } catch (err) {
     console.log('err: ', err);
     throw new Error(err);
   }
+};
+
+export const twitter = {
+  getTwitterUser,
+  getTwitterFollowersCount,
+  getTwitterPostsCount
 };

@@ -9,6 +9,7 @@ import { PhoneController } from './phone';
 import { EmailController } from './email';
 import { GithubController } from './github';
 import { PersonaController } from './persona';
+import { MetadataController } from './metadata';
 
 export {
   QuestappController,
@@ -21,5 +22,6 @@ export {
   PhoneController,
   EmailController,
   GithubController,
-  PersonaController
+  PersonaController,
+  MetadataController
 };

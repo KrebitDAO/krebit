@@ -8,30 +8,33 @@ import {
   getVeriffSession,
   sortByDate,
   getWalletInformation,
-  generateUID
+  generateUID,
+  IIsuerParams
 } from 'utils';
 import { debounce } from 'ts-debounce';
 
 interface IClaimValues {
   firstName: string;
   lastName: string;
+  private: boolean;
 }
 
-const { NEXT_PUBLIC_VERIFF_NODE_URL } = process.env;
-const { NEXT_PUBLIC_VERIFF_NODE_ADDRESS } = process.env;
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 export const useVeriffProvider = () => {
   const [veriffSession, setVeriffSession] = useState({});
   const [claimValues, setClaimValues] = useState<IClaimValues>({
     firstName: '',
-    lastName: ''
+    lastName: '',
+    private: true
   });
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
+  const [currentMint, setCurrentMint] = useState<Object | undefined>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const channel = new BroadcastChannel('veriff_oauth_channel');
 
   useEffect(() => {
@@ -53,7 +56,8 @@ export const useVeriffProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = async (address: string) => {
+  const handleFetchOAuth = async (address: string, issuer: IIsuerParams) => {
+    setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
         person: {
@@ -79,11 +83,12 @@ export const useVeriffProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'legalName',
+      type: 'LegalName',
       typeSchema: 'krebit://schemas/legalName',
-      tags: ['veriff', 'fullName', 'kyc', 'personhood'],
+      tags: ['Veriff', 'KYC', 'Personhood'],
       value: {
-        ...claimValues,
+        firstName: claimValues.firstName,
+        lastName: claimValues.lastName,
         fullName: claimValues.firstName
           .concat(' ')
           .concat(claimValues.lastName),
@@ -92,9 +97,7 @@ export const useVeriffProvider = () => {
           nonce: `${generateUID(10)}`
         }
       },
-      expirationDate: new Date(expirationDate).toISOString(),
-      encrypt: 'lit' as 'lit',
-      shareEncryptedWith: NEXT_PUBLIC_VERIFF_NODE_ADDRESS
+      expirationDate: new Date(expirationDate).toISOString()
     };
   };
 
@@ -108,9 +111,9 @@ export const useVeriffProvider = () => {
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       if (e.target === 'veriff') {
-        console.log('Saving Stamp', { type: 'legalName', proof: e.data });
+        console.log('Saving Stamp', { type: 'LegalName', proof: e.data });
 
-        const session = window.localStorage.getItem('ceramic-session');
+        const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
@@ -122,6 +125,10 @@ export const useVeriffProvider = () => {
 
         // Issue self-signed credential claiming the veriff
         const claim = await getClaim(walletInformation.address, e.data);
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
         console.log('claim: ', claim);
 
         const Issuer = new Krebit.core.Krebit({
@@ -151,7 +158,7 @@ export const useVeriffProvider = () => {
           // Step 1-B: Send self-signed credential to the Issuer for verification
 
           const issuedCredential = await getCredential({
-            verifyUrl: NEXT_PUBLIC_VERIFF_NODE_URL,
+            verifyUrl: currentIssuer.verificationUrl,
             claimedCredentialId
           });
 
@@ -177,11 +184,45 @@ export const useVeriffProvider = () => {
     }
   };
 
-  const handleStampCredential = async () => {
+  const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
 
-      const session = window.localStorage.getItem('ceramic-session');
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ethProvider: walletInformation.ethProvider,
+        address: walletInformation.address,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.read(walletInformation.address);
+
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      const stampTx = await Issuer.stampCredential(credential);
+      console.log('stampTx: ', stampTx);
+
+      setCurrentStamp({ transaction: stampTx });
+      setStatus('stamp_resolved');
+    } catch (error) {
+      setStatus('stamp_rejected');
+    }
+  };
+
+  const handleMintCredential = async credential => {
+    try {
+      setStatus('mint_pending');
+
+      const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
 
       const currentType = localStorage.getItem('auth-type');
@@ -193,12 +234,6 @@ export const useVeriffProvider = () => {
       });
       await passport.read(walletInformation.address);
 
-      const credentials = await passport.getCredentials('legalName');
-      const getLatestVeriffCredential = credentials
-        .filter(credential => credential.type.includes('veriff'))
-        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate))
-        .at(-1);
-
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
         litSdk: LitJsSdk,
@@ -206,22 +241,21 @@ export const useVeriffProvider = () => {
       });
       await Issuer.connect(currentSession);
 
-      const stampTx = await Issuer.stampCredential(getLatestVeriffCredential);
-      console.log('stampTx: ', stampTx);
+      const mintTx = await Issuer.mintNFT(credential);
+      console.log('mintTx: ', mintTx);
 
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
+      setCurrentMint({ transaction: mintTx });
+      setStatus('mint_resolved');
     } catch (error) {
-      setStatus('stamp_rejected');
+      setStatus('mint_rejected');
     }
   };
 
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
+    const { name, value, type, checked } = event.target;
     setClaimValues(prevValues => ({
       ...prevValues,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -230,9 +264,11 @@ export const useVeriffProvider = () => {
     handleFetchOAuth,
     handleStampCredential,
     handleClaimValues,
+    handleMintCredential,
     claimValues,
     status,
     currentCredential,
-    currentStamp
+    currentStamp,
+    currentMint
   };
 };

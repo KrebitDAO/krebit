@@ -1,10 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-interface IBoxStepWrapperProps {
-  hasInputs: boolean;
-}
-
 export const Wrapper = styled.div`
   ${({ theme }) => css`
     position: fixed;
@@ -26,7 +22,9 @@ export const Wrapper = styled.div`
       box-shadow: ${theme.shadows.smallest};
       padding: 36px 20px;
       margin: 0 auto;
+      max-height: 98%;
       width: 98%;
+      overflow-y: auto;
 
       @media (min-width: ${theme.screens.lg}) {
         width: 577px;
@@ -145,8 +143,8 @@ export const Wrapper = styled.div`
   `}
 `;
 
-export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
-  ${({ theme, hasInputs }) => css`
+export const BoxStepWrapper = styled.div`
+  ${({ theme }) => css`
     width: 100%;
     padding: 20px;
     border-radius: 15px;
@@ -168,47 +166,59 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
       align-items: center;
       justify-content: space-between;
 
-      .verify-box-step-content-texts {
-        .verify-box-step-content-title {
-          margin: 0;
-          font-size: ${theme.fonts.base};
-          color: ${theme.colors.white}B3;
+      .verify-box-step-content-title {
+        margin: 0;
+        font-size: ${theme.fonts.base};
+        color: ${theme.colors.white}B3;
 
-          @media (min-width: ${theme.screens.lg}) {
-            font-size: ${theme.fonts.xl};
-          }
-        }
-
-        .verify-box-step-content-description {
-          margin: 0;
-          font-size: ${theme.fonts.sm};
-          color: ${theme.colors.white}B3;
-
-          @media (min-width: ${theme.screens.lg}) {
-            font-size: ${theme.fonts.base};
-          }
-        }
-      }
-
-      .verify-box-step-content-icon {
-        margin-left: 20px;
-
-        & > svg {
-          width: 30px;
-          height: 30px;
-          fill: ${theme.colors.white};
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.xl};
         }
       }
     }
 
-    .verify-box-step-inputs {
+    .verify-box-step-content-description {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.white}B3;
+
+      @media (min-width: ${theme.screens.lg}) {
+        font-size: ${theme.fonts.base};
+      }
+    }
+
+    .verify-box-step-content-dots {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-decoration: underline;
+    }
+
+    .verify-box-step-content-icon {
+      margin-left: 20px;
+
+      & > svg {
+        width: 30px;
+        height: 30px;
+        fill: ${theme.colors.white};
+      }
+    }
+
+    .verify-box-step-content-list {
+      margin: 0;
+      margin-top: 24px;
+      padding: 0;
+      padding-inline-start: 20px;
+    }
+
+    .verify-box-step-fields {
       display: grid;
       grid-gap: 24px;
       margin-top: 24px;
 
       @media (min-width: ${theme.screens.lg}) {
         margin: 24px 0;
-        grid-template-columns: repeat(2, auto);
       }
 
       .verify-box-step-input {
@@ -233,13 +243,10 @@ export const BoxStepWrapper = styled.div<IBoxStepWrapperProps>`
     }
 
     .verify-box-step-button {
-      min-width: 85px;
+      width: 85px;
       height: 38px;
       margin-top: 24px;
-
-      @media (min-width: ${theme.screens.lg}) {
-        float: right;
-      }
+      float: right;
     }
   `}
 `;

@@ -1,91 +1,58 @@
-import {
-  Approval,
-  Badge,
-  Discord,
-  Email,
-  Phone,
-  Twitter,
-  Github,
-  Spect
-} from 'components/Icons';
+import { Discord } from 'components/Icons';
 
-const PERSONHOOD_CREDENTIALS = [
-  {
-    id: 'discord',
-    text: 'Discord',
-    icon: <Discord />
+const DEFAULT_EMPTY_CARD_PERSONHOOD = {
+  title: 'Platform',
+  description: 'Username',
+  dates: {
+    issuanceDate: {
+      text: 'ISSUED',
+      value: new Date().toISOString()
+    },
+    expirationDate: {
+      text: 'EXPIRES',
+      value: new Date().toISOString()
+    }
   },
-  {
-    id: 'twitter',
-    text: 'Twitter',
-    icon: <Twitter />
-  },
-  {
-    id: 'twitterFollowers',
-    text: 'Twitter Followers',
-    icon: <Twitter />
-  },
-  {
-    id: 'phone',
-    text: 'Phone (Twilio)',
-    icon: <Phone />
-  },
-  {
-    id: 'email',
-    text: 'Email (Twilio)',
-    icon: <Email />
-  },
-  {
-    id: 'veriff',
-    text: 'Legal Name (Veriff)',
-    icon: <Badge />,
-    isDisabled: true
-  },
-  {
-    id: 'persona',
-    text: 'Legal Name (Persona)',
-    icon: <Badge />
-    //isDisabled: true
-  }
-];
-
-const WORK_CREDENTIALS = [
-  {
-    id: 'github',
-    text: 'Github',
-    icon: <Github />,
-    image:
-      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
-  },
-  {
-    id: 'githubFollowers',
-    text: 'Github Followers',
-    icon: <Github />,
-    image:
-      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
-  },
-  {
-    id: 'spect',
-    text: 'Spect',
-    icon: <Spect />,
-    isDisabled: true
-  }
-];
-
-const COMMUNITY_CREDENTIALS = [
-  {
-    id: 'issuer',
-    text: 'Issuer',
-    icon: <Approval />,
-    image:
-      'https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png'
-  }
-];
-
-const constants = {
-  PERSONHOOD_CREDENTIALS,
-  WORK_CREDENTIALS,
-  COMMUNITY_CREDENTIALS
+  icon: <Discord />,
+  isIssued: false
 };
 
-export { constants };
+const DEFAULT_EMPTY_CARD_WORK = {
+  title: 'Job Title',
+  description: 'Company / Dates',
+  dates: {
+    issuanceDate: {
+      text: 'ISSUED',
+      value: new Date().toISOString()
+    },
+    expirationDate: {
+      text: 'EXPIRES',
+      value: new Date().toISOString()
+    }
+  },
+  image: '/imgs/logos/Logo.svg',
+  isIssued: false
+};
+
+const DEFAULT_EMPTY_CARD_COMMUNITY = {
+  title: 'Institution Title',
+  description: 'Institution Company',
+  dates: {
+    issuanceDate: {
+      text: 'ISSUED',
+      value: new Date().toISOString()
+    },
+    expirationDate: {
+      text: 'EXPIRES',
+      value: new Date().toISOString()
+    }
+  },
+  image: '',
+  isIssued: false
+};
+
+export const constants = {
+  DEFAULT_EMPTY_CARD_PERSONHOOD,
+  DEFAULT_EMPTY_CARD_WORK,
+  DEFAULT_EMPTY_CARD_COMMUNITY
+};

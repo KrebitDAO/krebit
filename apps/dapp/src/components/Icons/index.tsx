@@ -21,6 +21,9 @@ import { Delegate } from './Delegate';
 import { MoreVert } from './MoreVert';
 import { Github } from './Github';
 import { Spect } from './Spect';
+import { OpenInNew } from './OpenInNew';
+import { Upload } from './Upload';
+import { Token } from './Token';
 
 export {
   Close,
@@ -45,5 +48,8 @@ export {
   Delegate,
   MoreVert,
   Github,
-  Spect
+  Spect,
+  OpenInNew,
+  Upload,
+  Token
 };

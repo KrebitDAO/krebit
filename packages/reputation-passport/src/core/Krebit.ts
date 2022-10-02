@@ -12,15 +12,10 @@ import {
 } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
-import { ceramic, graph, Lit } from '../lib';
-import {
-  issueCredential,
-  validateSchema,
-  ClaimProps,
-  hashClaimValue
-} from '../utils';
-import { krbToken } from '../schemas';
-import { config, IConfigProps } from '../config';
+import { lib } from '../lib/index.js';
+import { utils, ClaimProps } from '../utils/index.js';
+import { schemas } from '../schemas/index.js';
+import { config, IConfigProps } from '../config/index.js';
 
 interface IProps extends IConfigProps {
   wallet: ethers.Signer;
@@ -37,6 +32,12 @@ interface StampsProps {
   first?: number;
   type?: string;
   claimId?: string;
+}
+
+interface EncryptedProps {
+  encryptedSymmetricKey: string;
+  encryptedString?: string;
+  accessControlConditions?: string;
 }
 
 const getEIP712CredentialFromStamp = (stamp: any) =>
@@ -58,6 +59,7 @@ export class Krebit {
   public address: string;
   public did: string;
   public krbContract: any;
+  public nftContract: any;
   public wallet: ethers.Signer;
   public ethProvider:
     | ethers.providers.Provider
@@ -74,8 +76,13 @@ export class Krebit {
     this.ceramic = ceramicClient;
     this.wallet = props.wallet;
     this.krbContract = new ethers.Contract(
-      krbToken[this.currentConfig.network].address,
-      krbToken.abi,
+      schemas.krbToken[this.currentConfig.network].address,
+      schemas.krbToken.abi,
+      props.wallet
+    );
+    this.nftContract = new ethers.Contract(
+      schemas.krebitNFT[this.currentConfig.network].address,
+      schemas.krebitNFT.abi,
       props.wallet
     );
   }
@@ -84,12 +91,12 @@ export class Krebit {
     if (currentSession) {
       const session = await DIDSession.fromSession(currentSession);
 
-      this.idx = await ceramic.authDIDSession({
+      this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         session
       });
     } else {
-      this.idx = await ceramic.authDIDSession({
+      this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         address: this.address,
         ethProvider: this.ethProvider
@@ -102,7 +109,7 @@ export class Krebit {
   };
 
   isConnected = async () => {
-    const currentSession = localStore.get('ceramic-session');
+    const currentSession = localStore.get('did-session');
 
     if (!currentSession) return false;
 
@@ -110,7 +117,10 @@ export class Krebit {
 
     if (session.hasSession && session.isExpired) return false;
 
-    this.idx = await ceramic.authDIDSession({ client: this.ceramic, session });
+    this.idx = await lib.ceramic.authDIDSession({
+      client: this.ceramic,
+      session
+    });
     this.did = this.idx.id;
 
     return this.idx.authenticated;
@@ -142,6 +152,7 @@ export class Krebit {
   };
 
   getTypeSchema = async (type?: string, did?: string) => {
+    if (!this.idx) throw new Error('Not connected');
     try {
       const content = await this.idx.get('claimTypes', did ? did : this.did);
 
@@ -159,7 +170,7 @@ export class Krebit {
 
   // get credential from ceramic
   getCredential = async (vcId: string) => {
-    if (!this.isConnected()) throw new Error('Not connected');
+    if (!this.idx) throw new Error('Not connected');
     if (!vcId.startsWith('ceramic://')) return null;
     const stream = await TileDocument.load(this.idx.ceramic, vcId);
     return stream.content as W3CCredential;
@@ -221,7 +232,7 @@ export class Krebit {
 
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-      const lit = new Lit();
+      const lit = new lib.Lit();
       const stream = await TileDocument.load(
         this.idx.ceramic,
         encrypted.accessControlConditions
@@ -252,7 +263,7 @@ export class Krebit {
 
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-      const lit = new Lit();
+      const lit = new lib.Lit();
       const stream = await TileDocument.load(
         this.idx.ceramic,
         encrypted.accessControlConditions
@@ -271,20 +282,45 @@ export class Krebit {
     }
   };
 
-  decryptClaimValue = async (w3cCredential: W3CCredential) => {
+  decryptCredential = async (w3cCredential: W3CCredential) => {
+    console.log('decrypting', w3cCredential);
     if (!this.isConnected()) throw new Error('Not connected');
     if (w3cCredential.credentialSubject.encrypted === 'lit') {
       try {
         const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
-        const lit = new Lit();
+        return await this.decryptClaimValue(encrypted);
+      } catch (err) {
+        throw new Error(`Could not decrypt: ${err.message}`);
+      }
+    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+      const claimedCredential: W3CCredential = await this.getCredential(
+        w3cCredential.id
+      );
+      if (claimedCredential) {
+        return await this.decryptCredential(claimedCredential);
+      } else {
+        throw new Error(`Could not retrieve claimed credential value`);
+      }
+    }
+  };
+
+  decryptClaimValue = async (encryptedClaimValue: EncryptedProps) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    if (
+      encryptedClaimValue.encryptedString &&
+      encryptedClaimValue.encryptedSymmetricKey &&
+      encryptedClaimValue.accessControlConditions
+    ) {
+      try {
+        const lit = new lib.Lit();
         const stream = await TileDocument.load(
           this.idx.ceramic,
-          encrypted.accessControlConditions
+          encryptedClaimValue.accessControlConditions
         );
         const accessControlConditions = stream.content as any;
         const result = await lit.decrypt(
-          encrypted.encryptedString,
-          encrypted.encryptedSymmetricKey,
+          encryptedClaimValue.encryptedString,
+          encryptedClaimValue.encryptedSymmetricKey,
           accessControlConditions,
           this.wallet
         );
@@ -292,25 +328,23 @@ export class Krebit {
           return JSON.parse(result);
         }
       } catch (err) {
-        return { encrypted: '********' };
+        throw new Error(`Could not decrypt: ${err.message}`);
       }
-    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
-      const claimedCredential: W3CCredential = await this.getCredential(
-        w3cCredential.id
-      );
-      return this.decryptClaimValue(claimedCredential);
+    } else {
     }
   };
 
   getClaimValue = async (w3cCredential: W3CCredential) => {
-    if (w3cCredential.credentialSubject.encrypted === 'lit') {
-      return { encrypted: '********' };
-    } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
+    if (w3cCredential.credentialSubject.encrypted === 'hash') {
       const claimedCredential: W3CCredential = await this.getCredential(
         w3cCredential.id
       );
-      return this.getClaimValue(claimedCredential);
-    } else if (w3cCredential.credentialSubject.encrypted === 'none') {
+      if (claimedCredential) {
+        return await this.getClaimValue(claimedCredential);
+      } else {
+        throw new Error(`Could not retrieve claimed credential value`);
+      }
+    } else {
       return JSON.parse(w3cCredential.credentialSubject.value);
     }
   };
@@ -318,7 +352,7 @@ export class Krebit {
   // Check if the plain claimed value matches the hashed credential value
   compareClaimValueHash = (claimValue: any, w3cCredential: W3CCredential) => {
     if (w3cCredential.credentialSubject.encrypted === 'hash') {
-      const hash = hashClaimValue({
+      const hash = utils.hashClaimValue({
         did: w3cCredential.issuer.id,
         value: claimValue
       });
@@ -333,12 +367,12 @@ export class Krebit {
     //Get verifications from subgraph
     let where = {};
     where['credentialStatus'] = 'Issued';
-    where['credentialSubject_'] = { _type: 'issuer' };
+    where['credentialSubject_'] = { _type: 'Issuer' };
     where['claimId_starts_with'] = 'ceramic://';
     if (type) where['_type_contains_nocase'] = type;
 
     //Get verifications from subgraph
-    return await graph.verifiableCredentialsQuery({
+    return await lib.graph.verifiableCredentialsQuery({
       first: first ? first : 100,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',
@@ -354,12 +388,12 @@ export class Krebit {
     // Check the types of the claim before issuing
 
     try {
-      await validateSchema({ idx: this.idx, claim });
+      await utils.validateSchema({ idx: this.idx, claim });
     } catch (err) {
       throw new Error(err);
     }
 
-    return await issueCredential({
+    return await utils.issueCredential({
       wallet: this.wallet as ethers.Wallet,
       idx: this.idx,
       claim
@@ -393,8 +427,8 @@ export class Krebit {
 
           // Initialize your dapp here like getting user accounts etc
           const metaContract = new ethers.Contract(
-            krbToken[this.currentConfig.network].address,
-            krbToken.abi,
+            schemas.krbToken[this.currentConfig.network].address,
+            schemas.krbToken.abi,
             biconomy.getSignerByAddress(this.address)
           );
 
@@ -406,7 +440,60 @@ export class Krebit {
           );
           let txParams = {
             data: data,
-            to: krbToken[this.currentConfig.network].address,
+            to: schemas.krbToken[this.currentConfig.network].address,
+            from: this.address,
+            signatureType: 'EIP712_SIGN'
+          };
+          const tx = await provider.send('eth_sendTransaction', [txParams]);
+          resolve(tx);
+        })
+      );
+    }
+  };
+
+  // Mint
+  // on-chain  (claim Krebit NFT)
+  mintCredentialNFT = async (w3cCredential: W3CCredential) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    const balance = await this.wallet.getBalance();
+    console.log('balance: ', balance);
+    if (balance > ethers.constants.Zero) {
+      return await this.mintNFT(w3cCredential);
+    } else {
+      // Pass connected wallet provider under walletProvider field
+      let biconomy = new Biconomy(
+        this.ethProvider as ethers.providers.ExternalProvider,
+        {
+          apiKey: this.currentConfig.biconomyKey,
+          debug: true,
+          walletProvider: this.ethProvider,
+          strictMode: false
+        }
+      );
+
+      return await new Promise(resolve =>
+        biconomy.onEvent(biconomy.READY, async () => {
+          const provider = biconomy.getEthersProvider();
+
+          // Initialize your dapp here like getting user accounts etc
+          const metaContract = new ethers.Contract(
+            schemas.krebitNFT[this.currentConfig.network].address,
+            schemas.krebitNFT.abi,
+            biconomy.getSignerByAddress(this.address)
+          );
+
+          const eip712credential = getEIP712Credential(w3cCredential);
+
+          let { data } =
+            await metaContract.populateTransaction.mintWithCredential(
+              this.address,
+              w3cCredential.credentialSubject.type,
+              eip712credential
+            );
+          let txParams = {
+            data: data,
+            to: schemas.krebitNFT[this.currentConfig.network].address,
             from: this.address,
             signatureType: 'EIP712_SIGN'
           };
@@ -433,6 +520,50 @@ export class Krebit {
     );
 
     return tx.hash;
+  };
+
+  // on-chain  (claim Krebit NFT)
+  mintNFT = async (w3cCredential: W3CCredential) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    console.log('Minting credential: ', w3cCredential);
+    const eip712credential = getEIP712Credential(w3cCredential);
+    const price = await this.nftContract.price();
+    const tx = await this.nftContract.mintWithCredential(
+      this.address,
+      w3cCredential.credentialSubject.type,
+      eip712credential,
+      0x0,
+      {
+        from: this.address,
+        value: price.toString()
+      }
+    );
+    console.log('mint Tx: ', tx);
+    return tx.hash;
+  };
+
+  // on-chain  (Krebit NFT credentialMinted)
+  isMinted = async (w3cCredential: W3CCredential) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+    let tokenID = ethers.utils.keccak256(
+      ethers.utils.defaultAbiCoder.encode(
+        ['string'],
+        [w3cCredential.credentialSubject.type]
+      )
+    );
+    return await this.nftContract.credentialMinted(tokenID);
+  };
+
+  // on-chain  (Krebit NFT balance)
+  nftBalance = async (credentialType: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    const balance = await this.nftContract.balanceOfCredential(
+      this.address,
+      credentialType
+    );
+
+    return balance;
   };
 
   stampCost = async (w3cCredential: W3CCredential) => {
@@ -475,7 +606,7 @@ export class Krebit {
     if (claimId) where['claimId'] = claimId;
 
     //Get verifications from subgraph
-    return await graph.verifiableCredentialsQuery({
+    return await lib.graph.verifiableCredentialsQuery({
       first: first ? first : 100,
       orderBy: 'issuanceDate',
       orderDirection: 'desc',
