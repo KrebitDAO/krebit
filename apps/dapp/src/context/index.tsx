@@ -80,7 +80,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         address: information.address,
         wallet: information.wallet,
         litSdk: LitJsSdk,
-        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL1
+        ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
       const isIssuerConnected = await issuer.isConnected();
 

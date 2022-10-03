@@ -45,6 +45,7 @@ export const Input = (props: IProps) => {
           name={name}
           label={placeholder}
           value={value}
+          type={type}
           onChange={onChange}
           variant="outlined"
           multiline={isMultiline}
