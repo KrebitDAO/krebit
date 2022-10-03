@@ -270,7 +270,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            twitterProvider.handleMintCredential(
+                            twitterProvider.handleStampCredential(
                               twitterProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
@@ -408,7 +408,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            githubProvider.handleMintCredential(
+                            githubProvider.handleStampCredential(
                               githubProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
@@ -1049,7 +1049,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            emailProvider.handleMintCredential(
+                            emailProvider.handleStampCredential(
                               emailProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
