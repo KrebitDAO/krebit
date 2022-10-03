@@ -139,7 +139,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            githubFollowersProvider.handleMintCredential(
+                            githubFollowersProvider.handleStampCredential(
                               githubFollowersProvider.currentCredential ||
                                 currentWork?.credential
                             )
@@ -283,7 +283,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            githubRepoProvider.handleMintCredential(
+                            githubRepoProvider.handleStampCredential(
                               githubRepoProvider.currentCredential ||
                                 currentWork?.credential
                             )
@@ -452,7 +452,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            githubRepoProvider.handleMintCredential(
+                            githubRepoProvider.handleStampCredential(
                               githubRepoProvider.currentCredential ||
                                 currentWork?.credential
                             )

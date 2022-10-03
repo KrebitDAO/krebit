@@ -325,7 +325,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            issuerProvider.handleMintCredential(
+                            issuerProvider.handleStampCredential(
                               issuerProvider.currentCredential ||
                                 currentCommunity?.credential
                             )
@@ -473,7 +473,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            githubOrgMemberProvider.handleMintCredential(
+                            githubOrgMemberProvider.handleStampCredential(
                               githubOrgMemberProvider.currentCredential ||
                                 currentCommunity?.credential
                             )
@@ -620,7 +620,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            discordGuildOwnerProvider.handleMintCredential(
+                            discordGuildOwnerProvider.handleStampCredential(
                               discordGuildOwnerProvider.currentCredential ||
                                 currentCommunity?.credential
                             )
@@ -769,7 +769,7 @@ export const VerifyCredential = (props: IProps) => {
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            discordGuildMemberProvider.handleMintCredential(
+                            discordGuildMemberProvider.handleStampCredential(
                               discordGuildMemberProvider.currentCredential ||
                                 currentCommunity?.credential
                             )
