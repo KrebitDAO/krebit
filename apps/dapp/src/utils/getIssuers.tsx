@@ -28,7 +28,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Discord',
     description: 'Krebit Verification Node',
     icon: <Discord />,
-    verificationUrl: 'http://localhost:4000/discord',
+    verificationUrl: process.env.NEXT_PUBLIC_DISCORD_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -38,7 +38,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Twitter',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
-    verificationUrl: 'http://localhost:4000/twitter',
+    verificationUrl: process.env.NEXT_PUBLIC_TWITTER_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -50,7 +50,7 @@ const PERSONHOOD_CREDENTIALS = [
     icon: <Github />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: 'http://localhost:4000/github',
+    verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -61,7 +61,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Phone',
     description: 'Krebit Verification Node',
     icon: <Phone />,
-    verificationUrl: 'http://localhost:4000/phone',
+    verificationUrl: process.env.NEXT_PUBLIC_PHONE_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -71,7 +71,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Email',
     description: 'Krebit Verification Node',
     icon: <Email />,
-    verificationUrl: 'http://localhost:4000/email',
+    verificationUrl: process.env.NEXT_PUBLIC_EMAIL_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -81,7 +81,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Legal Name (Veriff)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
-    verificationUrl: 'http://localhost:4000/veriff',
+    verificationUrl: process.env.NEXT_PUBLIC_VERIFF_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '1.5',
@@ -92,7 +92,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Legal Name (Persona)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
-    verificationUrl: 'http://localhost:4000/persona',
+    verificationUrl: process.env.NEXT_PUBLIC_PERSONA_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '2.5'
@@ -107,7 +107,7 @@ const WORK_CREDENTIALS = [
     icon: <Github />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: 'http://localhost:4000/github',
+    verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -119,7 +119,7 @@ const WORK_CREDENTIALS = [
     icon: <Github />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: 'http://localhost:4000/github',
+    verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -131,7 +131,7 @@ const WORK_CREDENTIALS = [
     icon: <Github />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: 'http://localhost:4000/github',
+    verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -141,7 +141,7 @@ const WORK_CREDENTIALS = [
     entity: 'Spect',
     description: 'Krebit Verification Node',
     icon: <Spect />,
-    verificationUrl: 'http://localhost:4000/spect',
+    verificationUrl: process.env.NEXT_PUBLIC_SPECT_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0',
@@ -155,7 +155,7 @@ const COMMUNITY_CREDENTIALS = [
     entity: 'Twitter Followers > 1K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
-    verificationUrl: 'http://localhost:4000/twitter',
+    verificationUrl: process.env.NEXT_PUBLIC_TWITTER_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -167,7 +167,7 @@ const COMMUNITY_CREDENTIALS = [
     icon: <Discord />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
-    verificationUrl: 'http://localhost:4000/discord',
+    verificationUrl: process.env.NEXT_PUBLIC_DISCORD_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -179,7 +179,7 @@ const COMMUNITY_CREDENTIALS = [
     icon: <Discord />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
-    verificationUrl: 'http://localhost:4000/discord',
+    verificationUrl: process.env.NEXT_PUBLIC_DISCORD_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0'
@@ -191,7 +191,7 @@ const COMMUNITY_CREDENTIALS = [
     icon: <Github />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: 'http://localhost:4000/github',
+    verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
 
@@ -204,7 +204,7 @@ const COMMUNITY_CREDENTIALS = [
     icon: <Approval />,
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
-    verificationUrl: 'http://localhost:4000/issuer',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL,
     did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
     price: '0',
