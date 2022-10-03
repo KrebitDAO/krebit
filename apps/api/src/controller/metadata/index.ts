@@ -21,8 +21,14 @@ export const MetadataController = async (
       throw new Error(`No tokenId in params`);
     }
 
+    const types = getNFTCredentialTypes();
     const tokenId = request.params.tokenId;
-    const tokenType = getNFTCredentialTypes()[tokenId];
+    if (tokenId === 'all') {
+      return response.json(types);
+    }
+
+    const tokenType = types[tokenId];
+    if (!tokenType) return response.status(404).send('Not found.');
     console.log('Credential type:', tokenType);
 
     /* TODO get credential types from getIssuers
