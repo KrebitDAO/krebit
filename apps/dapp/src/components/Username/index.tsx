@@ -240,16 +240,6 @@ export const Username = () => {
                   </div>
                 </div>
                 <div className="profile-buttons">
-                  <div
-                    className="profile-buttons-rounded"
-                    ref={parentShareContentRef}
-                  >
-                    <Button
-                      icon={<Share />}
-                      onClick={handleIsShareContentOpen}
-                      styleType="border-rounded"
-                    />
-                  </div>
                   {currentDIDFromURL !== auth?.did ? (
                     <>
                       <div className="profile-buttons-container">
@@ -274,6 +264,16 @@ export const Username = () => {
                       </div>
                     </>
                   )}
+                  <div
+                    className="profile-buttons-rounded"
+                    ref={parentShareContentRef}
+                  >
+                    <Button
+                      icon={<Share />}
+                      onClick={handleIsShareContentOpen}
+                      styleType="border-rounded"
+                    />
+                  </div>
                   {isShareContentOpen && (
                     <ShareContentModal
                       parentRef={parentShareContentRef}
