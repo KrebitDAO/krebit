@@ -24,6 +24,10 @@ import { Spect } from './Spect';
 import { OpenInNew } from './OpenInNew';
 import { Upload } from './Upload';
 import { Token } from './Token';
+import { Share } from './Share';
+import { Facebook } from './Facebook';
+import { Telegram } from './Telegram';
+import { Whatsapp } from './Whatsapp';
 
 export {
   Close,
@@ -51,5 +55,9 @@ export {
   Spect,
   OpenInNew,
   Upload,
-  Token
+  Token,
+  Share,
+  Facebook,
+  Telegram,
+  Whatsapp
 };

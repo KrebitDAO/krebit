@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 
@@ -11,6 +11,8 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
+import { ShareContentModal } from 'components/ShareContentModal';
+import { Share } from 'components/Icons';
 import { isValid, normalizeSchema, mergeArray, formatUrlImage } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
@@ -79,6 +81,7 @@ export const Username = () => {
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const { query, push } = useRouter();
   const {
     auth,
@@ -89,6 +92,7 @@ export const Username = () => {
   const windowSize = useWindowSize();
   const isDesktop = windowSize.width >= 1024;
   const isLoading = status === 'idle' || status === 'pending';
+  const parentShareContentRef = useRef(null);
 
   useEffect(() => {
     if (!window) return;
@@ -139,6 +143,21 @@ export const Username = () => {
     setIsEditProfileOpen(prevState => !prevState);
   };
 
+  const handleIsShareContentOpen = async () => {
+    const currentUrl = window.location.href;
+
+    if (!isDesktop && window?.navigator?.share) {
+      await window.navigator.share({
+        title: 'Krebit Reputation credentials',
+        text: 'Krebit Reputation credentials',
+        url: currentUrl
+      });
+      return;
+    }
+
+    setIsShareContentOpen(prevState => !prevState);
+  };
+
   const handleSendMessage = () => {
     if (!auth?.isAuthenticated) {
       handleOpenConnectWallet();
@@ -184,6 +203,7 @@ export const Username = () => {
             profilePicture={
               formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
             }
+            isCurrentProfile={currentDIDFromURL !== auth?.did}
           >
             <div className="profile-container">
               <Background image={formatUrlImage(profile?.background)} />
@@ -219,24 +239,48 @@ export const Username = () => {
                     </span>
                   </div>
                 </div>
-                {currentDIDFromURL !== auth?.did ? (
-                  <div className="profile-buttons">
-                    <Button text="Follow" onClick={() => {}} />
+                <div className="profile-buttons">
+                  <div
+                    className="profile-buttons-rounded"
+                    ref={parentShareContentRef}
+                  >
                     <Button
-                      text="Send Message"
-                      onClick={handleSendMessage}
-                      styleType="border"
+                      icon={<Share />}
+                      onClick={handleIsShareContentOpen}
+                      styleType="border-rounded"
                     />
                   </div>
-                ) : (
-                  <div className="profile-button">
-                    <Button
-                      text="Edit profile"
-                      onClick={handleEditProfile}
-                      styleType="border"
+                  {currentDIDFromURL !== auth?.did ? (
+                    <>
+                      <div className="profile-buttons-container">
+                        <Button text="Follow" onClick={() => {}} />
+                      </div>
+                      <div className="profile-buttons-container">
+                        <Button
+                          text="Send Message"
+                          onClick={handleSendMessage}
+                          styleType="border"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="profile-buttons-container">
+                        <Button
+                          text="Edit profile"
+                          onClick={handleEditProfile}
+                          styleType="border"
+                        />
+                      </div>
+                    </>
+                  )}
+                  {isShareContentOpen && (
+                    <ShareContentModal
+                      parentRef={parentShareContentRef}
+                      onClose={handleIsShareContentOpen}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
             <div className="content-container">
