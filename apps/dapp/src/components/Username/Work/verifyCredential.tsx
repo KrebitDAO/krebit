@@ -445,14 +445,14 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'polygon',
                               'tx',
-                              githubRepoProvider.currentStamp ||
+                              githubRepoCollaboratorProvider.currentStamp ||
                                 currentWork?.stamps[0]
                             )
                         }
                       : {
                           text: 'Stamp',
                           onClick: () =>
-                            githubRepoProvider.handleStampCredential(
+                            githubRepoCollaboratorProvider.handleStampCredential(
                               githubRepoProvider.currentCredential ||
                                 currentWork?.credential
                             )
