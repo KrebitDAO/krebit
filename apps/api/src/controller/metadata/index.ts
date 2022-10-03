@@ -1,5 +1,5 @@
 import express from 'express';
-
+import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, getNFTCredentialTypes } from '../../utils';
@@ -40,11 +40,15 @@ export const MetadataController = async (
     const issuers = await Issuer.getIssuers({type: "VerifiableCredentials"});
     console.log('List of issuers:', issuers);
 */
+    let tokenNumber = tokenId;
+    if (isNaN(Number(tokenId))) {
+      tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
+    }
 
     const result = {
       name: tokenType,
       description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
-      image: `${SERVER_NFT_METADATA_IPFS}/${tokenId}.jpg`,
+      image: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
       external_url: 'https://krebit.id',
       attributes: [
         { trait_type: 'Creator', value: 'krebit.eth' },
