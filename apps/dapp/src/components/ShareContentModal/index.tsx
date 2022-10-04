@@ -36,7 +36,7 @@ export const ShareContentModal = (props: IProps) => {
     }
 
     if (id === 'whatsapp') {
-      url = `https://wa.me/?text=${currentUrl}`;
+      url = `https://wa.me/?text=${customText}%20${currentUrl}`;
     }
 
     window.open(url, '_blank');
