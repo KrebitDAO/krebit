@@ -11,7 +11,6 @@ import {
   IIsuerParams
 } from 'utils';
 
-const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 interface IClaimValues {
   username: string;
   owner: string;
@@ -19,13 +18,12 @@ interface IClaimValues {
   private: boolean;
 }
 
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
+
+const initialState = { username: '', owner: '', repository: '', private: true };
+
 export const useGithubRepoCollaboratorProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    username: '',
-    owner: '',
-    repository: '',
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -215,11 +213,18 @@ export const useGithubRepoCollaboratorProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
+    handleClaimValues,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,

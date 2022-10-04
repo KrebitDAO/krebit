@@ -21,7 +21,6 @@ interface IProps {
 export const VerifyCredential = (props: IProps) => {
   const { currentWork, onClose } = props;
   const { walletInformation } = useContext(GeneralContext);
-
   const githubFollowersProvider = useGithubFollowersProvider();
   const githubRepoProvider = useGithubRepoProvider();
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
@@ -33,10 +32,25 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
+  const handleCleanState = (credentialType: string) => {
+    if (credentialType === 'GithubFollowersGT10') {
+      githubFollowersProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GithubRepoStarsGT10') {
+      githubRepoProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GithubRepoCollaborator') {
+      githubRepoCollaboratorProvider.handleCleanClaimValues();
+    }
+  };
+
   return (
     <Verify
       initialList={getIssuers('WorkExperience')}
       onClose={handleClose}
+      onClean={handleCleanState}
       verifyId={currentWork?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>

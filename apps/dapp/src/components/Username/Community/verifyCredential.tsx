@@ -36,10 +36,33 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
+  const handleCleanState = (credentialType: string) => {
+    if (credentialType === 'Issuer') {
+      issuerProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GithubOrgMember') {
+      githubOrgMemberProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'DiscordGuildOwner') {
+      discordGuildOwnerProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'DiscordGuildMember') {
+      discordGuildMemberProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'TwitterFollowersGT1K') {
+      twitterFollowersProvider.handleCleanClaimValues();
+    }
+  };
+
   return (
     <Verify
       initialList={getIssuers('Community')}
       onClose={handleClose}
+      onClean={handleCleanState}
       verifyId={currentCommunity?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>

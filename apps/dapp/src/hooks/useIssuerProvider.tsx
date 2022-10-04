@@ -25,19 +25,21 @@ interface IClaimValues {
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
+const initialState = {
+  entity: '',
+  description: '',
+  credentialType: '',
+  credentialSchema: '',
+  imageUrl: '',
+  verificationUrl: '',
+  did: '',
+  ethereumAddress: '',
+  expirationMonths: 12,
+  price: 0.0
+};
+
 export const useIssuerProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    entity: '',
-    description: '',
-    credentialType: '',
-    credentialSchema: '',
-    imageUrl: '',
-    verificationUrl: '',
-    did: '',
-    ethereumAddress: '',
-    expirationMonths: 12,
-    price: 0.0
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -176,10 +178,17 @@ export const useIssuerProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     handleGetCredential,
     handleClaimValues,
     handleMintCredential,
+    handleClaimValues,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,

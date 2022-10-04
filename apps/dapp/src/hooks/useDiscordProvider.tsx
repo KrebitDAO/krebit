@@ -13,16 +13,18 @@ import {
   getWalletInformation
 } from 'utils';
 
-const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
-
 interface IClaimValues {
   private: boolean;
 }
 
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
+
+const initialState = {
+  private: true
+};
+
 export const useDiscordProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -215,11 +217,18 @@ export const useDiscordProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
+    handleClaimValues,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,
