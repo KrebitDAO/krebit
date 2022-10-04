@@ -171,10 +171,15 @@ export const Work = (props: IProps) => {
   };
 
   const handleClaimValue = async (type: string, credential: any) => {
-    const claimValue =
-      type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential.value)
-        : credential.value;
+    let claimValue = credential.value;
+
+    if (type === 'decrypt') {
+      claimValue = await issuer.decryptClaimValue(credential.value);
+    }
+
+    if (type === 'encrypt') {
+      claimValue = await passport.getClaimValue(credential);
+    }
 
     const currentCredentialPosition = works.findIndex(
       work => work.credential.vcId === credential.vcId
@@ -183,21 +188,16 @@ export const Work = (props: IProps) => {
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      handleProfile(prevValues => {
-        const updatedWorks = [...prevValues.works];
-        updatedWorks[currentCredentialPosition] = {
-          ...updatedWorks[currentCredentialPosition],
-          credential: {
-            ...updatedWorks[currentCredentialPosition].credential,
-            value: claimValue
-          }
-        };
-        setWorks(updatedWorks);
-        return {
-          ...prevValues,
-          works: updatedWorks
-        };
-      });
+      const updatedWorks = [...works];
+      updatedWorks[currentCredentialPosition] = {
+        ...updatedWorks[currentCredentialPosition],
+        credential: {
+          ...updatedWorks[currentCredentialPosition].credential,
+          value: claimValue
+        }
+      };
+
+      setWorks(updatedWorks);
     }
   };
 

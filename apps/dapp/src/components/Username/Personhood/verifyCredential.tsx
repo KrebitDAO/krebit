@@ -451,7 +451,7 @@ export const VerifyCredential = (props: IProps) => {
             </>
           )}
 
-          {currentVerify?.credentialType === 'veriff' && (
+          {currentVerify?.credentialType === 'Veriff' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -596,7 +596,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'persona' && (
+          {currentVerify?.credentialType === 'Persona' && (
             <>
               <BoxStep
                 title="Issuer Details:"

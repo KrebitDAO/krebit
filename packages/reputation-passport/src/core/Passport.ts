@@ -104,11 +104,23 @@ export class Passport {
       this.ens = await lib.ens.lookupAddress(this.address);
       this.uns = await lib.uns.lookupAddress(this.address);
     } else if (value.endsWith('.eth')) {
-      await this.readEns(value);
-      return;
+      const ensInfo = await this.readEns(value);
+
+      this.address = ensInfo?.address;
+      this.did = `did:pkh:eip155:${
+        schemas.krbToken[this.currentConfig.network]?.domain?.chainId
+      }:${this.address}`;
+      this.ens = ensInfo?.ens;
+      this.uns = await lib.uns.lookupAddress(this.address);
     } else {
-      await this.readUns(value);
-      return;
+      const unsInfo = await this.readUns(value);
+
+      this.address = unsInfo?.address;
+      this.did = `did:pkh:eip155:${
+        schemas.krbToken[this.currentConfig.network]?.domain?.chainId
+      }:${this.address}`;
+      this.uns = unsInfo?.uns;
+      this.ens = await lib.ens.lookupAddress(this.address);
     }
 
     if (!this.did || !this.address) {
@@ -126,8 +138,10 @@ export class Passport {
     const address = await lib.ens.resolveName(name);
 
     if (address) {
-      this.ens = name;
-      this.read(address);
+      return {
+        ens: name,
+        address
+      };
     } else {
       throw new Error('No resolved address for that ENS domain');
     }
@@ -137,8 +151,10 @@ export class Passport {
     const address = await lib.uns.resolveName(name);
 
     if (address) {
-      this.uns = name;
-      this.read(address);
+      return {
+        uns: name,
+        address
+      };
     } else {
       throw new Error('No resolved address for that ENS domain');
     }

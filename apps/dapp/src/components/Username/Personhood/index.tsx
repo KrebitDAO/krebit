@@ -70,7 +70,6 @@ export const Personhood = (props: IProps) => {
         setPersonhoods(personhoodCredentials);
         handleProfile(prevValues => ({
           ...prevValues,
-          personhoods: personhoodCredentials,
           skills:
             (prevValues.skills || []).concat(
               personhoodCredentials.flatMap(credential => credential.skills)
@@ -177,32 +176,33 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleClaimValue = async (type: string, credential: any) => {
-    const claimValue =
-      type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential.value)
-        : credential.value;
+    let claimValue = credential.value;
+
+    if (type === 'decrypt') {
+      claimValue = await issuer.decryptClaimValue(credential.value);
+    }
+
+    if (type === 'encrypt') {
+      claimValue = await passport.getClaimValue(credential);
+    }
 
     const currentCredentialPosition = personhoods.findIndex(
       personhood => personhood.credential.vcId === credential.vcId
     );
+
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      handleProfile(prevValues => {
-        const updatedPersonhoods = [...prevValues.personhoods];
-        updatedPersonhoods[currentCredentialPosition] = {
-          ...updatedPersonhoods[currentCredentialPosition],
-          credential: {
-            ...updatedPersonhoods[currentCredentialPosition].credential,
-            value: claimValue
-          }
-        };
-        setPersonhoods(updatedPersonhoods);
-        return {
-          ...prevValues,
-          personhoods: updatedPersonhoods
-        };
-      });
+      const updatedPersnohoods = [...personhoods];
+      updatedPersnohoods[currentCredentialPosition] = {
+        ...updatedPersnohoods[currentCredentialPosition],
+        credential: {
+          ...updatedPersnohoods[currentCredentialPosition].credential,
+          value: claimValue
+        }
+      };
+
+      setPersonhoods(updatedPersnohoods);
     }
   };
 

@@ -71,7 +71,7 @@ export const useEmailProvider = () => {
 
       if (!currentSession) return;
 
-      const currentType = localStorage.getItem('auth-type');
+      const currentType = window.localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
 
       // Step 1-A:  Get credential from Issuer based on claim:
@@ -79,7 +79,7 @@ export const useEmailProvider = () => {
       const claim = await getClaim(walletInformation.address);
       if (claimValues.private) {
         claim['encrypt'] = 'lit' as 'lit';
-        claim['shareEncryptedWith'] = currentIssuer.address;
+        claim['shareEncryptedWith'] = issuer.address;
       }
       console.log('claim: ', claim);
 
@@ -97,7 +97,7 @@ export const useEmailProvider = () => {
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
       const result = await getCredential({
-        verifyUrl: currentIssuer.verificationUrl,
+        verifyUrl: issuer.verificationUrl,
         claimedCredential
       });
       console.log('verificationId: ', result);
