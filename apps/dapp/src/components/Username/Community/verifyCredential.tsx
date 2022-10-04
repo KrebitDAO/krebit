@@ -119,7 +119,6 @@ export const VerifyCredential = (props: IProps) => {
                 }
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={

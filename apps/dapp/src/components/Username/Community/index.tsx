@@ -172,10 +172,15 @@ export const Community = (props: IProps) => {
   };
 
   const handleClaimValue = async (type: string, credential: any) => {
-    const claimValue =
-      type === 'decrypt'
-        ? await issuer.decryptClaimValue(credential.value)
-        : credential.value;
+    let claimValue = credential.value;
+
+    if (type === 'decrypt') {
+      claimValue = await issuer.decryptClaimValue(credential.value);
+    }
+
+    if (type === 'encrypt') {
+      claimValue = await passport.getClaimValue(credential);
+    }
 
     const currentCredentialPosition = communities.findIndex(
       community => community.credential.vcId === credential.vcId
@@ -184,21 +189,16 @@ export const Community = (props: IProps) => {
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      handleProfile(prevValues => {
-        const updatedCommunities = [...prevValues.communities];
-        updatedCommunities[currentCredentialPosition] = {
-          ...updatedCommunities[currentCredentialPosition],
-          credential: {
-            ...updatedCommunities[currentCredentialPosition].credential,
-            value: claimValue
-          }
-        };
-        setCommunities(updatedCommunities);
-        return {
-          ...prevValues,
-          communities: updatedCommunities
-        };
-      });
+      const updatedCommunities = [...communities];
+      updatedCommunities[currentCredentialPosition] = {
+        ...updatedCommunities[currentCredentialPosition],
+        credential: {
+          ...updatedCommunities[currentCredentialPosition].credential,
+          value: claimValue
+        }
+      };
+
+      setCommunities(updatedCommunities);
     }
   };
 
