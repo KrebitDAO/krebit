@@ -228,7 +228,6 @@ export const useTwitterProvider = () => {
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

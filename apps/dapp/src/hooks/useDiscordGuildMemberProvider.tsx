@@ -234,7 +234,6 @@ export const useDiscordGuildMemberProvider = () => {
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

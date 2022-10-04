@@ -234,7 +234,6 @@ export const useDiscordGuildOwnerProvider = () => {
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

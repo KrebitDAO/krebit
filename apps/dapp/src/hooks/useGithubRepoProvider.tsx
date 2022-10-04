@@ -223,7 +223,6 @@ export const useGithubRepoProvider = () => {
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

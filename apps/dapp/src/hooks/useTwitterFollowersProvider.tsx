@@ -228,7 +228,6 @@ export const useTwitterFollowersProvider = () => {
     handleFetchOAuth,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

@@ -241,7 +241,6 @@ export const useEmailProvider = () => {
     handleGetCredential,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

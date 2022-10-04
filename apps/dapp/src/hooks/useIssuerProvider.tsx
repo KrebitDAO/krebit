@@ -187,7 +187,6 @@ export const useIssuerProvider = () => {
     handleGetCredential,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,

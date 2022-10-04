@@ -56,6 +56,9 @@ export const VerifyCredential = (props: IProps) => {
     if (credentialType === 'TwitterFollowersGT1K') {
       twitterFollowersProvider.handleCleanClaimValues();
     }
+    if (credentialType === 'TwitterFollowersGT10K') {
+      twitterFollowersProvider.handleCleanClaimValues();
+    }
   };
 
   return (

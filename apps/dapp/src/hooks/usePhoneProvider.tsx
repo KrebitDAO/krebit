@@ -243,7 +243,6 @@ export const usePhoneProvider = () => {
     handleGetCredential,
     handleClaimValues,
     handleMintCredential,
-    handleClaimValues,
     handleCleanClaimValues,
     claimValues,
     status,
