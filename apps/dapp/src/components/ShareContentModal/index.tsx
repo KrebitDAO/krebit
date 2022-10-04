@@ -6,11 +6,12 @@ import { constants } from 'utils';
 
 interface IProps {
   parentRef: React.MutableRefObject<undefined | HTMLDivElement>;
+  customText: string;
   onClose: () => void;
 }
 
 export const ShareContentModal = (props: IProps) => {
-  const { parentRef, onClose } = props;
+  const { parentRef, customText, onClose } = props;
   const ref = useRef(null);
   useOutsideClick({ ref, parentRef, handler: onClose });
 
@@ -19,7 +20,7 @@ export const ShareContentModal = (props: IProps) => {
     let url: string;
 
     if (id === 'twitter') {
-      url = `https://twitter.com/intent/tweet?text=${currentUrl}`;
+      url = `https://twitter.com/intent/tweet?url=${currentUrl}&text=${customText}&hashtags=krebit%2CWeb3Identity%2CWeb3Reputation%2Cethereum%2Cpolygon`;
     }
 
     if (id === 'facebook') {
@@ -31,7 +32,7 @@ export const ShareContentModal = (props: IProps) => {
     }
 
     if (id === 'telegram') {
-      url = `https://telegram.me/share/url?url=${currentUrl}`;
+      url = `https://telegram.me/share/url?url=${currentUrl}&title=${customText}`;
     }
 
     if (id === 'whatsapp') {
@@ -44,7 +45,7 @@ export const ShareContentModal = (props: IProps) => {
 
   return (
     <Wrapper ref={ref}>
-      <p className="share-content-title">Share link to this page</p>
+      <p className="share-content-title">Share a link to this page</p>
       <div className="share-content-container">
         {constants.DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS.map((item, index) => (
           <div

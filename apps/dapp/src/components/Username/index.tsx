@@ -276,6 +276,7 @@ export const Username = () => {
                   </div>
                   {isShareContentOpen && (
                     <ShareContentModal
+                      customText={`${profile.name}'s profile on @KrebitID`}
                       parentRef={parentShareContentRef}
                       onClose={handleIsShareContentOpen}
                     />
