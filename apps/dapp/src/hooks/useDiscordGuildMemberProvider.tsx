@@ -83,7 +83,7 @@ export const useDiscordGuildMemberProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'DiscordGuildMember',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/badge',
       tags: ['Community', 'Membership'],
       value: claimValue,

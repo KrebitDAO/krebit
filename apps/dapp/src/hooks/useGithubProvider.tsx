@@ -78,7 +78,7 @@ export const useGithubProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'Github',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Developer', 'Personhood'],
       value: claimValue,

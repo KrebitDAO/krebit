@@ -83,7 +83,7 @@ export const useDiscordGuildOwnerProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'DiscordGuildOwner',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Community'],
       value: claimValue,

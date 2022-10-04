@@ -83,7 +83,7 @@ export const useGithubRepoCollaboratorProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'GithubRepoCollaborator',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/workExperience',
       tags: ['Developer', 'WorkExperience'],
       value: claimValue,

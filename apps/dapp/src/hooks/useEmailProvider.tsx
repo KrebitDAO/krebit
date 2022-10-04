@@ -42,7 +42,7 @@ export const useEmailProvider = () => {
     return {
       id: `email-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'Email',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Contact', 'Personhood'],
       value: {

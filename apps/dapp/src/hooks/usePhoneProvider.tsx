@@ -44,7 +44,7 @@ export const usePhoneProvider = () => {
     return {
       id: `phone-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'PhoneNumber',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/phoneNumber',
       tags: ['Phone', 'contact', 'Personhood'],
       value: {

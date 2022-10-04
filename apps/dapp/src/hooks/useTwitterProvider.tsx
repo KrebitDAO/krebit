@@ -88,7 +88,7 @@ export const useTwitterProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'Twitter',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Personhood'],
       value: claimValue,

@@ -78,7 +78,7 @@ export const useGithubFollowersProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'GithubFollowersGT10',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Influencer', 'Developer', 'WorkExperience'],
       value: claimValue,

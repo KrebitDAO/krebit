@@ -80,7 +80,7 @@ export const useDiscordProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'Discord',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Personhood'],
       value: claimValue,

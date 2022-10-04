@@ -78,7 +78,7 @@ export const useGithubRepoProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'GithubRepoStarsGT10',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/workExperience',
       tags: ['DigitalProperty', 'Developer', 'WorkExperience'],
       value: claimValue,

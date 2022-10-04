@@ -161,6 +161,16 @@ const COMMUNITY_CREDENTIALS = [
     price: '0'
   },
   {
+    credentialType: 'TwitterFollowersGT10K',
+    entity: 'Twitter Followers > 10K',
+    description: 'Krebit Verification Node',
+    icon: <Twitter />,
+    verificationUrl: process.env.NEXT_PUBLIC_TWITTER_NODE_URL,
+    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    price: '0'
+  },
+  {
     credentialType: 'DiscordGuildOwner',
     entity: 'Discord Guild Owner',
     description: 'Krebit Verification Node',

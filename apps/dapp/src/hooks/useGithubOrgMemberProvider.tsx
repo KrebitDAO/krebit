@@ -80,7 +80,7 @@ export const useGithubOrgMemberProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'GithubOrgMember',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/badge',
       tags: ['Community', 'Membership', 'Developer'],
       value: claimValue,
