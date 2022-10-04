@@ -19,13 +19,15 @@ interface IClaimValues {
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
+const initialState = {
+  countryCode: '',
+  number: '',
+  code: '',
+  private: true
+};
+
 export const usePhoneProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    countryCode: '',
-    number: '',
-    code: '',
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentVerificationId, setCurrentVerificationId] = useState('');
   const [currentCredential, setCurrentCredential] = useState<
@@ -264,12 +266,18 @@ export const usePhoneProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     handleStartVerification,
     handleGetCredential,
     handleStampCredential,
-    handleClaimValues,
     handleMintCredential,
+    handleClaimValues,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentVerificationId,
