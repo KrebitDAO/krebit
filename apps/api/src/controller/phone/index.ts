@@ -56,7 +56,7 @@ export const PhoneController = async (
     );
 
     if (claimedCredential?.credentialSubject?.type !== 'PhoneNumber') {
-      throw new Error(`claimedCredential type is not phoneNumber`);
+      throw new Error(`claimedCredential type is not PhoneNumber`);
     }
 
     // get the claimValue

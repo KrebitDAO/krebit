@@ -37,7 +37,7 @@ export const usePhoneProvider = () => {
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
 
-  const getClaim = (address: string) => {
+  const getClaim = (address: string, issuer: IIsuerParams) => {
     const expirationDate = new Date();
     const expiresYears = 1;
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -46,9 +46,9 @@ export const usePhoneProvider = () => {
     return {
       id: `phone-${generateUID(10)}`,
       ethereumAddress: address,
-      type: 'PhoneNumber',
+      type: issuer.credentialType,
       typeSchema: 'krebit://schemas/phoneNumber',
-      tags: ['Phone', 'contact', 'Personhood'],
+      tags: ['Phone', 'Contact', 'Personhood'],
       value: {
         countryCode: Number(claimValues.countryCode),
         number: Number(claimValues.number),
@@ -79,7 +79,7 @@ export const usePhoneProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the phone
-      const claim = getClaim(walletInformation.address);
+      const claim = getClaim(walletInformation.address, issuer);
       if (claimValues.private) {
         claim['encrypt'] = 'lit' as 'lit';
         claim['shareEncryptedWith'] = issuer.address;
@@ -111,6 +111,7 @@ export const usePhoneProvider = () => {
         setStatus('verification_resolved');
       }
     } catch (error) {
+      console.log('handleStartVerification error: ', error);
       setStatus('verification_rejected');
     }
   };
@@ -129,7 +130,7 @@ export const usePhoneProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the phone
-      const claim = await getClaim(walletInformation.address);
+      const claim = await getClaim(walletInformation.address, currentIssuer);
       if (claimValues.private) {
         claim['encrypt'] = 'lit' as 'lit';
         claim['shareEncryptedWith'] = currentIssuer.address;
@@ -191,40 +192,6 @@ export const usePhoneProvider = () => {
     }
   };
 
-  const handleStampCredential = async credential => {
-    try {
-      setStatus('stamp_pending');
-
-      const session = window.localStorage.getItem('did-session');
-      const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ethProvider: walletInformation.ethProvider,
-        address: walletInformation.address,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
-
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      const stampTx = await Issuer.stampCredential(credential);
-      console.log('stampTx: ', stampTx);
-
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
-    } catch (error) {
-      setStatus('stamp_rejected');
-    }
-  };
-
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
@@ -274,7 +241,7 @@ export const usePhoneProvider = () => {
   return {
     handleStartVerification,
     handleGetCredential,
-    handleStampCredential,
+    handleClaimValues,
     handleMintCredential,
     handleClaimValues,
     handleCleanClaimValues,

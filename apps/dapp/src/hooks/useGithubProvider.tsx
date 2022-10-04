@@ -80,7 +80,7 @@ export const useGithubProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'Github',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Developer', 'Personhood'],
       value: claimValue,
@@ -168,40 +168,6 @@ export const useGithubProvider = () => {
     }
   };
 
-  const handleStampCredential = async credential => {
-    try {
-      setStatus('stamp_pending');
-
-      const session = window.localStorage.getItem('did-session');
-      const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ethProvider: walletInformation.ethProvider,
-        address: walletInformation.address,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
-
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      const stampTx = await Issuer.stampCredential(credential);
-      console.log('stampTx: ', stampTx);
-
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
-    } catch (error) {
-      setStatus('stamp_rejected');
-    }
-  };
-
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
@@ -251,7 +217,7 @@ export const useGithubProvider = () => {
   return {
     listenForRedirect,
     handleFetchOAuth,
-    handleStampCredential,
+    handleClaimValues,
     handleMintCredential,
     handleClaimValues,
     handleCleanClaimValues,

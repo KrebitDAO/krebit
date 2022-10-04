@@ -186,6 +186,62 @@ export const TwitterController = async (
           `Wrong twitter follower count: ${twitterUser.followers}`
         );
       }
+    } else if (
+      claimedCredential?.credentialSubject?.type === 'TwitterFollowersGT10K'
+    ) {
+      // Connect to twitter and get user ID from code
+      const twitterUser = await twitter.getTwitterFollowersCount({
+        client: authClient,
+        state: claimValue.proofs.state,
+        code_challenge: claimedCredential.credentialSubject.ethereumAddress,
+        code: claimValue.proofs.code
+      });
+      console.log('twitterFollowersCount: ', twitterUser.followers);
+
+      // If valid follower count
+      if (
+        claimValue.host === 'twitter.com' &&
+        twitterUser &&
+        twitterUser.username.toLowerCase() ===
+          claimValue.username.toLowerCase() &&
+        twitterUser.followers > 10000
+      ) {
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: claimValue,
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
+        console.log('claim: ', claim);
+
+        // Issue Verifiable credential (twitterUsername)
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(
+          `Wrong twitter follower count: ${twitterUser.followers}`
+        );
+      }
     }
   } catch (err) {
     next(err);
