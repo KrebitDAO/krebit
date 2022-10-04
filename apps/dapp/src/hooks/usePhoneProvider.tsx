@@ -35,7 +35,7 @@ export const usePhoneProvider = () => {
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
 
-  const getClaim = async (address: string) => {
+  const getClaim = (address: string) => {
     const expirationDate = new Date();
     const expiresYears = 1;
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -72,15 +72,15 @@ export const usePhoneProvider = () => {
 
       if (!currentSession) return;
 
-      const currentType = localStorage.getItem('auth-type');
+      const currentType = window.localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
 
       // Step 1-A:  Get credential from Issuer based on claim:
       // Issue self-signed credential claiming the phone
-      const claim = await getClaim(walletInformation.address);
+      const claim = getClaim(walletInformation.address);
       if (claimValues.private) {
         claim['encrypt'] = 'lit' as 'lit';
-        claim['shareEncryptedWith'] = currentIssuer.address;
+        claim['shareEncryptedWith'] = issuer.address;
       }
       console.log('claim: ', claim);
 
@@ -98,7 +98,7 @@ export const usePhoneProvider = () => {
       // Step 1-B: Send self-signed credential to the Issuer for verification
 
       const result = await getCredential({
-        verifyUrl: currentIssuer.verificationUrl,
+        verifyUrl: issuer.verificationUrl,
         claimedCredential
       });
       console.log('verificationId: ', result);
@@ -188,6 +188,7 @@ export const usePhoneProvider = () => {
       setStatus('credential_rejected');
     }
   };
+
   const handleStampCredential = async credential => {
     try {
       setStatus('stamp_pending');
