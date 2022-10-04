@@ -13,6 +13,11 @@ import {
   IIsuerParams
 } from 'utils';
 
+interface IClaimValues {
+  username: string;
+  private: boolean;
+}
+
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const authClient = new auth.OAuth2User({
@@ -20,17 +25,10 @@ const authClient = new auth.OAuth2User({
   callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
   scopes: ['tweet.read', 'users.read']
 });
-
-interface IClaimValues {
-  username: string;
-  private: boolean;
-}
+const initialState = { username: '', private: true };
 
 export const useTwitterFollowersProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    username: '',
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -254,12 +252,18 @@ export const useTwitterFollowersProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
-    handleClaimValues,
     handleMintCredential,
+    handleClaimValues,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,

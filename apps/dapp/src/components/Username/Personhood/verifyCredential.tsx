@@ -27,7 +27,6 @@ export const VerifyCredential = (props: IProps) => {
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
-
   const veriffProvider = useVeriffProvider();
   const phoneProvider = usePhoneProvider();
   const emailProvider = useEmailProvider();
@@ -41,10 +40,41 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
+  const handleCleanState = (credentialType: string) => {
+    if (credentialType === 'Discord') {
+      discordProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'Twitter') {
+      twitterProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'Veriff') {
+      veriffProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'Phone') {
+      phoneProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'Email') {
+      emailProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'Persona') {
+      personaProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'Github') {
+      githubProvider.handleCleanClaimValues();
+    }
+  };
+
   return (
     <Verify
       initialList={getIssuers('Personhood')}
       onClose={handleClose}
+      onClean={handleCleanState}
       verifyId={
         currentPersonhood?.credential?.visualInformation?.credentialType
       }
@@ -450,7 +480,6 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-
           {currentVerify?.credentialType === 'Veriff' && (
             <>
               <BoxStep

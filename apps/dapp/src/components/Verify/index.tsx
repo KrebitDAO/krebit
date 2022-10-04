@@ -37,12 +37,13 @@ interface IComponentProps {
 interface IProps {
   initialList: IInitialListProps[];
   onClose: () => void;
+  onClean: (credentialType: string) => void;
   component: (props: IComponentProps) => ReactElement;
   verifyId?: string;
 }
 
 export const Verify = (props: IProps) => {
-  const { initialList, component, onClose, verifyId } = props;
+  const { initialList, component, onClose, onClean, verifyId } = props;
   const [viewStatus, setViewStatus] = useState<IViewStatusProps>('init');
   const [currentVerify, setCurrentVerify] = useState<
     ICurrentIssuerProps | undefined
@@ -62,6 +63,10 @@ export const Verify = (props: IProps) => {
   }, [verifyId]);
 
   const handleViewStatus = (status: IViewStatusProps) => {
+    if (status === 'init') {
+      onClean(currentVerify.credentialType);
+    }
+
     setViewStatus(status);
   };
 

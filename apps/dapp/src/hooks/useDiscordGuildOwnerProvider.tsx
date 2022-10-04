@@ -13,18 +13,20 @@ import {
   getDiscordUser
 } from 'utils';
 
-const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
-
 interface IClaimValues {
   guildId: string;
   private: boolean;
 }
 
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
+
+const initialState = {
+  guildId: '',
+  private: true
+};
+
 export const useDiscordGuildOwnerProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    guildId: '',
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -256,12 +258,18 @@ export const useDiscordGuildOwnerProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
     handleStampCredential,
-    handleClaimValues,
     handleMintCredential,
+    handleClaimValues,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,
