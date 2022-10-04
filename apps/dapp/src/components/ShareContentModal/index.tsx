@@ -32,7 +32,7 @@ export const ShareContentModal = (props: IProps) => {
     }
 
     if (id === 'telegram') {
-      url = `https://telegram.me/share/url?url=${currentUrl}&title=${customText}`;
+      url = `https://telegram.me/share/url?url=${currentUrl}&text=${customText}`;
     }
 
     if (id === 'whatsapp') {
