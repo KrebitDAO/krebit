@@ -16,7 +16,7 @@ const initialConfig = {
   graphUrl: 'https://api.thegraph.com/subgraphs/name/krebit/krb-mumbai-v01',
   ensGraphUrl: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
   ceramicUrl: 'https://ceramic-clay.3boxlabs.com',
-  publicUrl: 'https://testnet.krebit.id',
+  publicUrl: 'https://krebit.id',
   biconomyKey: 'XtWAXxY1v.afcf7601-39b1-4e0d-b930-1c00581e36f1'
 };
 

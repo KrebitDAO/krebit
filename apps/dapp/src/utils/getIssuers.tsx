@@ -29,8 +29,8 @@ const PERSONHOOD_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Discord />,
     verificationUrl: process.env.NEXT_PUBLIC_DISCORD_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -39,8 +39,8 @@ const PERSONHOOD_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Twitter />,
     verificationUrl: process.env.NEXT_PUBLIC_TWITTER_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -51,19 +51,19 @@ const PERSONHOOD_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
 
   {
-    credentialType: 'Phone',
+    credentialType: 'PhoneNumber',
     entity: 'Phone',
     description: 'Krebit Verification Node',
     icon: <Phone />,
     verificationUrl: process.env.NEXT_PUBLIC_PHONE_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -72,8 +72,8 @@ const PERSONHOOD_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Email />,
     verificationUrl: process.env.NEXT_PUBLIC_EMAIL_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -82,8 +82,8 @@ const PERSONHOOD_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Badge />,
     verificationUrl: process.env.NEXT_PUBLIC_VERIFF_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '1.5',
     isDisabled: true
   },
@@ -93,8 +93,8 @@ const PERSONHOOD_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Badge />,
     verificationUrl: process.env.NEXT_PUBLIC_PERSONA_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '2.5'
   }
 ];
@@ -108,8 +108,8 @@ const WORK_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -120,8 +120,8 @@ const WORK_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -132,8 +132,8 @@ const WORK_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -142,8 +142,8 @@ const WORK_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Spect />,
     verificationUrl: process.env.NEXT_PUBLIC_SPECT_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
     isDisabled: true
   }
@@ -156,8 +156,8 @@ const COMMUNITY_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Twitter />,
     verificationUrl: process.env.NEXT_PUBLIC_TWITTER_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -166,8 +166,8 @@ const COMMUNITY_CREDENTIALS = [
     description: 'Krebit Verification Node',
     icon: <Twitter />,
     verificationUrl: process.env.NEXT_PUBLIC_TWITTER_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -178,8 +178,8 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_DISCORD_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -190,8 +190,8 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_DISCORD_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
   {
@@ -202,8 +202,8 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_GITHUB_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
 
     price: '0'
   },
@@ -215,8 +215,8 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL,
-    did: 'did:pkh:eip155:80001:0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
-    address: '0x661f52D8D111ECcF62872bDDb2E70C12d8b4b860',
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
     isDisabled: true
   }

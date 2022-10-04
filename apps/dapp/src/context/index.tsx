@@ -47,7 +47,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       setStatus('pending');
 
       const publicPassport = new Krebit.core.Passport({
-        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
+        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai' | 'polygon',
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
       setPublicPassport(publicPassport);
@@ -66,19 +66,14 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       setWalletInformation(information);
 
       const passport = new Krebit.core.Passport({
-        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
-        ethProvider: information.ethProvider,
-        address: information.address,
+        ...information,
         litSdk: LitJsSdk,
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
       const isPassportConnected = await passport.isConnected();
 
       const issuer = new Krebit.core.Krebit({
-        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
-        ethProvider: information.ethProvider,
-        address: information.address,
-        wallet: information.wallet,
+        ...information,
         litSdk: LitJsSdk,
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
@@ -117,9 +112,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       localStorage.setItem('auth-type', type);
 
       const passport = new Krebit.core.Passport({
-        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
-        ethProvider: information.ethProvider,
-        address: information.address,
+        ...information,
         litSdk: LitJsSdk,
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
@@ -129,10 +122,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const currentSession = JSON.parse(session);
 
       const issuer = new Krebit.core.Krebit({
-        network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai',
-        ethProvider: information.ethProvider,
-        address: information.address,
-        wallet: information.wallet,
+        ...information,
         litSdk: LitJsSdk,
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });

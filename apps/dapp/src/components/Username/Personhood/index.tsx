@@ -368,7 +368,7 @@ export const Personhood = (props: IProps) => {
                       : undefined,
                     isAuthenticated && personhood.stamps?.length !== 0
                       ? {
-                          title: 'Mint NFT',
+                          title: 'Mint Stamp',
                           onClick: () =>
                             handleCurrentPersonhood('mint_nft', personhood)
                         }

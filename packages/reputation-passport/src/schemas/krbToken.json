@@ -4,9 +4,8 @@
     "symbol": "KRB",
     "token": "MATIC",
     "name": "Polygon",
-    "address": "0xee524d0b396C8F9BcfD7Ac336d17aa0397a32CbE",
-    "block": 27536289,
-    "implementation": "0x1415A447855eA7beCFA257bBF1FbB385F5d16071",
+    "address": "0xEC30B11e0E8db9Dd0d57E07B150019fa006411Ca",
+    "block": 28447491,
     "network": "mumbai",
     "blockUrl": "https://mumbai.polygonscan.com/",
     "txUrl": "https://mumbai.polygonscan.com/tx/",
@@ -15,7 +14,7 @@
       "name": "Krebit",
       "version": "0.1",
       "chainId": 80001,
-      "verifyingContract": "0xee524d0b396C8F9BcfD7Ac336d17aa0397a32CbE"
+      "verifyingContract": "0xEC30B11e0E8db9Dd0d57E07B150019fa006411Ca"
     }
   },
   "abi": [
