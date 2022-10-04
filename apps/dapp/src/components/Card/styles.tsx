@@ -117,15 +117,9 @@ export const SimpleCardWrapper = styled.div<ICardProps>`
 
       .card-more-vert-inline-dropdown {
         position: absolute;
-        bottom: 0;
+        bottom: 10px;
         right: 30px;
         z-index: 10;
-
-        @media (min-width: ${theme.screens.lg}) {
-          bottom: 0;
-          right: initial;
-          left: 40px;
-        }
       }
     }
   `}
@@ -245,7 +239,7 @@ export const SmallCardWrapper = styled.div<ICardProps>`
 
     .card-more-vert-inline-dropdown {
       position: absolute;
-      bottom: 130px;
+      bottom: 110px;
       right: 50px;
       z-index: 10;
     }

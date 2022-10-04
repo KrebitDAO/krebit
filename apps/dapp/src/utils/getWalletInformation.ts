@@ -31,6 +31,8 @@ export const getWalletInformation = async (type: string) => {
     const address = await wallet.getAddress();
 
     return {
+      network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai' | 'polygon',
+      rpcUrl: process.env.NEXT_PUBLIC_NETWORK_RPC_URL,
       ethProvider: provider.provider,
       address,
       wallet

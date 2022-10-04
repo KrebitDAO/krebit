@@ -13,6 +13,11 @@ import {
   IIsuerParams
 } from 'utils';
 
+interface IClaimValues {
+  username: string;
+  private: boolean;
+}
+
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const authClient = new auth.OAuth2User({
@@ -20,17 +25,10 @@ const authClient = new auth.OAuth2User({
   callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
   scopes: ['tweet.read', 'users.read']
 });
-
-interface IClaimValues {
-  username: string;
-  private: boolean;
-}
+const initialState = { username: '', private: true };
 
 export const useTwitterFollowersProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    username: '',
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -88,7 +86,7 @@ export const useTwitterFollowersProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'TwitterFollowersGT1K',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Influencer', 'Community'],
       value: claimValue,
@@ -105,9 +103,9 @@ export const useTwitterFollowersProvider = () => {
 
     try {
       // when receiving Twitter oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'TwitterFollowersGT1K') {
+      if (e.target === 'TwitterFollowers') {
         console.log('Saving Stamp', {
-          type: 'TwitterFollowersGT1K',
+          type: currentIssuer.credentialType,
           proof: e.data
         });
 
@@ -179,40 +177,6 @@ export const useTwitterFollowersProvider = () => {
     }
   };
 
-  const handleStampCredential = async credential => {
-    try {
-      setStatus('stamp_pending');
-
-      const session = window.localStorage.getItem('did-session');
-      const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ethProvider: walletInformation.ethProvider,
-        address: walletInformation.address,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
-
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      const stampTx = await Issuer.stampCredential(credential);
-      console.log('stampTx: ', stampTx);
-
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
-    } catch (error) {
-      setStatus('stamp_rejected');
-    }
-  };
-
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
@@ -254,12 +218,17 @@ export const useTwitterFollowersProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
-    handleStampCredential,
     handleClaimValues,
     handleMintCredential,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,

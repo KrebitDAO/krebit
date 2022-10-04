@@ -45,6 +45,7 @@ export const getNFTCredentialTypes = () => {
       ethers.utils.defaultAbiCoder.encode(['string'], [type])
     );
     const tokenId = ethers.BigNumber.from(tokenIdHex);
+    result[tokenIdHex.toString().substring(2)] = type;
     result[tokenId.toString()] = type;
   }
   return result;

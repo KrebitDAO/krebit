@@ -4,9 +4,8 @@
     "symbol": "NFT",
     "token": "MATIC",
     "name": "Polygon",
-    "address": "0x48b3879A2B51fBAfb14e3eB9E345f6402ef93f97",
-    "block": 28346799,
-    "implementation": "0xc657fc572EF90162449ce80FD58407670d790D5c",
+    "address": "0xff9Edb48f006C4dF02853F90f9ce23078C0AeCD3",
+    "block": 28447492,
     "network": "mumbai",
     "blockUrl": "https://mumbai.polygonscan.com/",
     "txUrl": "https://mumbai.polygonscan.com/tx/",
@@ -510,6 +509,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "forceRegister",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -845,6 +857,11 @@
         },
         {
           "internalType": "bytes",
+          "name": "proofValue",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
           "name": "data",
           "type": "bytes"
         }
@@ -1035,6 +1052,32 @@
         }
       ],
       "name": "setApprovalForAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "newuri",
+          "type": "string"
+        }
+      ],
+      "name": "setContractURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "force",
+          "type": "bool"
+        }
+      ],
+      "name": "setContractURI",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -1,5 +1,5 @@
 import express from 'express';
-
+import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, getNFTCredentialTypes } from '../../utils';
@@ -21,8 +21,14 @@ export const MetadataController = async (
       throw new Error(`No tokenId in params`);
     }
 
+    const types = getNFTCredentialTypes();
     const tokenId = request.params.tokenId;
-    const tokenType = getNFTCredentialTypes()[tokenId];
+    if (tokenId === 'all') {
+      return response.json(types);
+    }
+
+    const tokenType = types[tokenId];
+    if (!tokenType) return response.status(404).send('Not found.');
     console.log('Credential type:', tokenType);
 
     /* TODO get credential types from getIssuers
@@ -40,11 +46,15 @@ export const MetadataController = async (
     const issuers = await Issuer.getIssuers({type: "VerifiableCredentials"});
     console.log('List of issuers:', issuers);
 */
+    let tokenNumber = tokenId;
+    if (isNaN(Number(tokenId))) {
+      tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
+    }
 
     const result = {
       name: tokenType,
       description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
-      image: `${SERVER_NFT_METADATA_IPFS}/${tokenId}.jpg`,
+      image: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
       external_url: 'https://krebit.id',
       attributes: [
         { trait_type: 'Creator', value: 'krebit.eth' },

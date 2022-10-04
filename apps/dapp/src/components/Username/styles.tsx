@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 interface IProps {
   profilePicture: string;
+  isCurrentProfile: boolean;
 }
 
 interface IBackgrounProps {
@@ -10,9 +11,17 @@ interface IBackgrounProps {
 }
 
 export const Wrapper = styled.div<IProps>`
-  ${({ theme, profilePicture }) => css`
-    max-width: 1238px;
-    margin: 0 auto;
+  ${({ theme, profilePicture, isCurrentProfile }) => css`
+    @media (min-width: ${theme.screens.xl}) {
+      margin-right: 80px;
+      float: right;
+    }
+
+    @media (min-width: ${theme.screens['2xl']}) {
+      max-width: 1238px;
+      margin: 0 auto;
+      float: initial;
+    }
 
     .profile-container {
       display: grid;
@@ -30,7 +39,9 @@ export const Wrapper = styled.div<IProps>`
 
         @media (min-width: ${theme.screens.lg}) {
           grid-template-areas: 'photo info buttons';
-          grid-template-columns: 215px auto 300px;
+          grid-template-columns: ${isCurrentProfile
+            ? '215px auto 366px'
+            : '215px auto 208px'};
           justify-content: initial;
           align-items: end;
         }
@@ -154,37 +165,30 @@ export const Wrapper = styled.div<IProps>`
         .profile-buttons {
           grid-area: buttons;
           display: grid;
-          grid-template-columns: repeat(2, 150px);
+          grid-template-columns: ${isCurrentProfile
+            ? 'repeat(3, auto)'
+            : 'repeat(2, auto)'};
           grid-gap: 8px;
           margin-top: 20px;
+          position: relative;
 
-          & > button {
+          .profile-buttons-container {
             height: 44px;
-          }
+            width: 150px;
 
-          @media (min-width: ${theme.screens.lg}) {
-            & > button {
+            @media (min-width: ${theme.screens.lg}) {
               height: 50px;
             }
           }
-        }
 
-        .profile-button {
-          margin: 0 auto;
-          margin-top: 20px;
-
-          & > button {
+          .profile-buttons-rounded {
             height: 44px;
-            width: 150px;
-            float: right;
-          }
+            width: 44px;
+            justify-self: right;
 
-          @media (min-width: ${theme.screens.lg}) {
-            margin: 0;
-            margin-bottom: 35px;
-
-            & > button {
+            @media (min-width: ${theme.screens.lg}) {
               height: 50px;
+              width: 50px;
             }
           }
         }

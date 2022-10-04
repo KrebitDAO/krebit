@@ -36,10 +36,36 @@ export const VerifyCredential = (props: IProps) => {
     window.location.reload();
   };
 
+  const handleCleanState = (credentialType: string) => {
+    if (credentialType === 'Issuer') {
+      issuerProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GithubOrgMember') {
+      githubOrgMemberProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'DiscordGuildOwner') {
+      discordGuildOwnerProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'DiscordGuildMember') {
+      discordGuildMemberProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'TwitterFollowersGT1K') {
+      twitterFollowersProvider.handleCleanClaimValues();
+    }
+    if (credentialType === 'TwitterFollowersGT10K') {
+      twitterFollowersProvider.handleCleanClaimValues();
+    }
+  };
+
   return (
     <Verify
       initialList={getIssuers('Community')}
       onClose={handleClose}
+      onClean={handleCleanState}
       verifyId={currentCommunity?.credential?.visualInformation?.credentialType}
       component={({ currentVerify }) => (
         <>
@@ -123,44 +149,10 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 2"
                 description={
-                  twitterFollowersProvider.currentStamp ||
-                  currentCommunity.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Add an on-chain stamp to your credential'
-                }
-                form={{
-                  button:
-                    twitterFollowersProvider.currentStamp ||
-                    currentCommunity.stamps?.length !== 0
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              twitterFollowersProvider.currentStamp ||
-                                currentCommunity.stamps[0]
-                            )
-                        }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            twitterFollowersProvider.handleStampCredential(
-                              twitterFollowersProvider.currentCredential ||
-                                currentCommunity?.credential
-                            )
-                        }
-                }}
-                isLoading={twitterFollowersProvider.status === 'stamp_pending'}
-                iconType="stamp"
-              />
-              <BoxStep
-                title="Step 3"
-                description={
                   twitterFollowersProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : 'Mint the credential as NFT'
+                    : 'Mint the credential stamp and NFT'
                 }
                 form={{
                   button:
@@ -176,7 +168,7 @@ export const VerifyCredential = (props: IProps) => {
                             )
                         }
                       : {
-                          text: 'Mint NFT',
+                          text: 'Mint Stamp',
                           onClick: () =>
                             twitterFollowersProvider.handleMintCredential(
                               twitterFollowersProvider.currentCredential ||
@@ -185,7 +177,119 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterFollowersProvider.status === 'mint_pending'}
-                iconType="nft"
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'TwitterFollowersGT10K' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  twitterFollowersProvider.currentCredential ||
+                  currentCommunity?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that your twitter follower count is more than 10K'
+                }
+                form={{
+                  fields:
+                    twitterFollowersProvider.currentCredential ||
+                    currentCommunity?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you twitter handle',
+                            value:
+                              twitterFollowersProvider.claimValues.username,
+                            onChange: twitterFollowersProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: twitterFollowersProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: twitterFollowersProvider.claimValues.private,
+                            onChange: twitterFollowersProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    twitterFollowersProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              twitterFollowersProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !twitterFollowersProvider.claimValues.username ||
+                            twitterFollowersProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  twitterFollowersProvider.handleFetchOAuth(
+                                    walletInformation.address,
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !twitterFollowersProvider.claimValues.username ||
+                            twitterFollowersProvider.claimValues.username === ''
+                        }
+                }}
+                isLoading={
+                  twitterFollowersProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+
+              <BoxStep
+                title="Step 2"
+                description={
+                  twitterFollowersProvider.currentMint ||
+                  currentCommunity?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT'
+                }
+                form={{
+                  button:
+                    twitterFollowersProvider.currentMint ||
+                    currentCommunity?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              twitterFollowersProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            twitterFollowersProvider.handleMintCredential(
+                              twitterFollowersProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                }}
+                isLoading={twitterFollowersProvider.status === 'mint_pending'}
+                iconType="stamp"
               />
             </>
           )}
@@ -303,43 +407,9 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 2"
                 description={
-                  issuerProvider.currentStamp ||
-                  currentCommunity?.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Stamp verification on-chain'
-                }
-                form={{
-                  button:
-                    issuerProvider.currentStamp ||
-                    currentCommunity?.stamps?.length !== 0
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              issuerProvider.currentStamp ||
-                                currentCommunity?.stamps[0]
-                            )
-                        }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            issuerProvider.handleStampCredential(
-                              issuerProvider.currentCredential ||
-                                currentCommunity?.credential
-                            )
-                        }
-                }}
-                iconType="stamp"
-                isLoading={issuerProvider.status === 'stamp_pending'}
-              />
-              <BoxStep
-                title="Step 3"
-                description={
                   issuerProvider.currentMint || currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : 'Mint the credential as NFT'
+                    : 'Mint the credential stamp and NFT'
                 }
                 form={{
                   button:
@@ -354,7 +424,7 @@ export const VerifyCredential = (props: IProps) => {
                             )
                         }
                       : {
-                          text: 'Mint NFT',
+                          text: 'Mint Stamp',
                           onClick: () =>
                             issuerProvider.handleMintCredential(
                               issuerProvider.currentCredential ||
@@ -363,7 +433,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={issuerProvider.status === 'mint_pending'}
-                iconType="nft"
+                iconType="stamp"
               />
             </>
           )}
@@ -451,44 +521,10 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 2"
                 description={
-                  githubOrgMemberProvider.currentStamp ||
-                  currentCommunity?.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Add an on-chain stamp to your credential'
-                }
-                form={{
-                  button:
-                    githubOrgMemberProvider.currentStamp ||
-                    currentCommunity?.stamps?.length !== 0
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              githubOrgMemberProvider.currentStamp ||
-                                currentCommunity?.stamps[0]
-                            )
-                        }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            githubOrgMemberProvider.handleStampCredential(
-                              githubOrgMemberProvider.currentCredential ||
-                                currentCommunity?.credential
-                            )
-                        }
-                }}
-                isLoading={githubOrgMemberProvider.status === 'stamp_pending'}
-                iconType="stamp"
-              />
-              <BoxStep
-                title="Step 3"
-                description={
                   githubOrgMemberProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : 'Mint the credential as NFT'
+                    : 'Mint the credential stamp and NFT'
                 }
                 form={{
                   button:
@@ -504,7 +540,7 @@ export const VerifyCredential = (props: IProps) => {
                             )
                         }
                       : {
-                          text: 'Mint NFT',
+                          text: 'Mint Stamp',
                           onClick: () =>
                             githubOrgMemberProvider.handleMintCredential(
                               githubOrgMemberProvider.currentCredential ||
@@ -513,7 +549,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubOrgMemberProvider.status === 'mint_pending'}
-                iconType="nft"
+                iconType="stamp"
               />
             </>
           )}
@@ -595,47 +631,14 @@ export const VerifyCredential = (props: IProps) => {
                 }
                 iconType="credential"
               />
+
               <BoxStep
                 title="Step 2"
-                description={
-                  discordGuildOwnerProvider.currentStamp ||
-                  currentCommunity.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Add an on-chain stamp to your credential'
-                }
-                form={{
-                  button:
-                    discordGuildOwnerProvider.currentStamp ||
-                    currentCommunity.stamps?.length !== 0
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              discordGuildOwnerProvider.currentStamp ||
-                                currentCommunity.stamps[0]
-                            )
-                        }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            discordGuildOwnerProvider.handleStampCredential(
-                              discordGuildOwnerProvider.currentCredential ||
-                                currentCommunity?.credential
-                            )
-                        }
-                }}
-                isLoading={discordGuildOwnerProvider.status === 'stamp_pending'}
-                iconType="stamp"
-              />
-              <BoxStep
-                title="Step 3"
                 description={
                   discordGuildOwnerProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : 'Mint the credential as NFT'
+                    : 'Mint the credential stamp and NFT'
                 }
                 form={{
                   button:
@@ -651,7 +654,7 @@ export const VerifyCredential = (props: IProps) => {
                             )
                         }
                       : {
-                          text: 'Mint NFT',
+                          text: 'Mint Stamp',
                           onClick: () =>
                             discordGuildOwnerProvider.handleMintCredential(
                               discordGuildOwnerProvider.currentCredential ||
@@ -660,7 +663,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordGuildOwnerProvider.status === 'mint_pending'}
-                iconType="nft"
+                iconType="stamp"
               />
             </>
           )}
@@ -747,46 +750,10 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 2"
                 description={
-                  discordGuildMemberProvider.currentStamp ||
-                  currentCommunity.stamps?.length !== 0
-                    ? 'Step completed, you can now check your stamp'
-                    : 'Add an on-chain stamp to your credential'
-                }
-                form={{
-                  button:
-                    discordGuildMemberProvider.currentStamp ||
-                    currentCommunity.stamps?.length !== 0
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              discordGuildMemberProvider.currentStamp ||
-                                currentCommunity.stamps[0]
-                            )
-                        }
-                      : {
-                          text: 'Stamp',
-                          onClick: () =>
-                            discordGuildMemberProvider.handleStampCredential(
-                              discordGuildMemberProvider.currentCredential ||
-                                currentCommunity?.credential
-                            )
-                        }
-                }}
-                isLoading={
-                  discordGuildMemberProvider.status === 'stamp_pending'
-                }
-                iconType="stamp"
-              />
-              <BoxStep
-                title="Step 3"
-                description={
                   discordGuildMemberProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : 'Mint the credential as NFT'
+                    : 'Mint the credential stamp and NFT'
                 }
                 form={{
                   button:
@@ -802,7 +769,7 @@ export const VerifyCredential = (props: IProps) => {
                             )
                         }
                       : {
-                          text: 'Mint NFT',
+                          text: 'Mint Stamp',
                           onClick: () =>
                             discordGuildMemberProvider.handleMintCredential(
                               discordGuildMemberProvider.currentCredential ||
@@ -811,7 +778,7 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordGuildMemberProvider.status === 'mint_pending'}
-                iconType="nft"
+                iconType="stamp"
               />
             </>
           )}

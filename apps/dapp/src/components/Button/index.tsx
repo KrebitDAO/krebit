@@ -1,12 +1,13 @@
-import { FunctionComponent, MouseEventHandler } from 'react';
+import { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
 
 import { Wrapper } from './styles';
 
 interface Props {
-  text: string;
   onClick: MouseEventHandler<HTMLButtonElement>;
+  text?: string;
+  icon?: ReactNode;
   type?: 'button' | 'submit' | 'reset';
-  styleType?: 'background' | 'border';
+  styleType?: 'background' | 'border' | 'border-rounded';
   primaryColor?: string;
   secondaryColor?: string;
   borderBackgroundColor?: string;
@@ -15,8 +16,9 @@ interface Props {
 
 export const Button: FunctionComponent<Props> = props => {
   const {
-    text,
     onClick,
+    text,
+    icon,
     type = 'button',
     styleType = 'background',
     primaryColor = 'heliotrope',
@@ -34,8 +36,9 @@ export const Button: FunctionComponent<Props> = props => {
       borderBackgroundColor={borderBackgroundColor}
       onClick={onClick}
       disabled={isDisabled}
+      hasIcon={!!icon}
     >
-      {text}
+      {icon ? icon : text}
     </Wrapper>
   );
 };

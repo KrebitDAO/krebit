@@ -13,18 +13,20 @@ import {
   getDiscordUser
 } from 'utils';
 
-const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
-
 interface IClaimValues {
   guildId: string;
   private: boolean;
 }
 
+const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
+
+const initialState = {
+  guildId: '',
+  private: true
+};
+
 export const useDiscordGuildOwnerProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    guildId: '',
-    private: true
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -83,7 +85,7 @@ export const useDiscordGuildOwnerProvider = () => {
     return {
       id: proofs.state,
       ethereumAddress: address,
-      type: 'DiscordGuildOwner',
+      type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
       tags: ['DigitalProperty', 'Community'],
       value: claimValue,
@@ -181,40 +183,6 @@ export const useDiscordGuildOwnerProvider = () => {
     }
   };
 
-  const handleStampCredential = async credential => {
-    try {
-      setStatus('stamp_pending');
-
-      const session = window.localStorage.getItem('did-session');
-      const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ethProvider: walletInformation.ethProvider,
-        address: walletInformation.address,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
-
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      const stampTx = await Issuer.stampCredential(credential);
-      console.log('stampTx: ', stampTx);
-
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
-    } catch (error) {
-      setStatus('stamp_rejected');
-    }
-  };
-
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
@@ -256,12 +224,17 @@ export const useDiscordGuildOwnerProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     listenForRedirect,
     handleFetchOAuth,
-    handleStampCredential,
     handleClaimValues,
     handleMintCredential,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,

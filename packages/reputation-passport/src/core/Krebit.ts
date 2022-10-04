@@ -489,6 +489,7 @@ export class Krebit {
             await metaContract.populateTransaction.mintWithCredential(
               this.address,
               w3cCredential.credentialSubject.type,
+              w3cCredential.proof.proofValue,
               eip712credential
             );
           let txParams = {
@@ -532,6 +533,7 @@ export class Krebit {
       this.address,
       w3cCredential.credentialSubject.type,
       eip712credential,
+      w3cCredential.proof.proofValue,
       0x0,
       {
         from: this.address,

@@ -25,19 +25,21 @@ interface IClaimValues {
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
+const initialState = {
+  entity: '',
+  description: '',
+  credentialType: '',
+  credentialSchema: '',
+  imageUrl: '',
+  verificationUrl: '',
+  did: '',
+  ethereumAddress: '',
+  expirationMonths: 12,
+  price: 0.0
+};
+
 export const useIssuerProvider = () => {
-  const [claimValues, setClaimValues] = useState<IClaimValues>({
-    entity: '',
-    description: '',
-    credentialType: '',
-    credentialSchema: '',
-    imageUrl: '',
-    verificationUrl: '',
-    did: '',
-    ethereumAddress: '',
-    expirationMonths: 12,
-    price: 0.0
-  });
+  const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -134,40 +136,6 @@ export const useIssuerProvider = () => {
     }
   };
 
-  const handleStampCredential = async credential => {
-    try {
-      setStatus('stamp_pending');
-
-      const session = window.localStorage.getItem('did-session');
-      const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ethProvider: walletInformation.ethProvider,
-        address: walletInformation.address,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
-
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      const stampTx = await Issuer.stampCredential(credential);
-      console.log('stampTx: ', stampTx);
-
-      setCurrentStamp({ transaction: stampTx });
-      setStatus('stamp_resolved');
-    } catch (error) {
-      setStatus('stamp_rejected');
-    }
-  };
-
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
@@ -210,11 +178,16 @@ export const useIssuerProvider = () => {
     }));
   };
 
+  const handleCleanClaimValues = () => {
+    setClaimValues(initialState);
+    setStatus('idle');
+  };
+
   return {
     handleGetCredential,
-    handleStampCredential,
     handleClaimValues,
     handleMintCredential,
+    handleCleanClaimValues,
     claimValues,
     status,
     currentCredential,
