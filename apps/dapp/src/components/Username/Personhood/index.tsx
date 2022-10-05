@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -8,6 +9,13 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
+
+const DynamicShareWithModal = dynamic(
+  () => import('../../ShareWithModal').then(c => c.ShareWithModal),
+  {
+    ssr: false
+  }
+);
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
@@ -44,6 +52,7 @@ export const Personhood = (props: IProps) => {
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
+  const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
 
@@ -106,6 +115,17 @@ export const Personhood = (props: IProps) => {
     });
   };
 
+  const handleIsShareWithModalOpen = () => {
+    if (!isAuthenticated) return;
+
+    setIsShareWithModalOpen(prevState => !prevState);
+    setCurrentPersonhoodSelected({
+      credential: undefined,
+      stamps: [],
+      isMinted: false
+    });
+  };
+
   const handleIsRemoveModalOpen = () => {
     if (!isAuthenticated) return;
 
@@ -121,6 +141,10 @@ export const Personhood = (props: IProps) => {
 
     setCurrentPersonhoodSelected(values);
     setCurrentActionType(type);
+
+    if (type === 'share_with') {
+      setIsShareWithModalOpen(true);
+    }
 
     if (type === 'add_stamp') {
       setIsVerifyCredentialOpen(true);
@@ -260,6 +284,12 @@ export const Personhood = (props: IProps) => {
           onClose={handleIsVerifyCredentialOpen}
         />
       ) : null}
+      {isShareWithModalOpen ? (
+        <DynamicShareWithModal
+          currentPersonhood={currentPersonhoodSelected}
+          onClose={handleIsShareWithModalOpen}
+        />
+      ) : null}
       {isRemoveModalOpen ? (
         <QuestionModal
           text="This action can't be undone."
@@ -357,6 +387,13 @@ export const Personhood = (props: IProps) => {
                               'tx',
                               personhood.stamps[0]
                             )
+                        }
+                      : undefined,
+                    isAuthenticated
+                      ? {
+                          title: 'Share with',
+                          onClick: () =>
+                            handleCurrentPersonhood('share_with', personhood)
                         }
                       : undefined,
                     isAuthenticated && personhood.stamps?.length === 0
