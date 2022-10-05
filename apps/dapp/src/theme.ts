@@ -23,7 +23,8 @@ export const systemTheme: Theme = {
     brightGray: '#3A4154',
     ebonyClay: '#2D3442',
     melrose: '#BDB4FE',
-    ebony: '#101828'
+    ebony: '#101828',
+    pomegranate: '#F44336'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',
