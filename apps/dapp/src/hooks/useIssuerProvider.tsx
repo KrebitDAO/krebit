@@ -1,3 +1,7 @@
+/*
+TODO: ADD LOADING MESSAGE AND ERROR MESSAGE, THIS HOOK IS NOT AVAILABLE FOR THIS VERSION
+*/
+
 import { ChangeEvent, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from 'lit-js-sdk';

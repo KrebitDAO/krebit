@@ -161,6 +161,13 @@ export const BoxStepWrapper = styled.div`
       text-align: center;
     }
 
+    .verify-box-error {
+      margin: 0;
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.pomegranate}B3;
+      text-align: center;
+    }
+
     .verify-box-step-content {
       display: flex;
       align-items: center;

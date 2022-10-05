@@ -86,9 +86,24 @@ const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
   }
 ];
 
+const DEFAULT_MESSAGES_FOR_PROVIDERS = {
+  INITIAL: 'Approve signature on your Wallet...',
+  ISSUER_CONNECTION: 'Connecting to issuer...',
+  SAVING_CLAIMED_CREDENTIAL: 'Saving claimed credential...',
+  ISSUING_CREDENTIAL: 'Issuing credential...',
+  ADDING_CREDENTIAL: 'Adding credential...',
+  MINTING_NFT: 'Minting NFT...'
+};
+
+const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
+  ERROR_CREDENTIAL: 'Error saving credential. Please check later'
+};
+
 export const constants = {
   DEFAULT_EMPTY_CARD_PERSONHOOD,
   DEFAULT_EMPTY_CARD_WORK,
   DEFAULT_EMPTY_CARD_COMMUNITY,
-  DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS
+  DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS,
+  DEFAULT_MESSAGES_FOR_PROVIDERS,
+  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS
 };
