@@ -32,7 +32,7 @@ export const ShareWithModal = (props: IProps) => {
           --lsm-error-color: ${theme.colors.pomegranate} !important;
           --lsm-title-font: HelveticaNowDisplay-Medium !important;
           --lsm-title-font-weight: initial !important;
-          --lsm-primary-font: HelveticaNowDisplay-Regular !important ;
+          --lsm-primary-font: HelveticaNowDisplay-Regular !important;
           --lsm-primary-font-weight: initial !important;
 
           // Default colors by lit component:
