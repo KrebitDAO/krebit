@@ -294,7 +294,7 @@
     babel-plugin-polyfill-regenerator "^0.4.1"
     semver "^6.3.0"
 
-"@babel/runtime@^7.10.4", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.19.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.4", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.19.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.8.7":
   version "7.19.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.19.0.tgz#22b11c037b094d27a8a2504ea4dcff00f50e2259"
   integrity sha512-eR8Lo9hnDS7tqkO7NsV+mKvCmv5boaXFSZ70DnfhcgiEne8hv9oCEd36Klw74EtizEqLsy4YnW8UWwpBVolHZA==
@@ -686,7 +686,7 @@
     source-map "^0.5.7"
     stylis "4.0.13"
 
-"@emotion/cache@^11.10.0", "@emotion/cache@^11.10.3":
+"@emotion/cache@^11.10.0", "@emotion/cache@^11.10.3", "@emotion/cache@^11.4.0":
   version "11.10.3"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.10.3.tgz#c4f67904fad10c945fea5165c3a5a0583c164b87"
   integrity sha512-Psmp/7ovAa8appWh3g51goxu/z3iVms7JXOreq136D8Bbn6dYraPnmL6mdM8GThEx9vwSn92Fz+mGSjBzN8UPQ==
@@ -714,7 +714,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.8.0.tgz#f580f9beb67176fa57aae70b08ed510e1b18980f"
   integrity sha512-G/YwXTkv7Den9mXDO7AhLWkE3q+I92B+VqAE+dYG4NGPaHZGvt3G8Q0p9vmE+sq7rTGphUbAvmQ9YpbfMQGGlA==
 
-"@emotion/react@^11.10.0", "@emotion/react@^11.9.3":
+"@emotion/react@^11.10.0", "@emotion/react@^11.8.1", "@emotion/react@^11.9.3":
   version "11.10.4"
   resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.10.4.tgz#9dc6bccbda5d70ff68fdb204746c0e8b13a79199"
   integrity sha512-j0AkMpr6BL8gldJZ6XQsQ8DnS9TxEQu1R+OGmDZiWjBAJtCcbt0tS3I/YffoqHXxH6MjgI7KdMbYKw3MEiU9eA==
@@ -2267,10 +2267,17 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-transition-group@^4.4.5":
+"@types/react-transition-group@^4.4.0", "@types/react-transition-group@^4.4.5":
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.5.tgz#aae20dcf773c5aa275d5b9f7cdbca638abc5e416"
   integrity sha512-juKD/eiSM3/xZYzjuzH6ZwpP+/lejltmiS3QEzV/vmb/Q8+HfDmxu+Baga8UEMGBqV88Nbg4l2hY/K2DkyaLLA==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-window@^1.8.2":
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-1.8.5.tgz#285fcc5cea703eef78d90f499e1457e9b5c02fc1"
+  integrity sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==
   dependencies:
     "@types/react" "*"
 
@@ -4846,7 +4853,7 @@ ethers@^4.0.37:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@^5.0.24, ethers@^5.6.9:
+ethers@^5.0.24, ethers@^5.5.4, ethers@^5.6.9:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.1.tgz#48c83a44900b5f006eb2f65d3ba6277047fd4f33"
   integrity sha512-5krze4dRLITX7FpU8J4WscXqADiKmyeNlylmmDLbS95DaZpBhDe2YSwRQwKXWNyXcox7a3gBgm/MkGXV1O1S/Q==
@@ -6980,6 +6987,46 @@ lit-js-sdk@^1.1.185, lit-js-sdk@^1.1.207:
     uint8arrays "^3.0.0"
     utf-8-validate "^5.0.8"
 
+lit-js-sdk@^1.1.198:
+  version "1.1.227"
+  resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.227.tgz#14591a90c6e51721523f97189556913f881b95d8"
+  integrity sha512-ZDcf0nZq9JxU9Xx146CdCq7AfRFECJbAzcpUVZKiNGDLPM6fPfp2c5Dzq6IyqpeTcpt2COFx6nEDpP81SirBkQ==
+  dependencies:
+    "@ethersproject/bytes" "^5.5.0"
+    "@ethersproject/contracts" "^5.2.0"
+    "@ethersproject/hash" "^5.4.0"
+    "@ethersproject/providers" "^5.2.0"
+    "@ethersproject/strings" "^5.5.0"
+    "@ethersproject/units" "^5.4.0"
+    "@ethersproject/wallet" "^5.2.0"
+    "@walletconnect/ethereum-provider" "^1.7.8"
+    buffer "^6.0.3"
+    bufferutil "^4.0.6"
+    cross-blob "^3.0.1"
+    jszip "^3.6.0"
+    lit-connect-modal "^0.1.8"
+    lit-siwe "^1.1.8"
+    node-fetch "^3.2.3"
+    pako "^2.0.4"
+    tslib "^2.3.1"
+    tweetnacl "^1.0.3"
+    tweetnacl-util "^0.15.1"
+    uint8arrays "^3.0.0"
+    utf-8-validate "^5.0.8"
+
+lit-share-modal-v3@^0.0.92:
+  version "0.0.92"
+  resolved "https://registry.yarnpkg.com/lit-share-modal-v3/-/lit-share-modal-v3-0.0.92.tgz#20d1b7b59cf4d9e2a2ddf27c19aeb62bde7ce44d"
+  integrity sha512-3Wb+R5gWFvomuTaGd9i7UXS6ajL87cfWSDWSyPj+WEW+LZrR4Hzh0feku+zWhb4KIU0XcZNQVUac3IvVdJWScQ==
+  dependencies:
+    ethers "^5.5.4"
+    events "^3.3.0"
+    lit-js-sdk "^1.1.198"
+    react "^18.1.0"
+    react-dom "^18.1.0"
+    react-select "^5.3.2"
+    react-windowed-select "^5.0.0"
+
 lit-siwe@^1.1.8:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/lit-siwe/-/lit-siwe-1.1.8.tgz#6a393069012816d629c518bb8aa410f1e4a78bd7"
@@ -7196,6 +7243,11 @@ memdown@^1.0.0:
     inherits "~2.0.1"
     ltgt "~2.2.0"
     safe-buffer "~5.1.1"
+
+"memoize-one@>=3.1.1 <6", memoize-one@^5.0.0:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
+  integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
 
 meow@^6.0.0:
   version "6.1.1"
@@ -8104,7 +8156,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.8.1:
+prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -8274,7 +8326,7 @@ raw-body@2.5.1:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-react-dom@^18.2.0:
+react-dom@^18.1.0, react-dom@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -8306,7 +8358,20 @@ react-reveal@^1.2.2:
   dependencies:
     prop-types "^15.5.10"
 
-react-transition-group@^4.4.2, react-transition-group@^4.4.5:
+react-select@^5.2.2, react-select@^5.3.2:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-5.4.0.tgz#81f6ac73906126706f104751ee14437bd16798f4"
+  integrity sha512-CjE9RFLUvChd5SdlfG4vqxZd55AZJRrLrHzkQyTYeHlpOztqcgnyftYAolJ0SGsBev6zAs6qFrjm6KU3eo2hzg==
+  dependencies:
+    "@babel/runtime" "^7.12.0"
+    "@emotion/cache" "^11.4.0"
+    "@emotion/react" "^11.8.1"
+    "@types/react-transition-group" "^4.4.0"
+    memoize-one "^5.0.0"
+    prop-types "^15.6.0"
+    react-transition-group "^4.3.0"
+
+react-transition-group@^4.3.0, react-transition-group@^4.4.2, react-transition-group@^4.4.5:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.5.tgz#e53d4e3f3344da8521489fbef8f2581d42becdd1"
   integrity sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==
@@ -8316,7 +8381,26 @@ react-transition-group@^4.4.2, react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^18.2.0:
+react-window@^1.8.6:
+  version "1.8.7"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.7.tgz#5e9fd0d23f48f432d7022cdb327219353a15f0d4"
+  integrity sha512-JHEZbPXBpKMmoNO1bNhoXOOLg/ujhL/BU4IqVU9r8eQPcy5KQnGHIHDRkJ0ns9IM5+Aq5LNwt3j8t3tIrePQzA==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
+
+react-windowed-select@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-windowed-select/-/react-windowed-select-5.1.0.tgz#166fb95765db2278ef93eb19fa85060073e46dec"
+  integrity sha512-5Ezt5Zb3GyBZH3OIWcsu9JQN/busVHtvYg5/POVV+cKKtpuZ9x8ZMT1TmWGwAt+SjcD6/lyDTaX59k7/KZ+hfQ==
+  dependencies:
+    "@types/react" "^18.0.14"
+    "@types/react-dom" "^18.0.5"
+    "@types/react-window" "^1.8.2"
+    react-select "^5.2.2"
+    react-window "^1.8.6"
+
+react@^18.1.0, react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
