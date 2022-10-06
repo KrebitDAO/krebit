@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import ShareModal from 'lit-share-modal-v3';
 
 import { Wrapper } from './styles';
@@ -13,11 +14,23 @@ interface IProps {
 
 export const ShareWithModal = (props: IProps) => {
   const { currentPersonhood, onClose } = props;
+  const [initialConditions, setInitialConditions] = useState([]);
 
   const onUnifiedAccessControlConditionsSelected = shareModalOutput => {
     console.log('shareModalOutput', shareModalOutput);
     console.log('currentPersonhood', currentPersonhood);
   };
+
+  useEffect(() => {
+    /*if (currentPersonhood){
+      let accessControlConditions = await issuer.getEncryptedCredentialConditions(
+        currentPersonhood.credential.id
+      );
+      setInitialConditions(accessControlConditions);
+     */ 
+    }
+  }
+
 
   return (
     <>
@@ -47,6 +60,22 @@ export const ShareWithModal = (props: IProps) => {
         <div className="share-with-modal-container">
           <ShareModal
             onClose={onClose}
+            defaultChain={'mumbai'}
+            chainOptions={['mumbai', 'polygon', 'ethereum', 'xdai']}
+            defaultTokens={[
+              {
+                label: 'Krebit Credential',
+                logo: 'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-icon.png',
+                value: '0xff9Edb48f006C4dF02853F90f9ce23078C0AeCD3',
+                symbol: 'Krebit NFT',
+                chain: 'polygon',
+                standard: 'ERC1155'
+              }
+            ]}
+            injectInitialState={true}
+            initialUnifiedAccessControlConditions={
+              currentPersonhood.accessControlConditions
+            }
             onUnifiedAccessControlConditionsSelected={
               onUnifiedAccessControlConditionsSelected
             }

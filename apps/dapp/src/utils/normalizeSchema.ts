@@ -9,6 +9,7 @@ export interface ICredential {
   stamps: any[];
   skills?: string[];
   isMinted: boolean;
+  accessControlConditions?: any[];
 }
 
 export interface IProfile {

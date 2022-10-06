@@ -143,6 +143,7 @@ export const Personhood = (props: IProps) => {
     setCurrentActionType(type);
 
     if (type === 'share_with') {
+      handleClaimValue('share', values.credential);
       setIsShareWithModalOpen(true);
     }
 
@@ -209,6 +210,12 @@ export const Personhood = (props: IProps) => {
     if (type === 'encrypt') {
       claimValue = await passport.getClaimValue(credential);
     }
+    let accessControlConditions = [];
+    if (type === 'share') {
+      accessControlConditions = await issuer.getEncryptedCredentialConditions(
+        credential.id
+      );
+    }
 
     const currentCredentialPosition = personhoods.findIndex(
       personhood => personhood.credential.vcId === credential.vcId
@@ -217,16 +224,17 @@ export const Personhood = (props: IProps) => {
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      const updatedPersnohoods = [...personhoods];
-      updatedPersnohoods[currentCredentialPosition] = {
-        ...updatedPersnohoods[currentCredentialPosition],
+      const updatedPersonhoods = [...personhoods];
+      updatedPersonhoods[currentCredentialPosition] = {
+        ...updatedPersonhoods[currentCredentialPosition],
         credential: {
-          ...updatedPersnohoods[currentCredentialPosition].credential,
-          value: claimValue
+          ...updatedPersonhoods[currentCredentialPosition].credential,
+          value: claimValue,
+          accessControlConditions
         }
       };
 
-      setPersonhoods(updatedPersnohoods);
+      setPersonhoods(updatedPersonhoods);
     }
   };
 
@@ -389,7 +397,10 @@ export const Personhood = (props: IProps) => {
                             )
                         }
                       : undefined,
-                    isAuthenticated
+                    isAuthenticated &&
+                    personhood.credential?.visualInformation
+                      .isEncryptedByDefault &&
+                    personhood.credential?.value?.encryptedString
                       ? {
                           title: 'Share with',
                           onClick: () =>

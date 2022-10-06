@@ -222,7 +222,7 @@ export class Krebit {
   // add address to Lit Access Control Conditions
   shareEncryptedCredentialWith = async (
     vcId: string,
-    ethereumAddress: string
+    accessControlConditions: any[]
   ) => {
     if (!this.isConnected()) throw new Error('Not connected');
     console.log(
@@ -240,7 +240,7 @@ export class Krebit {
       const accessControlConditions = stream.content as any;
 
       const newAccessControlConditions = accessControlConditions.concat(
-        lit.getShareWithCondition(ethereumAddress)
+        accessControlConditions
       );
       const updated = await lit.updateConditions(
         encrypted.encryptedSymmetricKey,
