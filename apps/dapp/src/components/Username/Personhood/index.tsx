@@ -143,7 +143,6 @@ export const Personhood = (props: IProps) => {
     setCurrentActionType(type);
 
     if (type === 'share_with') {
-      handleClaimValue('share', values.credential);
       setIsShareWithModalOpen(true);
     }
 
@@ -210,12 +209,6 @@ export const Personhood = (props: IProps) => {
     if (type === 'encrypt') {
       claimValue = await passport.getClaimValue(credential);
     }
-    let accessControlConditions = [];
-    if (type === 'share') {
-      accessControlConditions = await issuer.getEncryptedCredentialConditions(
-        credential.id
-      );
-    }
 
     const currentCredentialPosition = personhoods.findIndex(
       personhood => personhood.credential.vcId === credential.vcId
@@ -229,8 +222,7 @@ export const Personhood = (props: IProps) => {
         ...updatedPersonhoods[currentCredentialPosition],
         credential: {
           ...updatedPersonhoods[currentCredentialPosition].credential,
-          value: claimValue,
-          accessControlConditions
+          value: claimValue
         }
       };
 
@@ -295,6 +287,7 @@ export const Personhood = (props: IProps) => {
       {isShareWithModalOpen ? (
         <DynamicShareWithModal
           currentPersonhood={currentPersonhoodSelected}
+          issuer={issuer}
           onClose={handleIsShareWithModalOpen}
         />
       ) : null}
@@ -399,8 +392,7 @@ export const Personhood = (props: IProps) => {
                       : undefined,
                     isAuthenticated &&
                     personhood.credential?.visualInformation
-                      .isEncryptedByDefault &&
-                    personhood.credential?.value?.encryptedString
+                      .isEncryptedByDefault
                       ? {
                           title: 'Share with',
                           onClick: () =>
