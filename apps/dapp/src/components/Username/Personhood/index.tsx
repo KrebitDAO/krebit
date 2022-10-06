@@ -217,16 +217,16 @@ export const Personhood = (props: IProps) => {
     if (currentCredentialPosition === -1) return;
 
     if (claimValue) {
-      const updatedPersnohoods = [...personhoods];
-      updatedPersnohoods[currentCredentialPosition] = {
-        ...updatedPersnohoods[currentCredentialPosition],
+      const updatedPersonhoods = [...personhoods];
+      updatedPersonhoods[currentCredentialPosition] = {
+        ...updatedPersonhoods[currentCredentialPosition],
         credential: {
-          ...updatedPersnohoods[currentCredentialPosition].credential,
+          ...updatedPersonhoods[currentCredentialPosition].credential,
           value: claimValue
         }
       };
 
-      setPersonhoods(updatedPersnohoods);
+      setPersonhoods(updatedPersonhoods);
     }
   };
 
@@ -287,6 +287,7 @@ export const Personhood = (props: IProps) => {
       {isShareWithModalOpen ? (
         <DynamicShareWithModal
           currentPersonhood={currentPersonhoodSelected}
+          issuer={issuer}
           onClose={handleIsShareWithModalOpen}
         />
       ) : null}
@@ -389,7 +390,9 @@ export const Personhood = (props: IProps) => {
                             )
                         }
                       : undefined,
-                    isAuthenticated
+                    isAuthenticated &&
+                    personhood.credential?.visualInformation
+                      .isEncryptedByDefault
                       ? {
                           title: 'Share with',
                           onClick: () =>
