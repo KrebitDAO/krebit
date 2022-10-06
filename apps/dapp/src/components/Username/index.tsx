@@ -158,6 +158,10 @@ export const Username = () => {
     setIsShareContentOpen(prevState => !prevState);
   };
 
+  const handleOpenDomainPage = async (domain: string) => {
+    window.open(`/${domain}`, '_blank');
+  };
+
   const handleSendMessage = () => {
     if (!auth?.isAuthenticated) {
       handleOpenConnectWallet();
@@ -211,11 +215,37 @@ export const Username = () => {
                 <div className="profile-photo"></div>
                 <div className="profile-info">
                   <div className="profile-info-naming-container">
-                    <div className="profile-info-naming">
-                      <p className="profile-info-name">{profile.name}</p>{' '}
-                      <span className="profile-info-token">
-                        KRB {profile.reputation}
-                      </span>
+                    <div className="profile-info-naming-header">
+                      <div className="profile-info-naming">
+                        <span className="profile-info-name">
+                          {profile.name}
+                        </span>{' '}
+                        <span className="profile-info-token">
+                          KRB {profile.reputation}
+                        </span>
+                      </div>
+                      <div className="profile-info-domains">
+                        {profile.ensDomain && (
+                          <span
+                            className="profile-info-domain"
+                            onClick={() =>
+                              handleOpenDomainPage(profile.ensDomain)
+                            }
+                          >
+                            {profile.ensDomain}
+                          </span>
+                        )}
+                        {profile.unsDomain && (
+                          <span
+                            className="profile-info-domain"
+                            onClick={() =>
+                              handleOpenDomainPage(profile.unsDomain)
+                            }
+                          >
+                            {profile.unsDomain}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {profile.description && (
                       <p className="profile-info-description">

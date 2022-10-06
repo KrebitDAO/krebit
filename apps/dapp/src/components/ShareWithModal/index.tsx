@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import ShareModal from 'lit-share-modal-v3';
 import { ethers } from 'ethers';
+
 import { Wrapper } from './styles';
 import { theme } from 'theme';
-
+import { Loading } from 'components/Loading';
 import krebitNFT from '@krebitdao/reputation-passport/dist/schemas/krebitNFT.json';
 
 // types
@@ -47,8 +48,6 @@ export const ShareWithModal = (props: IProps) => {
   const onUnifiedAccessControlConditionsSelected = async shareModalOutput => {
     try {
       setStatus('pending');
-      console.log('shareModalOutput', shareModalOutput);
-      console.log('currentPersonhood', currentPersonhood);
 
       const newConditions = shareModalOutput.unifiedAccessControlConditions.map(
         condition => {
@@ -99,19 +98,22 @@ export const ShareWithModal = (props: IProps) => {
           --lsm-title-font-weight: initial !important;
           --lsm-primary-font: HelveticaNowDisplay-Regular !important;
           --lsm-primary-font-weight: initial !important;
+          --lsm-accent-color: ${theme.colors.white};
+          --lsm-disabled-color: ${theme.colors.gray};
+          --lsm-secondary-color: ${theme.colors.white};
 
           // Default colors by lit component:
-          --lsm-secondary-color: #c4c4c4;
           --lsm-modal-overlay-color: rgba(0, 0, 0, 0.4);
-          --lsm-accent-color: rgb(36, 78, 112);
-          --lsm-disabled-color: #aaa;
           --lsm-menu-focused-color: #2684ff;
         }
       `}</style>
       <Wrapper>
-        {/* TODO: ADD LOADING VIEW... */}
         {status === 'pending' ? (
-          <h1>loading...</h1>
+          <div className="share-with-modal-loading">
+            <div className="share-with-modal-container">
+              <Loading />
+            </div>
+          </div>
         ) : (
           <div className="share-with-modal-container">
             <ShareModal
