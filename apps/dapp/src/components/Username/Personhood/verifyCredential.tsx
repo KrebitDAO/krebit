@@ -134,6 +134,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordProvider.status === 'credential_pending'}
+                loadingMessage={discordProvider.statusMessage}
+                isError={discordProvider.status === 'credential_rejected'}
+                errorMessage={discordProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -165,6 +168,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordProvider.status === 'mint_pending'}
+                loadingMessage={discordProvider.statusMessage}
+                isError={discordProvider.status === 'mint_rejected'}
+                errorMessage={discordProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -239,6 +245,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterProvider.status === 'credential_pending'}
+                loadingMessage={twitterProvider.statusMessage}
+                isError={twitterProvider.status === 'credential_rejected'}
+                errorMessage={twitterProvider.errorMessage}
                 iconType="credential"
               />
 
@@ -271,6 +280,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterProvider.status === 'mint_pending'}
+                loadingMessage={twitterProvider.statusMessage}
+                isError={twitterProvider.status === 'mint_rejected'}
+                errorMessage={twitterProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -344,6 +356,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubProvider.status === 'credential_pending'}
+                loadingMessage={githubProvider.statusMessage}
+                isError={githubProvider.status === 'credential_rejected'}
+                errorMessage={githubProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -375,6 +390,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubProvider.status === 'mint_pending'}
+                loadingMessage={githubProvider.statusMessage}
+                isError={githubProvider.status === 'mint_rejected'}
+                errorMessage={githubProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -455,6 +473,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={veriffProvider.status === 'credential_pending'}
+                loadingMessage={veriffProvider.statusMessage}
+                isError={veriffProvider.status === 'credential_rejected'}
+                errorMessage={veriffProvider.errorMessage}
                 iconType="credential"
               />
 
@@ -487,6 +508,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={veriffProvider.status === 'mint_pending'}
+                loadingMessage={veriffProvider.statusMessage}
+                isError={veriffProvider.status === 'mint_rejected'}
+                errorMessage={veriffProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -566,6 +590,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={personaProvider.status === 'credential_pending'}
+                loadingMessage={personaProvider.statusMessage}
+                isError={personaProvider.status === 'credential_rejected'}
+                errorMessage={personaProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -597,6 +624,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={personaProvider.status === 'mint_pending'}
+                loadingMessage={personaProvider.statusMessage}
+                isError={personaProvider.status === 'mint_rejected'}
+                errorMessage={personaProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -715,6 +745,9 @@ export const VerifyCredential = (props: IProps) => {
                 }}
                 iconType="credential"
                 isLoading={phoneProvider.status === 'credential_pending'}
+                loadingMessage={phoneProvider.statusMessage}
+                isError={phoneProvider.status === 'credential_rejected'}
+                errorMessage={phoneProvider.errorMessage}
               />
               <BoxStep
                 title="Step 3"
@@ -745,6 +778,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={phoneProvider.status === 'mint_pending'}
+                loadingMessage={phoneProvider.statusMessage}
+                isError={phoneProvider.status === 'mint_rejected'}
+                errorMessage={phoneProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -850,6 +886,9 @@ export const VerifyCredential = (props: IProps) => {
                 }}
                 iconType="credential"
                 isLoading={emailProvider.status === 'credential_pending'}
+                loadingMessage={emailProvider.statusMessage}
+                isError={emailProvider.status === 'credential_rejected'}
+                errorMessage={emailProvider.errorMessage}
               />
               <BoxStep
                 title="Step 3"
@@ -880,6 +919,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={emailProvider.status === 'mint_pending'}
+                loadingMessage={emailProvider.statusMessage}
+                isError={emailProvider.status === 'mint_rejected'}
+                errorMessage={emailProvider.errorMessage}
                 iconType="stamp"
               />
             </>

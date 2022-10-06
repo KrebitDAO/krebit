@@ -7,7 +7,8 @@ import {
   generateUID,
   sortByDate,
   getWalletInformation,
-  IIsuerParams
+  IIsuerParams,
+  constants
 } from 'utils';
 
 interface IClaimValues {
@@ -29,6 +30,8 @@ const initialState = {
 export const usePhoneProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
+  const [statusMessage, setStatusMessage] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>();
   const [currentVerificationId, setCurrentVerificationId] = useState('');
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
@@ -118,6 +121,7 @@ export const usePhoneProvider = () => {
 
   const handleGetCredential = async () => {
     setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     try {
       const session = window.localStorage.getItem('did-session');
@@ -155,6 +159,9 @@ export const usePhoneProvider = () => {
       await passport.connect(currentSession);
       // Save claimedCredential
       if (claimedCredential) {
+        setStatusMessage(
+          constants.DEFAULT_MESSAGES_FOR_PROVIDERS.SAVING_CLAIMED_CREDENTIAL
+        );
         const claimedCredentialId = await passport.addClaim(claimedCredential);
         console.log('claimedCredentialId: ', claimedCredentialId);
 
@@ -168,6 +175,10 @@ export const usePhoneProvider = () => {
 
         // Step 1-C: Get the verifiable credential, and save it to the passport
         if (issuedCredential) {
+          setStatusMessage(
+            constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+          );
+
           const addedCredentialId = await passport.addCredential(
             issuedCredential
           );
@@ -189,12 +200,17 @@ export const usePhoneProvider = () => {
       }
     } catch (error) {
       setStatus('credential_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
     }
   };
 
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
+      setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -215,13 +231,21 @@ export const usePhoneProvider = () => {
       });
       await Issuer.connect(currentSession);
 
+      setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.MINTING_NFT);
+
       const mintTx = await Issuer.mintNFT(credential);
       console.log('mintTx: ', mintTx);
 
       setCurrentMint({ transaction: mintTx });
       setStatus('mint_resolved');
+      setStatusMessage(undefined);
+      setErrorMessage(undefined);
     } catch (error) {
       setStatus('mint_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
     }
   };
 
@@ -236,6 +260,8 @@ export const usePhoneProvider = () => {
   const handleCleanClaimValues = () => {
     setClaimValues(initialState);
     setStatus('idle');
+    setStatusMessage(undefined);
+    setErrorMessage(undefined);
   };
 
   return {
@@ -246,6 +272,8 @@ export const usePhoneProvider = () => {
     handleCleanClaimValues,
     claimValues,
     status,
+    statusMessage,
+    errorMessage,
     currentVerificationId,
     currentCredential,
     currentStamp,

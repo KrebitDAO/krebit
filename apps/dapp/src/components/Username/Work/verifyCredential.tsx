@@ -126,6 +126,11 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   githubFollowersProvider.status === 'credential_pending'
                 }
+                loadingMessage={githubFollowersProvider.statusMessage}
+                isError={
+                  githubFollowersProvider.status === 'credential_rejected'
+                }
+                errorMessage={githubFollowersProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -157,6 +162,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubFollowersProvider.status === 'mint_pending'}
+                loadingMessage={githubFollowersProvider.statusMessage}
+                isError={githubFollowersProvider.status === 'mint_rejected'}
+                errorMessage={githubFollowersProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -267,6 +275,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubRepoProvider.status === 'mint_pending'}
+                loadingMessage={githubRepoProvider.statusMessage}
+                isError={githubRepoProvider.status === 'mint_rejected'}
+                errorMessage={githubRepoProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -371,6 +382,12 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   githubRepoCollaboratorProvider.status === 'credential_pending'
                 }
+                loadingMessage={githubRepoCollaboratorProvider.statusMessage}
+                isError={
+                  githubRepoCollaboratorProvider.status ===
+                  'credential_rejected'
+                }
+                errorMessage={githubRepoCollaboratorProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep

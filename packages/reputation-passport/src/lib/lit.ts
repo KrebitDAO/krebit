@@ -69,6 +69,7 @@ export class Lit {
   public getOwnsAddressCondition = (address: string): Array<any> => {
     return [
       {
+        conditionType: 'evmBasic',
         contractAddress: '',
         standardContractType: '',
         chain: this.currentConfig.network,
@@ -88,6 +89,7 @@ export class Lit {
         operator: 'or'
       },
       {
+        conditionType: 'evmBasic',
         contractAddress: '',
         standardContractType: '',
         chain: this.currentConfig.network,
