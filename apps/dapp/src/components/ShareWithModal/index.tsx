@@ -40,7 +40,7 @@ export const ShareWithModal = (props: IProps) => {
       console.error(error);
       setStatus('rejected');
     }
-  }, [currentPersonhood]);
+  }, [currentPersonhood, issuer]);
 
   const onUnifiedAccessControlConditionsSelected = shareModalOutput => {
     console.log('shareModalOutput', shareModalOutput);
