@@ -40,18 +40,18 @@ export const Wrapper = styled.div`
       height: 100vh;
       background-color: ${theme.colors.bunting};
 
-      .share-with-modal-container {
-        margin: 0 auto;
-        margin-top: 30px;
-        width: 60px;
-        height: 60px;
-      }
-
       @media (min-width: ${theme.screens.lg}) {
         width: 500px;
         height: 700px;
         border-radius: 14px;
         box-shadow: ${theme.shadows.small};
+      }
+
+      .share-with-modal-container {
+        margin: 0 auto;
+        margin-top: 30px;
+        width: 60px;
+        height: 60px;
       }
     }
   `}
