@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import ShareModal from 'lit-share-modal-v3';
-
+import { ethers } from 'ethers';
 import { Wrapper } from './styles';
 import { theme } from 'theme';
+
+import krebitNFT from '@krebitdao/reputation-passport/dist/schemas/krebitNFT.json';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
@@ -42,9 +44,44 @@ export const ShareWithModal = (props: IProps) => {
     }
   }, [currentPersonhood, issuer]);
 
-  const onUnifiedAccessControlConditionsSelected = shareModalOutput => {
-    console.log('shareModalOutput', shareModalOutput);
-    console.log('currentPersonhood', currentPersonhood);
+  const onUnifiedAccessControlConditionsSelected = async shareModalOutput => {
+    try {
+      setStatus('pending');
+      console.log('shareModalOutput', shareModalOutput);
+      console.log('currentPersonhood', currentPersonhood);
+
+      const newConditions = shareModalOutput.unifiedAccessControlConditions.map(
+        condition => {
+          if (
+            condition.contractAddress ===
+              krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address &&
+            isNaN(Number(condition.parameters[1]))
+          ) {
+            const tokenIdHex = ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(
+                ['string'],
+                [condition.parameters[1]]
+              )
+            );
+            const tokenId = ethers.BigNumber.from(tokenIdHex);
+            const newParameters = [condition.parameters[0], tokenId.toString()];
+            return { ...condition, parameters: newParameters };
+          } else {
+            return condition;
+          }
+        }
+      );
+      console.log('newConditions', newConditions);
+      await issuer.shareEncryptedCredentialWith(
+        currentPersonhood.credential.id,
+        shareModalOutput.unifiedAccessControlConditions
+      );
+      setStatus('resolved');
+      onClose();
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected');
+    }
   };
 
   return (
@@ -85,7 +122,7 @@ export const ShareWithModal = (props: IProps) => {
                 {
                   label: 'Krebit Credential',
                   logo: 'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-icon.png',
-                  value: '0xff9Edb48f006C4dF02853F90f9ce23078C0AeCD3',
+                  value: krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address,
                   symbol: 'Krebit NFT',
                   chain: 'polygon',
                   standard: 'ERC1155'
