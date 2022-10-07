@@ -29,7 +29,10 @@ export const checkCredentialsURLs = (
   }
 
   if (type === 'ceramic') {
-    currentUrl = `https://cerscan.com/testnet-clay/stream/${value}`;
+    currentUrl =
+      process.env.NEXT_PUBLIC_NETWORK === 'polygon'
+        ? `https://cerscan.com/mainnet/stream/${value}`
+        : `https://cerscan.com/testnet-clay/stream/${value}`;
   }
 
   if (type === 'polygon') {
@@ -40,7 +43,10 @@ export const checkCredentialsURLs = (
 
   if (type === 'rarible') {
     let contract = krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address;
-    currentUrl = `https://testnet.rarible.com/token/polygon/${contract}:${value}`;
+    currentUrl =
+      process.env.NEXT_PUBLIC_NETWORK === 'polygon'
+        ? `https://rarible.com/token/polygon/${contract}:${value}`
+        : `https://testnet.rarible.com/token/polygon/${contract}:${value}`;
   }
 
   window.open(currentUrl, '_blank');

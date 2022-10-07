@@ -13,6 +13,8 @@
     "dev-api": "dotenv -e .env -- turbo run dev --filter=api",
     "dev-webpage": "dotenv -e .env -- turbo run dev --filter=website",
     "dev-dapp": "dotenv -e .env -- turbo run dev --filter=dapp",
+    "prod-api": "dotenv -e .env.prod -- turbo run dev --filter=api",
+    "prod-dapp": "dotenv -e .env.prod -- turbo run dev --filter=dapp",
     "build-api": "turbo run build --filter=api",
     "build-webpage": "turbo run build --filter=website",
     "build-dapp": "turbo run build --filter=dapp",

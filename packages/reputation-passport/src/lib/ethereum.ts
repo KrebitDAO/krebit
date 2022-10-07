@@ -70,7 +70,10 @@ const getWeb3Provider = async () => {
 };
 
 const getProvider = () => {
-  return new utils.WalletProvider(currentConfig.rpcUrl, currentConfig.network);
+  return new utils.WalletProvider(
+    currentConfig.rpcUrl,
+    schemas.krbToken[currentConfig.network].network
+  );
 };
 
 export const ethereum = {
