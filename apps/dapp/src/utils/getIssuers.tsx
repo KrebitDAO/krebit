@@ -95,7 +95,8 @@ const PERSONHOOD_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_PERSONA_NODE_URL,
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '2.5'
+    price: '2.5',
+    isDisabled: true
   }
 ];
 
@@ -137,15 +138,14 @@ const WORK_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'spect',
-    entity: 'Spect',
+    credentialType: 'SpectCompletedTasksGT10',
+    entity: 'Spect Completed Tasks > 10',
     description: 'Krebit Verification Node',
     icon: <Spect />,
     verificationUrl: process.env.NEXT_PUBLIC_SPECT_NODE_URL,
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    isDisabled: true
+    price: '0'
   }
 ];
 

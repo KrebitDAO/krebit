@@ -7,7 +7,8 @@ import { GeneralContext } from 'context';
 import {
   useGithubFollowersProvider,
   useGithubRepoProvider,
-  useGithubRepoCollaboratorProvider
+  useGithubRepoCollaboratorProvider,
+  useSpectCompletedProvider
 } from 'hooks';
 
 // types
@@ -24,6 +25,7 @@ export const VerifyCredential = (props: IProps) => {
   const githubFollowersProvider = useGithubFollowersProvider();
   const githubRepoProvider = useGithubRepoProvider();
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
+  const spectCompletedProvider = useSpectCompletedProvider();
 
   const handleClose = () => {
     if (!window) return;
@@ -43,6 +45,10 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'GithubRepoCollaborator') {
       githubRepoCollaboratorProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'SpectCompletedTasksGT10') {
+      spectCompletedProvider.handleCleanClaimValues();
     }
   };
 
@@ -423,6 +429,116 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   githubRepoCollaboratorProvider.status === 'mint_pending'
                 }
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'SpectCompletedTasksGT10' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  spectCompletedProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your github repo'
+                }
+                form={{
+                  fields:
+                    spectCompletedProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'circle',
+                            placeholder: 'Enter the spect circle',
+                            value: spectCompletedProvider.claimValues.circle,
+                            onChange: spectCompletedProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: spectCompletedProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: spectCompletedProvider.claimValues.private,
+                            onChange: spectCompletedProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    spectCompletedProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              spectCompletedProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !spectCompletedProvider.claimValues.circle ||
+                            spectCompletedProvider.claimValues.circle === ''
+                              ? undefined
+                              : () =>
+                                  spectCompletedProvider.handleGetCredential(
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !spectCompletedProvider.claimValues.circle ||
+                            spectCompletedProvider.claimValues.circle === ''
+                        }
+                }}
+                isLoading={
+                  spectCompletedProvider.status === 'credential_pending'
+                }
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  spectCompletedProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT'
+                }
+                form={{
+                  button:
+                    spectCompletedProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              spectCompletedProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            spectCompletedProvider.handleMintCredential(
+                              spectCompletedProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={spectCompletedProvider.status === 'mint_pending'}
+                loadingMessage={spectCompletedProvider.statusMessage}
+                isError={spectCompletedProvider.status === 'mint_rejected'}
+                errorMessage={spectCompletedProvider.errorMessage}
                 iconType="stamp"
               />
             </>
