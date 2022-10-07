@@ -1,10 +1,46 @@
 {
+  "polygon": {
+    "contractName": "Krebit",
+    "symbol": "KRB",
+    "token": "polygon",
+    "name": "Polygon",
+    "address": "0x2b1Aa81F5cBea8E4D5CB16c772abecDA13E3cBaA",
+    "block": 34019942,
+    "network": "matic",
+    "blockUrl": "https://polygonscan.com/",
+    "txUrl": "https://polygonscan.com/tx/",
+    "addressUrl": "https://polygonscan.com/address/",
+    "domain": {
+      "name": "Krebit",
+      "version": "1.0",
+      "chainId": 137,
+      "verifyingContract": "0x2b1Aa81F5cBea8E4D5CB16c772abecDA13E3cBaA"
+    }
+  },
+  "matic": {
+    "contractName": "Krebit",
+    "symbol": "KRB",
+    "token": "polygon",
+    "name": "Polygon",
+    "address": "0x2b1Aa81F5cBea8E4D5CB16c772abecDA13E3cBaA",
+    "block": 34019942,
+    "network": "matic",
+    "blockUrl": "https://polygonscan.com/",
+    "txUrl": "https://polygonscan.com/tx/",
+    "addressUrl": "https://polygonscan.com/address/",
+    "domain": {
+      "name": "Krebit",
+      "version": "1.0",
+      "chainId": 137,
+      "verifyingContract": "0x2b1Aa81F5cBea8E4D5CB16c772abecDA13E3cBaA"
+    }
+  },
   "mumbai": {
     "contractName": "Krebit",
     "symbol": "KRB",
-    "token": "MATIC",
-    "name": "Polygon",
-    "address": "0xEC30B11e0E8db9Dd0d57E07B150019fa006411Ca",
+    "token": "polygon",
+    "name": "Polygon Testnet",
+    "address": "0x3210e026f93ed87B51b9798012727df6C8C9bAaA",
     "block": 28447491,
     "network": "mumbai",
     "blockUrl": "https://mumbai.polygonscan.com/",
@@ -12,9 +48,9 @@
     "addressUrl": "https://mumbai.polygonscan.com/address/",
     "domain": {
       "name": "Krebit",
-      "version": "0.1",
+      "version": "1.0",
       "chainId": 80001,
-      "verifyingContract": "0xEC30B11e0E8db9Dd0d57E07B150019fa006411Ca"
+      "verifyingContract": "0x3210e026f93ed87B51b9798012727df6C8C9bAaA"
     }
   },
   "abi": [
@@ -178,7 +214,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -240,7 +276,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -257,7 +293,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -273,7 +309,7 @@
             }
           ],
           "indexed": false,
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         }
@@ -504,6 +540,19 @@
     },
     {
       "inputs": [],
+      "name": "DEPOSITOR_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "DOMAIN_SEPARATOR",
       "outputs": [
         {
@@ -713,7 +762,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -775,7 +824,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -792,7 +841,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -807,7 +856,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         },
@@ -825,6 +874,24 @@
           "type": "bool"
         }
       ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "depositData",
+          "type": "bytes"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -860,7 +927,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -922,7 +989,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -939,7 +1006,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -954,7 +1021,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         },
@@ -988,7 +1055,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -1050,7 +1117,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -1067,7 +1134,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -1082,7 +1149,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "disputeVC",
           "type": "tuple"
         }
@@ -1130,7 +1197,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -1192,7 +1259,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -1209,7 +1276,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -1224,7 +1291,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         }
@@ -1360,7 +1427,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -1422,7 +1489,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -1439,7 +1506,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -1454,7 +1521,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         }
@@ -1502,7 +1569,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -1564,7 +1631,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -1581,7 +1648,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -1596,7 +1663,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         }
@@ -1926,7 +1993,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -1988,7 +2055,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -2005,7 +2072,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -2020,7 +2087,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         },
@@ -2052,7 +2119,7 @@
       "name": "registry",
       "outputs": [
         {
-          "internalType": "enum KRBTokenV01.Status",
+          "internalType": "enum KRBToken.Status",
           "name": "credentialStatus",
           "type": "uint8"
         },
@@ -2133,7 +2200,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -2195,7 +2262,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -2212,7 +2279,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -2227,7 +2294,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         },
@@ -2318,7 +2385,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -2380,7 +2447,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -2397,7 +2464,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -2412,7 +2479,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         },
@@ -2514,6 +2581,19 @@
     },
     {
       "inputs": [],
+      "name": "trustedForwarder",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "unpause",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -2563,7 +2643,7 @@
         },
         {
           "internalType": "address",
-          "name": "trustedForwarder",
+          "name": "newTrustedForwarder",
           "type": "address"
         }
       ],
@@ -2601,6 +2681,42 @@
       "name": "upgradeToAndCall",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "signer",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "structHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "validateSignedData",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

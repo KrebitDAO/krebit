@@ -118,15 +118,15 @@ export const ShareWithModal = (props: IProps) => {
           <div className="share-with-modal-container">
             <ShareModal
               onClose={onClose}
-              defaultChain={'mumbai'}
-              chainOptions={['mumbai', 'polygon', 'ethereum', 'xdai']}
+              defaultChain={process.env.NEXT_PUBLIC_NETWORK}
+              chainOptions={['polygon', 'ethereum', 'xdai', 'mumbai']}
               defaultTokens={[
                 {
                   label: 'Krebit Credential',
                   logo: 'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-icon.png',
                   value: krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address,
                   symbol: 'Krebit NFT',
-                  chain: 'polygon',
+                  chain: process.env.NEXT_PUBLIC_NETWORK,
                   standard: 'ERC1155'
                 }
               ]}

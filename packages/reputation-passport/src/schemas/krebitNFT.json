@@ -1,10 +1,22 @@
 {
+  "polygon": {
+    "contractName": "Krebit NFT",
+    "symbol": "NFT",
+    "token": "polygon",
+    "name": "Polygon",
+    "address": "0x3F01060d9c5ddC855B5DD1db5aE70204D37e3E7E",
+    "block": 34019949,
+    "network": "polygon",
+    "blockUrl": "https://polygonscan.com/",
+    "txUrl": "https://polygonscan.com/tx/",
+    "addressUrl": "https://polygonscan.com/address/"
+  },
   "mumbai": {
     "contractName": "Krebit NFT",
     "symbol": "NFT",
-    "token": "MATIC",
-    "name": "Polygon",
-    "address": "0xff9Edb48f006C4dF02853F90f9ce23078C0AeCD3",
+    "token": "polygon",
+    "name": "Polygon Testnet",
+    "address": "0xA5E2Bc2BbB8F72de7a899730EAE35dC710AEee35",
     "block": 28447492,
     "network": "mumbai",
     "blockUrl": "https://mumbai.polygonscan.com/",
@@ -315,6 +327,19 @@
     },
     {
       "inputs": [],
+      "name": "DEPOSITOR_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "GOVERN_ROLE",
       "outputs": [
         {
@@ -474,6 +499,24 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "depositData",
+          "type": "bytes"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -757,7 +800,7 @@
                   "type": "address"
                 }
               ],
-              "internalType": "struct VCTypesV01.Issuer",
+              "internalType": "struct VCTypes.Issuer",
               "name": "issuer",
               "type": "tuple"
             },
@@ -819,7 +862,7 @@
                   "type": "uint256"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSubject",
+              "internalType": "struct VCTypes.CredentialSubject",
               "name": "credentialSubject",
               "type": "tuple"
             },
@@ -836,7 +879,7 @@
                   "type": "string"
                 }
               ],
-              "internalType": "struct VCTypesV01.CredentialSchema",
+              "internalType": "struct VCTypes.CredentialSchema",
               "name": "credentialSchema",
               "type": "tuple"
             },
@@ -851,7 +894,7 @@
               "type": "string"
             }
           ],
-          "internalType": "struct VCTypesV01.VerifiableCredential",
+          "internalType": "struct VCTypes.VerifiableCredential",
           "name": "vc",
           "type": "tuple"
         },
@@ -1072,19 +1115,6 @@
     {
       "inputs": [
         {
-          "internalType": "bool",
-          "name": "force",
-          "type": "bool"
-        }
-      ],
-      "name": "setContractURI",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
           "name": "newPrice",
           "type": "uint256"
@@ -1117,6 +1147,19 @@
         }
       ],
       "name": "setURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "force",
+          "type": "bool"
+        }
+      ],
+      "name": "setforceRegister",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1232,6 +1275,24 @@
     {
       "inputs": [
         {
+          "internalType": "uint256[]",
+          "name": "ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "withdrawBatch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address payable",
           "name": "_to",
           "type": "address"
@@ -1256,6 +1317,24 @@
         }
       ],
       "name": "withdrawPayments",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawSingle",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
