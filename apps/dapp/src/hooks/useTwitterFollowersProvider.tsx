@@ -22,8 +22,8 @@ interface IClaimValues {
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const authClient = new auth.OAuth2User({
-  client_id: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CLIENT_ID as string,
-  callback: process.env.NEXT_PUBLIC_PASSPORT_TWITTER_CALLBACK as string,
+  client_id: process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID as string,
+  callback: process.env.NEXT_PUBLIC_TWITTER_CALLBACK as string,
   scopes: ['tweet.read', 'users.read']
 });
 const initialState = { username: '', private: true };

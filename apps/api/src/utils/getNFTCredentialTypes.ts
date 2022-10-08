@@ -36,7 +36,10 @@ const CREDENTIAL_TYPES = [
   'SnapshotProposalsPassedGT10',
   'SnapshotVotesGT10',
   'SnapshotVotesGT100',
-  'SpectCompletedTasksGT10'
+  'SpectCompletedTasksGT10',
+  'DribbbleFollowersGT100',
+  'DribbbleFollowersGT1K',
+  'DribbbleTeamMember'
 ];
 
 export const getNFTCredentialTypes = () => {
