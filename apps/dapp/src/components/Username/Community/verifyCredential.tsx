@@ -56,6 +56,7 @@ export const VerifyCredential = (props: IProps) => {
     if (credentialType === 'TwitterFollowersGT1K') {
       twitterFollowersProvider.handleCleanClaimValues();
     }
+
     if (credentialType === 'TwitterFollowersGT10K') {
       twitterFollowersProvider.handleCleanClaimValues();
     }
@@ -143,9 +144,13 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   twitterFollowersProvider.status === 'credential_pending'
                 }
+                loadingMessage={twitterFollowersProvider.statusMessage}
+                isError={
+                  twitterFollowersProvider.status === 'credential_rejected'
+                }
+                errorMessage={twitterFollowersProvider.errorMessage}
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={
@@ -177,6 +182,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterFollowersProvider.status === 'mint_pending'}
+                loadingMessage={twitterFollowersProvider.statusMessage}
+                isError={twitterFollowersProvider.status === 'mint_rejected'}
+                errorMessage={twitterFollowersProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -255,6 +263,11 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   twitterFollowersProvider.status === 'credential_pending'
                 }
+                loadingMessage={twitterFollowersProvider.statusMessage}
+                isError={
+                  twitterFollowersProvider.status === 'credential_rejected'
+                }
+                errorMessage={twitterFollowersProvider.errorMessage}
                 iconType="credential"
               />
 
@@ -289,6 +302,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={twitterFollowersProvider.status === 'mint_pending'}
+                loadingMessage={twitterFollowersProvider.statusMessage}
+                isError={twitterFollowersProvider.status === 'mint_rejected'}
+                errorMessage={twitterFollowersProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -516,6 +532,11 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   githubOrgMemberProvider.status === 'credential_pending'
                 }
+                loadingMessage={githubOrgMemberProvider.statusMessage}
+                isError={
+                  githubOrgMemberProvider.status === 'credential_rejected'
+                }
+                errorMessage={githubOrgMemberProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -549,6 +570,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubOrgMemberProvider.status === 'mint_pending'}
+                loadingMessage={githubOrgMemberProvider.statusMessage}
+                isError={githubOrgMemberProvider.status === 'mint_rejected'}
+                errorMessage={githubOrgMemberProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -629,9 +653,13 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   discordGuildOwnerProvider.status === 'credential_pending'
                 }
+                loadingMessage={discordGuildOwnerProvider.statusMessage}
+                isError={
+                  discordGuildOwnerProvider.status === 'credential_rejected'
+                }
+                errorMessage={discordGuildOwnerProvider.errorMessage}
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={
@@ -663,6 +691,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordGuildOwnerProvider.status === 'mint_pending'}
+                loadingMessage={discordGuildOwnerProvider.statusMessage}
+                isError={discordGuildOwnerProvider.status === 'mint_rejected'}
+                errorMessage={discordGuildOwnerProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -745,6 +776,11 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   discordGuildMemberProvider.status === 'credential_pending'
                 }
+                loadingMessage={discordGuildMemberProvider.statusMessage}
+                isError={
+                  discordGuildMemberProvider.status === 'credential_rejected'
+                }
+                errorMessage={discordGuildMemberProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -778,6 +814,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={discordGuildMemberProvider.status === 'mint_pending'}
+                loadingMessage={discordGuildMemberProvider.statusMessage}
+                isError={discordGuildMemberProvider.status === 'mint_rejected'}
+                errorMessage={discordGuildMemberProvider.errorMessage}
                 iconType="stamp"
               />
             </>

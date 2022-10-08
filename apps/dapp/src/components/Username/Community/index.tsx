@@ -352,13 +352,6 @@ export const Community = (props: IProps) => {
                             handleCurrentCommunity('add_stamp', community)
                         }
                       : undefined,
-                    isAuthenticated && community.stamps?.length !== 0
-                      ? {
-                          title: 'Mint Stamp',
-                          onClick: () =>
-                            handleCurrentCommunity('mint_nft', community)
-                        }
-                      : undefined,
                     isAuthenticated &&
                     community.credential?.visualInformation.isEncryptedByDefault
                       ? community.credential?.value?.encryptedString

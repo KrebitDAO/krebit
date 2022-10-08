@@ -20,6 +20,8 @@ export interface IProfile {
   reputation: string | number;
   countFollowers: number;
   countFollowing: number;
+  ensDomain?: string;
+  unsDomain?: string;
   personhoods?: ICredential[];
   works?: ICredential[];
   communities?: ICredential[];
@@ -32,6 +34,8 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
 
   const orbisProfile = await orbis.getProfile(did);
   const reputation = await passport.getReputation();
+  const ensDomain = passport?.ens;
+  const unsDomain = passport?.uns;
 
   if (orbisProfile?.data?.did) {
     currentProfile = {
@@ -44,7 +48,9 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,
       countFollowers: orbisProfile?.data?.count_followers || 0,
-      countFollowing: orbisProfile?.data?.count_following || 0
+      countFollowing: orbisProfile?.data?.count_following || 0,
+      ensDomain,
+      unsDomain
     };
   } else {
     const profile = await passport.getProfile();
@@ -65,7 +71,9 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         description: profile?.description,
         reputation: reputation || 0,
         countFollowers: orbisProfile?.data?.count_followers || 0,
-        countFollowing: orbisProfile?.data?.count_following || 0
+        countFollowing: orbisProfile?.data?.count_following || 0,
+        ensDomain,
+        unsDomain
       };
     } else {
       currentProfile = {
@@ -81,7 +89,9 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         description: undefined,
         reputation: reputation || 0,
         countFollowers: 0,
-        countFollowing: 0
+        countFollowing: 0,
+        ensDomain,
+        unsDomain
       };
     }
   }

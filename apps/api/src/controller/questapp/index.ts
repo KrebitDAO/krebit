@@ -23,12 +23,12 @@ export const QuestappController = async (
     if (!request?.body) {
       throw new Error('Body not defined');
     }
-
+    /*
     if (!request?.body?.claimedCredentialId) {
       throw new Error(`No claimedCredentialId in body`);
-    }
+    }*/
 
-    const { claimedCredentialId } = request.body;
+    //const { claimedCredentialId } = request.body;
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -44,7 +44,7 @@ export const QuestappController = async (
     const did = await Issuer.connect();
     console.log('DID:', did);
 
-    const delegateCredential = await Issuer.getCredential(claimedCredentialId);
+    /* const delegateCredential = await Issuer.getCredential(claimedCredentialId);
 
     console.log(
       'checkCredential: ',
@@ -105,7 +105,7 @@ export const QuestappController = async (
 
     if (issuedCredential) {
       return response.json(issuedCredential);
-    }
+    } */
   } catch (err) {
     next(err);
   }

@@ -63,6 +63,7 @@ declare module '@emotion/react' {
       ebonyClay: string;
       melrose: string;
       ebony: string;
+      pomegranate: string;
     };
     shadows: {
       smallest: string;

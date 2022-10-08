@@ -80,35 +80,59 @@ export const Wrapper = styled.div<IProps>`
           }
 
           .profile-info-naming-container {
-            .profile-info-naming {
+            .profile-info-naming-header {
               display: flex;
+              flex-direction: column;
+              grid-gap: 5px;
               align-items: center;
-              justify-content: center;
 
               @media (min-width: ${theme.screens.lg}) {
-                justify-content: initial;
+                display: flex;
+                flex-direction: initial;
+                grid-gap: initial;
               }
 
-              .profile-info-name {
-                margin: 0;
-                font-size: ${theme.fonts.xl};
-                color: ${theme.colors.white};
-                max-width: 250px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+              .profile-info-naming {
+                display: flex;
+                align-items: center;
 
-                @media (min-width: ${theme.screens.lg}) {
-                  font-size: ${theme.fonts['2xl']};
-                  max-width: 600px;
+                .profile-info-name {
+                  margin: 0;
+                  font-size: ${theme.fonts.xl};
+                  color: ${theme.colors.white};
+                  max-width: 250px;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+
+                  @media (min-width: ${theme.screens.lg}) {
+                    font-size: ${theme.fonts['2xl']};
+                    max-width: 400px;
+                  }
+                }
+
+                .profile-info-token {
+                  margin: 0;
+                  margin-left: 10px;
+                  margin-right: 10px;
+                  font-size: ${theme.fonts.sm};
+                  color: ${theme.colors.cyan};
                 }
               }
 
-              .profile-info-token {
-                margin: 0;
-                margin-left: 10px;
-                font-size: ${theme.fonts.sm};
-                color: ${theme.colors.cyan};
+              .profile-info-domains {
+                .profile-info-domain {
+                  margin: 0;
+                  margin-top: 5px;
+                  margin-right: 5px;
+                  padding: 2px 10px;
+                  background-color: ${theme.colors.ebonyClay};
+                  border-radius: 15px;
+                  font-size: ${theme.fonts.sm};
+                  color: ${theme.colors.white};
+                  text-decoration: underline;
+                  cursor: pointer;
+                }
               }
             }
 
@@ -165,12 +189,19 @@ export const Wrapper = styled.div<IProps>`
         .profile-buttons {
           grid-area: buttons;
           display: grid;
+          justify-content: center;
           grid-template-columns: ${isCurrentProfile
             ? 'repeat(3, auto)'
-            : 'repeat(2, auto)'};
+            : '44px 150px'};
           grid-gap: 8px;
           margin-top: 20px;
           position: relative;
+
+          @media (min-width: ${theme.screens.lg}) {
+            grid-template-columns: ${isCurrentProfile
+              ? 'repeat(3, auto)'
+              : '50px 150px'};
+          }
 
           .profile-buttons-container {
             height: 44px;

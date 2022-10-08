@@ -349,12 +349,6 @@ export const Work = (props: IProps) => {
                           onClick: () => handleCurrentWork('add_stamp', work)
                         }
                       : undefined,
-                    isAuthenticated && work.stamps?.length !== 0
-                      ? {
-                          title: 'Mint Stamp',
-                          onClick: () => handleCurrentWork('mint_nft', work)
-                        }
-                      : undefined,
                     isAuthenticated &&
                     work.credential?.visualInformation.isEncryptedByDefault
                       ? work.credential?.value?.encryptedString

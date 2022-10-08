@@ -55,6 +55,7 @@ export const MetadataController = async (
       name: tokenType,
       description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
       image: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
+      animation_url: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.mp4`,
       external_url: 'https://krebit.id',
       attributes: [
         { trait_type: 'Creator', value: 'krebit.eth' },

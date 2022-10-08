@@ -8,7 +8,8 @@ import {
   sortByDate,
   getWalletInformation,
   generateUID,
-  IIsuerParams
+  IIsuerParams,
+  constants
 } from 'utils';
 import { debounce } from 'ts-debounce';
 
@@ -25,6 +26,8 @@ const initialState = { firstName: '', lastName: '', private: true };
 export const usePersonaProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
+  const [statusMessage, setStatusMessage] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>();
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();
@@ -54,11 +57,11 @@ export const usePersonaProvider = () => {
 
   const handleFetchOAuth = (issuer: IIsuerParams) => {
     setCurrentIssuer(issuer);
-    const authUrl = `https://krebit.withpersona.com/verify?template-id=${
-      process.env.NEXT_PUBLIC_PASSPORT_PERSONA_API_TEMPLATE
-    }&environment=sandbox&reference-id=persona-${generateUID(
-      10
-    )}&redirect-uri=${process.env.NEXT_PUBLIC_PASSPORT_PERSONA_CALLBACK}`;
+    const authUrl = `${
+      process.env.NEXT_PUBLIC_PERSONA_AUTH_URL
+    }&reference-id=persona-${generateUID(10)}&redirect-uri=${
+      process.env.NEXT_PUBLIC_PERSONA_CALLBACK
+    }`;
 
     openOAuthUrl({
       url: authUrl
@@ -98,6 +101,7 @@ export const usePersonaProvider = () => {
     data: { state: string };
   }) => {
     setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
@@ -141,6 +145,10 @@ export const usePersonaProvider = () => {
 
         // Save claimedCredential
         if (claimedCredential) {
+          setStatusMessage(
+            constants.DEFAULT_MESSAGES_FOR_PROVIDERS.SAVING_CLAIMED_CREDENTIAL
+          );
+
           const claimedCredentialId = await passport.addClaim(
             claimedCredential
           );
@@ -157,6 +165,10 @@ export const usePersonaProvider = () => {
 
           // Step 1-C: Get the verifiable credential, and save it to the passport
           if (issuedCredential) {
+            setStatusMessage(
+              constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+            );
+
             const addedCredentialId = await passport.addCredential(
               issuedCredential
             );
@@ -167,17 +179,24 @@ export const usePersonaProvider = () => {
               vcId: addedCredentialId
             });
             setStatus('credential_resolved');
+            setStatusMessage(undefined);
+            setErrorMessage(undefined);
           }
         }
       }
     } catch (error) {
       setStatus('credential_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
     }
   };
 
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
+      setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -198,13 +217,21 @@ export const usePersonaProvider = () => {
       });
       await Issuer.connect(currentSession);
 
+      setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.MINTING_NFT);
+
       const mintTx = await Issuer.mintNFT(credential);
       console.log('mintTx: ', mintTx);
 
       setCurrentMint({ transaction: mintTx });
       setStatus('mint_resolved');
+      setStatusMessage(undefined);
+      setErrorMessage(undefined);
     } catch (error) {
       setStatus('mint_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
     }
   };
 
@@ -219,6 +246,8 @@ export const usePersonaProvider = () => {
   const handleCleanClaimValues = () => {
     setClaimValues(initialState);
     setStatus('idle');
+    setStatusMessage(undefined);
+    setErrorMessage(undefined);
   };
 
   return {
@@ -229,6 +258,8 @@ export const usePersonaProvider = () => {
     handleCleanClaimValues,
     claimValues,
     status,
+    statusMessage,
+    errorMessage,
     currentCredential,
     currentStamp,
     currentMint

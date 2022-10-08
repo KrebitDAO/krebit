@@ -34,7 +34,10 @@ interface IProps {
       isDisabled?: boolean;
     };
   };
-  isLoading?: Boolean;
+  isLoading?: boolean;
+  loadingMessage?: string;
+  isError?: boolean;
+  errorMessage?: string;
   iconType?: string;
   icon?: ReactNode;
   did?: string;
@@ -48,6 +51,9 @@ export const BoxStep = (props: IProps) => {
     description,
     form,
     isLoading = false,
+    loadingMessage,
+    isError = false,
+    errorMessage,
     iconType,
     icon,
     did,
@@ -58,10 +64,12 @@ export const BoxStep = (props: IProps) => {
 
   return (
     <BoxStepWrapper>
-      {isLoading ? (
-        <p className="verify-box-loading">
-          Approve signature on your Wallet...
+      {isError ? (
+        <p className="verify-box-error">
+          {errorMessage || 'Something went wrong'}
         </p>
+      ) : isLoading ? (
+        <p className="verify-box-loading">{loadingMessage || 'Loading...'}</p>
       ) : (
         <>
           <div className="verify-box-step-content">

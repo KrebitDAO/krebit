@@ -9,16 +9,32 @@ export interface IConfigProps {
   biconomyKey?: string;
 }
 
-const initialConfig = {
+const initialConfigTestnet = {
   network: 'mumbai',
   rpcUrl:
     'https://rpc-mumbai.maticvigil.com/v1/5de1e8fc6cabc2e7782450d3a1a2135b2710c50c',
   graphUrl: 'https://api.thegraph.com/subgraphs/name/krebit/krb-mumbai-v01',
   ensGraphUrl: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
   ceramicUrl: 'https://ceramic-clay.3boxlabs.com',
+  publicUrl: 'https://testnet.krebit.id',
+  biconomyKey: 'XtWAXxY1v.afcf7601-39b1-4e0d-b930-1c00581e36f1'
+};
+
+const initialConfigMainnet = {
+  network: 'polygon',
+  rpcUrl:
+    'https://rpc-mainnet.maticvigil.com/v1/5de1e8fc6cabc2e7782450d3a1a2135b2710c50c',
+  graphUrl: 'https://api.thegraph.com/subgraphs/name/krebit/krb-matic-v1',
+  ensGraphUrl: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
+  ceramicUrl: 'https://node1.orbis.club',
   publicUrl: 'https://krebit.id',
   biconomyKey: 'XtWAXxY1v.afcf7601-39b1-4e0d-b930-1c00581e36f1'
 };
+
+const initialConfig =
+  process.env.NEXT_PUBLIC_NETWORK === 'polygon'
+    ? initialConfigMainnet
+    : initialConfigTestnet;
 
 const isNode =
   typeof process !== 'undefined' &&
