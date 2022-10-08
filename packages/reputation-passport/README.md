@@ -6,7 +6,7 @@
 
 This repository hosts the [Krebit] Reputation Passport sdk, based on [W3C Ethereum EIP712 Signature 2021 Draft].
 
-[krebit]: http://krebit.id
+[krebit]: https://krebit.id
 [w3c ethereum eip712 signature 2021 draft]: https://w3c-ccg.github.io/ethereum-eip712-signature-2021-spec
 
 It provides functions for creating off-chain [Verifiable-Credentials] in Ceramic that can be verified on-chain with [krebit-contracts].
