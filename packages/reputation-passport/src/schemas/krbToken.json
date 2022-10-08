@@ -17,6 +17,24 @@
       "verifyingContract": "0xdEb4810c8AB3f9De3F253064A40b1D0c8703fbbf"
     }
   },
+  "matic": {
+    "contractName": "Krebit",
+    "symbol": "KRB",
+    "token": "polygon",
+    "name": "Polygon",
+    "address": "0xdEb4810c8AB3f9De3F253064A40b1D0c8703fbbf",
+    "block": 34019942,
+    "network": "matic",
+    "blockUrl": "https://polygonscan.com/",
+    "txUrl": "https://polygonscan.com/tx/",
+    "addressUrl": "https://polygonscan.com/address/",
+    "domain": {
+      "name": "Krebit",
+      "version": "1.0",
+      "chainId": 137,
+      "verifyingContract": "0xdEb4810c8AB3f9De3F253064A40b1D0c8703fbbf"
+    }
+  },
   "mumbai": {
     "contractName": "Krebit",
     "symbol": "KRB",

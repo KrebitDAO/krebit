@@ -159,7 +159,7 @@ export const Username = () => {
   };
 
   const handleOpenDomainPage = async (domain: string) => {
-    window.open(`/${domain}`, '_blank');
+    window.open(`/${domain}`);
   };
 
   const handleSendMessage = () => {
