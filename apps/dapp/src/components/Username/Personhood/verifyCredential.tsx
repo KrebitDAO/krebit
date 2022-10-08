@@ -53,7 +53,7 @@ export const VerifyCredential = (props: IProps) => {
       veriffProvider.handleCleanClaimValues();
     }
 
-    if (credentialType === 'Phone') {
+    if (credentialType === 'PhoneNumber') {
       phoneProvider.handleCleanClaimValues();
     }
 
@@ -701,6 +701,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={phoneProvider.status === 'verification_pending'}
+                loadingMessage={phoneProvider.statusMessage}
+                isError={phoneProvider.status === 'verification_rejected'}
+                errorMessage={phoneProvider.errorMessage}
               />
               <BoxStep
                 title="Step 2"
@@ -842,6 +845,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={emailProvider.status === 'verification_pending'}
+                loadingMessage={emailProvider.statusMessage}
+                isError={emailProvider.status === 'verification_rejected'}
+                errorMessage={emailProvider.errorMessage}
               />
               <BoxStep
                 title="Step 2"

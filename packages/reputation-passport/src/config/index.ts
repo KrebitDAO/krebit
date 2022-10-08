@@ -32,7 +32,8 @@ const initialConfigMainnet = {
 };
 
 const initialConfig =
-  process.env.NEXT_PUBLIC_NETWORK === 'polygon'
+  process.env.NEXT_PUBLIC_NETWORK === 'polygon' ||
+  process.env.SERVER_NETWORK === 'polygon'
     ? initialConfigMainnet
     : initialConfigTestnet;
 
