@@ -62,7 +62,7 @@ export const useDiscordGuildMemberProvider = () => {
     setCurrentIssuer(issuer);
     const state = `discordGuildMember-${generateUID(10)}`;
 
-    const authUrl = `https://discord.com/api/oauth2/authorize?response_type=token&scope=identify%20guilds%20guilds.members.read&client_id=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CLIENT_ID}&state=${state}&redirect_uri=${process.env.NEXT_PUBLIC_PASSPORT_DISCORD_CALLBACK}`;
+    const authUrl = `https://discord.com/api/oauth2/authorize?response_type=token&scope=identify%20guilds%20guilds.members.read&client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&state=${state}&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_CALLBACK}`;
 
     openOAuthUrl({
       url: authUrl

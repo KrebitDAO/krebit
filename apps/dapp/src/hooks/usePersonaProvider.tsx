@@ -57,11 +57,11 @@ export const usePersonaProvider = () => {
 
   const handleFetchOAuth = (issuer: IIsuerParams) => {
     setCurrentIssuer(issuer);
-    const authUrl = `https://krebit.withpersona.com/verify?template-id=${
-      process.env.NEXT_PUBLIC_PASSPORT_PERSONA_API_TEMPLATE
-    }&environment=sandbox&reference-id=persona-${generateUID(
-      10
-    )}&redirect-uri=${process.env.NEXT_PUBLIC_PASSPORT_PERSONA_CALLBACK}`;
+    const authUrl = `${
+      process.env.NEXT_PUBLIC_PERSONA_AUTH_URL
+    }&reference-id=persona-${generateUID(10)}&redirect-uri=${
+      process.env.NEXT_PUBLIC_PERSONA_CALLBACK
+    }`;
 
     openOAuthUrl({
       url: authUrl

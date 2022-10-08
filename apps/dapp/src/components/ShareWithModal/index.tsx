@@ -123,7 +123,9 @@ export const ShareWithModal = (props: IProps) => {
               defaultTokens={[
                 {
                   label: 'Krebit Credential',
-                  logo: 'https://gateway.pinata.cloud/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-icon.png',
+                  logo:
+                    process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+                    '/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-icon.png',
                   value: krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address,
                   symbol: 'Krebit NFT',
                   chain: process.env.NEXT_PUBLIC_NETWORK,
