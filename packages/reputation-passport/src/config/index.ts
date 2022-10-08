@@ -28,7 +28,7 @@ const initialConfigMainnet = {
   ensGraphUrl: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
   ceramicUrl: 'https://node1.orbis.club',
   publicUrl: 'https://krebit.id',
-  biconomyKey: 'XtWAXxY1v.afcf7601-39b1-4e0d-b930-1c00581e36f1'
+  biconomyKey: 'lMY3O7m6h.884dd5c0-9682-421c-817c-f9160c7cfd94'
 };
 
 const initialConfig =
