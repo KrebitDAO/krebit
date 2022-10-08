@@ -38,6 +38,7 @@ env.prod
 .env.production.local
 
 fly.toml
+fly-prod.toml
 
 # turbo
 .turbo

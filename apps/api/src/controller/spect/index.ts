@@ -80,7 +80,7 @@ export const SpectController = async (
       });
       console.log('Importing from Spect:', spect);
 
-      if (spect.assignedClosedCards && spect.assignedClosedCards.length >= 1) {
+      if (spect.assignedClosedCards && spect.assignedClosedCards.length > 10) {
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
