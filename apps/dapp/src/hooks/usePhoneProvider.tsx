@@ -67,7 +67,7 @@ export const usePhoneProvider = () => {
   const handleStartVerification = async (issuer: IIsuerParams) => {
     setCurrentIssuer(issuer);
     setStatus('verification_pending');
-
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       console.log('Saving Stamp', { type: 'PhoneNumber' });
@@ -101,7 +101,9 @@ export const usePhoneProvider = () => {
       console.log('claimedCredential: ', claimedCredential);
 
       // Step 1-B: Send self-signed credential to the Issuer for verification
-
+      setStatusMessage(
+        constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ISSUER_CONNECTION
+      );
       const result = await getCredential({
         verifyUrl: issuer.verificationUrl,
         claimedCredential
@@ -112,10 +114,17 @@ export const usePhoneProvider = () => {
       if (result) {
         setCurrentVerificationId(result.verificationId);
         setStatus('verification_resolved');
+
+        setStatusMessage(undefined);
+        setErrorMessage(undefined);
       }
     } catch (error) {
       console.log('handleStartVerification error: ', error);
       setStatus('verification_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
     }
   };
 
