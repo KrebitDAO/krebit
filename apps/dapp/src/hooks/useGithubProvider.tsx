@@ -217,7 +217,7 @@ export const useGithubProvider = () => {
 
       setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.MINTING_NFT);
 
-      const mintTx = await Issuer.mintNFT(credential);
+      const mintTx = await Issuer.mintCredentialNFT(credential);
       console.log('mintTx: ', mintTx);
 
       setCurrentMint({ transaction: mintTx });
