@@ -15,6 +15,7 @@ import { useDiscordGuildOwnerProvider } from './useDiscordGuildOwnerProvider';
 import { useDiscordGuildMemberProvider } from './useDiscordGuildMemberProvider';
 import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
+import { useSpectCompletedProvider } from './useSpectCompletedProvider';
 
 export {
   useWindowSize,
@@ -33,5 +34,6 @@ export {
   useDiscordGuildOwnerProvider,
   useDiscordGuildMemberProvider,
   usePersonaProvider,
-  useOutsideClick
+  useOutsideClick,
+  useSpectCompletedProvider
 };

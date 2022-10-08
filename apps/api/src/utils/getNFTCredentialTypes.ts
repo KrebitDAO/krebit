@@ -35,7 +35,8 @@ const CREDENTIAL_TYPES = [
   'StackOverflowGoldBadgesGT10',
   'SnapshotProposalsPassedGT10',
   'SnapshotVotesGT10',
-  'SnapshotVotesGT100'
+  'SnapshotVotesGT100',
+  'SpectCompletedTasksGT10'
 ];
 
 export const getNFTCredentialTypes = () => {

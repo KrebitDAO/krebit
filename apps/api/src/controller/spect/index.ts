@@ -1,6 +1,6 @@
 import express from 'express';
 import krebit from '@krebitdao/reputation-passport';
-
+import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import { connect, getSpectUser } from '../../utils';
 
 const {
@@ -11,22 +11,32 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
+export const mergeArray = (arr: any[]): any[] => {
+  const counts = {};
+
+  for (const num of arr) {
+    counts[num] = counts[num] ? counts[num] + 1 : 1;
+  }
+  return Object.entries(counts).sort(
+    (a, b) => (b[1] as number) - (a[1] as number)
+  );
+};
+
 export const SpectController = async (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction
 ) => {
-  console.log(request.body);
   try {
     if (!request?.body) {
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.address) {
-      throw new Error(`No address in body`);
+    if (!request?.body?.claimedCredentialId) {
+      throw new Error(`No claimedCredentialId in body`);
     }
 
-    const { address } = request.body;
+    const { claimedCredentialId } = request.body;
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -34,62 +44,98 @@ export const SpectController = async (
       wallet,
       ethProvider,
       address: wallet.address,
-      ceramicUrl: SERVER_CERAMIC_URL
+      ceramicUrl: SERVER_CERAMIC_URL,
+      litSdk: LitJsSdk
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
 
-    // Connect to spect and get reputation from address
-    const spect = await getSpectUser({ address });
-    console.log('Importing from Spect:', spect);
+    const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
-    const expirationDate = new Date();
-    const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
-    expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
-    console.log('expirationDate: ', expirationDate);
+    console.log('Verifying spect with claimedCredential: ', claimedCredential);
 
-    if (!spect.assignedClosedCards || spect.assignedClosedCards.length === 0) {
-      throw new Error('Missing completed tasks');
+    // Check self-signature
+    console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
+
+    // get the claimValue
+    let claimValue = null;
+    //Decrypt
+    if (claimedCredential.credentialSubject.encrypted === 'lit') {
+      claimValue = await Issuer.decryptCredential(claimedCredential);
+      console.log('Decrypted claim value: ', claimValue);
+    } else {
+      claimValue = JSON.parse(claimedCredential.credentialSubject.value);
+      console.log('Claim value: ', claimValue);
     }
+    const publicClaim: boolean =
+      claimedCredential.credentialSubject.encrypted === 'none';
 
-    const result = await Promise.all(
-      await spect.assignedClosedCards.map(async task => {
-        if (spect.cardDetails[task] && spect.cardDetails[task].status.paid) {
-          let claim = {
-            id: spect.cardDetails[task].id,
-            ethereumAddress: address,
-            type: 'SpectCompletedTask',
-            typeSchema: 'krebit://schemas/workExperience',
-            tags: ['WorkExperience', 'Community'],
-            value: {
-              title: spect.cardDetails[task].title,
-              entity: spect.cardDetails[task].circle.name,
-              imageUrl: spect.cardDetails[task].circle.avatar,
-              skills: [{ skillId: 'participation', score: 100 }],
-              startDate: '',
-              endDate: spect.cardDetails[task].circle.deadline
-                ? spect.cardDetails[task].circle.deadline
-                : '',
-              proofs: {
-                url: `https://circles.spect.network/${spect.cardDetails[task].circle.slug}/${spect.cardDetails[task].project.slug}/${spect.cardDetails[task].slug}`,
-                apiUrl: 'https://api.spect.network/user/' + address
-              }
-            },
-            trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
-            stake: parseInt(SERVER_STAKE, 10), // In KRB
-            price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-            expirationDate: new Date(expirationDate).toISOString()
-          };
+    //Tasks for a specific Circle or Skill
+    if (
+      claimedCredential?.credentialSubject?.type === 'SpectCompletedTasksGT10'
+    ) {
+      // Connect to spect and get reputation from address
+      const spect = await getSpectUser({
+        address: claimedCredential.credentialSubject.ethereumAddress
+      });
+      console.log('Importing from Spect:', spect);
 
-          const issuedCredential = await Issuer.issue(claim);
-          console.log('issuedCredential: ', issuedCredential);
+      if (spect.assignedClosedCards && spect.assignedClosedCards.length >= 1) {
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+        let avatar = undefined;
+        const skills = spect.assignedClosedCards
+          .map(task => {
+            if (
+              spect.cardDetails[task] &&
+              spect.cardDetails[task].circle.slug.toLowerCase() ===
+                claimValue.entity.toLowerCase()
+            ) {
+              avatar = spect.cardDetails[task].circle.avatar;
+              return spect.cardDetails[task].labels;
+            }
+          })
+          .flatMap(task => {
+            return task != undefined ? task : 'Other';
+          });
 
-          if (issuedCredential) return issuedCredential;
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: `did:pkh:eip155:${
+            krebit.schemas.krbToken[process.env.SERVER_NETWORK]?.domain?.chainId
+          }:${claimedCredential.credentialSubject.ethereumAddress}`,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2).concat(skills),
+          value: claimValue,
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        } else {
+          if (avatar) claim.value['imageUrl'] = avatar;
+          claim.value['skills'] = mergeArray(skills);
         }
-      })
-    );
+        console.log('claim: ', claim);
 
-    return response.json(result);
+        // Issue Verifiable credential
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong spect ID: ${spect}`);
+      }
+    }
   } catch (err) {
     next(err);
   }
