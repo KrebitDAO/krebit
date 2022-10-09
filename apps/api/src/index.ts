@@ -21,7 +21,12 @@ const { SERVER_PORT } = process.env;
 const app = express();
 const router = express.Router();
 
-router.use(cors()).use(express.json());
+const corsOptions = {
+  origin: 'https://krebit.id',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+router.use(cors(corsOptions)).use(express.json());
 
 router.get('/metadata/:tokenId', MetadataController);
 
