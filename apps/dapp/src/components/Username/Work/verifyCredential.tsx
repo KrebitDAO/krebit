@@ -250,6 +250,9 @@ export const VerifyCredential = (props: IProps) => {
                         }
                 }}
                 isLoading={githubRepoProvider.status === 'credential_pending'}
+                loadingMessage={githubRepoProvider.statusMessage}
+                isError={githubRepoProvider.status === 'credential_rejected'}
+                errorMessage={githubRepoProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
@@ -429,6 +432,11 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   githubRepoCollaboratorProvider.status === 'mint_pending'
                 }
+                loadingMessage={githubRepoCollaboratorProvider.statusMessage}
+                isError={
+                  githubRepoCollaboratorProvider.status === 'mint_rejected'
+                }
+                errorMessage={githubRepoCollaboratorProvider.errorMessage}
                 iconType="stamp"
               />
             </>
@@ -505,6 +513,11 @@ export const VerifyCredential = (props: IProps) => {
                 isLoading={
                   spectCompletedProvider.status === 'credential_pending'
                 }
+                loadingMessage={spectCompletedProvider.statusMessage}
+                isError={
+                  spectCompletedProvider.status === 'credential_rejected'
+                }
+                errorMessage={spectCompletedProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep

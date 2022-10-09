@@ -270,7 +270,6 @@ export const VerifyCredential = (props: IProps) => {
                 errorMessage={twitterFollowersProvider.errorMessage}
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={
