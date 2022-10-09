@@ -250,7 +250,6 @@ export const VerifyCredential = (props: IProps) => {
                 errorMessage={twitterProvider.errorMessage}
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={
@@ -478,7 +477,6 @@ export const VerifyCredential = (props: IProps) => {
                 errorMessage={veriffProvider.errorMessage}
                 iconType="credential"
               />
-
               <BoxStep
                 title="Step 2"
                 description={
