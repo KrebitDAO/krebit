@@ -116,16 +116,16 @@ export const Work = (props: IProps) => {
   };
 
   const handleCurrentWork = (type: string, values: ICredential) => {
-    if (!isAuthenticated) return;
-
     setCurrentWorkSelected(values);
     setCurrentActionType(type);
 
     if (type === 'add_stamp') {
+      if (!isAuthenticated) return;
       setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'remove_credential' || type === 'remove_stamp') {
+      if (!isAuthenticated) return;
       setIsRemoveModalOpen(true);
     }
 
@@ -349,7 +349,6 @@ export const Work = (props: IProps) => {
                           onClick: () => handleCurrentWork('add_stamp', work)
                         }
                       : undefined,
-                    isAuthenticated &&
                     work.credential?.visualInformation.isEncryptedByDefault
                       ? work.credential?.value?.encryptedString
                         ? {
