@@ -117,16 +117,16 @@ export const Community = (props: IProps) => {
   };
 
   const handleCurrentCommunity = (type: string, values: ICredential) => {
-    if (!isAuthenticated) return;
-
     setCurrentCommunitySelected(values);
     setCurrentActionType(type);
 
     if (type === 'add_stamp') {
+      if (!isAuthenticated) return;
       setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'remove_credential' || type === 'remove_stamp') {
+      if (!isAuthenticated) return;
       setIsRemoveModalOpen(true);
     }
 
@@ -352,7 +352,6 @@ export const Community = (props: IProps) => {
                             handleCurrentCommunity('add_stamp', community)
                         }
                       : undefined,
-                    isAuthenticated &&
                     community.credential?.visualInformation.isEncryptedByDefault
                       ? community.credential?.value?.encryptedString
                         ? {
