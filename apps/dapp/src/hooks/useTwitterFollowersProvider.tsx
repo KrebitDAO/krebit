@@ -77,7 +77,9 @@ export const useTwitterFollowersProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
-      username: claimValues.username,
+      username: claimValues.username.startsWith('@')
+        ? claimValues.username.substring(1)
+        : claimValues.username,
       proofs
     };
 
