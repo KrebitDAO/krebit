@@ -37,7 +37,7 @@ interface StampsProps {
 interface EncryptedProps {
   encryptedSymmetricKey: string;
   encryptedString?: string;
-  accessControlConditions?: string;
+  unifiedAccessControlConditions?: string;
 }
 
 const getEIP712CredentialFromStamp = (stamp: any) =>
@@ -205,7 +205,7 @@ export class Krebit {
   getEncryptedCredentialConditions = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
     console.log(
-      'Getting VerifiableCredential accessControlConditions from Ceramic...'
+      'Getting VerifiableCredential unifiedAccessControlConditions from Ceramic...'
     );
     const w3cCredential: W3CCredential = await this.getCredential(vcId);
 
@@ -213,7 +213,7 @@ export class Krebit {
       const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
       const stream = await TileDocument.load(
         this.idx.ceramic,
-        encrypted.accessControlConditions
+        encrypted.unifiedAccessControlConditions
       );
       return stream.content as any;
     }
@@ -226,7 +226,7 @@ export class Krebit {
   ) => {
     if (!this.isConnected()) throw new Error('Not connected');
     console.log(
-      'Updating VerifiableCredential accessControlConditions on Ceramic...'
+      'Updating VerifiableCredential unifiedAccessControlConditions on Ceramic...'
     );
     const w3cCredential: W3CCredential = await this.getCredential(vcId);
 
@@ -235,7 +235,7 @@ export class Krebit {
       const lit = new lib.Lit();
       const stream = await TileDocument.load(
         this.idx.ceramic,
-        encrypted.accessControlConditions
+        encrypted.unifiedAccessControlConditions
       );
 
       const updated = await lit.updateConditions(
@@ -253,7 +253,7 @@ export class Krebit {
   removeAllEncryptedCredentialShares = async (vcId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
     console.log(
-      'Updating VerifiableCredential accessControlConditions on Ceramic...'
+      'Updating VerifiableCredential unifiedAccessControlConditions on Ceramic...'
     );
     const w3cCredential: W3CCredential = await this.getCredential(vcId);
 
@@ -262,7 +262,7 @@ export class Krebit {
       const lit = new lib.Lit();
       const stream = await TileDocument.load(
         this.idx.ceramic,
-        encrypted.accessControlConditions
+        encrypted.unifiedAccessControlConditions
       );
       const newAccessControlConditions = lit.getOwnsAddressCondition(
         this.address
@@ -286,7 +286,8 @@ export class Krebit {
         const encrypted = JSON.parse(w3cCredential.credentialSubject.value);
         return await this.decryptClaimValue(encrypted);
       } catch (err) {
-        throw new Error(`Could not decrypt: ${err.message}`);
+        console.error(`Could not decrypt: ${err.message}`);
+        //throw new Error(`Could not decrypt: ${err.message}`);
       }
     } else if (w3cCredential.credentialSubject.encrypted === 'hash') {
       const claimedCredential: W3CCredential = await this.getCredential(
@@ -305,26 +306,27 @@ export class Krebit {
     if (
       encryptedClaimValue.encryptedString &&
       encryptedClaimValue.encryptedSymmetricKey &&
-      encryptedClaimValue.accessControlConditions
+      encryptedClaimValue.unifiedAccessControlConditions
     ) {
       try {
         const lit = new lib.Lit();
         const stream = await TileDocument.load(
           this.idx.ceramic,
-          encryptedClaimValue.accessControlConditions
+          encryptedClaimValue.unifiedAccessControlConditions
         );
-        const accessControlConditions = stream.content as any;
+        const unifiedAccessControlConditions = stream.content as any;
         const result = await lit.decrypt(
           encryptedClaimValue.encryptedString,
           encryptedClaimValue.encryptedSymmetricKey,
-          accessControlConditions,
+          unifiedAccessControlConditions,
           this.wallet
         );
         if (result) {
           return JSON.parse(result);
         }
       } catch (err) {
-        throw new Error(`Could not decrypt: ${err.message}`);
+        console.error(`Could not decrypt: ${err.message}`);
+        //throw new Error(`Could not decrypt: ${err.message}`);
       }
     } else {
     }

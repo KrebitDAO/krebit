@@ -16,13 +16,13 @@ import {
   MetadataController
 } from './controller';
 
-const { SERVER_PORT } = process.env;
+const { SERVER_PORT, SERVER_BASE_URL } = process.env;
 
 const app = express();
 const router = express.Router();
 
 const corsOptions = {
-  origin: 'https://krebit.id',
+  origin: SERVER_BASE_URL,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 

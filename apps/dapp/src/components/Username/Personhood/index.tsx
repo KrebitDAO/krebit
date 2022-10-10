@@ -137,24 +137,26 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleCurrentPersonhood = (type: string, values: ICredential) => {
-    if (!isAuthenticated) return;
-
     setCurrentPersonhoodSelected(values);
     setCurrentActionType(type);
 
     if (type === 'share_with') {
+      if (!isAuthenticated) return;
       setIsShareWithModalOpen(true);
     }
 
     if (type === 'add_stamp') {
+      if (!isAuthenticated) return;
       setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'mint_nft') {
+      if (!isAuthenticated) return;
       setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'remove_credential' || type === 'remove_stamp') {
+      if (!isAuthenticated) return;
       setIsRemoveModalOpen(true);
     }
 
@@ -391,6 +393,7 @@ export const Personhood = (props: IProps) => {
                         }
                       : undefined,
                     isAuthenticated &&
+                    process.env.NEXT_PUBLIC_NETWORK === 'mumbai' &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? {
@@ -406,7 +409,6 @@ export const Personhood = (props: IProps) => {
                             handleCurrentPersonhood('add_stamp', personhood)
                         }
                       : undefined,
-                    isAuthenticated &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? personhood.credential?.value?.encryptedString
