@@ -105,7 +105,7 @@ export class Lit {
 
   public encrypt = async (
     message: String,
-    accessControlConditions: Array<Object>,
+    unifiedAccessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ) => {
     if (!this.litNodeClient) {
@@ -125,11 +125,11 @@ export class Lit {
       encryptedString
     );
     const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-      accessControlConditions,
+      unifiedAccessControlConditions,
       symmetricKey,
       authSig,
       chain: this.currentConfig.network,
-      permanant: false
+      permanent: false
     });
 
     return {
@@ -138,7 +138,7 @@ export class Lit {
         encryptedSymmetricKey,
         'base16'
       ),
-      accessControlConditions: accessControlConditions,
+      unifiedAccessControlConditions: unifiedAccessControlConditions,
       chain: this.currentConfig.network
     };
   };
@@ -159,11 +159,11 @@ export class Lit {
 
     const newEncryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey(
       {
-        accessControlConditions: newAccessControlConditions,
+        unifiedAccessControlConditions: newAccessControlConditions,
         encryptedSymmetricKey: utils.base64.decodeb64(encryptedSymmetricKey),
         authSig,
         chain: this.currentConfig.network,
-        permanant: false
+        permanent: false
       }
     );
 
@@ -173,7 +173,7 @@ export class Lit {
   public decrypt = async (
     encryptedString: string,
     encryptedSymmetricKey: string,
-    accessControlConditions: Array<Object>,
+    unifiedAccessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ): Promise<string> => {
     if (!this.litNodeClient) {
@@ -186,7 +186,7 @@ export class Lit {
     });
 
     const decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
-      accessControlConditions,
+      unifiedAccessControlConditions,
       toDecrypt: encryptedSymmetricKey,
       authSig,
       chain: this.currentConfig.network

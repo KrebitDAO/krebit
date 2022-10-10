@@ -393,6 +393,7 @@ export const Personhood = (props: IProps) => {
                         }
                       : undefined,
                     isAuthenticated &&
+                    process.env.NEXT_PUBLIC_NETWORK === 'mumbai' &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? {
