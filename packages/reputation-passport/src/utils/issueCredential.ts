@@ -127,26 +127,26 @@ export const issueCredential = async (props: IssueProps) => {
       claim['value'] = hashClaimValue({ did: idx.id, value: claim.value });
       claim['encrypted'] = 'hash';
     } else if (claim.encrypt == 'lit') {
-      let accessControlConditions = lit.getOwnsAddressCondition(
+      let unifiedAccessControlConditions = lit.getOwnsAddressCondition(
         claim.ethereumAddress
       );
       if (claim.shareEncryptedWith) {
-        accessControlConditions = accessControlConditions.concat(
+        unifiedAccessControlConditions = unifiedAccessControlConditions.concat(
           lit.getShareWithCondition(claim.shareEncryptedWith)
         );
       }
       let encryptedContent = await lit.encrypt(
         JSON.stringify(claim.value),
-        accessControlConditions,
+        unifiedAccessControlConditions,
         wallet
       );
       const stream = await TileDocument.create(
         idx.ceramic,
-        accessControlConditions
+        unifiedAccessControlConditions
       );
       claim['value'] = JSON.stringify({
         ...encryptedContent,
-        accessControlConditions: stream.id.toUrl()
+        unifiedAccessControlConditions: stream.id.toUrl()
       });
       claim['encrypted'] = 'lit';
     } else {

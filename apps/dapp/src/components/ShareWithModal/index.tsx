@@ -27,12 +27,12 @@ export const ShareWithModal = (props: IProps) => {
       setStatus('pending');
 
       const getEncryptedCredentialConditions = async () => {
-        const accessControlConditions =
+        const unifiedAccessControlConditions =
           await issuer.getEncryptedCredentialConditions(
             currentPersonhood.credential.id
           );
 
-        setInitialConditions(accessControlConditions);
+        setInitialConditions(unifiedAccessControlConditions);
         setStatus('resolved');
       };
 
