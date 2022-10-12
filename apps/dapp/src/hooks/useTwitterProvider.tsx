@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 import { auth } from 'twitter-api-sdk';
 import { debounce } from 'ts-debounce';
 
@@ -76,7 +76,7 @@ export const useTwitterProvider = () => {
     });
   };
 
-  const getClaim = async (address: string, proofs: any) => {
+  const getClaim = async (address: string, did: string, proofs: any) => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
@@ -93,6 +93,7 @@ export const useTwitterProvider = () => {
 
     return {
       id: proofs.state,
+      did,
       ethereumAddress: address,
       type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
@@ -123,16 +124,6 @@ export const useTwitterProvider = () => {
         const currentType = localStorage.getItem('auth-type');
         const walletInformation = await getWalletInformation(currentType);
 
-        // Step 1-A:  Get credential from Issuer based on claim:
-
-        //Issue self-signed credential claiming the Twitter
-        const claim = await getClaim(walletInformation.address, e.data);
-        if (claimValues.private) {
-          claim['encrypt'] = 'lit' as 'lit';
-          claim['shareEncryptedWith'] = currentIssuer.address;
-        }
-        console.log('claim: ', claim);
-
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
           litSdk: LitJsSdk,
@@ -140,6 +131,20 @@ export const useTwitterProvider = () => {
         });
 
         await Issuer.connect(currentSession);
+
+        // Step 1-A:  Get credential from Issuer based on claim:
+
+        //Issue self-signed credential claiming the Twitter
+        const claim = await getClaim(
+          walletInformation.address,
+          Issuer.did,
+          e.data
+        );
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
+        console.log('claim: ', claim);
 
         const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
@@ -212,12 +217,6 @@ export const useTwitterProvider = () => {
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ...walletInformation,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

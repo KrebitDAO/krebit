@@ -1,5 +1,5 @@
 import express from 'express';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, twilio } from '../../utils';
@@ -83,14 +83,14 @@ export const EmailController = async (
       // Check Verification status
       console.log('proofs: ', claimValue.proofs);
       const verification = await twilio.checkTwilioVerification(
-        claimValue.username.concat('@').concat(claimValue.host),
+        claimValue.username?.concat('@')?.concat(claimValue.host),
         claimValue.proofs.nonce
       );
       console.log('verification: ', verification);
       // If verification number matches claimed email
       if (
         verification.to ===
-          claimValue.username.concat('@').concat(claimValue.host) &&
+          claimValue.username?.concat('@')?.concat(claimValue.host) &&
         verification.status === 'approved'
       ) {
         // Issue verifiable credential
@@ -101,6 +101,7 @@ export const EmailController = async (
 
         const claim = {
           id: request.body.claimedCredentialId,
+          did: claimedCredential.credentialSubject.id,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
@@ -135,7 +136,7 @@ export const EmailController = async (
     } else {
       // Start Twilio verification
       const verificationId = await twilio.startTwilioVerification(
-        claimValue.username.concat('@').concat(claimValue.host),
+        claimValue.username?.concat('@')?.concat(claimValue.host),
         channel
       );
       console.log('verificationId: ', verificationId);
