@@ -26,6 +26,30 @@ const authClient = new auth.OAuth2User({
   callback: process.env.NEXT_PUBLIC_TWITTER_CALLBACK as string,
   scopes: ['tweet.read', 'users.read']
 });
+
+export const getTwitterToken = async (
+  url: string,
+  code: string,
+  address: string
+) => {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: code,
+        address: address
+      })
+    }).then(result => result.json());
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
 const initialState = {
   username: '',
   private: true
@@ -124,9 +148,16 @@ export const useTwitterProvider = () => {
         const walletInformation = await getWalletInformation(currentType);
 
         // Step 1-A:  Get credential from Issuer based on claim:
-
+        const token = await getTwitterToken(
+          currentIssuer.verificationUrl,
+          e.data.code,
+          walletInformation.address
+        );
         //Issue self-signed credential claiming the Twitter
-        const claim = await getClaim(walletInformation.address, e.data);
+        const claim = await getClaim(walletInformation.address, {
+          code: token.access_token,
+          state: e.data.state
+        });
         if (claimValues.private) {
           claim['encrypt'] = 'lit' as 'lit';
           claim['shareEncryptedWith'] = currentIssuer.address;
