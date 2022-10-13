@@ -4,6 +4,7 @@ import { graph } from './graph.js';
 import { Lit } from './lit.js';
 import { ens } from './ens.js';
 import { uns } from './uns.js';
+import { orbis } from './orbis.js';
 
 export const lib = {
   ceramic,
@@ -11,5 +12,6 @@ export const lib = {
   graph,
   Lit,
   ens,
-  uns
+  uns,
+  orbis
 };

@@ -60,14 +60,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         did,
         background: profile?.background?.original?.src,
         picture: profile?.image?.original?.src,
-        name:
-          profile?.name ||
-          did.replace(
-            `did:pkh:eip155:${
-              krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId
-            }:`,
-            ''
-          ),
+        name: profile?.name || passport.address,
         description: profile?.description,
         reputation: reputation || 0,
         countFollowers: orbisProfile?.data?.count_followers || 0,
@@ -80,12 +73,7 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
         did,
         background: undefined,
         picture: '/imgs/images/person_outline.svg',
-        name: did.replace(
-          `did:pkh:eip155:${
-            krbTokenSchema[process.env.NEXT_PUBLIC_NETWORK]?.domain?.chainId
-          }:`,
-          ''
-        ),
+        name: passport.address,
         description: undefined,
         reputation: reputation || 0,
         countFollowers: 0,

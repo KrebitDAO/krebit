@@ -30,7 +30,7 @@ import krebit from '@krebitdao/reputation-passport';
 const passport = new krebit.core.Passport({
   ceramicUrl: 'https://ceramic-clay.3boxlabs.com'
 });
-passport.read(address, `did:pkh:eip155:80001:${address}`);
+passport.read(address);
 
 const profile = await passport.getProfile();
 console.log('profile: ', profile);
@@ -175,7 +175,7 @@ With Lit protocol:
 
 ```javascript
 import krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk'; // Added Lit
+import LitJsSdk from "@lit-protocol/sdk-browser"; // Added Lit
 
 const { wallet, ethProvider } = await connectWeb3();
 

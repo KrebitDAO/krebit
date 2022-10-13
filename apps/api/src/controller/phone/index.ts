@@ -1,5 +1,5 @@
 import express from 'express';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, twilio } from '../../utils';
@@ -79,7 +79,7 @@ export const PhoneController = async (
       // Check Verification status
       console.log('proofs: ', claimValue.proofs);
       const verification = await twilio.checkTwilioVerification(
-        '+'.concat(claimValue.countryCode).concat(claimValue.number),
+        '+'?.concat(claimValue.countryCode)?.concat(claimValue.number),
         claimValue.proofs.nonce
       );
       console.log('verification: ', verification);
@@ -100,6 +100,7 @@ export const PhoneController = async (
         const claim = {
           id: request.body.claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
@@ -134,7 +135,7 @@ export const PhoneController = async (
     } else {
       // Start Twilio verification
       const verificationId = await twilio.startTwilioVerification(
-        '+'.concat(claimValue.countryCode).concat(claimValue.number),
+        '+'?.concat(claimValue.countryCode)?.concat(claimValue.number),
         channel
       );
       console.log('verificationId: ', verificationId);

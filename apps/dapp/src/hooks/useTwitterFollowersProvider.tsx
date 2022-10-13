@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 import { auth } from 'twitter-api-sdk';
 import { debounce } from 'ts-debounce';
 
@@ -97,7 +97,7 @@ export const useTwitterFollowersProvider = () => {
     });
   };
 
-  const getClaim = (address: string, proofs: any) => {
+  const getClaim = (address: string, did: string, proofs: any) => {
     const claimValue = {
       protocol: 'https',
       host: 'twitter.com',
@@ -114,6 +114,7 @@ export const useTwitterFollowersProvider = () => {
 
     return {
       id: proofs.state,
+      did,
       ethereumAddress: address,
       type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
@@ -147,6 +148,13 @@ export const useTwitterFollowersProvider = () => {
         const currentType = localStorage.getItem('auth-type');
         const walletInformation = await getWalletInformation(currentType);
 
+        const Issuer = new Krebit.core.Krebit({
+          ...walletInformation,
+          litSdk: LitJsSdk,
+          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+        });
+        await Issuer.connect(currentSession);
+
         // Step 1-A:  Get credential from Issuer based on claim:
         const token = await getTwitterToken(
           currentIssuer.verificationUrl,
@@ -163,13 +171,6 @@ export const useTwitterFollowersProvider = () => {
           claim['shareEncryptedWith'] = currentIssuer.address;
         }
         console.log('claim: ', claim);
-
-        const Issuer = new Krebit.core.Krebit({
-          ...walletInformation,
-          litSdk: LitJsSdk,
-          ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-        });
-        await Issuer.connect(currentSession);
 
         const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
@@ -242,12 +243,6 @@ export const useTwitterFollowersProvider = () => {
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ...walletInformation,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

@@ -4,7 +4,7 @@ TODO: ADD LOADING MESSAGE AND ERROR MESSAGE, THIS HOOK IS NOT AVAILABLE FOR THIS
 
 import { ChangeEvent, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 
 import {
   getCredential,
@@ -55,7 +55,11 @@ export const useIssuerProvider = () => {
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
 
-  const getClaim = async (address: string, typeSchemaUrl: string) => {
+  const getClaim = async (
+    address: string,
+    did: string,
+    typeSchemaUrl: string
+  ) => {
     const expirationDate = new Date();
     const expiresYears = 1;
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -63,6 +67,7 @@ export const useIssuerProvider = () => {
 
     return {
       id: `issuer-${generateUID(10)}`,
+      did,
       ethereumAddress: address,
       type: 'Issuer',
       typeSchema: typeSchemaUrl,
@@ -101,7 +106,11 @@ export const useIssuerProvider = () => {
         typeSchemaUrl = await Issuer.setTypeSchema('Issuer', issuerSchema);
       }
 
-      const claim = await getClaim(walletInformation.address, typeSchemaUrl);
+      const claim = await getClaim(
+        walletInformation.address,
+        Issuer.did,
+        typeSchemaUrl
+      );
       console.log('claim: ', claim);
 
       const claimedCredential = await Issuer.issue(claim);
@@ -165,12 +174,6 @@ export const useIssuerProvider = () => {
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ...walletInformation,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

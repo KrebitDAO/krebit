@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 
 import {
   getCredential,
@@ -68,7 +68,7 @@ export const usePersonaProvider = () => {
     });
   };
 
-  const getClaim = async (address: string, proofs: any) => {
+  const getClaim = async (address: string, did: string, proofs: any) => {
     const expirationDate = new Date();
     const expiresYears = 1;
     expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -76,6 +76,7 @@ export const usePersonaProvider = () => {
 
     return {
       id: proofs.state,
+      did,
       ethereumAddress: address,
       type: 'LegalName',
       typeSchema: 'krebit://schemas/legalName',
@@ -84,8 +85,8 @@ export const usePersonaProvider = () => {
         firstName: claimValues.firstName,
         lastName: claimValues.lastName,
         fullName: claimValues.firstName
-          .concat(' ')
-          .concat(claimValues.lastName),
+          ?.concat(' ')
+          ?.concat(claimValues.lastName),
         proofs: {
           ...proofs,
           nonce: `${generateUID(10)}`
@@ -116,22 +117,26 @@ export const usePersonaProvider = () => {
         const currentType = localStorage.getItem('auth-type');
         const walletInformation = await getWalletInformation(currentType);
 
-        // Step 1-A:  Get credential from Issuer based on claim:
-
-        // Issue self-signed credential claiming the legalName
-        const claim = await getClaim(walletInformation.address, e.data);
-        if (claimValues.private) {
-          claim['encrypt'] = 'lit' as 'lit';
-          claim['shareEncryptedWith'] = currentIssuer.address;
-        }
-        console.log('claim: ', claim);
-
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
           litSdk: LitJsSdk,
           ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await Issuer.connect(currentSession);
+
+        // Step 1-A:  Get credential from Issuer based on claim:
+
+        // Issue self-signed credential claiming the legalName
+        const claim = await getClaim(
+          walletInformation.address,
+          Issuer.did,
+          e.data
+        );
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
+        console.log('claim: ', claim);
 
         // TODO: in this case, we can encrypt for the issuer too
         const claimedCredential = await Issuer.issue(claim);
@@ -203,12 +208,6 @@ export const usePersonaProvider = () => {
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ...walletInformation,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

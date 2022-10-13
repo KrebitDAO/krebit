@@ -6,7 +6,7 @@ export const isValid = (type: string, value: string) => {
   }
 
   if (type === 'did') {
-    return value.match(Krebit.utils.regexValidations.did);
+    return value.startsWith('did:pkh:eip155:');
   }
 
   if (type === 'ens') {
