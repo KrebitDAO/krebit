@@ -33,6 +33,14 @@ export const TwitterController = async (
       throw new Error('Body not defined');
     }
 
+    if (request?.body?.code) {
+      const token = await twitter.getTwitterToken(
+        request.body.code,
+        request.body.address
+      );
+      return response.json(token);
+    }
+
     if (!request?.body?.claimedCredentialId) {
       throw new Error(`No claimedCredentialId in body`);
     }
@@ -120,9 +128,10 @@ export const TwitterController = async (
         console.log('claim: ', claim);
 
         // Issue Verifiable credential (twitterUsername)
-
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
+
+        await twitter.revokeTwitterToken(claimValue.proofs.code);
 
         if (issuedCredential) {
           return response.json(issuedCredential);
@@ -177,6 +186,8 @@ export const TwitterController = async (
 
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
+
+        await twitter.revokeTwitterToken(claimValue.proofs.code);
 
         if (issuedCredential) {
           return response.json(issuedCredential);
