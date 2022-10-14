@@ -162,7 +162,7 @@ export const useTwitterFollowersProvider = () => {
           walletInformation.address
         );
         //Issue self-signed credential claiming the Twitter
-        const claim = await getClaim(walletInformation.address, {
+        const claim = await getClaim(walletInformation.address, Issuer.did, {
           code: token.access_token,
           state: e.data.state
         });

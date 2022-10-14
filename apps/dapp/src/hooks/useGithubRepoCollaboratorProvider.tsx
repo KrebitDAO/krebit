@@ -72,7 +72,9 @@ export const useGithubRepoCollaboratorProvider = () => {
       entity: claimValues.owner,
       proofs: {
         ...proofs,
-        username: claimValues.username
+        username: claimValues.username.startsWith('@')
+          ? claimValues.username.substring(1)
+          : claimValues.username
       }
     };
 

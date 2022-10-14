@@ -72,7 +72,9 @@ export const useGithubOrgMemberProvider = () => {
   const getClaim = (address: string, did: string, proofs: any) => {
     const claimValue = {
       name: 'Github Organization Member', //TODO take this from getIssuers()
-      username: claimValues.username,
+      username: claimValues.username.startsWith('@')
+        ? claimValues.username.substring(1)
+        : claimValues.username,
       entity: claimValues.organization,
       proofs: proofs
     };

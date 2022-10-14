@@ -71,7 +71,9 @@ export const useGithubProvider = () => {
     const claimValue = {
       protocol: 'https',
       host: 'github.com',
-      username: claimValues.username,
+      username: claimValues.username.startsWith('@')
+        ? claimValues.username.substring(1)
+        : claimValues.username,
       proofs
     };
 

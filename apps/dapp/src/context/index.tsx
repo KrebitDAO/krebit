@@ -119,11 +119,12 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       let defaultDID = await Krebit.lib.orbis.getDefaultDID(
         information.address
       );
+      console.log('defaultDID', defaultDID);
       if (defaultDID) {
         let _didArr = defaultDID.split(':');
         defaultChainId = _didArr[3];
       }
-
+      console.log('defaultChainId', defaultChainId);
       const passport = new Krebit.core.Passport({
         ...information,
         litSdk: LitJsSdk,
