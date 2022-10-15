@@ -9,7 +9,6 @@ import {
   getCredential,
   getWalletInformation,
   openOAuthUrl,
-  sortByDate,
   IIsuerParams,
   constants
 } from 'utils';
@@ -163,14 +162,10 @@ export const useTwitterProvider = () => {
           walletInformation.address
         );
         //Issue self-signed credential claiming the Twitter
-        const claim = await getClaim(
-          walletInformation.address,
-          Issuer.did,
-          {
+        const claim = await getClaim(walletInformation.address, Issuer.did, {
           code: token.access_token,
           state: e.data.state
-        }
-        );
+        });
         if (claimValues.private) {
           claim['encrypt'] = 'lit' as 'lit';
           claim['shareEncryptedWith'] = currentIssuer.address;

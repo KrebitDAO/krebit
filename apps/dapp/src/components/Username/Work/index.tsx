@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -9,13 +8,6 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
-
-const DynamicShareWithModal = dynamic(
-  () => import('../../ShareWithModal').then(c => c.ShareWithModal),
-  {
-    ssr: false
-  }
-);
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
@@ -51,7 +43,6 @@ export const Work = (props: IProps) => {
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
-  const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
 
@@ -60,6 +51,10 @@ export const Work = (props: IProps) => {
     if (!publicPassport) return;
     if (isHidden) return;
 
+    getInformation();
+  }, [publicPassport, currentFilterOption, isHidden]);
+
+  const getInformation = async () => {
     setStatus('pending');
     // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
     handleProfile(prevValues => ({
@@ -67,31 +62,27 @@ export const Work = (props: IProps) => {
       skills: undefined
     }));
 
-    const getInformation = async () => {
-      try {
-        const workCredentials = await getCredentials({
-          type: 'WorkExperience',
-          passport: publicPassport,
-          limit: currentFilterOption === 'overview' ? 2 : 100
-        });
+    try {
+      const workCredentials = await getCredentials({
+        type: 'WorkExperience',
+        passport: publicPassport,
+        limit: currentFilterOption === 'overview' ? 2 : 100
+      });
 
-        setWorks(workCredentials);
-        handleProfile(prevValues => ({
-          ...prevValues,
-          skills:
-            (prevValues.skills || [])?.concat(
-              workCredentials.flatMap(credential => credential.skills)
-            ) || []
-        }));
-        setStatus('resolved');
-      } catch (error) {
-        console.error(error);
-        setStatus('rejected');
-      }
-    };
-
-    getInformation();
-  }, [publicPassport, currentFilterOption, isHidden]);
+      setWorks(workCredentials);
+      handleProfile(prevValues => ({
+        ...prevValues,
+        skills:
+          (prevValues.skills || [])?.concat(
+            workCredentials.flatMap(credential => credential.skills)
+          ) || []
+      }));
+      setStatus('resolved');
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected');
+    }
+  };
 
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
@@ -114,35 +105,16 @@ export const Work = (props: IProps) => {
     });
   };
 
-  const handleIsShareWithModalOpen = () => {
-    if (!isAuthenticated) return;
-
-    setIsShareWithModalOpen(prevState => !prevState);
-    setCurrentWorkSelected({
-      credential: undefined,
-      stamps: [],
-      isMinted: false
-    });
-  };
-
   const handleIsRemoveModalOpen = () => {
     if (!isAuthenticated) return;
 
-    // TODO: WE SHOULD USE THIS METHOD INSTEAD
-    // setIsRemoveModalOpen(prevState => !prevState);
-
-    if (!window) return;
-    window.location.reload();
+    setIsRemoveModalOpen(prevState => !prevState);
+    setActionStatus('idle');
   };
 
   const handleCurrentWork = (type: string, values: ICredential) => {
     setCurrentWorkSelected(values);
     setCurrentActionType(type);
-
-    if (type === 'share_with') {
-      if (!isAuthenticated) return;
-      setIsShareWithModalOpen(true);
-    }
 
     if (type === 'add_stamp') {
       if (!isAuthenticated) return;
@@ -173,6 +145,7 @@ export const Work = (props: IProps) => {
         );
 
         if (response) {
+          await getInformation();
           handleIsRemoveModalOpen();
         }
       }
@@ -186,6 +159,7 @@ export const Work = (props: IProps) => {
         );
 
         if (response) {
+          await getInformation();
           handleIsRemoveModalOpen();
         }
       }
@@ -264,6 +238,7 @@ export const Work = (props: IProps) => {
       {isVerifyCredentialOpen ? (
         <VerifyCredential
           currentWork={currentWorkSelected}
+          getInformation={getInformation}
           onClose={handleIsVerifyCredentialOpen}
         />
       ) : null}
@@ -366,14 +341,6 @@ export const Work = (props: IProps) => {
                               'tx',
                               work.stamps[0]
                             )
-                        }
-                      : undefined,
-                    isAuthenticated &&
-                    process.env.NEXT_PUBLIC_NETWORK === 'mumbai' &&
-                    work.credential?.visualInformation.isEncryptedByDefault
-                      ? {
-                          title: 'Share with',
-                          onClick: () => handleCurrentWork('share_with', work)
                         }
                       : undefined,
                     isAuthenticated && work.stamps?.length === 0

@@ -3,7 +3,7 @@ RUN apk update
 
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo
+RUN yarn global add turbo@1.4.7
 COPY . .
 RUN turbo prune --scope=@krebitdao/api --docker
 

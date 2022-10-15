@@ -1,5 +1,4 @@
 import { Orbis } from '@orbisclub/orbis-sdk';
-import krbTokenSchema from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
 
 // types
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';

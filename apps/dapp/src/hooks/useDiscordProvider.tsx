@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState, ReactNode } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { debounce } from 'ts-debounce';
@@ -8,7 +8,6 @@ import {
   getCredential,
   getDiscordUser,
   openOAuthUrl,
-  sortByDate,
   IIsuerParams,
   getWalletInformation,
   constants
@@ -29,7 +28,6 @@ export const useDiscordProvider = () => {
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
-
   const [currentCredential, setCurrentCredential] = useState<
     Object | undefined
   >();

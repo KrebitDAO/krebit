@@ -8,7 +8,6 @@ import {
   getCredential,
   getWalletInformation,
   openOAuthUrl,
-  sortByDate,
   IIsuerParams,
   constants
 } from 'utils';
