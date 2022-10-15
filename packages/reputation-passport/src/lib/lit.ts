@@ -5,11 +5,54 @@ import { schemas } from '../schemas/index.js';
 import { utils } from '../utils/index.js';
 import { config, IConfigProps } from '../config/index.js';
 
+import localStore from 'store2';
+
 interface ISignAuthMessageProps {
   wallet: ethers.Signer;
   resources?: Array<any>;
   config: IConfigProps;
 }
+
+export const AUTH_SIGNATURE_BODY =
+  'I am creating an account to use the private features of Krebit at {{timestamp}}';
+
+const signAuthMessage = async (props: ISignAuthMessageProps) => {
+  const { wallet, resources = [], config } = props;
+
+  const now = new Date().toISOString();
+  const statement = AUTH_SIGNATURE_BODY.replace('{{timestamp}}', now);
+  const message = {
+    domain: config.publicUrl,
+    address: await wallet.getAddress(),
+    statement,
+    uri: config.publicUrl,
+    version: '1',
+    chainId: Number(schemas.krbToken[config.network].domain.chainId)
+  };
+
+  if (resources && resources.length > 0) {
+    message['resources'] = resources;
+  }
+
+  const siweMessage = new SiweMessage(message);
+
+  const messageToSign = siweMessage.prepareMessage();
+
+  const signature = await wallet.signMessage(messageToSign);
+
+  console.log('signature: ', signature);
+
+  const recoveredAddress = ethers.utils.verifyMessage(messageToSign, signature);
+
+  const authSig = {
+    sig: signature,
+    derivedVia: 'web3.eth.personal.sign',
+    signedMessage: messageToSign,
+    address: recoveredAddress
+  };
+  localStore.set('lit-auth-signature', JSON.stringify(authSig));
+  return authSig;
+};
 
 export class Lit {
   private litSdk;
@@ -73,9 +116,16 @@ export class Lit {
       await this.connect();
     }
 
-    const authSig = await this.litSdk.checkAndSignAuthMessage({
-      chain: this.currentConfig.network
-    });
+    let authSig = localStore.get('lit-auth-signature');
+    if (!authSig || authSig === 'undefined') {
+      console.log('signing auth message because sig is not in local storage');
+      await signAuthMessage({
+        wallet,
+        config: this.currentConfig
+      });
+      authSig = localStore.get('lit-auth-signature');
+    }
+    authSig = JSON.parse(authSig);
 
     const { encryptedString, symmetricKey } = await this.litSdk.encryptString(
       message
@@ -112,9 +162,16 @@ export class Lit {
       await this.connect();
     }
 
-    const authSig = await this.litSdk.checkAndSignAuthMessage({
-      chain: this.currentConfig.network
-    });
+    let authSig = localStore.get('lit-auth-signature');
+    if (!authSig || authSig === 'undefined') {
+      console.log('signing auth message because sig is not in local storage');
+      await signAuthMessage({
+        wallet,
+        config: this.currentConfig
+      });
+      authSig = localStore.get('lit-auth-signature');
+    }
+    authSig = JSON.parse(authSig);
 
     const newEncryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey(
       {
@@ -139,9 +196,16 @@ export class Lit {
       await this.connect();
     }
 
-    const authSig = await this.litSdk.checkAndSignAuthMessage({
-      chain: this.currentConfig.network
-    });
+    let authSig = localStore.get('lit-auth-signature');
+    if (!authSig || authSig === 'undefined') {
+      console.log('signing auth message because sig is not in local storage');
+      await signAuthMessage({
+        wallet,
+        config: this.currentConfig
+      });
+      authSig = localStore.get('lit-auth-signature');
+    }
+    authSig = JSON.parse(authSig);
 
     const decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
       accessControlConditions,
