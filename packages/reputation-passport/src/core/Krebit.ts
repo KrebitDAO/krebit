@@ -37,6 +37,7 @@ interface StampsProps {
 interface EncryptedProps {
   encryptedSymmetricKey: string;
   encryptedString?: string;
+  accessControlConditions?: any[];
   unifiedAccessControlConditions?: string;
 }
 
@@ -319,7 +320,7 @@ export class Krebit {
         const result = await lit.decrypt(
           encryptedClaimValue.encryptedString,
           encryptedClaimValue.encryptedSymmetricKey,
-          unifiedAccessControlConditions,
+          encryptedClaimValue.accessControlConditions,
           this.wallet
         );
         if (result) {
