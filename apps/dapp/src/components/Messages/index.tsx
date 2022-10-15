@@ -16,7 +16,7 @@ export const Messages = () => {
   } = useContext(GeneralContext);
 
   const TEMPORAL_orbisLink = () => {
-    window.open('https://orbis.club/', '_blank');
+    window.open('https://app.orbis.club/', '_blank');
   };
 
   if (auth?.status === 'pending') {
