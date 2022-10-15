@@ -1,11 +1,10 @@
 import { ethers } from 'ethers';
 import { SiweMessage } from 'siwe';
+import localStore from 'store2';
 
 import { schemas } from '../schemas/index.js';
 import { utils } from '../utils/index.js';
 import { config, IConfigProps } from '../config/index.js';
-
-import localStore from 'store2';
 
 interface ISignAuthMessageProps {
   wallet: ethers.Signer;
