@@ -109,7 +109,7 @@ export const Home = () => {
               </div>
               <div className="main-line-button">
                 <Link href="#web3">
-                  <a className="main-line-button-text">Web3 Ready</a>
+                  <a className="main-line-button-text">Web3 Native</a>
                 </Link>
               </div>
             </div>

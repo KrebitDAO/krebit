@@ -57,19 +57,17 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
                 Metamask
               </WalletButton>
-              {process.env.NEXT_PUBLIC_NETWORK === 'mumbai' && (
-                <WalletButton
-                  textColor="white"
-                  onClick={() => handlerConnect('wallet_connect')}
-                >
-                  <img
-                    src="/imgs/logos/wallet-connect.png"
-                    width={30}
-                    height={24}
-                  />{' '}
-                  WalletConnect
-                </WalletButton>
-              )}
+              {/* <WalletButton
+                textColor="white"
+                onClick={() => handlerConnect('wallet_connect')}
+              >
+                <img
+                  src="/imgs/logos/wallet-connect.png"
+                  width={30}
+                  height={24}
+                />{' '}
+                WalletConnect
+              </WalletButton> */}
             </div>
             <a
               className="wallet-read"

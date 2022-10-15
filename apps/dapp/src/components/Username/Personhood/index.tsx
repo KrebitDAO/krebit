@@ -61,6 +61,10 @@ export const Personhood = (props: IProps) => {
     if (!publicPassport) return;
     if (isHidden) return;
 
+    getInformation();
+  }, [publicPassport, currentFilterOption, isHidden]);
+
+  const getInformation = async () => {
     setStatus('pending');
     // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
     handleProfile(prevValues => ({
@@ -68,31 +72,27 @@ export const Personhood = (props: IProps) => {
       skills: undefined
     }));
 
-    const getInformation = async () => {
-      try {
-        const personhoodCredentials = await getCredentials({
-          type: 'Personhood',
-          passport: publicPassport,
-          limit: currentFilterOption === 'overview' ? 3 : 100
-        });
+    try {
+      const personhoodCredentials = await getCredentials({
+        type: 'Personhood',
+        passport: publicPassport,
+        limit: currentFilterOption === 'overview' ? 3 : 100
+      });
 
-        setPersonhoods(personhoodCredentials);
-        handleProfile(prevValues => ({
-          ...prevValues,
-          skills:
-            (prevValues.skills || [])?.concat(
-              personhoodCredentials.flatMap(credential => credential.skills)
-            ) || []
-        }));
-        setStatus('resolved');
-      } catch (error) {
-        console.error(error);
-        setStatus('rejected');
-      }
-    };
-
-    getInformation();
-  }, [publicPassport, currentFilterOption, isHidden]);
+      setPersonhoods(personhoodCredentials);
+      handleProfile(prevValues => ({
+        ...prevValues,
+        skills:
+          (prevValues.skills || [])?.concat(
+            personhoodCredentials.flatMap(credential => credential.skills)
+          ) || []
+      }));
+      setStatus('resolved');
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected');
+    }
+  };
 
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
@@ -129,11 +129,8 @@ export const Personhood = (props: IProps) => {
   const handleIsRemoveModalOpen = () => {
     if (!isAuthenticated) return;
 
-    // TODO: WE SHOULD USE THIS METHOD INSTEAD
-    // setIsRemoveModalOpen(prevState => !prevState);
-
-    if (!window) return;
-    window.location.reload();
+    setIsRemoveModalOpen(prevState => !prevState);
+    setActionStatus('idle');
   };
 
   const handleCurrentPersonhood = (type: string, values: ICredential) => {
@@ -179,6 +176,7 @@ export const Personhood = (props: IProps) => {
         );
 
         if (response) {
+          await getInformation();
           handleIsRemoveModalOpen();
         }
       }
@@ -192,6 +190,7 @@ export const Personhood = (props: IProps) => {
         );
 
         if (response) {
+          await getInformation();
           handleIsRemoveModalOpen();
         }
       }
@@ -283,6 +282,7 @@ export const Personhood = (props: IProps) => {
       {isVerifyCredentialOpen ? (
         <VerifyCredential
           currentPersonhood={currentPersonhoodSelected}
+          getInformation={getInformation}
           onClose={handleIsVerifyCredentialOpen}
         />
       ) : null}

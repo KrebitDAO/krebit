@@ -8,9 +8,13 @@
     "endDate": { "type": "string" },
     "skills": {
       "type": "array",
-      "properties": {
-        "skillId": { "type": "string" },
-        "score": { "type": "integer" }
+      "items": {
+        "type": "object",
+        "properties": {
+          "skillId": { "type": "string" },
+          "score": { "type": "number" }
+        },
+        "required": ["skillId", "score"]
       }
     },
     "proofs": { "type": "object" }

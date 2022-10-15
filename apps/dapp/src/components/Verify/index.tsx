@@ -36,7 +36,7 @@ interface IComponentProps {
 
 interface IProps {
   initialList: IInitialListProps[];
-  onClose: () => void;
+  onClose: (credentialType: string) => void;
   onClean: (credentialType: string) => void;
   component: (props: IComponentProps) => ReactElement;
   verifyId?: string;
@@ -101,7 +101,10 @@ export const Verify = (props: IProps) => {
                   : 'Verify your credentials'}
               </p>
             </div>
-            <div className="verify-box-header-close" onClick={onClose}>
+            <div
+              className="verify-box-header-close"
+              onClick={() => onClose(currentVerify?.credentialType)}
+            >
               <Close />
             </div>
           </div>

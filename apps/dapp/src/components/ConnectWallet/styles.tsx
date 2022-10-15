@@ -27,7 +27,6 @@ export const Wrapper = styled.div<WalletProps>`
     .wallet {
       background-color: ${theme.colors.bunting};
       width: 313px;
-      height: 348px;
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
       padding: 36px 28px;
@@ -36,7 +35,6 @@ export const Wrapper = styled.div<WalletProps>`
 
       @media (min-width: ${theme.screens.lg}) {
         width: 426px;
-        height: 396px;
       }
 
       .wallet-header {
@@ -67,11 +65,12 @@ export const Wrapper = styled.div<WalletProps>`
 
       .wallet-buttons {
         display: grid;
-        grid-template-rows: repeat(2, 56px);
+        // TODO: IF wallet_connect IS GOING TO BE ADDED, CHAGE TO "repeat(2, xPX)"
+        grid-template-rows: repeat(1, 56px);
         grid-gap: 16px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-template-rows: repeat(2, 69px);
+          grid-template-rows: repeat(1, 69px);
         }
       }
 

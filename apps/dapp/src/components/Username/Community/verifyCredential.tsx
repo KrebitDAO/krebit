@@ -17,11 +17,12 @@ import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
   currentCommunity: ICredential;
+  getInformation: () => Promise<void>;
   onClose: () => void;
 }
 
 export const VerifyCredential = (props: IProps) => {
-  const { currentCommunity, onClose } = props;
+  const { currentCommunity, getInformation, onClose } = props;
   const { walletInformation } = useContext(GeneralContext);
   const issuerProvider = useIssuerProvider();
   const githubOrgMemberProvider = useGithubOrgMemberProvider();
@@ -29,11 +30,50 @@ export const VerifyCredential = (props: IProps) => {
   const discordGuildMemberProvider = useDiscordGuildMemberProvider();
   const twitterFollowersProvider = useTwitterFollowersProvider();
 
-  const handleClose = () => {
-    if (!window) return;
+  const handleClose = async (credentialType: string) => {
+    let isStatusResolved = false;
 
-    // TODO: WE SHOULD USE onClose INSTEAD
-    window.location.reload();
+    if (credentialType === 'Issuer') {
+      isStatusResolved =
+        issuerProvider.status === 'credential_resolved' ||
+        issuerProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'GithubOrgMember') {
+      isStatusResolved =
+        githubOrgMemberProvider.status === 'credential_resolved' ||
+        githubOrgMemberProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'DiscordGuildOwner') {
+      isStatusResolved =
+        discordGuildOwnerProvider.status === 'credential_resolved' ||
+        discordGuildOwnerProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'DiscordGuildMember') {
+      isStatusResolved =
+        discordGuildMemberProvider.status === 'credential_resolved' ||
+        discordGuildMemberProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'TwitterFollowersGT1K') {
+      isStatusResolved =
+        twitterFollowersProvider.status === 'credential_resolved' ||
+        twitterFollowersProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'TwitterFollowersGT10K') {
+      isStatusResolved =
+        twitterFollowersProvider.status === 'credential_resolved' ||
+        twitterFollowersProvider.status === 'mint_resolved';
+    }
+
+    if (isStatusResolved) {
+      await getInformation();
+    }
+
+    onClose();
   };
 
   const handleCleanState = (credentialType: string) => {

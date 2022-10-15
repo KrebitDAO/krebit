@@ -13,9 +13,9 @@ const getCredentials = async (props: IProps) => {
   const { type, passport, limit = 2 } = props;
 
   // TODO: Slice is a hacky way to limit the credentials, this should be replaced with pagination
-  const currentCredentials = (
-    await passport.getCredentials(undefined, type)
-  ).slice(0, limit);
+  const currentCredentials = (await passport.getCredentials(undefined, type))
+    .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
+    .slice(0, limit);
 
   return await Promise.all(
     currentCredentials.map(async credential => {
@@ -48,10 +48,6 @@ const getCredentials = async (props: IProps) => {
         skills: credential.type
       };
     })
-  ).then(credentials =>
-    credentials.sort((a, b) =>
-      sortByDate(a.credential.issuanceDate, b.credential.issuanceDate, 'des')
-    )
   );
 };
 

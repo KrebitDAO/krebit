@@ -16,22 +16,49 @@ import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
   currentWork: ICredential;
+  getInformation: () => Promise<void>;
   onClose: () => void;
 }
 
 export const VerifyCredential = (props: IProps) => {
-  const { currentWork, onClose } = props;
-  const { walletInformation } = useContext(GeneralContext);
+  const { currentWork, getInformation, onClose } = props;
   const githubFollowersProvider = useGithubFollowersProvider();
   const githubRepoProvider = useGithubRepoProvider();
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
   const spectCompletedProvider = useSpectCompletedProvider();
 
-  const handleClose = () => {
-    if (!window) return;
+  const handleClose = async (credentialType: string) => {
+    let isStatusResolved = false;
 
-    // TODO: WE SHOULD USE onClose INSTEAD
-    window.location.reload();
+    if (credentialType === 'GithubFollowersGT10') {
+      isStatusResolved =
+        githubFollowersProvider.status === 'credential_resolved' ||
+        githubFollowersProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'GithubRepoStarsGT10') {
+      isStatusResolved =
+        githubRepoProvider.status === 'credential_resolved' ||
+        githubRepoProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'GithubRepoCollaborator') {
+      isStatusResolved =
+        githubRepoCollaboratorProvider.status === 'credential_resolved' ||
+        githubRepoCollaboratorProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'SpectCompletedTasksGT10') {
+      isStatusResolved =
+        spectCompletedProvider.status === 'credential_resolved' ||
+        spectCompletedProvider.status === 'mint_resolved';
+    }
+
+    if (isStatusResolved) {
+      await getInformation();
+    }
+
+    onClose();
   };
 
   const handleCleanState = (credentialType: string) => {

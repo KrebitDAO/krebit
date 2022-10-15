@@ -99,7 +99,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     setOpenConnectWallet(prevState => !prevState);
   };
 
-  const handleSetProfile = profile => {
+  const handleSetProfile = (profile: IProfile) => {
     setProfile(profile);
   };
 
