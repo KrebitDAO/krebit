@@ -219,7 +219,9 @@ export const GithubController = async (
         if (!publicClaim) {
           claim['encrypt'] = 'hash' as 'hash';
         } else {
-          claim.value['description'] = githubRepo.description;
+          claim.value['description'] = githubRepo.description
+            ? githubRepo.description
+            : '';
           claim.value['startDate'] = githubRepo.created_at;
           claim.value['endDate'] = githubRepo.pushed_at;
           claim.value['imageUrl'] = githubRepo.owner.avatar_url;
@@ -299,7 +301,9 @@ export const GithubController = async (
         if (!publicClaim) {
           claim['encrypt'] = 'hash' as 'hash';
         } else {
-          claim.value['description'] = githubRepo.description;
+          claim.value['description'] = githubRepo.description
+            ? githubRepo.description
+            : '';
           claim.value['startDate'] = githubRepo.created_at;
           claim.value['endDate'] = githubRepo.pushed_at;
           claim.value['imageUrl'] = githubRepo.owner.avatar_url;
@@ -371,7 +375,9 @@ export const GithubController = async (
           claim['encrypt'] = 'hash' as 'hash';
         } else {
           claim.value['role'] = githubOrg.role;
-          claim.value['description'] = githubOrg.organization.description;
+          claim.value['description'] = githubOrg.organization.description
+            ? githubOrg.organization.description
+            : '';
           claim.value['imageUrl'] = githubOrg.organization.avatar_url;
         }
         console.log('claim: ', claim);

@@ -16,7 +16,7 @@
         "type": "object",
         "properties": {
           "skillId": { "type": "string" },
-          "score": { "type": "integer" }
+          "score": { "type": "number" }
         },
         "required": ["skillId", "score"]
       }
