@@ -12,9 +12,13 @@
     "endDate": { "type": "string" },
     "skills": {
       "type": "array",
-      "properties": {
-        "skillId": { "type": "string" },
-        "score": { "type": "integer" }
+      "items": {
+        "type": "object",
+        "properties": {
+          "skillId": { "type": "string" },
+          "score": { "type": "integer" }
+        },
+        "required": ["skillId", "score"]
       }
     },
     "proofs": { "type": "object" }
