@@ -17,13 +17,13 @@
   "dependencies": {
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
+    "@lit-protocol/sdk-nodejs": "^1.1.228",
     "cors": "^2.8.5",
     "ethers": "^5.6.9",
     "express": "^4.18.1",
-    "lit-js-sdk": "^1.1.207",
     "siwe": "^1.1.6",
-    "twitter-api-sdk": "^1.1.0",
-    "twilio": "^3.81.0"
+    "twilio": "^3.81.0",
+    "twitter-api-sdk": "^1.1.0"
   },
   "devDependencies": {
     "@krebitdao/tsconfig": "*",

@@ -21,7 +21,7 @@ export interface ClaimProps {
   type: string;
   typeSchema: string;
   ethereumAddress: string;
-  did?: string;
+  did: string;
   expirationDate: string;
   tags?: string[];
   trust?: number;
@@ -131,7 +131,7 @@ export const issueCredential = async (props: IssueProps) => {
         claim.ethereumAddress
       );
       if (claim.shareEncryptedWith) {
-        unifiedAccessControlConditions = unifiedAccessControlConditions.concat(
+        unifiedAccessControlConditions = unifiedAccessControlConditions?.concat(
           lit.getShareWithCondition(claim.shareEncryptedWith)
         );
       }
@@ -161,7 +161,7 @@ export const issueCredential = async (props: IssueProps) => {
       'https://www.w3.org/2018/credentials/v1',
       'https://w3id.org/security/suites/eip712sig-2021'
     ],
-    type: ['VerifiableCredential'].concat(claim.type, ...claim.tags),
+    type: ['VerifiableCredential']?.concat(claim.type, ...claim.tags),
     id: claim.id,
     issuer: {
       id: idx.id,
@@ -169,11 +169,7 @@ export const issueCredential = async (props: IssueProps) => {
     },
     credentialSubject: {
       ...claim,
-      id: claim.did
-        ? claim.did
-        : `did:pkh:eip155:${
-            schemas.krbToken[currentConfig.network].domain.chainId
-          }:${claim.ethereumAddress}`,
+      id: claim.did,
       trust: claim.trust ? claim.trust : 100, // How much we trust the evidence to sign this?
       stake: claim.stake ? claim.stake : 1, // In KRB
       price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs

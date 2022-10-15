@@ -43,7 +43,7 @@ export class Passport {
     this.ethProvider = props?.ethProvider;
   }
 
-  connect = async (currentSession?: string) => {
+  connect = async (currentSession?: string, defaultChainId?: string) => {
     if (currentSession) {
       const session = await DIDSession.fromSession(currentSession);
 
@@ -55,7 +55,8 @@ export class Passport {
       this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         address: this.address,
-        ethProvider: this.ethProvider
+        ethProvider: this.ethProvider,
+        defaultChainId
       });
     }
 
@@ -93,9 +94,9 @@ export class Passport {
   read = async (value: string) => {
     if (value.startsWith('0x')) {
       this.address = value;
-      this.did = `did:pkh:eip155:${
-        schemas.krbToken[this.currentConfig.network]?.domain?.chainId
-      }:${value}`;
+      let defaultDID = await lib.orbis.getDefaultDID(this.address);
+      this.did = defaultDID ? defaultDID : `did:pkh:eip155:1:${value}`;
+
       this.ens = await lib.ens.lookupAddress(this.address);
       this.uns = await lib.uns.lookupAddress(this.address);
     } else if (value.startsWith('did:pkh:eip155:')) {
@@ -107,18 +108,16 @@ export class Passport {
       const ensInfo = await this.readEns(value);
 
       this.address = ensInfo?.address;
-      this.did = `did:pkh:eip155:${
-        schemas.krbToken[this.currentConfig.network]?.domain?.chainId
-      }:${this.address}`;
+      let defaultDID = await lib.orbis.getDefaultDID(this.address);
+      this.did = defaultDID ? defaultDID : `did:pkh:eip155:1:${this.address}`;
       this.ens = ensInfo?.ens;
       this.uns = await lib.uns.lookupAddress(this.address);
     } else {
       const unsInfo = await this.readUns(value);
 
       this.address = unsInfo?.address;
-      this.did = `did:pkh:eip155:${
-        schemas.krbToken[this.currentConfig.network]?.domain?.chainId
-      }:${this.address}`;
+      let defaultDID = await lib.orbis.getDefaultDID(this.address);
+      this.did = defaultDID ? defaultDID : `did:pkh:eip155:1:${this.address}`;
       this.uns = unsInfo?.uns;
       this.ens = await lib.ens.lookupAddress(this.address);
     }

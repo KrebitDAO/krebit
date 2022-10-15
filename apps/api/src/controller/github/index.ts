@@ -1,5 +1,5 @@
 import express from 'express';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, github } from '../../utils';
@@ -86,7 +86,7 @@ export const GithubController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
@@ -140,7 +140,7 @@ export const GithubController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
@@ -200,13 +200,13 @@ export const GithubController = async (
 
         let tags = claimedCredential.type.slice(2);
         if (githubRepo.topics && githubRepo.topics.length > 0)
-          tags = tags.concat(githubRepo.topics);
+          tags = tags?.concat(githubRepo.topics);
         if (githubRepo.language) tags.push(githubRepo.language);
 
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: tags,
@@ -280,13 +280,13 @@ export const GithubController = async (
 
         let tags = claimedCredential.type.slice(2);
         if (githubRepo.topics && githubRepo.topics.length > 0)
-          tags = tags.concat(githubRepo.topics);
+          tags = tags?.concat(githubRepo.topics);
         if (githubRepo.language) tags.push(githubRepo.language);
 
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: tags,
@@ -353,7 +353,7 @@ export const GithubController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),

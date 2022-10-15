@@ -23,6 +23,11 @@ export const Wrapper = styled.div`
         box-shadow: ${theme.shadows.small};
       }
 
+      .lsm-share-modal-container {
+        width: 500px;
+        height: 650px;
+      }
+
       .lsm-back-button:hover {
         background-color: var(--lsm-background-color) !important;
       }

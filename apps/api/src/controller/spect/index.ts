@@ -1,6 +1,6 @@
 import express from 'express';
 import krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import { connect, getSpectUser } from '../../utils';
 
 const {
@@ -104,12 +104,10 @@ export const SpectController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${
-            krebit.schemas.krbToken[process.env.SERVER_NETWORK]?.domain?.chainId
-          }:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(2).concat(skills),
+          tags: claimedCredential.type.slice(2)?.concat(skills),
           value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
