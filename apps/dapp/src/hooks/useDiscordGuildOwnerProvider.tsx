@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 import { debounce } from 'ts-debounce';
 
 import {
@@ -69,7 +69,12 @@ export const useDiscordGuildOwnerProvider = () => {
     });
   };
 
-  const getClaim = (address: string, payload: any, proofs: any) => {
+  const getClaim = (
+    address: string,
+    did: string,
+    payload: any,
+    proofs: any
+  ) => {
     const claimValue = {
       protocol: 'https',
       host: 'discord.com',
@@ -87,6 +92,7 @@ export const useDiscordGuildOwnerProvider = () => {
 
     return {
       id: proofs.state,
+      did,
       ethereumAddress: address,
       type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/digitalProperty',
@@ -125,20 +131,25 @@ export const useDiscordGuildOwnerProvider = () => {
         //Get discord user
         const discordUser = await getDiscordUser(e.data);
 
-        //Issue self-signed credential claiming the discord guild
-        const claim = getClaim(walletInformation.address, discordUser, e.data);
-        if (claimValues.private) {
-          claim['encrypt'] = 'lit' as 'lit';
-          claim['shareEncryptedWith'] = currentIssuer.address;
-        }
-        console.log('claim: ', claim);
-
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
           litSdk: LitJsSdk,
           ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
         });
         await Issuer.connect(currentSession);
+
+        //Issue self-signed credential claiming the discord guild
+        const claim = getClaim(
+          walletInformation.address,
+          Issuer.did,
+          discordUser,
+          e.data
+        );
+        if (claimValues.private) {
+          claim['encrypt'] = 'lit' as 'lit';
+          claim['shareEncryptedWith'] = currentIssuer.address;
+        }
+        console.log('claim: ', claim);
 
         const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
@@ -212,12 +223,6 @@ export const useDiscordGuildOwnerProvider = () => {
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ...walletInformation,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

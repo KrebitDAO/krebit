@@ -1,5 +1,5 @@
 import express from 'express';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, discord } from '../../utils';
@@ -87,7 +87,7 @@ export const DiscordController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
@@ -143,7 +143,7 @@ export const DiscordController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
@@ -158,10 +158,10 @@ export const DiscordController = async (
         } else {
           claim.value['username'] = discordGuild.name;
           claim.value['imageUrl'] = 'https://cdn.discordapp.com/icons/'
-            .concat(discordGuild.id)
-            .concat('/')
-            .concat(discordGuild.icon)
-            .concat('.png');
+            ?.concat(discordGuild.id)
+            ?.concat('/')
+            ?.concat(discordGuild.icon)
+            ?.concat('.png');
         }
         console.log('claim: ', claim);
 
@@ -211,7 +211,7 @@ export const DiscordController = async (
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: `did:pkh:eip155:${krebit.schemas.krbToken[SERVER_NETWORK]?.domain?.chainId}:${claimedCredential.credentialSubject.ethereumAddress}`,
+          did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: claimedCredential.type.slice(2),
@@ -228,18 +228,18 @@ export const DiscordController = async (
           claim.value['username'] = discordGuildMember.nick
             ? discordGuildMember.nick
             : discordUser.username
-                .concat('#')
-                .concat(discordUser.discriminator);
+                ?.concat('#')
+                ?.concat(discordUser.discriminator);
           claim.value['role'] = discordGuild.owner ? 'owner' : 'member';
           claim.value['skills'] = discordGuildMember.roles.map(role => {
             return { skillId: role, score: 100 };
           });
           claim.value['startDate'] = discordGuildMember.joined_at;
           claim.value['imageUrl'] = 'https://cdn.discordapp.com/icons/'
-            .concat(discordGuild.id)
-            .concat('/')
-            .concat(discordGuild.icon)
-            .concat('.png');
+            ?.concat(discordGuild.id)
+            ?.concat('/')
+            ?.concat(discordGuild.icon)
+            ?.concat('.png');
         }
         console.log('claim: ', claim);
 

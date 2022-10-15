@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 import { debounce } from 'ts-debounce';
 
 import {
@@ -69,10 +69,12 @@ export const useGithubOrgMemberProvider = () => {
     });
   };
 
-  const getClaim = (address: string, proofs: any) => {
+  const getClaim = (address: string, did: string, proofs: any) => {
     const claimValue = {
       name: 'Github Organization Member', //TODO take this from getIssuers()
-      username: claimValues.username,
+      username: claimValues.username.startsWith('@')
+        ? claimValues.username.substring(1)
+        : claimValues.username,
       entity: claimValues.organization,
       proofs: proofs
     };
@@ -84,6 +86,7 @@ export const useGithubOrgMemberProvider = () => {
 
     return {
       id: proofs.state,
+      did,
       ethereumAddress: address,
       type: currentIssuer.credentialType,
       typeSchema: 'krebit://schemas/badge',
@@ -117,12 +120,6 @@ export const useGithubOrgMemberProvider = () => {
         const currentType = localStorage.getItem('auth-type');
         const walletInformation = await getWalletInformation(currentType);
 
-        // Step 1-A:  Get credential from Issuer based on claim:
-
-        //Issue self-signed credential claiming the Github
-        const claim = getClaim(walletInformation.address, e.data);
-        console.log('claim: ', claim);
-
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
           litSdk: LitJsSdk,
@@ -130,6 +127,12 @@ export const useGithubOrgMemberProvider = () => {
         });
 
         await Issuer.connect(currentSession);
+
+        // Step 1-A:  Get credential from Issuer based on claim:
+
+        //Issue self-signed credential claiming the Github
+        const claim = getClaim(walletInformation.address, Issuer.did, e.data);
+        console.log('claim: ', claim);
 
         const claimedCredential = await Issuer.issue(claim);
         if (claimValues.private) {
@@ -206,12 +209,6 @@ export const useGithubOrgMemberProvider = () => {
 
       const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
-
-      const passport = new Krebit.core.Passport({
-        ...walletInformation,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await passport.read(walletInformation.address);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

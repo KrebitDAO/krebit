@@ -79,7 +79,7 @@ export const Work = (props: IProps) => {
         handleProfile(prevValues => ({
           ...prevValues,
           skills:
-            (prevValues.skills || []).concat(
+            (prevValues.skills || [])?.concat(
               workCredentials.flatMap(credential => credential.skills)
             ) || []
         }));
@@ -232,19 +232,19 @@ export const Work = (props: IProps) => {
     let formattedValue = '';
 
     if (value?.entity)
-      formattedValue = formattedValue.concat(' / ').concat(value.entity);
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.entity);
     if (value?.title)
-      formattedValue = formattedValue.concat(' / ').concat(value.title);
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.title);
 
     if (value?.username) {
       formattedValue = formattedValue
-        .concat(' / ')
-        .concat('@')
-        .concat(value.username);
+        ?.concat(' / ')
+        ?.concat('@')
+        ?.concat(value.username);
     }
 
     if (value?.id) {
-      formattedValue = formattedValue.concat(' / ').concat(value.id);
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.id);
     }
 
     return formattedValue;

@@ -80,7 +80,7 @@ export const Personhood = (props: IProps) => {
         handleProfile(prevValues => ({
           ...prevValues,
           skills:
-            (prevValues.skills || []).concat(
+            (prevValues.skills || [])?.concat(
               personhoodCredentials.flatMap(credential => credential.skills)
             ) || []
         }));
@@ -239,31 +239,31 @@ export const Personhood = (props: IProps) => {
 
     if (value?.protocol === 'Email') {
       formattedValue = formattedValue
-        .concat(' / ')
-        .concat(value.username)
-        .concat('@')
-        .concat(value.host);
+        ?.concat(' / ')
+        ?.concat(value.username)
+        ?.concat('@')
+        ?.concat(value.host);
     }
 
     if (value?.username) {
       formattedValue = formattedValue
-        .concat(' / ')
-        .concat('@')
-        .concat(value.username);
+        ?.concat(' / ')
+        ?.concat('@')
+        ?.concat(value.username);
     }
 
     if (value?.fullName) {
-      formattedValue = formattedValue.concat(' / ').concat(value.fullName);
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.fullName);
     }
 
     if (value?.id) {
-      formattedValue = formattedValue.concat(' / ').concat(value.id);
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.id);
     }
 
     if (value?.countryCode) {
       formattedValue = formattedValue
-        .concat(' / ')
-        .concat(`+${value?.countryCode}${value?.number}`);
+        ?.concat(' / ')
+        ?.concat(`+${value?.countryCode}${value?.number}`);
     }
 
     return formattedValue;
