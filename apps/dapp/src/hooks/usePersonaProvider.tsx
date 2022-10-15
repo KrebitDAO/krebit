@@ -1,17 +1,16 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
+import { debounce } from 'ts-debounce';
 
 import {
   getCredential,
   openOAuthUrl,
-  sortByDate,
   getWalletInformation,
   generateUID,
   IIsuerParams,
   constants
 } from 'utils';
-import { debounce } from 'ts-debounce';
 
 interface IClaimValues {
   firstName: string;

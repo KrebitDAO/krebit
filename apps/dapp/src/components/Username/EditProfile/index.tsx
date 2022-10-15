@@ -1,4 +1,11 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState
+} from 'react';
 import { Web3Storage, File } from 'web3.storage';
 import Orbis from '@orbisclub/orbis-sdk';
 
@@ -11,7 +18,6 @@ import { formatFilename, formatUrlImage } from 'utils';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
-import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 
 interface IValues {
   background: string | File;
@@ -23,7 +29,8 @@ interface IValues {
 interface IProps {
   profile: IProfile;
   onClose: () => void;
-  passport: Passport;
+  handleProfile: Dispatch<SetStateAction<IProfile>>;
+  contextHandleProfile: Dispatch<SetStateAction<IProfile>>;
   orbis: Orbis;
   storage: Web3Storage;
 }
@@ -31,7 +38,14 @@ interface IProps {
 const fileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 
 export const EditProfile = (props: IProps) => {
-  const { profile, onClose, passport, orbis, storage } = props;
+  const {
+    profile,
+    onClose,
+    handleProfile,
+    contextHandleProfile,
+    orbis,
+    storage
+  } = props;
   const [status, setStatus] = useState('idle');
   const [values, setValues] = useState<IValues>({
     background: '',
@@ -107,9 +121,21 @@ export const EditProfile = (props: IProps) => {
       });
 
       if (orbisResponse) {
-        // TODO: WE SHOULD USE onClose METHOD INSTEAD
-        if (!window) return;
-        window.location.reload();
+        const newProfile = {
+          ...profile,
+          picture: values.picture
+            ? (values.picture as string)
+            : (pictureImage as string),
+          background: values.background
+            ? (values.background as string)
+            : (backgroundImage as string),
+          name: values.name,
+          description: values.description
+        };
+
+        handleProfile(newProfile);
+        contextHandleProfile(newProfile);
+        onClose();
       }
     } catch (error) {
       console.error(error);

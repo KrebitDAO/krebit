@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -9,13 +8,6 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
-
-const DynamicShareWithModal = dynamic(
-  () => import('../../ShareWithModal').then(c => c.ShareWithModal),
-  {
-    ssr: false
-  }
-);
 
 // types
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
@@ -52,7 +44,6 @@ export const Community = (props: IProps) => {
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
-  const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
 
@@ -61,6 +52,10 @@ export const Community = (props: IProps) => {
     if (!publicPassport) return;
     if (isHidden) return;
 
+    getInformation();
+  }, [publicPassport, currentFilterOption, isHidden]);
+
+  const getInformation = async () => {
     setStatus('pending');
     // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
     handleProfile(prevValues => ({
@@ -68,31 +63,27 @@ export const Community = (props: IProps) => {
       skills: undefined
     }));
 
-    const getInformation = async () => {
-      try {
-        const communityCredentials = await getCredentials({
-          type: 'Community',
-          passport: publicPassport,
-          limit: currentFilterOption === 'overview' ? 4 : 100
-        });
+    try {
+      const communityCredentials = await getCredentials({
+        type: 'Community',
+        passport: publicPassport,
+        limit: currentFilterOption === 'overview' ? 4 : 100
+      });
 
-        setCommunities(communityCredentials);
-        handleProfile(prevValues => ({
-          ...prevValues,
-          skills:
-            (prevValues.skills || [])?.concat(
-              communityCredentials.flatMap(credential => credential.skills)
-            ) || []
-        }));
-        setStatus('resolved');
-      } catch (error) {
-        console.error(error);
-        setStatus('rejected');
-      }
-    };
-
-    getInformation();
-  }, [publicPassport, currentFilterOption, isHidden]);
+      setCommunities(communityCredentials);
+      handleProfile(prevValues => ({
+        ...prevValues,
+        skills:
+          (prevValues.skills || [])?.concat(
+            communityCredentials.flatMap(credential => credential.skills)
+          ) || []
+      }));
+      setStatus('resolved');
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected');
+    }
+  };
 
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
@@ -115,35 +106,16 @@ export const Community = (props: IProps) => {
     });
   };
 
-  const handleIsShareWithModalOpen = () => {
-    if (!isAuthenticated) return;
-
-    setIsShareWithModalOpen(prevState => !prevState);
-    setCurrentCommunitySelected({
-      credential: undefined,
-      stamps: [],
-      isMinted: false
-    });
-  };
-
   const handleIsRemoveModalOpen = () => {
     if (!isAuthenticated) return;
 
-    // TODO: WE SHOULD USE THIS METHOD INSTEAD
-    // setIsRemoveModalOpen(prevState => !prevState);
-
-    if (!window) return;
-    window.location.reload();
+    setIsRemoveModalOpen(prevState => !prevState);
+    setActionStatus('idle');
   };
 
   const handleCurrentCommunity = (type: string, values: ICredential) => {
     setCurrentCommunitySelected(values);
     setCurrentActionType(type);
-
-    if (type === 'share_with') {
-      if (!isAuthenticated) return;
-      setIsShareWithModalOpen(true);
-    }
 
     if (type === 'add_stamp') {
       if (!isAuthenticated) return;
@@ -174,6 +146,7 @@ export const Community = (props: IProps) => {
         );
 
         if (response) {
+          await getInformation();
           handleIsRemoveModalOpen();
         }
       }
@@ -187,6 +160,7 @@ export const Community = (props: IProps) => {
         );
 
         if (response) {
+          await getInformation();
           handleIsRemoveModalOpen();
         }
       }
@@ -266,6 +240,7 @@ export const Community = (props: IProps) => {
       {isVerifyCredentialOpen ? (
         <VerifyCredential
           currentCommunity={currentCommunitySelected}
+          getInformation={getInformation}
           onClose={handleIsVerifyCredentialOpen}
         />
       ) : null}
@@ -368,15 +343,6 @@ export const Community = (props: IProps) => {
                               'tx',
                               community.stamps[0]
                             )
-                        }
-                      : undefined,
-                    isAuthenticated &&
-                    process.env.NEXT_PUBLIC_NETWORK === 'mumbai' &&
-                    community.credential?.visualInformation.isEncryptedByDefault
-                      ? {
-                          title: 'Share with',
-                          onClick: () =>
-                            handleCurrentCommunity('share_with', community)
                         }
                       : undefined,
                     isAuthenticated && community.stamps?.length === 0
