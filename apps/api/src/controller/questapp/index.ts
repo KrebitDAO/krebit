@@ -1,7 +1,7 @@
 // TODO: Validate if address deserves the badge
 
 import express from 'express';
-import LitJsSdk from 'lit-js-sdk/build/index.node.js';
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, generateUID } from '../../utils';

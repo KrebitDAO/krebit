@@ -87,7 +87,7 @@ export class Krebit {
     );
   }
 
-  connect = async (currentSession?: string) => {
+  connect = async (currentSession?: string, defaultChainId?: string) => {
     if (currentSession) {
       const session = await DIDSession.fromSession(currentSession);
 
@@ -99,7 +99,8 @@ export class Krebit {
       this.idx = await lib.ceramic.authDIDSession({
         client: this.ceramic,
         address: this.address,
-        ethProvider: this.ethProvider
+        ethProvider: this.ethProvider,
+        defaultChainId
       });
     }
 

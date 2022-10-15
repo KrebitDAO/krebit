@@ -1,7 +1,7 @@
 import { FunctionComponent, createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
-import LitJsSdk from 'lit-js-sdk';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 import { Web3Storage } from 'web3.storage';
 import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
@@ -111,12 +111,26 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       setWalletInformation(information);
       localStorage.setItem('auth-type', type);
 
+      const orbis = new Orbis();
+      setOrbis(orbis);
+
+      let defaultChainId = '1';
+      /** Check if the user trying to connect already has an existing did on Orbis */
+      let defaultDID = await Krebit.lib.orbis.getDefaultDID(
+        information.address
+      );
+      console.log('defaultDID', defaultDID);
+      if (defaultDID) {
+        let _didArr = defaultDID.split(':');
+        defaultChainId = _didArr[3];
+      }
+      console.log('defaultChainId', defaultChainId);
       const passport = new Krebit.core.Passport({
         ...information,
         litSdk: LitJsSdk,
         ceramicUrl: process.env.NEXT_PUBLIC_CERAMIC_URL
       });
-      const passportConnection = await passport.connect();
+      const passportConnection = await passport.connect(null, defaultChainId);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -131,9 +145,6 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       if (passportConnection && issuerConnection) {
         setPassport(passport);
         setIssuer(issuer);
-
-        const orbis = new Orbis();
-        setOrbis(orbis);
 
         const orbisConnection = orbis.connect();
 

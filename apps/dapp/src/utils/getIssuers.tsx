@@ -28,7 +28,8 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Discord',
     description: 'Krebit Verification Node',
     icon: <Discord />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/discord'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -38,7 +39,8 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Twitter',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/twitter'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -51,7 +53,7 @@ const PERSONHOOD_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/github'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -62,7 +64,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Phone',
     description: 'Krebit Verification Node',
     icon: <Phone />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/phone'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/phone'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -72,7 +74,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Email',
     description: 'Krebit Verification Node',
     icon: <Email />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/email'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/email'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -82,7 +84,7 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Legal Name (Veriff)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/veriff'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '1.5',
@@ -93,7 +95,8 @@ const PERSONHOOD_CREDENTIALS = [
     entity: 'Legal Name (Persona)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/persona'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/persona'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '2.5',
@@ -110,7 +113,7 @@ const WORK_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/github'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -123,7 +126,7 @@ const WORK_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/github'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -136,7 +139,7 @@ const WORK_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/github'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -146,7 +149,7 @@ const WORK_CREDENTIALS = [
     entity: 'Spect Completed Tasks > 10',
     description: 'Krebit Verification Node',
     icon: <Spect />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/spect'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -159,7 +162,8 @@ const COMMUNITY_CREDENTIALS = [
     entity: 'Twitter Followers > 1K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/twitter'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -169,7 +173,8 @@ const COMMUNITY_CREDENTIALS = [
     entity: 'Twitter Followers > 10K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/twitter'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -182,7 +187,8 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/discord'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -195,7 +201,8 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/discord'),
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
@@ -208,7 +215,7 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/github'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
 
@@ -222,7 +229,7 @@ const COMMUNITY_CREDENTIALS = [
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL.concat('/issuer'),
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',

@@ -5,8 +5,8 @@ import { DIDDataStore } from '@glazed/did-datastore';
 import localStore from 'store2';
 
 // DID-session
-import { EthereumAuthProvider } from '@ceramicnetwork/blockchain-utils-linking';
 import { DIDSession } from 'did-session';
+import { EthereumNodeAuth, getAccountId } from '@didtools/pkh-ethereum';
 
 import { schemas } from '../schemas/index.js';
 
@@ -22,6 +22,7 @@ export interface AuthProviderProps {
   address?: string;
   ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
   session?: DIDSession | undefined;
+  defaultChainId?: string | undefined;
 }
 
 const publicIDX = (props: PublicIDXProps) => {
@@ -34,12 +35,21 @@ const publicIDX = (props: PublicIDXProps) => {
 };
 
 const authDIDSession = async (props: AuthProviderProps) => {
-  const { client, address, ethProvider, session } = props;
+  const { client, address, ethProvider, session, defaultChainId } = props;
   let currentSession: DIDSession = session;
 
   if (!currentSession) {
-    const authProvider = new EthereumAuthProvider(ethProvider, address);
-    const newSession = await DIDSession.authorize(authProvider, {
+    let accountId = await getAccountId(ethProvider, address);
+
+    accountId.chainId.reference = defaultChainId ? defaultChainId : '1';
+    console.log('Account chainId: ', accountId.chainId.reference);
+    const authMethod = await EthereumNodeAuth.getAuthMethod(
+      ethProvider,
+      accountId,
+      DOMAIN
+    );
+
+    const newSession = await DIDSession.authorize(authMethod, {
       resources: [`ceramic://*`],
       domain: DOMAIN
     });
