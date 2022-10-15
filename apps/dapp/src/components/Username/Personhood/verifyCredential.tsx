@@ -19,11 +19,12 @@ import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
   currentPersonhood?: ICredential;
+  getInformation: () => Promise<void>;
   onClose: () => void;
 }
 
 export const VerifyCredential = (props: IProps) => {
-  const { currentPersonhood, onClose } = props;
+  const { currentPersonhood, getInformation, onClose } = props;
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
@@ -33,11 +34,56 @@ export const VerifyCredential = (props: IProps) => {
   const personaProvider = usePersonaProvider();
   const githubProvider = useGithubProvider();
 
-  const handleClose = () => {
-    if (!window) return;
+  const handleClose = async (credentialType: string) => {
+    let isStatusResolved = false;
 
-    // TODO: WE SHOULD USE onClose INSTEAD
-    window.location.reload();
+    if (credentialType === 'Discord') {
+      isStatusResolved =
+        discordProvider.status === 'credential_resolved' ||
+        discordProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'Twitter') {
+      isStatusResolved =
+        twitterProvider.status === 'credential_resolved' ||
+        twitterProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'Veriff') {
+      isStatusResolved =
+        veriffProvider.status === 'credential_resolved' ||
+        veriffProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'PhoneNumber') {
+      isStatusResolved =
+        phoneProvider.status === 'credential_resolved' ||
+        phoneProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'Email') {
+      isStatusResolved =
+        emailProvider.status === 'credential_resolved' ||
+        emailProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'Persona') {
+      isStatusResolved =
+        personaProvider.status === 'credential_resolved' ||
+        personaProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'Github') {
+      isStatusResolved =
+        githubProvider.status === 'credential_resolved' ||
+        githubProvider.status === 'mint_resolved';
+    }
+
+    if (isStatusResolved) {
+      await getInformation();
+    }
+
+    onClose();
   };
 
   const handleCleanState = (credentialType: string) => {

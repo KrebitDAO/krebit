@@ -85,9 +85,10 @@ export const Username = () => {
   const { query, push } = useRouter();
   const {
     auth,
+    storage,
     walletInformation: { publicPassport, passport, issuer, orbis },
     walletModal: { openConnectWallet, handleOpenConnectWallet },
-    storage
+    profileInformation: { handleSetProfile }
   } = useContext(GeneralContext);
   const windowSize = useWindowSize();
   const isDesktop = windowSize.width >= 1024;
@@ -192,7 +193,8 @@ export const Username = () => {
         <EditProfile
           profile={profile}
           onClose={handleEditProfile}
-          passport={passport}
+          handleProfile={handleProfile}
+          contextHandleProfile={handleSetProfile}
           orbis={orbis}
           storage={storage}
         />

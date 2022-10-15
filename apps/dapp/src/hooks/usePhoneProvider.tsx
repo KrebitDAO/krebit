@@ -5,7 +5,6 @@ import LitJsSdk from '@lit-protocol/sdk-browser';
 import {
   getCredential,
   generateUID,
-  sortByDate,
   getWalletInformation,
   IIsuerParams,
   constants
