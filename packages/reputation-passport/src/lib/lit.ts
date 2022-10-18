@@ -53,6 +53,46 @@ const signAuthMessage = async (props: ISignAuthMessageProps) => {
   return authSig;
 };
 
+export function canonicalAccessControlConditionFormatter(cond) {
+  // need to return in the exact format below:
+  /*
+  pub struct JsonAccessControlCondition {
+    pub contract_address: String,
+    pub chain: String,
+    pub standard_contract_type: String,
+    pub method: String,
+    pub parameters: Vec<String>,
+    pub return_value_test: JsonReturnValueTest,
+  }
+  */
+
+  if (Array.isArray(cond)) {
+    return cond.map(c => canonicalAccessControlConditionFormatter(c));
+  }
+
+  if ('operator' in cond) {
+    return {
+      operator: cond.operator
+    };
+  }
+
+  if ('returnValueTest' in cond) {
+    return {
+      contractAddress: cond.contractAddress,
+      chain: cond.chain,
+      standardContractType: cond.standardContractType,
+      method: cond.method,
+      parameters: cond.parameters,
+      returnValueTest: {
+        comparator: cond.returnValueTest.comparator,
+        value: cond.returnValueTest.value
+      }
+    };
+  }
+
+  throw new Error(`invalid access control condition: ${cond}`);
+}
+
 export class Lit {
   private litSdk;
   private litNodeClient;
@@ -138,7 +178,7 @@ export class Lit {
       symmetricKey,
       authSig,
       chain: this.currentConfig.network,
-      permanent: false
+      permanant: false
     });
 
     return {
@@ -172,13 +212,16 @@ export class Lit {
     }
     authSig = JSON.parse(authSig);
 
+    const conds = newAccessControlConditions.map(c =>
+      canonicalAccessControlConditionFormatter(c)
+    );
     const newEncryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey(
       {
-        accessControlConditions: newAccessControlConditions,
+        accessControlConditions: conds,
         encryptedSymmetricKey: utils.base64.decodeb64(encryptedSymmetricKey),
         authSig,
         chain: this.currentConfig.network,
-        permanent: false
+        permanant: false
       }
     );
 
@@ -206,8 +249,12 @@ export class Lit {
     }
     authSig = JSON.parse(authSig);
 
+    const conds = accessControlConditions.map(c =>
+      canonicalAccessControlConditionFormatter(c)
+    );
+
     const decryptedSymmKey = await this.litNodeClient.getEncryptionKey({
-      accessControlConditions,
+      accessControlConditions: conds,
       toDecrypt: encryptedSymmetricKey,
       authSig,
       chain: this.currentConfig.network

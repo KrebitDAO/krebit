@@ -320,7 +320,7 @@ export class Krebit {
         const result = await lit.decrypt(
           encryptedClaimValue.encryptedString,
           encryptedClaimValue.encryptedSymmetricKey,
-          encryptedClaimValue.accessControlConditions,
+          unifiedAccessControlConditions,
           this.wallet
         );
         if (result) {

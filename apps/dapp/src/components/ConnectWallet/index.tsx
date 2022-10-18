@@ -57,7 +57,8 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
                 Metamask
               </WalletButton>
-              {/* <WalletButton
+
+              <WalletButton
                 textColor="white"
                 onClick={() => handlerConnect('wallet_connect')}
               >
@@ -67,7 +68,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                   height={24}
                 />{' '}
                 WalletConnect
-              </WalletButton> */}
+              </WalletButton>
             </div>
             <a
               className="wallet-read"
