@@ -28,6 +28,8 @@ import { Share } from './Share';
 import { Facebook } from './Facebook';
 import { Telegram } from './Telegram';
 import { Whatsapp } from './Whatsapp';
+import { Tune } from './Tune';
+import { Search } from './Search';
 
 export {
   Close,
@@ -59,5 +61,7 @@ export {
   Share,
   Facebook,
   Telegram,
-  Whatsapp
+  Whatsapp,
+  Tune,
+  Search
 };
