@@ -146,7 +146,10 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         setPassport(passport);
         setIssuer(issuer);
 
-        const orbisConnection = orbis.connect();
+        const orbisConnection = orbis.connect_v2({
+          provider: information.ethProvider,
+          lit: true
+        });
 
         if (orbisConnection) {
           const currentProfile = await normalizeSchema.profile(passport, orbis);
