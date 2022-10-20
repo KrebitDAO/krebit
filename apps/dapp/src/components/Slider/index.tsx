@@ -5,6 +5,7 @@ import { Wrapper } from './styles';
 
 interface IProps {
   ariaLabel: string;
+  name: string;
   value: number | number[];
   onChange: (
     event: Event,
@@ -16,13 +17,14 @@ interface IProps {
 }
 
 export const Slider = (props: IProps) => {
-  const { ariaLabel, value, onChange, min = 10, max = 1000 } = props;
+  const { ariaLabel, name, value, onChange, min = 1, max = 1000 } = props;
 
   return (
     <StyledEngineProvider injectFirst>
       <Wrapper>
         <MaterialSlider
           getAriaLabel={() => ariaLabel}
+          name={name}
           value={value}
           onChange={onChange}
           valueLabelDisplay="auto"
