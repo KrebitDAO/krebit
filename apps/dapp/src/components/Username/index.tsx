@@ -106,10 +106,10 @@ export const Username = () => {
       try {
         await publicPassport.read((query.id as string).toLowerCase());
 
-        const currentProfile = await normalizeSchema.profile(
-          publicPassport,
+        const currentProfile = await normalizeSchema.profile({
+          passport: publicPassport,
           orbis
-        );
+        });
 
         const currentDIDFromURL = publicPassport.did;
         if (!isValid('did', currentDIDFromURL)) setStatus('rejected');
@@ -206,9 +206,7 @@ export const Username = () => {
           </LoadingWrapper>
         ) : (
           <Wrapper
-            profilePicture={
-              formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
-            }
+            profilePicture={formatUrlImage(profile?.picture)}
             isCurrentProfile={currentDIDFromURL !== auth?.did}
           >
             <div className="profile-container">

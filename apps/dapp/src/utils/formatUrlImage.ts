@@ -1,5 +1,5 @@
 export const formatUrlImage = (value: string | File) => {
-  if (!value) return;
+  if (value === undefined || value === null) return;
 
   if (value instanceof File) {
     return URL.createObjectURL(value);
@@ -14,4 +14,6 @@ export const formatUrlImage = (value: string | File) => {
 
     return `https://${content[0]}.ipfs.dweb.link/${content[1]}`;
   }
+
+  return value;
 };

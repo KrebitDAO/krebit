@@ -69,7 +69,7 @@ export const Wrapper = styled.div<WalletProps>`
         grid-gap: 16px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-template-rows: repeat(1, 69px);
+          grid-template-rows: repeat(2, 69px);
         }
       }
 
