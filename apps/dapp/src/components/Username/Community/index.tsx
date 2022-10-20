@@ -306,7 +306,12 @@ export const Community = (props: IProps) => {
                 type="small"
                 id={`community_${index}`}
                 icon={community.credential?.visualInformation?.icon}
-                title={community.credential?.visualInformation?.entity}
+                title={community.credential?.credentialSubject?.type
+                  .replace('Github', ' Github')
+                  .replace(/([a-z])([A-Z])/g, '$1 $2')
+                  .replace('#', '# ')
+                  .replace('++', '++ ')
+                  .replace('GT', '> ')}
                 description={formatCredentialName(community.credential?.value)}
                 dates={{
                   issuanceDate: {

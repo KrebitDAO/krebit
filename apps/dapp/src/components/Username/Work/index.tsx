@@ -304,7 +304,12 @@ export const Work = (props: IProps) => {
                 type="long"
                 id={`work_${index}`}
                 icon={work.credential?.visualInformation?.icon}
-                title={work.credential?.visualInformation?.entity}
+                title={work.credential?.credentialSubject?.type
+                  .replace('Github', ' Github')
+                  .replace(/([a-z])([A-Z])/g, '$1 $2')
+                  .replace('#', '# ')
+                  .replace('++', '++ ')
+                  .replace('GT', '> ')}
                 description={formatCredentialName(work.credential?.value)}
                 dates={{
                   issuanceDate: {

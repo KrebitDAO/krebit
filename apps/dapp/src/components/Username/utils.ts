@@ -28,7 +28,7 @@ const getCredentials = async (props: IProps) => {
       const isMinted = false;
 
       const visualInformation = getIssuers(type).find(issuer =>
-        credential.type.includes(issuer.credentialType)
+        credential.credentialSubject.type.includes(issuer.credentialType)
       );
       const claimValue = await passport.getClaimValue(credential);
 

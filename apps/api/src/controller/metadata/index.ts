@@ -2,7 +2,7 @@ import express from 'express';
 import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getNFTCredentialTypes } from '../../utils';
+import { connect, getNFTCredentialTypes, getTokenIds } from '../../utils';
 
 const { SERVER_NFT_METADATA_IPFS, SERVER_CERAMIC_URL } = process.env;
 
@@ -24,7 +24,7 @@ export const MetadataController = async (
     const types = getNFTCredentialTypes();
     const tokenId = request.params.tokenId;
     if (tokenId === 'all') {
-      return response.json(types);
+      return response.json(getTokenIds());
     }
 
     const tokenType = types[tokenId];

@@ -355,7 +355,12 @@ export const Personhood = (props: IProps) => {
                 type="simple"
                 id={`personhood_${index}`}
                 icon={personhood.credential?.visualInformation?.icon}
-                title={personhood.credential?.visualInformation?.entity}
+                title={personhood.credential?.credentialSubject?.type
+                  .replace('Github', ' Github')
+                  .replace(/([a-z])([A-Z])/g, '$1 $2')
+                  .replace('#', '# ')
+                  .replace('++', '++ ')
+                  .replace('GT', '> ')}
                 description={formatCredentialName(personhood.credential?.value)}
                 dates={{
                   issuanceDate: {
