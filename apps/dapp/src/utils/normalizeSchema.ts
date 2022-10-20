@@ -1,7 +1,15 @@
 import { Orbis } from '@orbisclub/orbis-sdk';
+import Passport from '@krebitdao/reputation-passport';
 
 // types
-import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
+import { Passport as PassportType } from '@krebitdao/reputation-passport/dist/core/Passport';
+
+interface IProps {
+  orbis: Orbis;
+  passport?: PassportType;
+  did?: string;
+  reputation?: number;
+}
 
 export interface ICredential {
   credential: any;
@@ -27,20 +35,29 @@ export interface IProfile {
   skills?: string[];
 }
 
-export const profile = async (passport: Passport, orbis: Orbis) => {
+const DEFAULT_PICTURE = '/imgs/images/person_outline.svg';
+const DEFAULT_NAME = 'Anonymous';
+
+export const profile = async (props: IProps) => {
+  let { orbis, passport, did, reputation = 0 } = props;
   let currentProfile: IProfile;
-  const did = passport?.did;
+  let ensDomain: string;
+  let unsDomain: string;
+
+  if (passport) {
+    did = passport.did;
+    reputation = await passport.getReputation();
+    ensDomain = passport?.ens;
+    unsDomain = passport?.uns;
+  }
 
   const orbisProfile = await orbis.getProfile(did);
-  const reputation = await passport.getReputation();
-  const ensDomain = passport?.ens;
-  const unsDomain = passport?.uns;
 
   if (orbisProfile?.data?.did) {
     currentProfile = {
       did,
       background: orbisProfile?.data?.details?.profile?.cover,
-      picture: orbisProfile?.data?.details?.profile?.pfp,
+      picture: orbisProfile?.data?.details?.profile?.pfp || DEFAULT_PICTURE,
       name:
         orbisProfile?.data?.details?.profile?.username ||
         orbisProfile?.data?.details?.metadata?.ensName,
@@ -52,35 +69,19 @@ export const profile = async (passport: Passport, orbis: Orbis) => {
       unsDomain
     };
   } else {
-    const profile = await passport.getProfile();
-
-    if (profile) {
-      currentProfile = {
-        did,
-        background: profile?.background?.original?.src,
-        picture: profile?.image?.original?.src,
-        name: profile?.name || passport.address,
-        description: profile?.description,
-        reputation: reputation || 0,
-        countFollowers: orbisProfile?.data?.count_followers || 0,
-        countFollowing: orbisProfile?.data?.count_following || 0,
-        ensDomain,
-        unsDomain
-      };
-    } else {
-      currentProfile = {
-        did,
-        background: undefined,
-        picture: '/imgs/images/person_outline.svg',
-        name: passport.address,
-        description: undefined,
-        reputation: reputation || 0,
-        countFollowers: 0,
-        countFollowing: 0,
-        ensDomain,
-        unsDomain
-      };
-    }
+    currentProfile = {
+      did,
+      background: undefined,
+      picture: DEFAULT_PICTURE,
+      name:
+        did.match(Passport.utils.regexValidations.address)[0] || DEFAULT_NAME,
+      description: undefined,
+      reputation: reputation || 0,
+      countFollowers: 0,
+      countFollowing: 0,
+      ensDomain,
+      unsDomain
+    };
   }
 
   return currentProfile;

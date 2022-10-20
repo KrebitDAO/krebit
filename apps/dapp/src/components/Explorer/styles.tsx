@@ -205,6 +205,24 @@ export const Wrapper = styled.div<IProps>`
           grid-template-columns: repeat(3, minmax(auto, 0.5fr));
           grid-gap: 26px;
         }
+
+        .explorer-card-loading {
+          width: 100%;
+          height: 222px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            height: 383px;
+          }
+        }
+      }
+
+      .explore-card-not-found {
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+        margin: 0;
+        margin-top: 20px;
+        text-align: center;
       }
     }
   `}
@@ -222,6 +240,7 @@ export const FilterMenu = styled.div<IProps>`
     border-radius: 10px 10px 0px 0px;
     box-shadow: ${theme.shadows.small};
     overflow-y: auto;
+    overflow-x: hidden;
     transition: 0.5s;
 
     @media (min-width: ${theme.screens.lg}) {
@@ -229,7 +248,7 @@ export const FilterMenu = styled.div<IProps>`
       position: initial;
       bottom: initial;
       border-radius: 15px;
-      padding: 31px 14px;
+      padding: 30px 22px;
     }
 
     .filter-menu-header {
@@ -294,6 +313,20 @@ export const FilterMenu = styled.div<IProps>`
     }
 
     .filter-menu-skills {
+      .filter-menu-skills-loading {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+      }
+
+      .filter-menu-no-skills {
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+        margin: 0;
+        text-align: center;
+      }
+
       .filter-menu-skills-text {
         font-family: 'HelveticaNowDisplay-Medium';
         font-size: ${theme.fonts.sm};
@@ -330,6 +363,7 @@ export const FilterMenu = styled.div<IProps>`
         font-size: ${theme.fonts.sm};
         text-decoration: underline;
         border-bottom: 1px solid ${theme.colors.gray};
+        cursor: pointer;
 
         @media (min-width: ${theme.screens.lg}) {
           padding-top: 32px;

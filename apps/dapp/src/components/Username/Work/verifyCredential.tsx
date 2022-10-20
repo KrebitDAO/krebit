@@ -1,9 +1,6 @@
-import { useContext } from 'react';
-
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
 import { getIssuers, checkCredentialsURLs } from 'utils';
-import { GeneralContext } from 'context';
 import {
   useGithubFollowersProvider,
   useGithubRepoProvider,
