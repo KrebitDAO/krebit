@@ -246,10 +246,10 @@ export const Explorer = () => {
               )}
             </div>
             <div className="filter-menu-slider">
-              <p className="filter-menu-slider-text">kRB Quantity</p>
+              <p className="filter-menu-slider-text">KRBs Quantity</p>
               <div className="filter-menu-slider-component">
                 <Slider
-                  ariaLabel="kRB Quantity"
+                  ariaLabel="KRBs Quantity"
                   name="krbs"
                   value={filterValues.krbs}
                   onChange={handleFilterValues}
@@ -257,10 +257,10 @@ export const Explorer = () => {
               </div>
               <div className="filter-menu-slider-bottom">
                 <p className="filter-menu-slider-bottom-text">
-                  {filterValues.krbs[0]} kRB
+                  {filterValues.krbs[0]} KRBs
                 </p>
                 <p className="filter-menu-slider-bottom-text">
-                  {filterValues.krbs[1]} kRB
+                  {filterValues.krbs[1]} KRBs
                 </p>
               </div>
             </div>
