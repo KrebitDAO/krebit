@@ -27,7 +27,6 @@ const CREDENTIAL_TYPES = [
   'GithubRepoWatchersGT10',
   'GithubRepoCollaborator',
   'GithubRepoMergedPullsGT1',
-  'GithubRepoCollaborator',
   'StackOverflowReputationGT1K',
   'StackOverflowReputationGT10K',
   'StackOverflowBronzeBadgesGT10',
@@ -39,7 +38,53 @@ const CREDENTIAL_TYPES = [
   'SpectCompletedTasksGT10',
   'DribbbleFollowersGT100',
   'DribbbleFollowersGT1K',
-  'DribbbleTeamMember'
+  'DribbbleTeamMember',
+  'JavaScriptGithubRepoStarsGT10',
+  'PythonGithubRepoStarsGT10',
+  'JavaScriptGithubRepoStarsGT10',
+  'JavaGithubRepoStarsGT10',
+  'C#GithubRepoStarsGT10',
+  'PHPGithubRepoStarsGT10',
+  'AndroidGithubRepoStarsGT10',
+  'HTMLGithubRepoStarsGT10',
+  'C++GithubRepoStarsGT10',
+  'CSSGithubRepoStarsGT10',
+  'Objective-CGithubRepoStarsGT10',
+  'SQLGithubRepoStarsGT10',
+  'RGithubRepoStarsGT10',
+  'CGithubRepoStarsGT10',
+  'SwiftGithubRepoStarsGT10',
+  'RubyGithubRepoStarsGT10',
+  'TypeScriptGithubRepoStarsGT10',
+  'ScalaGithubRepoStarsGT10',
+  'ShellGithubRepoStarsGT10',
+  'KotlinGithubRepoStarsGT10',
+  'GoGithubRepoStarsGT10',
+  'RustGithubRepoStarsGT10',
+  'SolidityGithubRepoStarsGT10',
+  'JavaScriptGithubRepoCollaborator',
+  'PythonGithubRepoCollaborator',
+  'JavaScriptGithubRepoCollaborator',
+  'JavaGithubRepoCollaborator',
+  'C#GithubRepoCollaborator',
+  'PHPGithubRepoCollaborator',
+  'AndroidGithubRepoCollaborator',
+  'HTMLGithubRepoCollaborator',
+  'C++GithubRepoCollaborator',
+  'CSSGithubRepoCollaborator',
+  'Objective-CGithubRepoCollaborator',
+  'SQLGithubRepoCollaborator',
+  'RGithubRepoCollaborator',
+  'CGithubRepoCollaborator',
+  'SwiftGithubRepoCollaborator',
+  'RubyGithubRepoCollaborator',
+  'TypeScriptGithubRepoCollaborator',
+  'ScalaGithubRepoCollaborator',
+  'ShellGithubRepoCollaborator',
+  'KotlinGithubRepoCollaborator',
+  'GoGithubRepoCollaborator',
+  'RustGithubRepoCollaborator',
+  'SolidityGithubRepoCollaborator'
 ];
 
 export const getNFTCredentialTypes = () => {
@@ -51,6 +96,26 @@ export const getNFTCredentialTypes = () => {
     const tokenId = ethers.BigNumber.from(tokenIdHex);
     result[tokenIdHex.toString().substring(2)] = type;
     result[tokenId.toString()] = type;
+  }
+  return result;
+};
+
+export const getTokenIds = () => {
+  let result = {};
+  for (const type of CREDENTIAL_TYPES) {
+    const tokenIdHex = ethers.utils.keccak256(
+      ethers.utils.defaultAbiCoder.encode(['string'], [type])
+    );
+    const tokenId = ethers.BigNumber.from(tokenIdHex);
+    result[type] = {
+      name: type
+        .replace('Github', ' Github')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace('#', '# ')
+        .replace('++', '++ ')
+        .replace('GT', '> '),
+      tokenId: tokenId.toString()
+    };
   }
   return result;
 };

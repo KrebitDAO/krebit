@@ -106,6 +106,16 @@ const PERSONHOOD_CREDENTIALS = [
 
 const WORK_CREDENTIALS = [
   {
+    credentialType: 'SpectCompletedTasksGT10',
+    entity: 'Spect Completed Tasks > 10',
+    description: 'Krebit Verification Node',
+    icon: <Spect />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
     credentialType: 'GithubFollowersGT10',
     entity: 'Github Followers > 10',
     description: 'Krebit Verification Node',
@@ -140,16 +150,6 @@ const WORK_CREDENTIALS = [
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
-    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
-  },
-  {
-    credentialType: 'SpectCompletedTasksGT10',
-    entity: 'Spect Completed Tasks > 10',
-    description: 'Krebit Verification Node',
-    icon: <Spect />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'

@@ -26,11 +26,6 @@ interface IProps {
 
 const MENU_OPTIONS = [
   {
-    title: 'Home',
-    href: '/home',
-    icon: <Home />
-  },
-  {
     title: 'Explore',
     href: '/explore',
     icon: <Explore />
@@ -78,11 +73,7 @@ export const Layout: FunctionComponent<IProps> = props => {
 
   return (
     <Wrapper>
-      <MenuMobile
-        profilePicture={
-          formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
-        }
-      >
+      <MenuMobile profilePicture={formatUrlImage(profile?.picture)}>
         <div className="icon">
           <Menu />
         </div>
@@ -124,11 +115,7 @@ export const Layout: FunctionComponent<IProps> = props => {
           </Link>
         ))}
       </NavBarMobile>
-      <NavBarDesktop
-        profilePicture={
-          formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
-        }
-      >
+      <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
         <div className="options">
           <div className="option-logo">
             <img src="/imgs/logos/Krebit.svg" width={40} height={40} />

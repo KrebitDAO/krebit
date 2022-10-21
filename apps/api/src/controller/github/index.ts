@@ -198,7 +198,7 @@ export const GithubController = async (
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
         console.log('expirationDate: ', expirationDate);
 
-        let tags = claimedCredential.type.slice(2);
+        let tags = claimedCredential.type.slice(1);
         if (githubRepo.topics && githubRepo.topics.length > 0)
           tags = tags?.concat(githubRepo.topics);
         if (githubRepo.language) tags.push(githubRepo.language);
@@ -207,7 +207,11 @@ export const GithubController = async (
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           did: claimedCredential.credentialSubject.id,
-          type: claimedCredential.credentialSubject.type,
+          type: githubRepo.language
+            ? githubRepo.language.concat(
+                claimedCredential.credentialSubject.type
+              )
+            : claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: tags,
           value: claimValue,
@@ -280,7 +284,7 @@ export const GithubController = async (
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
         console.log('expirationDate: ', expirationDate);
 
-        let tags = claimedCredential.type.slice(2);
+        let tags = claimedCredential.type.slice(1);
         if (githubRepo.topics && githubRepo.topics.length > 0)
           tags = tags?.concat(githubRepo.topics);
         if (githubRepo.language) tags.push(githubRepo.language);
@@ -289,7 +293,11 @@ export const GithubController = async (
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           did: claimedCredential.credentialSubject.id,
-          type: claimedCredential.credentialSubject.type,
+          type: githubRepo.language
+            ? githubRepo.language.concat(
+                claimedCredential.credentialSubject.type
+              )
+            : claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
           tags: tags,
           value: claimValue,

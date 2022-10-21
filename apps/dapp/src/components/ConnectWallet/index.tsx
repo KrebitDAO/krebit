@@ -1,4 +1,4 @@
-import { FunctionComponent, MouseEvent, useContext, useState } from 'react';
+import { FunctionComponent, useContext, useState } from 'react';
 
 import { Wrapper, WalletButton } from './styles';
 import { Close } from 'components/Icons';
@@ -57,7 +57,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
                 Metamask
               </WalletButton>
-              {/* <WalletButton
+              <WalletButton
                 textColor="white"
                 onClick={() => handlerConnect('wallet_connect')}
               >
@@ -67,7 +67,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                   height={24}
                 />{' '}
                 WalletConnect
-              </WalletButton> */}
+              </WalletButton>
             </div>
             <a
               className="wallet-read"

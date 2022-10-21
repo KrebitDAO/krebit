@@ -65,12 +65,11 @@ export const Wrapper = styled.div<WalletProps>`
 
       .wallet-buttons {
         display: grid;
-        // TODO: IF wallet_connect IS GOING TO BE ADDED, CHAGE TO "repeat(2, xPX)"
-        grid-template-rows: repeat(1, 56px);
+        grid-template-rows: repeat(2, 56px);
         grid-gap: 16px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-template-rows: repeat(1, 69px);
+          grid-template-rows: repeat(2, 69px);
         }
       }
 
