@@ -2,7 +2,12 @@ import express from 'express';
 import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getNFTCredentialTypes, getTokenIds } from '../../utils';
+import {
+  connect,
+  getNFTCredentialTypes,
+  getTokenIds,
+  getNftSvg
+} from '../../utils';
 
 const { SERVER_NFT_METADATA_IPFS, SERVER_CERAMIC_URL } = process.env;
 
@@ -54,7 +59,7 @@ export const MetadataController = async (
     const result = {
       name: tokenType,
       description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
-      image: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
+      image_data: getNftSvg(tokenType),
       animation_url: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.mp4`,
       external_url: 'https://krebit.id',
       attributes: [
