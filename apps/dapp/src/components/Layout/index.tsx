@@ -26,11 +26,6 @@ interface IProps {
 
 const MENU_OPTIONS = [
   {
-    title: 'Home',
-    href: '/home',
-    icon: <Home />
-  },
-  {
     title: 'Explore',
     href: '/explore',
     icon: <Explore />

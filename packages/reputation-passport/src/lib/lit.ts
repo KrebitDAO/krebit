@@ -187,7 +187,7 @@ export class Lit {
         encryptedSymmetricKey,
         'base16'
       ),
-      accessControlConditions: accessControlConditions,
+      unifiedAccessControlConditions: accessControlConditions,
       chain: this.currentConfig.network
     };
   };

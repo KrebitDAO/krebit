@@ -328,7 +328,6 @@ export class Krebit {
         }
       } catch (err) {
         console.error(`Could not decrypt: ${err.message}`);
-        //throw new Error(`Could not decrypt: ${err.message}`);
       }
     } else {
     }

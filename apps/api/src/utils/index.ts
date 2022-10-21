@@ -8,7 +8,8 @@ import { getSpectUser } from './getSpectUser';
 import { twilio } from './twilio';
 import { github } from './github';
 import { getPersonaDecision } from './getPersonaDecision';
-import { getNFTCredentialTypes } from './getNFTCredentialTypes';
+import { getNFTCredentialTypes, getTokenIds } from './getNFTCredentialTypes';
+import { getNftSvg } from './getNftSvg';
 
 export {
   connect,
@@ -21,5 +22,7 @@ export {
   twilio,
   github,
   getPersonaDecision,
-  getNFTCredentialTypes
+  getNFTCredentialTypes,
+  getTokenIds,
+  getNftSvg
 };
