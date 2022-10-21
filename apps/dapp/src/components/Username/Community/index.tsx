@@ -226,6 +226,15 @@ export const Community = (props: IProps) => {
     return formattedValue;
   };
 
+  const formatCredentialType = (value: any) => {
+    return value
+      .replace('Github', ' Github')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace('#', '# ')
+      .replace('++', '++ ')
+      .replace('GT', '> ');
+  };
+
   const handleCheckCredentialsURLs = (
     type: string,
     valuesType: string,
@@ -306,12 +315,9 @@ export const Community = (props: IProps) => {
                 type="small"
                 id={`community_${index}`}
                 icon={community.credential?.visualInformation?.icon}
-                title={community.credential?.credentialSubject?.type
-                  .replace('Github', ' Github')
-                  .replace(/([a-z])([A-Z])/g, '$1 $2')
-                  .replace('#', '# ')
-                  .replace('++', '++ ')
-                  .replace('GT', '> ')}
+                title={formatCredentialType(
+                  community.credential?.credentialSubject?.type
+                )}
                 description={formatCredentialName(community.credential?.value)}
                 dates={{
                   issuanceDate: {

@@ -224,6 +224,15 @@ export const Work = (props: IProps) => {
     return formattedValue;
   };
 
+  const formatCredentialType = (value: any) => {
+    return value
+      .replace('Github', ' Github')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace('#', '# ')
+      .replace('++', '++ ')
+      .replace('GT', '> ');
+  };
+
   const handleCheckCredentialsURLs = (
     type: string,
     valuesType: string,
@@ -304,12 +313,9 @@ export const Work = (props: IProps) => {
                 type="long"
                 id={`work_${index}`}
                 icon={work.credential?.visualInformation?.icon}
-                title={work.credential?.credentialSubject?.type
-                  .replace('Github', ' Github')
-                  .replace(/([a-z])([A-Z])/g, '$1 $2')
-                  .replace('#', '# ')
-                  .replace('++', '++ ')
-                  .replace('GT', '> ')}
+                title={formatCredentialType(
+                  work.credential?.credentialSubject?.type
+                )}
                 description={formatCredentialName(work.credential?.value)}
                 dates={{
                   issuanceDate: {
