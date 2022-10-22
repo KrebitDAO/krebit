@@ -37,12 +37,14 @@ const initialFilterValues = {
 };
 
 const DEFAULT_SLICE_SKILLS = 5;
+const DEFAULT_LIST_PAGINATION = 9;
 
 export const Explorer = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterValues, setFilterValues] = useState(initialFilterValues);
   const [status, setStatus] = useState('idle');
   const [information, setInformation] = useState<IInformation>();
+  const [currentPage, setCurrentPage] = useState(1);
   const [shouldViewMoreSkills, setShouldViewMoreSkills] = useState(false);
   const {
     walletInformation: { publicPassport, orbis }
@@ -63,11 +65,15 @@ export const Explorer = () => {
     if (!orbis) return;
 
     const getProfiles = async () => {
-      await searchInformation(filterValues);
+      await searchInformation(
+        filterValues,
+        DEFAULT_LIST_PAGINATION * currentPage,
+        currentPage === 1 ? 0 : DEFAULT_LIST_PAGINATION * (currentPage - 1)
+      );
     };
 
     getProfiles();
-  }, [publicPassport, orbis, filterValues.value]);
+  }, [publicPassport, orbis, filterValues.value, currentPage]);
 
   const handleFilterOpen = () => {
     if (isDesktop) return;
@@ -88,6 +94,19 @@ export const Explorer = () => {
     }));
   };
 
+  const handleSkillValue = (value: string) => {
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      skills: prevStates.skills.includes(value)
+        ? prevStates.skills.filter(skill => skill !== value)
+        : [...prevStates.skills, value]
+    }));
+  };
+
+  const handleCurrentPage = () => {
+    setCurrentPage(prevValue => prevValue + 1);
+  };
+
   const handleCleanFilterValues = () => {
     setFilterValues(initialFilterValues);
   };
@@ -96,12 +115,17 @@ export const Explorer = () => {
     setShouldViewMoreSkills(prevStatus => !prevStatus);
   };
 
-  const searchInformation = async (values = initialFilterValues, first = 9) => {
+  const searchInformation = async (
+    values = initialFilterValues,
+    first = DEFAULT_LIST_PAGINATION,
+    skip = 0
+  ) => {
     try {
       setStatus('pending');
 
       const erc20BalancesResponse = await Krebit.lib.graph.erc20BalancesQuery({
         first,
+        skip,
         orderDirection: 'desc',
         orderBy: 'value',
         where: {
@@ -150,7 +174,14 @@ export const Explorer = () => {
 
       const skills = profiles.flatMap(profile => profile.skills);
 
-      setInformation({ profiles, skills });
+      setInformation(prevValues =>
+        currentPage === 1
+          ? { profiles, skills }
+          : {
+              profiles: [...(prevValues?.profiles || []), ...profiles],
+              skills: [...(prevValues?.skills || []), ...skills]
+            }
+      );
       setStatus('resolved');
     } catch (error) {
       console.error(error);
@@ -160,6 +191,7 @@ export const Explorer = () => {
 
   const handleSearch = async () => {
     handleFilterOpen();
+    setCurrentPage(1);
     await searchInformation(filterValues);
   };
 
@@ -222,10 +254,18 @@ export const Explorer = () => {
                     {mergeArray(information?.skills || [])
                       .slice(
                         0,
-                        shouldViewMoreSkills ? -1 : DEFAULT_SLICE_SKILLS
+                        shouldViewMoreSkills ? undefined : DEFAULT_SLICE_SKILLS
                       )
                       .map((item, index) => (
-                        <div className="filter-menu-skills-item" key={index}>
+                        <div
+                          className={`filter-menu-skills-item ${
+                            filterValues.skills.includes(item[0])
+                              ? 'filter-menu-skills-item-active'
+                              : ''
+                          }`}
+                          key={index}
+                          onClick={() => handleSkillValue(item[0])}
+                        >
                           <p className="filter-menu-skills-item-text">
                             {item[0]}{' '}
                             {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
@@ -233,15 +273,20 @@ export const Explorer = () => {
                         </div>
                       ))}
                   </div>
-                  <p
-                    className="filter-menu-skills-view-more"
-                    onClick={handleViewMoreSkills}
-                  >
-                    View more (
-                    {mergeArray(information?.skills || []).length -
-                      DEFAULT_SLICE_SKILLS}
-                    )
-                  </p>
+                  {mergeArray(information?.skills || []).length >
+                    DEFAULT_SLICE_SKILLS && (
+                    <p
+                      className="filter-menu-skills-view-more"
+                      onClick={handleViewMoreSkills}
+                    >
+                      {shouldViewMoreSkills
+                        ? 'View less'
+                        : `View more (${
+                            mergeArray(information?.skills || []).length -
+                            DEFAULT_SLICE_SKILLS
+                          })`}
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -304,17 +349,9 @@ export const Explorer = () => {
               <Close />
             </div>
           </div>
-          {isLoading ? (
-            <div className="explorer-cards">
-              {new Array(6).fill(0).map((_, index) => (
-                <div className="explorer-card-loading" key={index}>
-                  <Loading type="skeleton" />
-                </div>
-              ))}
-            </div>
-          ) : information?.profiles?.length === 0 ? (
+          {information?.profiles?.length === 0 ? (
             <p className="explore-card-not-found">No profiles found</p>
-          ) : (
+          ) : information?.profiles?.length > 0 ? (
             <div className="explorer-cards">
               {information?.profiles.map((profile, index) => (
                 <Card picture={profile.picture} key={index}>
@@ -352,6 +389,26 @@ export const Explorer = () => {
                   </div>
                 </Card>
               ))}
+            </div>
+          ) : null}
+          {isLoading && (
+            <div className="explorer-cards">
+              {new Array(6).fill(0).map((_, index) => (
+                <div className="explorer-card-loading" key={index}>
+                  <Loading type="skeleton" />
+                </div>
+              ))}
+            </div>
+          )}
+          {information?.profiles?.length >=
+            DEFAULT_LIST_PAGINATION * currentPage && (
+            <div className="explorer-cards-button">
+              <Button
+                text="View more"
+                onClick={handleCurrentPage}
+                styleType="border"
+                borderBackgroundColor="ebony"
+              />
             </div>
           )}
         </div>

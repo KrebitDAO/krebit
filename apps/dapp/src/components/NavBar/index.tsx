@@ -64,7 +64,11 @@ export const NavBar = () => {
             href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
             rel="noopener noreferrer"
           >
-            <a target="_blank" className="menu-bar-item">
+            <a
+              target="_blank"
+              className="menu-bar-item"
+              onClick={handleCloseMenu}
+            >
               Credential Issuers
             </a>
           </Link>

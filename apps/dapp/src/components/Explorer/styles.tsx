@@ -12,7 +12,7 @@ interface ICardProps {
 export const Wrapper = styled.div<IProps>`
   ${({ theme, isFilterOpen }) => css`
     margin: 0 auto;
-    margin-bottom: 76px;
+    margin-bottom: 100px;
 
     @media (min-width: ${theme.screens.lg}) {
       float: right;
@@ -224,6 +224,18 @@ export const Wrapper = styled.div<IProps>`
         margin-top: 20px;
         text-align: center;
       }
+
+      .explorer-cards-button {
+        width: 94px;
+        height: 28px;
+        margin: 0 auto;
+        margin-top: 20px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 144px;
+          height: 44px;
+        }
+      }
     }
   `}
 `;
@@ -346,11 +358,20 @@ export const FilterMenu = styled.div<IProps>`
           padding: 4px 14px;
           height: 100%;
           width: fit-content;
+          cursor: pointer;
 
           .filter-menu-skills-item-text {
             margin: 0;
             font-size: ${theme.fonts.sm};
             color: ${theme.colors.melrose};
+          }
+        }
+
+        .filter-menu-skills-item-active {
+          background-color: ${theme.colors.melrose};
+
+          .filter-menu-skills-item-text {
+            color: ${theme.colors.white};
           }
         }
       }

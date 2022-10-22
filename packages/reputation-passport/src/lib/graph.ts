@@ -19,6 +19,7 @@ export interface ClientProps {
 
 export interface ListProps {
   first?: number;
+  skip?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: object;
