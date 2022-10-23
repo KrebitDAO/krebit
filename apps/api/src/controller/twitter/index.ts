@@ -74,7 +74,6 @@ export const TwitterController = async (
     //Decrypt
     if (claimedCredential.credentialSubject.encrypted === 'lit') {
       claimValue = await Issuer.decryptCredential(claimedCredential);
-      console.log('Decrypted claim value: ', claimValue);
     } else {
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('Claim value: ', claimValue);

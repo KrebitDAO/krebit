@@ -15,6 +15,7 @@ import { mergeArray } from './mergeArray';
 import { constants } from './constants';
 import { formatFilename } from './formatFilename';
 import { formatUrlImage } from './formatUrlImage';
+import { countries } from './countries';
 
 export {
   createEmotionCache,
@@ -33,6 +34,7 @@ export {
   mergeArray,
   constants,
   formatFilename,
-  formatUrlImage
+  formatUrlImage,
+  countries
 };
 export type { IIsuerParams };

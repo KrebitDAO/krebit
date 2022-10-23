@@ -6,7 +6,9 @@ import {
   Phone,
   Twitter,
   Github,
-  Spect
+  Spect,
+  Cake,
+  Person
 } from 'components/Icons';
 import { ReactNode } from 'react';
 
@@ -80,27 +82,49 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'Veriff',
-    entity: 'Legal Name (Veriff)',
+    credentialType: 'VeriffAgeGT18',
+    entity: 'Age > 18 (Veriff)',
+    description: 'Krebit Verification Node',
+    icon: <Cake />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
+  },
+  {
+    credentialType: 'VeriffGovernmentId',
+    entity: 'Verified Government Id (Veriff)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '1.5',
-    isDisabled: process.env.NEXT_PUBLIC_VERIFF_ENABLED
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
   },
   {
-    credentialType: 'Persona',
+    credentialType: 'VeriffLegalName',
+    entity: 'Legal Name (Veriff)',
+    description: 'Krebit Verification Node',
+    icon: <Person />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '1.5',
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
+  },
+  {
+    credentialType: 'PersonaLegalName',
     entity: 'Legal Name (Persona)',
     description: 'Krebit Verification Node',
-    icon: <Badge />,
+    icon: <Person />,
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/persona'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '2.5',
-    isDisabled: process.env.NEXT_PUBLIC_PERSONA_ENABLED
+    isDisabled: !process.env.NEXT_PUBLIC_PERSONA_ENABLED
   }
 ];
 

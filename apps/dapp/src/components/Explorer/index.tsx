@@ -32,7 +32,7 @@ interface IInformation {
 
 const initialFilterValues = {
   skills: [],
-  krbs: [3, 99],
+  krbs: [1, 99],
   value: ''
 };
 
@@ -155,7 +155,8 @@ export const Explorer = () => {
               orderBy: 'issuanceDate',
               orderDirection: 'desc',
               where: {
-                credentialSubjectAddress: balance.account.id
+                credentialSubjectAddress: balance.account.id,
+                credentialStatus: 'Issued'
               }
             })
           ]);

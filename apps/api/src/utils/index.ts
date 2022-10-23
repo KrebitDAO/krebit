@@ -9,7 +9,6 @@ import { twilio } from './twilio';
 import { github } from './github';
 import { getPersonaDecision } from './getPersonaDecision';
 import { getNFTCredentialTypes, getTokenIds } from './getNFTCredentialTypes';
-import { getNftSvg } from './getNftSvg';
 
 export {
   connect,
@@ -23,6 +22,5 @@ export {
   github,
   getPersonaDecision,
   getNFTCredentialTypes,
-  getTokenIds,
-  getNftSvg
+  getTokenIds
 };

@@ -39,7 +39,7 @@ export const getVeriffDecision = async (veriffId: string): Promise<any> => {
         }
       }
     ).then(result => result.json());
-
+    console.log('veriffDecision response: ', response);
     if (response.status == 'fail') throw new Error(response.message);
 
     return response.verification;
