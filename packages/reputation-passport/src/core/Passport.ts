@@ -60,7 +60,7 @@ export class Passport {
       });
     }
 
-    this.did = this.idx.id;
+    this.did = this.idx.id.toLocaleLowerCase();
     this.ens = await lib.ens.lookupAddress(this.address);
     this.uns = await lib.uns.lookupAddress(this.address);
     return this.did;
@@ -79,7 +79,7 @@ export class Passport {
       client: this.ceramic,
       session
     });
-    this.did = this.idx.id;
+    this.did = this.idx.id.toLocaleLowerCase();
 
     return this.idx.authenticated;
   };
@@ -93,21 +93,21 @@ export class Passport {
 
   read = async (value: string) => {
     if (value.startsWith('0x')) {
-      this.address = value;
+      this.address = value.toLocaleLowerCase();
       let defaultDID = await lib.orbis.getDefaultDID(this.address);
       this.did = defaultDID ? defaultDID : `did:pkh:eip155:1:${value}`;
 
       this.ens = await lib.ens.lookupAddress(this.address);
       this.uns = await lib.uns.lookupAddress(this.address);
     } else if (value.startsWith('did:pkh:eip155:')) {
-      this.did = value;
+      this.did = value.toLocaleLowerCase();
       this.address = (value as string).match(utils.regexValidations.address)[0];
       this.ens = await lib.ens.lookupAddress(this.address);
       this.uns = await lib.uns.lookupAddress(this.address);
     } else if (value.endsWith('.eth')) {
       const ensInfo = await this.readEns(value);
 
-      this.address = ensInfo?.address;
+      this.address = ensInfo?.address.toLocaleLowerCase();
       let defaultDID = await lib.orbis.getDefaultDID(this.address);
       this.did = defaultDID ? defaultDID : `did:pkh:eip155:1:${this.address}`;
       this.ens = ensInfo?.ens;
@@ -115,7 +115,7 @@ export class Passport {
     } else {
       const unsInfo = await this.readUns(value);
 
-      this.address = unsInfo?.address;
+      this.address = unsInfo?.address.toLocaleLowerCase();
       let defaultDID = await lib.orbis.getDefaultDID(this.address);
       this.did = defaultDID ? defaultDID : `did:pkh:eip155:1:${this.address}`;
       this.uns = unsInfo?.uns;
