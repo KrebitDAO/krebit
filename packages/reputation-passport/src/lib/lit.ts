@@ -49,7 +49,7 @@ const signAuthMessage = async (props: ISignAuthMessageProps) => {
     signedMessage: messageToSign,
     address: recoveredAddress
   };
-  localStore.set('lit-auth-signature', JSON.stringify(authSig));
+  localStore.set('lit-auth-signature', authSig);
   return authSig;
 };
 
@@ -151,45 +151,48 @@ export class Lit {
     accessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ) => {
-    if (!this.litNodeClient) {
-      await this.connect();
-    }
+    try {
+      if (!this.litNodeClient) {
+        await this.connect();
+      }
 
-    let authSig = localStore.get('lit-auth-signature');
-    if (!authSig || authSig === 'undefined') {
-      console.log('signing auth message because sig is not in local storage');
-      await signAuthMessage({
-        wallet,
-        config: this.currentConfig
+      let authSig = localStore.get('lit-auth-signature');
+      if (!authSig || authSig === 'undefined') {
+        console.log('signing auth message because sig is not in local storage');
+        await signAuthMessage({
+          wallet,
+          config: this.currentConfig
+        });
+        authSig = localStore.get('lit-auth-signature');
+      }
+
+      const { encryptedString, symmetricKey } = await this.litSdk.encryptString(
+        message
+      );
+
+      const encryptedStringBase64 = await utils.base64.blobToBase64(
+        encryptedString
+      );
+      const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
+        accessControlConditions,
+        symmetricKey,
+        authSig,
+        chain: this.currentConfig.network,
+        permanant: false
       });
-      authSig = localStore.get('lit-auth-signature');
+
+      return {
+        encryptedString: encryptedStringBase64,
+        encryptedSymmetricKey: this.litSdk.uint8arrayToString(
+          encryptedSymmetricKey,
+          'base16'
+        ),
+        unifiedAccessControlConditions: accessControlConditions,
+        chain: this.currentConfig.network
+      };
+    } catch (error) {
+      console.error('Encrypt error', error);
     }
-    authSig = JSON.parse(authSig);
-
-    const { encryptedString, symmetricKey } = await this.litSdk.encryptString(
-      message
-    );
-
-    const encryptedStringBase64 = await utils.base64.blobToBase64(
-      encryptedString
-    );
-    const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-      accessControlConditions,
-      symmetricKey,
-      authSig,
-      chain: this.currentConfig.network,
-      permanant: false
-    });
-
-    return {
-      encryptedString: encryptedStringBase64,
-      encryptedSymmetricKey: this.litSdk.uint8arrayToString(
-        encryptedSymmetricKey,
-        'base16'
-      ),
-      unifiedAccessControlConditions: accessControlConditions,
-      chain: this.currentConfig.network
-    };
   };
 
   public updateConditions = async (
