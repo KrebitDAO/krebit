@@ -1,4 +1,10 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import { useRouter } from 'next/router';
 import { debounce } from 'ts-debounce';
@@ -31,13 +37,14 @@ interface IInformation {
 }
 
 const initialFilterValues = {
-  skills: [],
+  skill: '',
   krbs: [3, 99],
   value: ''
 };
 
 const DEFAULT_SLICE_SKILLS = 5;
-const DEFAULT_LIST_PAGINATION = 9;
+// TODO: This big number should be replaced with '9' to follow a right pagination
+const DEFAULT_LIST_PAGINATION = 900;
 
 export const Explorer = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -60,19 +67,29 @@ export const Explorer = () => {
     }
   }, [isDesktop, isFilterOpen]);
 
+  const delayedInformation = useCallback(
+    debounce(
+      (
+        values = initialFilterValues,
+        first = DEFAULT_LIST_PAGINATION,
+        skip = 0
+      ) => searchInformation(values, first, skip),
+      500
+    ),
+    [publicPassport, orbis, filterValues.value, currentPage]
+  );
+
   useEffect(() => {
     if (!publicPassport) return;
     if (!orbis) return;
 
-    const getProfiles = async () => {
-      await searchInformation(
-        filterValues,
-        DEFAULT_LIST_PAGINATION * currentPage,
-        currentPage === 1 ? 0 : DEFAULT_LIST_PAGINATION * (currentPage - 1)
-      );
-    };
+    delayedInformation(
+      filterValues,
+      DEFAULT_LIST_PAGINATION * currentPage,
+      currentPage === 1 ? 0 : DEFAULT_LIST_PAGINATION * (currentPage - 1)
+    );
 
-    getProfiles();
+    return delayedInformation.cancel;
   }, [publicPassport, orbis, filterValues.value, currentPage]);
 
   const handleFilterOpen = () => {
@@ -95,11 +112,17 @@ export const Explorer = () => {
   };
 
   const handleSkillValue = (value: string) => {
-    setFilterValues(prevStates => ({
+    // TODO: Allow user to filter more than one skill
+    /* setFilterValues(prevStates => ({
       ...prevStates,
       skills: prevStates.skills.includes(value)
         ? prevStates.skills.filter(skill => skill !== value)
         : [...prevStates.skills, value]
+    })); */
+
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      skill: value
     }));
   };
 
@@ -123,54 +146,50 @@ export const Explorer = () => {
     try {
       setStatus('pending');
 
-      const erc20BalancesResponse = await Krebit.lib.graph.erc20BalancesQuery({
+      const response = await Krebit.lib.graph.exploreAccountsQuery({
         first,
         skip,
-        orderDirection: 'desc',
-        orderBy: 'value',
         where: {
-          value_gte: values.krbs[0],
-          value_lte: values.krbs[1]
+          ERC20balances_: {
+            value_gte: values.krbs[0],
+            value_lte: values.krbs[1]
+          },
+          VerifiableCredentials_: {
+            _type_contains_nocase: values.value ? values.value : values.skill,
+            credentialStatus: 'Issued'
+          }
         }
       });
 
       const profiles = await Promise.all(
-        erc20BalancesResponse.map(async balance => {
-          if (!balance?.account?.id) return undefined;
+        response.map(async account => {
+          if (!account?.id) return undefined;
 
-          const defaultDID = await Krebit.lib.orbis.getDefaultDID(
-            balance.account.id
-          );
+          const defaultDID = await Krebit.lib.orbis.getDefaultDID(account.id);
           const did = defaultDID
             ? defaultDID
-            : `did:pkh:eip155:1:${balance.account.id}`;
+            : `did:pkh:eip155:1:${account.id}`;
 
-          const [profile, stamps] = await Promise.all([
-            normalizeSchema.profile({
-              orbis,
-              did,
-              reputation: balance.value
-            }),
-            Krebit.lib.graph.verifiableCredentialsQuery({
-              orderBy: 'issuanceDate',
-              orderDirection: 'desc',
-              where: {
-                credentialSubjectAddress: balance.account.id
-              }
-            })
-          ]);
+          const profile = await normalizeSchema.profile({
+            orbis,
+            did,
+            reputation: account.ERC20balances[0].value
+          });
 
-          const skills = stamps
-            .map(stamp => (stamp?._type ? JSON.parse(stamp._type) : []))
+          const skills = account.VerifiableCredentials.map(
+            values => values?._type
+          )
+            .map(credentials => (credentials ? JSON.parse(credentials) : []))
             .flatMap(skills => skills);
 
           return {
             ...profile,
-            stamps: stamps || [],
             skills: skills || []
           };
         })
-      ).then(profiles => profiles.filter(profile => profile !== undefined));
+      )
+        .then(profiles => profiles.filter(profile => profile !== undefined))
+        .then(profiles => profiles.sort((a, b) => b.reputation - a.reputation));
 
       const skills = profiles.flatMap(profile => profile.skills);
 
@@ -178,7 +197,9 @@ export const Explorer = () => {
         currentPage === 1
           ? { profiles, skills }
           : {
-              profiles: [...(prevValues?.profiles || []), ...profiles],
+              profiles: [...(prevValues?.profiles || []), ...profiles].sort(
+                (a, b) => b.reputation - a.reputation
+              ),
               skills: [...(prevValues?.skills || []), ...skills]
             }
       );
@@ -192,6 +213,10 @@ export const Explorer = () => {
   const handleSearch = async () => {
     handleFilterOpen();
     setCurrentPage(1);
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      value: ''
+    }));
     await searchInformation(filterValues);
   };
 
@@ -259,7 +284,7 @@ export const Explorer = () => {
                       .map((item, index) => (
                         <div
                           className={`filter-menu-skills-item ${
-                            filterValues.skills.includes(item[0])
+                            filterValues.skill === item[0]
                               ? 'filter-menu-skills-item-active'
                               : ''
                           }`}
