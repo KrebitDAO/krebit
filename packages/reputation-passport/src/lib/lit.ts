@@ -250,7 +250,6 @@ export class Lit {
       });
       authSig = localStore.get('lit-auth-signature');
     }
-    authSig = JSON.parse(authSig);
 
     const conds = accessControlConditions.map(c =>
       canonicalAccessControlConditionFormatter(c)
