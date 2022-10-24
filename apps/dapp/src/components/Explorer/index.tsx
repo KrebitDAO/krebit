@@ -126,6 +126,13 @@ export const Explorer = () => {
     }));
   };
 
+  const handleCleanSearchValue = () => {
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      value: ''
+    }));
+  };
+
   const handleCurrentPage = () => {
     setCurrentPage(prevValue => prevValue + 1);
   };
@@ -370,7 +377,10 @@ export const Explorer = () => {
               autoCorrect="off"
               spellCheck="false"
             />
-            <div className="explorer-searcher-icon explorer-searcher-icon-white">
+            <div
+              className="explorer-searcher-icon explorer-searcher-icon-white"
+              onClick={handleCleanSearchValue}
+            >
               <Close />
             </div>
           </div>
