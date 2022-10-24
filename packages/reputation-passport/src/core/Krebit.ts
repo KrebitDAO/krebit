@@ -384,19 +384,18 @@ export class Krebit {
   issue = async (claim: ClaimProps) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    // Check the types of the claim before issuing
-
     try {
+      // Check the types of the claim before issuing
       await utils.validateSchema({ idx: this.idx, claim });
+
+      return await utils.issueCredential({
+        wallet: this.wallet as ethers.Wallet,
+        idx: this.idx,
+        claim
+      });
     } catch (err) {
       throw new Error(err);
     }
-
-    return await utils.issueCredential({
-      wallet: this.wallet as ethers.Wallet,
-      idx: this.idx,
-      claim
-    });
   };
 
   // Stamp
