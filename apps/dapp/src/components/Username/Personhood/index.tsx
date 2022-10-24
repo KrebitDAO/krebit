@@ -317,7 +317,7 @@ export const Personhood = (props: IProps) => {
         <div className="person-header">
           <div className="person-header-text-container">
             <p className="person-header-text">Personhood Credentials</p>
-            {currentFilterOption === 'overview' && personhoods?.length !== 0 ? (
+            {currentFilterOption === 'overview' ? (
               <div
                 className="person-header-text-open-new"
                 onClick={() => onFilterOption('Personhood')}
