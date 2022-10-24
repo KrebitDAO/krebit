@@ -38,7 +38,7 @@ interface IInformation {
 
 const initialFilterValues = {
   skill: '',
-  krbs: [3, 99],
+  krbs: [1, 99],
   value: ''
 };
 

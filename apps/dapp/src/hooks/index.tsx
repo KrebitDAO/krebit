@@ -2,7 +2,7 @@ import { useWindowSize } from './useWindowSize';
 import { useDiscordProvider } from './useDiscordProvider';
 import { useTwitterProvider } from './useTwitterProvider';
 import { useTwitterFollowersProvider } from './useTwitterFollowersProvider';
-import { useVeriffProvider } from './useVeriffProvider';
+import { useVeriffLegalNameProvider } from './useVeriffLegalNameProvider';
 import { usePhoneProvider } from './usePhoneProvider';
 import { useIssuerProvider } from './useIssuerProvider';
 import { useEmailProvider } from './useEmailProvider';
@@ -16,13 +16,15 @@ import { useDiscordGuildMemberProvider } from './useDiscordGuildMemberProvider';
 import { usePersonaProvider } from './usePersonaProvider';
 import { useOutsideClick } from './useOutsideClick';
 import { useSpectCompletedProvider } from './useSpectCompletedProvider';
+import { useVeriffAgeProvider } from './useVeriffAgeProvider';
+import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
 
 export {
   useWindowSize,
   useDiscordProvider,
   useTwitterProvider,
   useTwitterFollowersProvider,
-  useVeriffProvider,
+  useVeriffLegalNameProvider,
   usePhoneProvider,
   useIssuerProvider,
   useEmailProvider,
@@ -35,5 +37,7 @@ export {
   useDiscordGuildMemberProvider,
   usePersonaProvider,
   useOutsideClick,
-  useSpectCompletedProvider
+  useSpectCompletedProvider,
+  useVeriffAgeProvider,
+  useVeriffGovernmentIdProvider
 };

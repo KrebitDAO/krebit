@@ -5,7 +5,7 @@ import { Button } from 'components/Button';
 import { Input } from 'components/Input';
 import { Select, IItems } from 'components/Select';
 import { Switch } from 'components/Switch';
-import { Approval, Fingerprint, Token } from 'components/Icons';
+import { Approval, Fingerprint, Timer } from 'components/Icons';
 import { useWindowSize } from 'hooks';
 
 // types
@@ -85,8 +85,8 @@ export const BoxStep = (props: IProps) => {
                   <Fingerprint />
                 ) : iconType === 'stamp' ? (
                   <Approval />
-                ) : iconType === 'nft' ? (
-                  <Token />
+                ) : iconType === 'timer' ? (
+                  <Timer />
                 ) : icon ? (
                   icon
                 ) : null}

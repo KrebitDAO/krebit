@@ -30,6 +30,9 @@ import { Telegram } from './Telegram';
 import { Whatsapp } from './Whatsapp';
 import { Tune } from './Tune';
 import { Search } from './Search';
+import { Cake } from './Cake';
+import { Person } from './Person';
+import { Timer } from './Timer';
 
 export {
   Close,
@@ -63,5 +66,8 @@ export {
   Telegram,
   Whatsapp,
   Tune,
-  Search
+  Search,
+  Cake,
+  Person,
+  Timer
 };

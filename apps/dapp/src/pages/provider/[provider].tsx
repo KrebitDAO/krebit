@@ -158,19 +158,36 @@ const DynamicProvider = () => {
     const queryState = queryString.get('status');
 
     // if Veriff oauth then submit message to other windows and close self
-    if (queryState && queryState == 'submitted') {
+    if (queryState && queryState == 'VeriffLegalName') {
       // shared message channel between windows (on the same domain)
       const channel = new BroadcastChannel(currentChannel);
 
       // only continue with the process if a code is returned
       channel.postMessage({
-        target: 'veriff',
+        target: 'VeriffLegalName',
         data: { state: queryState }
       });
+    } else if (queryState && queryState == 'VeriffAgeGT18') {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
 
-      // always close the redirected window
-      window.close();
+      // only continue with the process if a code is returned
+      channel.postMessage({
+        target: 'VeriffAgeGT18',
+        data: { state: queryState }
+      });
+    } else if (queryState && queryState == 'VeriffGovernmentId') {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      channel.postMessage({
+        target: 'VeriffGovernmentId',
+        data: { state: queryState }
+      });
     }
+    // always close the redirected window
+    window.close();
   };
 
   const githubChannel = () => {

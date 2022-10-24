@@ -66,7 +66,7 @@ export const Work = (props: IProps) => {
       const workCredentials = await getCredentials({
         type: 'WorkExperience',
         passport: publicPassport,
-        limit: currentFilterOption === 'overview' ? 2 : 100
+        limit: currentFilterOption === 'overview' ? 3 : 100
       });
 
       setWorks(workCredentials);

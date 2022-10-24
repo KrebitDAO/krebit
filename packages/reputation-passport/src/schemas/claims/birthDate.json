@@ -5,6 +5,6 @@
     "date": { "type": "string" },
     "proofs": { "type": "object" }
   },
-  "required": ["date"],
+  "required": [],
   "additionalProperties": false
 }
