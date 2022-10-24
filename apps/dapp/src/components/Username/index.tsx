@@ -134,6 +134,8 @@ export const Username = () => {
   };
 
   const handleFilterOption = (value: string) => {
+    if (value === currentFilterOption) return;
+
     setProfile({ ...profile, skills: [] });
     setCurrentFilterOption(value);
   };
