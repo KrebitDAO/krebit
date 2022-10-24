@@ -39,7 +39,7 @@ export class Passport {
     this.currentConfig = currentConfig;
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
     this.ceramic = ceramicClient;
-    this.address = props?.address;
+    this.address = props?.address?.toLocaleLowerCase();
     this.ethProvider = props?.ethProvider;
   }
 
