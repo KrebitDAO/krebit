@@ -72,7 +72,7 @@ export class Krebit {
     this.currentConfig = currentConfig;
 
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.address = props.address;
+    this.address = props.address.toLocaleLowerCase();
     this.ethProvider = props.ethProvider;
     this.ceramic = ceramicClient;
     this.wallet = props.wallet;
@@ -105,7 +105,7 @@ export class Krebit {
       });
     }
 
-    this.did = this.idx.id;
+    this.did = this.idx.id.toLocaleLowerCase();
 
     return this.did;
   };
@@ -123,7 +123,7 @@ export class Krebit {
       client: this.ceramic,
       session
     });
-    this.did = this.idx.id;
+    this.did = this.idx.id.toLocaleLowerCase();
 
     return this.idx.authenticated;
   };
