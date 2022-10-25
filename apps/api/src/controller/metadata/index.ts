@@ -20,17 +20,6 @@ export const MetadataController = async (
     if (!request?.params?.tokenId) {
       throw new Error(`No tokenId in params`);
     }
-
-    const types = getNFTCredentialTypes();
-    const tokenId = request.params.tokenId;
-    if (tokenId === 'all') {
-      return response.json(getTokenIds());
-    }
-
-    const tokenType = types[tokenId];
-    if (!tokenType) return response.status(404).send('Not found.');
-    console.log('Credential type:', tokenType);
-
     /* TODO get credential types from getIssuers
     const { wallet, ethProvider } = await connect();
      
@@ -46,7 +35,22 @@ export const MetadataController = async (
     const issuers = await Issuer.getIssuers({type: "VerifiableCredentials"});
     console.log('List of issuers:', issuers);
 */
-    let tokenNumber = tokenId;
+
+    const types = getNFTCredentialTypes();
+    const tokenId = request.params.tokenId;
+    if (tokenId === 'all') {
+      return response.json(getTokenIds());
+    }
+
+    let tokenType = types[tokenId];
+    console.log('Credential type:', tokenType);
+
+    let tokenNumber = '0';
+    if (tokenType) {
+      tokenNumber = tokenId;
+    } else {
+      tokenType = 'VerifiedCredential';
+    }
     if (isNaN(Number(tokenId))) {
       tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
     }

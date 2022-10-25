@@ -184,7 +184,7 @@ const WORK_CREDENTIALS = [
 const COMMUNITY_CREDENTIALS = [
   {
     credentialType: 'GuildXyzMember',
-    entity: 'Guild.xyz Guild Member',
+    entity: 'Guild Member',
     description: 'Krebit Verification Node',
     icon: <Guild />,
     imageUrl:
@@ -207,8 +207,8 @@ const COMMUNITY_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'GuildXyzAdminGT100',
-    entity: 'Admin of Guild with > 100 members',
+    credentialType: 'GuildXyzRole',
+    entity: 'Has Role in a Guild',
     description: 'Krebit Verification Node',
     icon: <Guild />,
     imageUrl:
@@ -216,19 +216,8 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
-  },
-  {
-    credentialType: 'GuildXyzRoleGT100',
-    entity: 'Role in a Guild with > 100 members',
-    description: 'Krebit Verification Node',
-    icon: <Guild />,
-    imageUrl:
-      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
-    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    price: '0',
+    isDisabled: true
   },
   {
     credentialType: 'TwitterFollowersGT1K',

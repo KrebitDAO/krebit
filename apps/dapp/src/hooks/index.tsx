@@ -19,6 +19,7 @@ import { useSpectCompletedProvider } from './useSpectCompletedProvider';
 import { useVeriffAgeProvider } from './useVeriffAgeProvider';
 import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
 import { useGuildXyzMemberProvider } from './useGuildXyzMemberProvider';
+import { useGuildXyzAdminProvider } from './useGuildXyzAdminProvider';
 
 export {
   useWindowSize,
@@ -41,5 +42,6 @@ export {
   useSpectCompletedProvider,
   useVeriffAgeProvider,
   useVeriffGovernmentIdProvider,
-  useGuildXyzMemberProvider
+  useGuildXyzMemberProvider,
+  useGuildXyzAdminProvider
 };

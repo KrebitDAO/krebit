@@ -16,11 +16,31 @@ const getAddressGuilds = async (userAddress: string) => {
 
       return {
         text: guildInfo.name,
-        value: m.guildId
+        value: m.guildId.toString()
       };
     })
   );
   return result;
+};
+
+const getAddressGuildAdmin = async (userAddress: string) => {
+  const memberships = await user.getMemberships(userAddress);
+  const result = await Promise.all(
+    memberships.map(async m => {
+      const guildInfo = await guild.get(m.guildId);
+      let guildAmin = undefined;
+      for (const a of guildInfo.admins) {
+        if (a.address.toLowerCase() === userAddress.toLowerCase()) {
+          guildAmin = {
+            text: guildInfo.name,
+            value: m.guildId.toString()
+          };
+        }
+      }
+      if (guildAmin) return guildAmin;
+    })
+  );
+  return result.filter(g => g != undefined);
 };
 
 const getAddressRoles = async (guildId: number, userAddress: string) => {
@@ -33,7 +53,7 @@ const getAddressRoles = async (guildId: number, userAddress: string) => {
           const roleInfo = await role.get(r);
           return {
             text: roleInfo.name,
-            value: r
+            value: r.toString()
           };
         })
       );
@@ -54,5 +74,6 @@ export const guildXyz = {
   getGuild,
   getGuildRoles,
   getAddressGuilds,
-  getAddressRoles
+  getAddressRoles,
+  getAddressGuildAdmin
 };
