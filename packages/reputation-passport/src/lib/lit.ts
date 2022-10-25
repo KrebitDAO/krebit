@@ -178,7 +178,7 @@ export class Lit {
         symmetricKey,
         authSig,
         chain: this.currentConfig.network,
-        permanant: false
+        permanent: false
       });
 
       return {
@@ -213,7 +213,6 @@ export class Lit {
       });
       authSig = localStore.get('lit-auth-signature');
     }
-    authSig = JSON.parse(authSig);
 
     const conds = newAccessControlConditions.map(c =>
       canonicalAccessControlConditionFormatter(c)
@@ -224,7 +223,7 @@ export class Lit {
         encryptedSymmetricKey: utils.base64.decodeb64(encryptedSymmetricKey),
         authSig,
         chain: this.currentConfig.network,
-        permanant: false
+        permanent: false
       }
     );
 

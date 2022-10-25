@@ -168,7 +168,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   githubFollowersProvider.currentMint || currentWork?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -284,7 +284,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   githubRepoProvider.currentMint || currentWork?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -429,7 +429,7 @@ export const VerifyCredential = (props: IProps) => {
                   githubRepoCollaboratorProvider.currentMint ||
                   currentWork?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -549,7 +549,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   spectCompletedProvider.currentMint || currentWork?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:

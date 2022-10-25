@@ -2,12 +2,14 @@ import { useContext } from 'react';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { getIssuers, checkCredentialsURLs } from 'utils';
+import { getIssuers, checkCredentialsURLs, countries } from 'utils';
 import { GeneralContext } from 'context';
 import {
   useDiscordProvider,
   useTwitterProvider,
-  useVeriffProvider,
+  useVeriffLegalNameProvider,
+  useVeriffAgeProvider,
+  useVeriffGovernmentIdProvider,
   usePhoneProvider,
   useEmailProvider,
   usePersonaProvider,
@@ -28,7 +30,9 @@ export const VerifyCredential = (props: IProps) => {
   const { walletInformation } = useContext(GeneralContext);
   const discordProvider = useDiscordProvider();
   const twitterProvider = useTwitterProvider();
-  const veriffProvider = useVeriffProvider();
+  const veriffLegalNameProvider = useVeriffLegalNameProvider();
+  const veriffAgeProvider = useVeriffAgeProvider();
+  const veriffGovernmentIdProvider = useVeriffGovernmentIdProvider();
   const phoneProvider = usePhoneProvider();
   const emailProvider = useEmailProvider();
   const personaProvider = usePersonaProvider();
@@ -49,10 +53,16 @@ export const VerifyCredential = (props: IProps) => {
         twitterProvider.status === 'mint_resolved';
     }
 
-    if (credentialType === 'Veriff') {
+    if (credentialType === 'VeriffAgeGT18') {
       isStatusResolved =
-        veriffProvider.status === 'credential_resolved' ||
-        veriffProvider.status === 'mint_resolved';
+        veriffAgeProvider.status === 'credential_resolved' ||
+        veriffAgeProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'VeriffLegalName') {
+      isStatusResolved =
+        veriffLegalNameProvider.status === 'credential_resolved' ||
+        veriffLegalNameProvider.status === 'mint_resolved';
     }
 
     if (credentialType === 'PhoneNumber') {
@@ -67,7 +77,7 @@ export const VerifyCredential = (props: IProps) => {
         emailProvider.status === 'mint_resolved';
     }
 
-    if (credentialType === 'Persona') {
+    if (credentialType === 'PersonaLegalName') {
       isStatusResolved =
         personaProvider.status === 'credential_resolved' ||
         personaProvider.status === 'mint_resolved';
@@ -95,8 +105,12 @@ export const VerifyCredential = (props: IProps) => {
       twitterProvider.handleCleanClaimValues();
     }
 
-    if (credentialType === 'Veriff') {
-      veriffProvider.handleCleanClaimValues();
+    if (credentialType === 'VeriffAgeGT18') {
+      veriffAgeProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'VeriffLegalName') {
+      veriffLegalNameProvider.handleCleanClaimValues();
     }
 
     if (credentialType === 'PhoneNumber') {
@@ -107,7 +121,7 @@ export const VerifyCredential = (props: IProps) => {
       emailProvider.handleCleanClaimValues();
     }
 
-    if (credentialType === 'Persona') {
+    if (credentialType === 'PersonaLegalName') {
       personaProvider.handleCleanClaimValues();
     }
 
@@ -190,7 +204,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   discordProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -301,7 +315,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   twitterProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -411,7 +425,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   githubProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -442,7 +456,7 @@ export const VerifyCredential = (props: IProps) => {
               />
             </>
           )}
-          {currentVerify?.credentialType === 'Veriff' && (
+          {currentVerify?.credentialType === 'VeriffAgeGT18' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -455,41 +469,36 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  veriffProvider.currentCredential ||
+                  veriffAgeProvider.currentCredential ||
                   currentPersonhood?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim your full legal name'
+                    : 'Start verification of your Adulthood with Veriff'
                 }
                 form={{
                   fields:
-                    veriffProvider.currentCredential ||
+                    veriffAgeProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? undefined
                       : [
                           {
-                            name: 'firstName',
-                            placeholder: 'Enter you first name',
-                            value: veriffProvider.claimValues.firstName,
-                            onChange: veriffProvider.handleClaimValues
-                          },
-                          {
-                            name: 'lastName',
-                            placeholder: 'Enter you last name',
-                            value: veriffProvider.claimValues.lastName,
-                            onChange: veriffProvider.handleClaimValues
+                            name: 'date',
+                            type: 'date',
+                            placeholder: 'Date of birth',
+                            value: veriffAgeProvider.claimValues.date,
+                            onChange: veriffAgeProvider.handleClaimValues
                           },
                           {
                             name: 'private',
                             type: 'switch',
-                            placeholder: veriffProvider.claimValues.private
+                            placeholder: veriffAgeProvider.claimValues.private
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
-                            value: veriffProvider.claimValues.private,
-                            onChange: veriffProvider.handleClaimValues
+                            value: veriffAgeProvider.claimValues.private,
+                            onChange: undefined
                           }
                         ],
                   button:
-                    veriffProvider.currentCredential ||
+                    veriffAgeProvider.currentCredential ||
                     currentPersonhood?.credential
                       ? {
                           text: 'Check it',
@@ -497,69 +506,322 @@ export const VerifyCredential = (props: IProps) => {
                             checkCredentialsURLs(
                               'ceramic',
                               'credential',
-                              veriffProvider.currentCredential ||
+                              veriffAgeProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
                         }
                       : {
                           text: 'Verify',
-                          onClick:
-                            !veriffProvider.claimValues.firstName ||
-                            !veriffProvider.claimValues.lastName
-                              ? undefined
-                              : () =>
-                                  veriffProvider.handleFetchOAuth(
-                                    walletInformation.address,
-                                    currentVerify
-                                  ),
-                          isDisabled:
-                            !veriffProvider.claimValues.firstName ||
-                            !veriffProvider.claimValues.lastName
+                          onClick: () =>
+                            veriffAgeProvider.handleFetchOAuth(
+                              walletInformation.address,
+                              currentVerify
+                            )
                         }
                 }}
-                isLoading={veriffProvider.status === 'credential_pending'}
-                loadingMessage={veriffProvider.statusMessage}
-                isError={veriffProvider.status === 'credential_rejected'}
-                errorMessage={veriffProvider.errorMessage}
+                isLoading={veriffAgeProvider.status === 'credential_pending'}
+                loadingMessage={veriffAgeProvider.statusMessage}
+                isError={veriffAgeProvider.status === 'credential_rejected'}
+                errorMessage={veriffAgeProvider.errorMessage}
                 iconType="credential"
               />
               <BoxStep
                 title="Step 2"
                 description={
-                  veriffProvider.currentMint || currentPersonhood?.isMinted
+                  veriffAgeProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
-                    veriffProvider.currentMint || currentPersonhood?.isMinted
+                    veriffAgeProvider.currentMint || currentPersonhood?.isMinted
                       ? {
                           text: 'Check it',
                           onClick: () =>
                             checkCredentialsURLs(
                               'polygon',
                               'tx',
-                              veriffProvider.currentMint
+                              veriffAgeProvider.currentMint
                             )
                         }
                       : {
                           text: 'Mint Stamp',
                           onClick: () =>
-                            veriffProvider.handleMintCredential(
-                              veriffProvider.currentCredential ||
+                            veriffAgeProvider.handleMintCredential(
+                              veriffAgeProvider.currentCredential ||
                                 currentPersonhood?.credential
                             )
                         }
                 }}
-                isLoading={veriffProvider.status === 'mint_pending'}
-                loadingMessage={veriffProvider.statusMessage}
-                isError={veriffProvider.status === 'mint_rejected'}
-                errorMessage={veriffProvider.errorMessage}
+                isLoading={veriffAgeProvider.status === 'mint_pending'}
+                loadingMessage={veriffAgeProvider.statusMessage}
+                isError={veriffAgeProvider.status === 'mint_rejected'}
+                errorMessage={veriffAgeProvider.errorMessage}
                 iconType="stamp"
               />
             </>
           )}
-          {currentVerify?.credentialType === 'Persona' && (
+          {currentVerify?.credentialType === 'VeriffLegalName' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  veriffLegalNameProvider.currentCredential ||
+                  currentPersonhood?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your full legal name'
+                }
+                form={{
+                  fields:
+                    veriffLegalNameProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'firstName',
+                            placeholder:
+                              'Enter you first name as it appears on the ID document',
+                            value:
+                              veriffLegalNameProvider.claimValues.firstName,
+                            onChange: veriffLegalNameProvider.handleClaimValues
+                          },
+                          {
+                            name: 'lastName',
+                            placeholder:
+                              'Enter you last name as it appears on the ID document',
+                            value: veriffLegalNameProvider.claimValues.lastName,
+                            onChange: veriffLegalNameProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: veriffLegalNameProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: veriffLegalNameProvider.claimValues.private,
+                            onChange: undefined
+                          }
+                        ],
+                  button:
+                    veriffLegalNameProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              veriffLegalNameProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !veriffLegalNameProvider.claimValues.firstName ||
+                            !veriffLegalNameProvider.claimValues.lastName
+                              ? undefined
+                              : () =>
+                                  veriffLegalNameProvider.handleFetchOAuth(
+                                    walletInformation.address,
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !veriffLegalNameProvider.claimValues.firstName ||
+                            !veriffLegalNameProvider.claimValues.lastName
+                        }
+                }}
+                isLoading={
+                  veriffLegalNameProvider.status === 'credential_pending'
+                }
+                loadingMessage={veriffLegalNameProvider.statusMessage}
+                isError={
+                  veriffLegalNameProvider.status === 'credential_rejected'
+                }
+                errorMessage={veriffLegalNameProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  veriffLegalNameProvider.currentMint ||
+                  currentPersonhood?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    veriffLegalNameProvider.currentMint ||
+                    currentPersonhood?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              veriffLegalNameProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            veriffLegalNameProvider.handleMintCredential(
+                              veriffLegalNameProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                }}
+                isLoading={veriffLegalNameProvider.status === 'mint_pending'}
+                loadingMessage={veriffLegalNameProvider.statusMessage}
+                isError={veriffLegalNameProvider.status === 'mint_rejected'}
+                errorMessage={veriffLegalNameProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+
+          {currentVerify?.credentialType === 'VeriffGovernmentId' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  veriffGovernmentIdProvider.currentCredential ||
+                  currentPersonhood?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your Government Id'
+                }
+                form={{
+                  fields:
+                    veriffGovernmentIdProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'country',
+                            type: 'select',
+                            placeholder: 'Select the ID document country',
+                            value:
+                              veriffGovernmentIdProvider.claimValues.country,
+                            items: countries.isoCodes,
+                            onChange:
+                              veriffGovernmentIdProvider.handleClaimValues
+                          },
+                          {
+                            name: 'number',
+                            placeholder:
+                              'ID number with *all* exact characters as it appears on the document',
+                            value:
+                              veriffGovernmentIdProvider.claimValues.number,
+                            onChange:
+                              veriffGovernmentIdProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: veriffGovernmentIdProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value:
+                              veriffGovernmentIdProvider.claimValues.private,
+                            onChange: undefined
+                          }
+                        ],
+                  button:
+                    veriffGovernmentIdProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              veriffGovernmentIdProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !veriffGovernmentIdProvider.claimValues.country ||
+                            !veriffGovernmentIdProvider.claimValues.number
+                              ? undefined
+                              : () =>
+                                  veriffGovernmentIdProvider.handleFetchOAuth(
+                                    walletInformation.address,
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !veriffGovernmentIdProvider.claimValues.country ||
+                            !veriffGovernmentIdProvider.claimValues.number
+                        }
+                }}
+                isLoading={
+                  veriffGovernmentIdProvider.status === 'credential_pending'
+                }
+                loadingMessage={veriffGovernmentIdProvider.statusMessage}
+                isError={
+                  veriffGovernmentIdProvider.status === 'credential_rejected'
+                }
+                errorMessage={veriffGovernmentIdProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  veriffGovernmentIdProvider.currentMint ||
+                  currentPersonhood?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    veriffGovernmentIdProvider.currentMint ||
+                    currentPersonhood?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              veriffGovernmentIdProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            veriffGovernmentIdProvider.handleMintCredential(
+                              veriffGovernmentIdProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                }}
+                isLoading={veriffGovernmentIdProvider.status === 'mint_pending'}
+                loadingMessage={veriffGovernmentIdProvider.statusMessage}
+                isError={veriffGovernmentIdProvider.status === 'mint_rejected'}
+                errorMessage={veriffGovernmentIdProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'PersonaLegalName' && (
             <>
               <BoxStep
                 title="Issuer Details:"
@@ -602,7 +864,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: personaProvider.claimValues.private,
-                            onChange: personaProvider.handleClaimValues
+                            onChange: undefined
                           }
                         ],
                   button:
@@ -644,7 +906,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   personaProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -700,11 +962,11 @@ export const VerifyCredential = (props: IProps) => {
                       ? undefined
                       : [
                           {
-                            type: 'number',
                             name: 'countryCode',
-                            placeholder: '+',
-                            pattern: '^+[0-9]*',
+                            type: 'select',
+                            placeholder: 'Select the country dialing prefix',
                             value: phoneProvider.claimValues.countryCode,
+                            items: countries.phoneCodes,
                             onChange: phoneProvider.handleClaimValues
                           },
                           {
@@ -722,7 +984,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: phoneProvider.claimValues.private,
-                            onChange: phoneProvider.handleClaimValues
+                            onChange: undefined
                           }
                         ],
                   button:
@@ -801,7 +1063,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   phoneProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -870,7 +1132,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: emailProvider.claimValues.private,
-                            onChange: emailProvider.handleClaimValues
+                            onChange: undefined
                           }
                         ],
                   button:
@@ -945,7 +1207,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   emailProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:

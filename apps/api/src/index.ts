@@ -13,7 +13,8 @@ import {
   EmailController,
   GithubController,
   PersonaController,
-  MetadataController
+  MetadataController,
+  GuildController
 } from './controller';
 
 const { SERVER_PORT, SERVER_BASE_URL } = process.env;
@@ -43,7 +44,8 @@ router
   .post('/phone', PhoneController)
   .post('/email', EmailController)
   .post('/github', GithubController)
-  .post('/persona', PersonaController);
+  .post('/persona', PersonaController)
+  .post('/guild', GuildController);
 
 app.use('/', router);
 

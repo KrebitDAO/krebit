@@ -6,7 +6,10 @@ import {
   Phone,
   Twitter,
   Github,
-  Spect
+  Spect,
+  Cake,
+  Person,
+  Guild
 } from 'components/Icons';
 import { ReactNode } from 'react';
 
@@ -80,27 +83,49 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
-    credentialType: 'Veriff',
-    entity: 'Legal Name (Veriff)',
+    credentialType: 'VeriffAgeGT18',
+    entity: 'Age > 18 (Veriff)',
+    description: 'Krebit Verification Node',
+    icon: <Cake />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
+  },
+  {
+    credentialType: 'VeriffGovernmentId',
+    entity: 'Verified Government Id (Veriff)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '1.5',
-    isDisabled: process.env.NEXT_PUBLIC_VERIFF_ENABLED
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
   },
   {
-    credentialType: 'Persona',
+    credentialType: 'VeriffLegalName',
+    entity: 'Legal Name (Veriff)',
+    description: 'Krebit Verification Node',
+    icon: <Person />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '1.5',
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
+  },
+  {
+    credentialType: 'PersonaLegalName',
     entity: 'Legal Name (Persona)',
     description: 'Krebit Verification Node',
-    icon: <Badge />,
+    icon: <Person />,
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/persona'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '2.5',
-    isDisabled: process.env.NEXT_PUBLIC_PERSONA_ENABLED
+    isDisabled: !process.env.NEXT_PUBLIC_PERSONA_ENABLED
   }
 ];
 
@@ -158,10 +183,49 @@ const WORK_CREDENTIALS = [
 
 const COMMUNITY_CREDENTIALS = [
   {
+    credentialType: 'GuildXyzMember',
+    entity: 'Guild Member',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
+    credentialType: 'GuildXyzAdmin',
+    entity: 'Admin of Guild',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
+    credentialType: 'GuildXyzRole',
+    entity: 'Has Role in a Guild',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
     credentialType: 'TwitterFollowersGT1K',
     entity: 'Twitter Followers > 1K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
+    imageUrl:
+      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+      '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/twitter-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
@@ -173,6 +237,9 @@ const COMMUNITY_CREDENTIALS = [
     entity: 'Twitter Followers > 10K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
+    imageUrl:
+      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+      '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/twitter-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,

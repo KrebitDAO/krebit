@@ -84,7 +84,11 @@ const CREDENTIAL_TYPES = [
   'KotlinGithubRepoCollaborator',
   'GoGithubRepoCollaborator',
   'RustGithubRepoCollaborator',
-  'SolidityGithubRepoCollaborator'
+  'SolidityGithubRepoCollaborator',
+  'GuildXyzAdmin',
+  'GuildXyzMember',
+  'GuildXyzRole',
+  'VerifiableCredential'
 ];
 
 export const getNFTCredentialTypes = () => {
@@ -98,6 +102,14 @@ export const getNFTCredentialTypes = () => {
     result[tokenId.toString()] = type;
   }
   return result;
+};
+
+export const getTokenId = (type: string) => {
+  const tokenIdHex = ethers.utils.keccak256(
+    ethers.utils.defaultAbiCoder.encode(['string'], [type])
+  );
+  const tokenId = ethers.BigNumber.from(tokenIdHex);
+  return tokenId;
 };
 
 export const getTokenIds = () => {

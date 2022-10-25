@@ -26,6 +26,7 @@
     "@emotion/react": "^11.10.0",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "@guildxyz/sdk": "^1.1.1",
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
     "@lit-protocol/sdk-browser": "^1.1.228",

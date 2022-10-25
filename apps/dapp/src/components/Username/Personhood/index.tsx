@@ -236,6 +236,11 @@ export const Personhood = (props: IProps) => {
 
     let formattedValue = '';
 
+    if (value?.date) {
+      const [yyyy, mm, dd] = value?.date.split(/-/g);
+      formattedValue = `${mm}/${dd}/${yyyy}`;
+    }
+
     if (value?.protocol === 'Email') {
       formattedValue = formattedValue
         ?.concat(' / ')

@@ -2,14 +2,17 @@ import { useContext } from 'react';
 
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { getIssuers, checkCredentialsURLs } from 'utils';
+import { getIssuers, checkCredentialsURLs, guildXyz } from 'utils';
 import { GeneralContext } from 'context';
 import {
   useIssuerProvider,
   useGithubOrgMemberProvider,
   useDiscordGuildOwnerProvider,
   useDiscordGuildMemberProvider,
-  useTwitterFollowersProvider
+  useTwitterFollowersProvider,
+  useGuildXyzMemberProvider,
+  useGuildXyzAdminProvider,
+  useGuildXyzRoleProvider
 } from 'hooks';
 
 // types
@@ -29,6 +32,9 @@ export const VerifyCredential = (props: IProps) => {
   const discordGuildOwnerProvider = useDiscordGuildOwnerProvider();
   const discordGuildMemberProvider = useDiscordGuildMemberProvider();
   const twitterFollowersProvider = useTwitterFollowersProvider();
+  const guildXyzMemberProvider = useGuildXyzMemberProvider();
+  const guildXyzAdminProvider = useGuildXyzAdminProvider();
+  const guildXyzRoleProvider = useGuildXyzRoleProvider();
 
   const handleClose = async (credentialType: string) => {
     let isStatusResolved = false;
@@ -43,6 +49,12 @@ export const VerifyCredential = (props: IProps) => {
       isStatusResolved =
         githubOrgMemberProvider.status === 'credential_resolved' ||
         githubOrgMemberProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'GuildXyzMember') {
+      isStatusResolved =
+        guildXyzMemberProvider.status === 'credential_resolved' ||
+        guildXyzMemberProvider.status === 'mint_resolved';
     }
 
     if (credentialType === 'DiscordGuildOwner') {
@@ -83,6 +95,10 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'GithubOrgMember') {
       githubOrgMemberProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GuildXyzMember') {
+      guildXyzMemberProvider.handleCleanClaimValues();
     }
 
     if (credentialType === 'DiscordGuildOwner') {
@@ -197,7 +213,7 @@ export const VerifyCredential = (props: IProps) => {
                   twitterFollowersProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -316,7 +332,7 @@ export const VerifyCredential = (props: IProps) => {
                   twitterFollowersProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -464,7 +480,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   issuerProvider.currentMint || currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -584,7 +600,7 @@ export const VerifyCredential = (props: IProps) => {
                   githubOrgMemberProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -705,7 +721,7 @@ export const VerifyCredential = (props: IProps) => {
                   discordGuildOwnerProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -828,7 +844,7 @@ export const VerifyCredential = (props: IProps) => {
                   discordGuildMemberProvider.currentMint ||
                   currentCommunity?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -856,6 +872,367 @@ export const VerifyCredential = (props: IProps) => {
                 loadingMessage={discordGuildMemberProvider.statusMessage}
                 isError={discordGuildMemberProvider.status === 'mint_rejected'}
                 errorMessage={discordGuildMemberProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'GuildXyzMember' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  guildXyzMemberProvider.currentCredential ||
+                  currentCommunity.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your guild membership'
+                }
+                form={{
+                  fields:
+                    guildXyzMemberProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'guildId',
+                            type: 'select',
+                            placeholder: 'Select the guild',
+                            value: guildXyzMemberProvider.claimValues.guildId,
+                            items: guildXyzMemberProvider.guildNames,
+                            onChange: guildXyzMemberProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: guildXyzMemberProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: guildXyzMemberProvider.claimValues.private,
+                            onChange: guildXyzMemberProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    guildXyzMemberProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              guildXyzMemberProvider.currentCredential ||
+                                currentCommunity.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !guildXyzMemberProvider.claimValues.guildId ||
+                            guildXyzMemberProvider.claimValues.guildId === ''
+                              ? undefined
+                              : () =>
+                                  guildXyzMemberProvider.handleGetCredential(
+                                    currentVerify
+                                  ),
+
+                          isDisabled:
+                            !guildXyzMemberProvider.claimValues.guildId ||
+                            guildXyzMemberProvider.claimValues.guildId === ''
+                        }
+                }}
+                isLoading={
+                  guildXyzMemberProvider.status === 'credential_pending'
+                }
+                loadingMessage={guildXyzMemberProvider.statusMessage}
+                isError={
+                  guildXyzMemberProvider.status === 'credential_rejected'
+                }
+                errorMessage={guildXyzMemberProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  guildXyzMemberProvider.currentMint ||
+                  currentCommunity?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    guildXyzMemberProvider.currentMint ||
+                    currentCommunity?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              guildXyzMemberProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            guildXyzMemberProvider.handleMintCredential(
+                              guildXyzMemberProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                }}
+                isLoading={guildXyzMemberProvider.status === 'mint_pending'}
+                loadingMessage={guildXyzMemberProvider.statusMessage}
+                isError={guildXyzMemberProvider.status === 'mint_rejected'}
+                errorMessage={guildXyzMemberProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'GuildXyzAdmin' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  guildXyzAdminProvider.currentCredential ||
+                  currentCommunity.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your guild adming status'
+                }
+                form={{
+                  fields:
+                    guildXyzAdminProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'guildId',
+                            type: 'select',
+                            placeholder: 'Select the guild',
+                            value: guildXyzAdminProvider.claimValues.guildId,
+                            items: guildXyzAdminProvider.guildNames,
+                            onChange: guildXyzAdminProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: guildXyzAdminProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: guildXyzAdminProvider.claimValues.private,
+                            onChange: guildXyzAdminProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    guildXyzAdminProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              guildXyzAdminProvider.currentCredential ||
+                                currentCommunity.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !guildXyzAdminProvider.claimValues.guildId ||
+                            guildXyzAdminProvider.claimValues.guildId === ''
+                              ? undefined
+                              : () =>
+                                  guildXyzAdminProvider.handleGetCredential(
+                                    currentVerify
+                                  ),
+
+                          isDisabled:
+                            !guildXyzAdminProvider.claimValues.guildId ||
+                            guildXyzAdminProvider.claimValues.guildId === ''
+                        }
+                }}
+                isLoading={
+                  guildXyzAdminProvider.status === 'credential_pending'
+                }
+                loadingMessage={guildXyzAdminProvider.statusMessage}
+                isError={guildXyzAdminProvider.status === 'credential_rejected'}
+                errorMessage={guildXyzAdminProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  guildXyzAdminProvider.currentMint ||
+                  currentCommunity?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    guildXyzAdminProvider.currentMint ||
+                    currentCommunity?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              guildXyzAdminProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            guildXyzAdminProvider.handleMintCredential(
+                              guildXyzAdminProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                }}
+                isLoading={guildXyzAdminProvider.status === 'mint_pending'}
+                loadingMessage={guildXyzAdminProvider.statusMessage}
+                isError={guildXyzAdminProvider.status === 'mint_rejected'}
+                errorMessage={guildXyzAdminProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'GuildXyzRole' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  guildXyzRoleProvider.currentCredential ||
+                  currentCommunity.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your guild role'
+                }
+                form={{
+                  fields:
+                    guildXyzRoleProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'guildId',
+                            type: 'select',
+                            placeholder: 'Select the guild',
+                            value: guildXyzRoleProvider.claimValues.guildId,
+                            items: guildXyzRoleProvider.guildNames,
+                            onChange: guildXyzRoleProvider.handleClaimValues
+                          },
+                          {
+                            name: 'roleId',
+                            type: 'select',
+                            placeholder: 'Select the role',
+                            value: guildXyzRoleProvider.claimValues.roleId,
+                            items: guildXyzRoleProvider.roleNames,
+                            onChange: guildXyzRoleProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: guildXyzRoleProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: guildXyzRoleProvider.claimValues.private,
+                            onChange: guildXyzRoleProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    guildXyzRoleProvider.currentCredential ||
+                    currentCommunity.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              guildXyzRoleProvider.currentCredential ||
+                                currentCommunity.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !guildXyzRoleProvider.claimValues.guildId ||
+                            guildXyzRoleProvider.claimValues.guildId === ''
+                              ? undefined
+                              : () =>
+                                  guildXyzRoleProvider.handleGetCredential(
+                                    currentVerify
+                                  ),
+
+                          isDisabled:
+                            !guildXyzRoleProvider.claimValues.guildId ||
+                            guildXyzRoleProvider.claimValues.guildId === ''
+                        }
+                }}
+                isLoading={guildXyzRoleProvider.status === 'credential_pending'}
+                loadingMessage={guildXyzRoleProvider.statusMessage}
+                isError={guildXyzRoleProvider.status === 'credential_rejected'}
+                errorMessage={guildXyzRoleProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  guildXyzRoleProvider.currentMint || currentCommunity?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    guildXyzRoleProvider.currentMint ||
+                    currentCommunity?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              guildXyzRoleProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            guildXyzRoleProvider.handleMintCredential(
+                              guildXyzRoleProvider.currentCredential ||
+                                currentCommunity?.credential
+                            )
+                        }
+                }}
+                isLoading={guildXyzRoleProvider.status === 'mint_pending'}
+                loadingMessage={guildXyzRoleProvider.statusMessage}
+                isError={guildXyzRoleProvider.status === 'mint_rejected'}
+                errorMessage={guildXyzRoleProvider.errorMessage}
                 iconType="stamp"
               />
             </>

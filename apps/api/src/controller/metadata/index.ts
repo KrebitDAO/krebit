@@ -2,12 +2,7 @@ import express from 'express';
 import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
-import {
-  connect,
-  getNFTCredentialTypes,
-  getTokenIds,
-  getNftSvg
-} from '../../utils';
+import { connect, getNFTCredentialTypes, getTokenIds } from '../../utils';
 
 const { SERVER_NFT_METADATA_IPFS, SERVER_CERAMIC_URL } = process.env;
 
@@ -25,17 +20,6 @@ export const MetadataController = async (
     if (!request?.params?.tokenId) {
       throw new Error(`No tokenId in params`);
     }
-
-    const types = getNFTCredentialTypes();
-    const tokenId = request.params.tokenId;
-    if (tokenId === 'all') {
-      return response.json(getTokenIds());
-    }
-
-    const tokenType = types[tokenId];
-    if (!tokenType) return response.status(404).send('Not found.');
-    console.log('Credential type:', tokenType);
-
     /* TODO get credential types from getIssuers
     const { wallet, ethProvider } = await connect();
      
@@ -51,7 +35,22 @@ export const MetadataController = async (
     const issuers = await Issuer.getIssuers({type: "VerifiableCredentials"});
     console.log('List of issuers:', issuers);
 */
-    let tokenNumber = tokenId;
+
+    const types = getNFTCredentialTypes();
+    const tokenId = request.params.tokenId;
+    if (tokenId === 'all') {
+      return response.json(getTokenIds());
+    }
+
+    let tokenType = types[tokenId];
+    console.log('Credential type:', tokenType);
+
+    let tokenNumber = '0';
+    if (tokenType) {
+      tokenNumber = tokenId;
+    } else {
+      tokenType = 'VerifiedCredential';
+    }
     if (isNaN(Number(tokenId))) {
       tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
     }
@@ -59,7 +58,7 @@ export const MetadataController = async (
     const result = {
       name: tokenType,
       description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
-      image_data: getNftSvg(tokenType),
+      image_data: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
       animation_url: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.mp4`,
       external_url: 'https://krebit.id',
       attributes: [

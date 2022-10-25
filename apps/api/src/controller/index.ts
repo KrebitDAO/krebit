@@ -10,6 +10,7 @@ import { EmailController } from './email';
 import { GithubController } from './github';
 import { PersonaController } from './persona';
 import { MetadataController } from './metadata';
+import { GuildController } from './guild';
 
 export {
   QuestappController,
@@ -23,5 +24,6 @@ export {
   EmailController,
   GithubController,
   PersonaController,
-  MetadataController
+  MetadataController,
+  GuildController
 };
