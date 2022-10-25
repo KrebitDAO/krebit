@@ -204,7 +204,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   discordProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -315,7 +315,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   twitterProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -425,7 +425,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   githubProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -530,7 +530,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   veriffAgeProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -656,7 +656,7 @@ export const VerifyCredential = (props: IProps) => {
                   veriffLegalNameProvider.currentMint ||
                   currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -789,7 +789,7 @@ export const VerifyCredential = (props: IProps) => {
                   veriffGovernmentIdProvider.currentMint ||
                   currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -906,7 +906,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   personaProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -1063,7 +1063,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   phoneProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
@@ -1207,7 +1207,7 @@ export const VerifyCredential = (props: IProps) => {
                 description={
                   emailProvider.currentMint || currentPersonhood?.isMinted
                     ? 'Step completed, you can now check your stamp'
-                    : "Mint the credential stamp and NFT ( NOTE: If you don't have MATIC we cover gas for you :)  )"
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
                 }
                 form={{
                   button:
