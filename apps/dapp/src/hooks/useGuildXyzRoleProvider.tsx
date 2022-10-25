@@ -13,6 +13,7 @@ import {
 
 interface IClaimValues {
   guildId: string;
+  roleId: string;
   private: boolean;
 }
 
@@ -25,10 +26,19 @@ const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const initialState = {
   guildId: '',
+  roleId: '',
   private: true
 };
 
-export const useGuildXyzMemberProvider = () => {
+const camelSentence = (str: string) => {
+  return (' ' + str)
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]+(.)/g, function (match, chr) {
+      return chr.toUpperCase();
+    });
+};
+
+export const useGuildXyzRoleProvider = () => {
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
@@ -40,10 +50,11 @@ export const useGuildXyzMemberProvider = () => {
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
   const [guildNames, setGuildNames] = useState<IItems[]>([]);
+  const [roleNames, setRoleNames] = useState<IItems[]>([]);
 
   useEffect(() => {
     const loadGuilds = async () => {
-      const currentType = window.localStorage.getItem('auth-type');
+      const currentType = localStorage.getItem('auth-type');
       const walletInformation = await getWalletInformation(currentType);
       const guilds = await guildXyz.getAddressGuilds(walletInformation.address);
       setGuildNames(guilds);
@@ -52,6 +63,22 @@ export const useGuildXyzMemberProvider = () => {
     loadGuilds();
   }, []);
 
+  useEffect(() => {
+    const loadRoles = async () => {
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+      const roles = claimValues?.guildId
+        ? await guildXyz.getAddressRoles(
+            claimValues.guildId,
+            walletInformation.address
+          )
+        : [];
+      setRoleNames(roles);
+    };
+
+    loadRoles();
+  }, [claimValues]);
+
   const getClaim = async (
     address: string,
     payload: any,
@@ -59,13 +86,14 @@ export const useGuildXyzMemberProvider = () => {
     issuer: IIsuerParams
   ) => {
     const claimValue = {
-      entity: payload.name,
-      name: `${payload.name} Guild.xyz Member`,
-      imageUrl: payload.imageUrl,
-      description: payload.description,
-
+      entity: payload.guildInfo.name,
+      name: `${payload.roleInfo.name} Guild.xyz Role`,
+      imageUrl: payload.roleInfo.imageUrl,
+      description: payload.roleInfo.description,
+      role: payload.roleInfo.name,
       proofs: {
-        guildId: claimValues.guildId
+        guildId: claimValues.guildId,
+        roleId: claimValues.roleId
       }
     };
 
@@ -75,12 +103,18 @@ export const useGuildXyzMemberProvider = () => {
     console.log('expirationDate: ', expirationDate);
 
     return {
-      id: `guildXyzMember-${claimValues.guildId}`,
+      id: `guildXyzRole-${claimValues.roleId}`,
       did,
       ethereumAddress: address,
       type: issuer.credentialType,
       typeSchema: 'krebit://schemas/badge',
-      tags: [payload.name, 'Community', 'Membership'],
+      tags: [
+        payload.guildInfo.name,
+        camelSentence(payload.roleInfo.name),
+        'Role',
+        'Community',
+        'Membership'
+      ],
       value: claimValue,
       expirationDate: new Date(expirationDate).toISOString()
     };
@@ -92,7 +126,7 @@ export const useGuildXyzMemberProvider = () => {
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     try {
-      console.log('Saving Stamp', { type: 'GuildXyzMember' });
+      console.log('Saving Stamp', { type: 'GuildXyzRole' });
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
@@ -112,10 +146,11 @@ export const useGuildXyzMemberProvider = () => {
 
       // Step 1-A:  Get credential from Issuer based on claim:
       const guildInfo = await guildXyz.getGuild(claimValues.guildId);
+      const roleInfo = await guildXyz.getRole(claimValues.roleId);
       //Issue self-signed credential claiming
       const claim = await getClaim(
         walletInformation.address,
-        guildInfo,
+        { guildInfo, roleInfo },
         Issuer.did,
         issuer
       );
@@ -246,6 +281,7 @@ export const useGuildXyzMemberProvider = () => {
     currentCredential,
     currentStamp,
     currentMint,
-    guildNames
+    guildNames,
+    roleNames
   };
 };

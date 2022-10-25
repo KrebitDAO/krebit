@@ -207,10 +207,10 @@ export const Community = (props: IProps) => {
     let formattedValue = '';
     if (value?.entity)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.entity);
-    if (value?.description)
-      formattedValue = formattedValue?.concat(' / ')?.concat(value.description);
     if (value?.role)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.role);
+    if (value?.description)
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.description);
 
     if (value?.username) {
       formattedValue = formattedValue

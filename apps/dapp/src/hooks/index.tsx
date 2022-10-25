@@ -20,6 +20,7 @@ import { useVeriffAgeProvider } from './useVeriffAgeProvider';
 import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
 import { useGuildXyzMemberProvider } from './useGuildXyzMemberProvider';
 import { useGuildXyzAdminProvider } from './useGuildXyzAdminProvider';
+import { useGuildXyzRoleProvider } from './useGuildXyzRoleProvider';
 
 export {
   useWindowSize,
@@ -43,5 +44,6 @@ export {
   useVeriffAgeProvider,
   useVeriffGovernmentIdProvider,
   useGuildXyzMemberProvider,
-  useGuildXyzAdminProvider
+  useGuildXyzAdminProvider,
+  useGuildXyzRoleProvider
 };

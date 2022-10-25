@@ -174,6 +174,61 @@ export const GuildController = async (
       } else {
         throw new Error(`Wrong guild ID: ${claimValue.proofs.guildId}`);
       }
+    } else if (claimedCredential?.credentialSubject?.type === 'GuildXyzRole') {
+      const roles = await guildXyz.getAddressRoles(
+        claimValue.proofs.guildId,
+        claimedCredential.credentialSubject.ethereumAddress
+      );
+      const guild = await guildXyz.getGuild(claimValue.proofs.guildId);
+
+      console.log('Importing from Roles:', roles);
+
+      let valid = false;
+      for (const r of roles) {
+        if (
+          r.value === claimValue.proofs.roleId &&
+          r.text === claimValue.role &&
+          guild.name === claimValue.entity
+        ) {
+          valid = true;
+        }
+      }
+
+      if (valid) {
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: claimedCredential.credentialSubject.id,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: claimValue,
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
+        console.log('claim: ', claim);
+
+        // Issue Verifiable credential
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong role ID: ${claimValue.proofs.roleId}`);
+      }
     }
   } catch (err) {
     next(err);

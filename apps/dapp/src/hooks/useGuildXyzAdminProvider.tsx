@@ -13,7 +13,6 @@ import {
 
 interface IClaimValues {
   guildId: string;
-  guildUrlName: string;
   private: boolean;
 }
 
@@ -26,7 +25,6 @@ const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const initialState = {
   guildId: '',
-  guildUrlName: '',
   private: true
 };
 
@@ -115,7 +113,7 @@ export const useGuildXyzAdminProvider = () => {
       await Issuer.connect(currentSession);
 
       // Step 1-A:  Get credential from Issuer based on claim:
-      const guildInfo = await guildXyz.getGuild(claimValues.guildId.toString());
+      const guildInfo = await guildXyz.getGuild(claimValues.guildId);
       //Issue self-signed credential claiming
       const claim = await getClaim(
         walletInformation.address,

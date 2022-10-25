@@ -4,8 +4,8 @@ const getGuild = async (guildId: string) => {
   return await guild.get(guildId);
 };
 
-const getRole = async (roleId: number) => {
-  return await role.get(roleId);
+const getRole = async (roleId: string) => {
+  return await role.get(Number(roleId));
 };
 
 const getAddressGuilds = async (userAddress: string) => {
@@ -43,24 +43,26 @@ const getAddressGuildAdmin = async (userAddress: string) => {
   return result.filter(g => g != undefined);
 };
 
-const getAddressRoles = async (guildId: number, userAddress: string) => {
+const getAddressRoles = async (guildId: string, userAddress: string) => {
   const memberships = await user.getMemberships(userAddress);
-  let result = [];
+
   for (const m of memberships) {
-    if (m.guildId === guildId) {
+    if (m.guildId.toString() === guildId) {
+      console.log('membership guildId', guildId);
       const roles = await Promise.all(
-        m.roleids.map(async r => {
+        // @ts-ignore: wrong type in original module
+        m.roleIds.map(async r => {
           const roleInfo = await role.get(r);
+          console.log('roleInfo', roleInfo);
           return {
             text: roleInfo.name,
             value: r.toString()
           };
         })
       );
-      result.concat(roles);
+      return roles;
     }
   }
-  return result;
 };
 
 const getGuildRoles = async (guildId: number, userAddress: string) => {
@@ -72,6 +74,7 @@ const getGuildRoles = async (guildId: number, userAddress: string) => {
 
 export const guildXyz = {
   getGuild,
+  getRole,
   getGuildRoles,
   getAddressGuilds,
   getAddressRoles,
