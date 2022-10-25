@@ -178,7 +178,7 @@ export class Lit {
         symmetricKey,
         authSig,
         chain: this.currentConfig.network,
-        permanant: false
+        permanent: false
       });
 
       return {
@@ -223,7 +223,7 @@ export class Lit {
         encryptedSymmetricKey: utils.base64.decodeb64(encryptedSymmetricKey),
         authSig,
         chain: this.currentConfig.network,
-        permanant: false
+        permanent: false
       }
     );
 
