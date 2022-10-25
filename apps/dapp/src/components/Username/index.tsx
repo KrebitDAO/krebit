@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
+import Krebit from '@krebitdao/reputation-passport';
 
 import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
@@ -13,7 +14,7 @@ import { Loading } from 'components/Loading';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share } from 'components/Icons';
-import { isValid, normalizeSchema, mergeArray, formatUrlImage } from 'utils';
+import { isValid, normalizeSchema, formatUrlImage } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -343,14 +344,18 @@ export const Username = () => {
                     </div>
                   ) : (
                     <div className="skills-box">
-                      {mergeArray(profile.skills).map((item, index) => (
-                        <div className="skills-box-item" key={index}>
-                          <p className="skills-box-item-text">
-                            {item[0]}{' '}
-                            {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
-                          </p>
-                        </div>
-                      ))}
+                      {Krebit.utils
+                        .mergeArray(profile.skills)
+                        .map((item, index) => (
+                          <div className="skills-box-item" key={index}>
+                            <p className="skills-box-item-text">
+                              {item[0]}{' '}
+                              {parseInt(item[1]) === 1
+                                ? ''
+                                : '(' + item[1] + ')'}
+                            </p>
+                          </div>
+                        ))}
                     </div>
                   )}
                 </Skills>

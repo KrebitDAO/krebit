@@ -482,7 +482,7 @@ export const VerifyCredential = (props: IProps) => {
                       : [
                           {
                             name: 'date',
-                            type: 'date',
+                            type: 'datepicker',
                             placeholder: 'Date of birth',
                             value: veriffAgeProvider.claimValues.date,
                             onChange: veriffAgeProvider.handleClaimValues
@@ -494,6 +494,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: veriffAgeProvider.claimValues.private,
+                            isDisabled: true,
                             onChange: undefined
                           }
                         ],
@@ -608,6 +609,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: veriffLegalNameProvider.claimValues.private,
+                            isDisabled: true,
                             onChange: undefined
                           }
                         ],
@@ -741,6 +743,7 @@ export const VerifyCredential = (props: IProps) => {
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value:
                               veriffGovernmentIdProvider.claimValues.private,
+                            isDisabled: true,
                             onChange: undefined
                           }
                         ],
@@ -864,6 +867,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: personaProvider.claimValues.private,
+                            isDisabled: true,
                             onChange: undefined
                           }
                         ],
@@ -984,6 +988,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: phoneProvider.claimValues.private,
+                            isDisabled: true,
                             onChange: undefined
                           }
                         ],
@@ -1132,6 +1137,7 @@ export const VerifyCredential = (props: IProps) => {
                               ? 'private (Stored encrypted off-chain)'
                               : 'public (WARNING: Is not recommended to publish private data to public networks)',
                             value: emailProvider.claimValues.private,
+                            isDisabled: true,
                             onChange: undefined
                           }
                         ],

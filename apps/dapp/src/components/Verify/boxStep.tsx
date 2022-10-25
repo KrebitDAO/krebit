@@ -3,6 +3,7 @@ import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { BoxStepWrapper } from './styles';
 import { Button } from 'components/Button';
 import { Input } from 'components/Input';
+import { DatePicker } from 'components/DatePicker';
 import { Select, IItems } from 'components/Select';
 import { Switch } from 'components/Switch';
 import { Approval, Fingerprint } from 'components/Icons';
@@ -134,6 +135,22 @@ export const BoxStep = (props: IProps) => {
                       name={input.name}
                       label={input.placeholder}
                       value={input.value as boolean}
+                      isDisabled={input.isDisabled}
+                      isRequired={input.isRequired}
+                      onChange={input.onChange}
+                    />
+                  );
+                }
+
+                if (input.type === 'datepicker') {
+                  return (
+                    <DatePicker
+                      key={index}
+                      name={input.name}
+                      placeholder={input.placeholder}
+                      value={input.value as string | number}
+                      isDisabled={input.isDisabled}
+                      isRequired={input.isRequired}
                       onChange={input.onChange}
                     />
                   );

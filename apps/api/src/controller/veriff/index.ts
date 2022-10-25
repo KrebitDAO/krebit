@@ -2,7 +2,7 @@ import express from 'express';
 import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getVeriffDecision } from '../../utils';
+import { connect, getVeriffDecision, wait, getAge } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
@@ -11,22 +11,6 @@ const {
   SERVER_PRICE,
   SERVER_CERAMIC_URL
 } = process.env;
-
-function wait(delay) {
-  return new Promise(resolve => setTimeout(resolve, delay));
-}
-
-function getAge(dateString) {
-  const [year, month, day] = dateString.split('-');
-  var today = new Date();
-  var age = today.getFullYear() - parseInt(year);
-  var m = today.getMonth() - parseInt(month);
-  if (m < 0 || (m === 0 && today.getDate() < parseInt(day))) {
-    age--;
-  }
-  console.log('Age:', age);
-  return age;
-}
 
 export const VeriffController = async (
   request: express.Request,

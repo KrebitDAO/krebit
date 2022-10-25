@@ -227,26 +227,6 @@ export const BoxStepWrapper = styled.div`
       @media (min-width: ${theme.screens.lg}) {
         margin: 24px 0;
       }
-
-      .verify-box-step-input {
-        width: 100%;
-        height: 38px;
-        border: 1px solid ${theme.colors.white}B3;
-        border-radius: 4px;
-        background-color: ${theme.colors.transparent};
-        color: ${theme.colors.white}B3;
-        font-size: ${theme.fonts.base};
-        padding: 0 20px;
-
-        &:focus {
-          outline: none;
-        }
-
-        &:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-      }
     }
 
     .verify-box-step-button {

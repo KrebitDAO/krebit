@@ -47,5 +47,13 @@ export const InputWrapper = styled.div`
       color: ${theme.colors.white}B3 !important;
       -webkit-text-fill-color: ${theme.colors.white}B3 !important;
     }
+
+    .MuiSvgIcon-root {
+      fill: ${theme.colors.white}B3 !important;
+    }
+
+    .Mui-error {
+      color: ${theme.colors.white}B3 !important;
+    }
   `}
 `;
