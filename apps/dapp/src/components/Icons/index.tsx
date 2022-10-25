@@ -32,7 +32,7 @@ import { Tune } from './Tune';
 import { Search } from './Search';
 import { Cake } from './Cake';
 import { Person } from './Person';
-import { Timer } from './Timer';
+import { Guild } from './Guild';
 
 export {
   Close,
@@ -69,5 +69,5 @@ export {
   Search,
   Cake,
   Person,
-  Timer
+  Guild
 };

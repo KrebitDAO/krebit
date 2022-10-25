@@ -8,7 +8,8 @@ import {
   Github,
   Spect,
   Cake,
-  Person
+  Person,
+  Guild
 } from 'components/Icons';
 import { ReactNode } from 'react';
 
@@ -182,10 +183,61 @@ const WORK_CREDENTIALS = [
 
 const COMMUNITY_CREDENTIALS = [
   {
+    credentialType: 'GuildXyzMember',
+    entity: 'Guild.xyz Guild Member',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
+    credentialType: 'GuildXyzAdmin',
+    entity: 'Admin of Guild',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
+    credentialType: 'GuildXyzAdminGT100',
+    entity: 'Admin of Guild with > 100 members',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
+    credentialType: 'GuildXyzRoleGT100',
+    entity: 'Role in a Guild with > 100 members',
+    description: 'Krebit Verification Node',
+    icon: <Guild />,
+    imageUrl:
+      'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
+  },
+  {
     credentialType: 'TwitterFollowersGT1K',
     entity: 'Twitter Followers > 1K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
+    imageUrl:
+      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+      '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/twitter-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
@@ -197,6 +249,9 @@ const COMMUNITY_CREDENTIALS = [
     entity: 'Twitter Followers > 10K',
     description: 'Krebit Verification Node',
     icon: <Twitter />,
+    imageUrl:
+      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+      '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/twitter-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,

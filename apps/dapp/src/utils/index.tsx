@@ -16,6 +16,7 @@ import { constants } from './constants';
 import { formatFilename } from './formatFilename';
 import { formatUrlImage } from './formatUrlImage';
 import { countries } from './countries';
+import { guildXyz } from './guildXyz';
 
 export {
   createEmotionCache,
@@ -35,6 +36,7 @@ export {
   constants,
   formatFilename,
   formatUrlImage,
-  countries
+  countries,
+  guildXyz
 };
 export type { IIsuerParams };

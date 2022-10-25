@@ -84,7 +84,11 @@ const CREDENTIAL_TYPES = [
   'KotlinGithubRepoCollaborator',
   'GoGithubRepoCollaborator',
   'RustGithubRepoCollaborator',
-  'SolidityGithubRepoCollaborator'
+  'SolidityGithubRepoCollaborator',
+  'GuildXyzAdmin',
+  'GuildXyzMember',
+  'GuildXyzRoleGT100',
+  'GuildXyzRole#4568'
 ];
 
 export const getNFTCredentialTypes = () => {

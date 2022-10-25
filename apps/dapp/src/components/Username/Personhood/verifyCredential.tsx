@@ -25,10 +25,6 @@ interface IProps {
   onClose: () => void;
 }
 
-const countryCodes = countries.map(c => {
-  return { text: c.name, value: c.isoCode };
-});
-
 export const VerifyCredential = (props: IProps) => {
   const { currentPersonhood, getInformation, onClose } = props;
   const { walletInformation } = useContext(GeneralContext);
@@ -723,7 +719,7 @@ export const VerifyCredential = (props: IProps) => {
                             placeholder: 'Select the ID document country',
                             value:
                               veriffGovernmentIdProvider.claimValues.country,
-                            items: countryCodes,
+                            items: countries.isoCodes,
                             onChange:
                               veriffGovernmentIdProvider.handleClaimValues
                           },
@@ -966,11 +962,11 @@ export const VerifyCredential = (props: IProps) => {
                       ? undefined
                       : [
                           {
-                            type: 'number',
                             name: 'countryCode',
-                            placeholder: '+',
-                            pattern: '^+[0-9]*',
+                            type: 'select',
+                            placeholder: 'Select the country dialing prefix',
                             value: phoneProvider.claimValues.countryCode,
+                            items: countries.phoneCodes,
                             onChange: phoneProvider.handleClaimValues
                           },
                           {

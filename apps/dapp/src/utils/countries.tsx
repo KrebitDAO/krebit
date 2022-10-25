@@ -1,4 +1,4 @@
-export const countries = [
+const COUNTRIES = [
   {
     isoCode: 'AF',
     name: 'Afghanistan',
@@ -5746,3 +5746,17 @@ export const countries = [
     ]
   }
 ];
+
+const isoCodes = COUNTRIES.map(c => {
+  return { text: c.name, value: c.isoCode };
+});
+
+const phoneCodes = COUNTRIES.map(c => {
+  return { text: `${c.name} (+${c.phonecode})`, value: c.phonecode };
+});
+
+export const countries = {
+  COUNTRIES,
+  isoCodes,
+  phoneCodes
+};

@@ -18,6 +18,7 @@ import { useOutsideClick } from './useOutsideClick';
 import { useSpectCompletedProvider } from './useSpectCompletedProvider';
 import { useVeriffAgeProvider } from './useVeriffAgeProvider';
 import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
+import { useGuildXyzMemberProvider } from './useGuildXyzMemberProvider';
 
 export {
   useWindowSize,
@@ -39,5 +40,6 @@ export {
   useOutsideClick,
   useSpectCompletedProvider,
   useVeriffAgeProvider,
-  useVeriffGovernmentIdProvider
+  useVeriffGovernmentIdProvider,
+  useGuildXyzMemberProvider
 };
