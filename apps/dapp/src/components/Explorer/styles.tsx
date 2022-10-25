@@ -118,7 +118,7 @@ export const Wrapper = styled.div<IProps>`
           color: ${theme.colors.white};
 
           @media (min-width: ${theme.screens.lg}) {
-            font-size: ${theme.fonts.lg};
+            font-size: ${theme.fonts.xl};
           }
 
           .explorer-header-span {

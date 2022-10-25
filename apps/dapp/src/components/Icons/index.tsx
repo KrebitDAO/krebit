@@ -33,6 +33,8 @@ import { Search } from './Search';
 import { Cake } from './Cake';
 import { Person } from './Person';
 import { Guild } from './Guild';
+import { ChromeReaderMode } from './ChromeReaderMode';
+import { Lock } from './Lock';
 
 export {
   Close,
@@ -69,5 +71,7 @@ export {
   Search,
   Cake,
   Person,
-  Guild
+  Guild,
+  ChromeReaderMode,
+  Lock
 };

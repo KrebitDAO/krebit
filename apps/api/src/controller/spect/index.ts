@@ -1,6 +1,7 @@
 import express from 'express';
 import krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-nodejs';
+
 import { connect, getSpectUser } from '../../utils';
 
 const {
@@ -10,17 +11,6 @@ const {
   SERVER_PRICE,
   SERVER_CERAMIC_URL
 } = process.env;
-
-export const mergeArray = (arr: any[]): any[] => {
-  const counts = {};
-
-  for (const num of arr) {
-    counts[num] = counts[num] ? counts[num] + 1 : 1;
-  }
-  return Object.entries(counts).sort(
-    (a, b) => (b[1] as number) - (a[1] as number)
-  );
-};
 
 export const SpectController = async (
   request: express.Request,
@@ -117,7 +107,7 @@ export const SpectController = async (
           claim['encrypt'] = 'hash' as 'hash';
         } else {
           if (avatar) claim.value['imageUrl'] = avatar;
-          claim.value['skills'] = mergeArray(skills);
+          claim.value['skills'] = krebit.utils.mergeArray(skills);
         }
         console.log('claim: ', claim);
 

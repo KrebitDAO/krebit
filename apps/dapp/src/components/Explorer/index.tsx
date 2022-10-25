@@ -16,7 +16,7 @@ import { Close, Search, Tune } from 'components/Icons';
 import { Slider } from 'components/Slider';
 import { Button } from 'components/Button';
 import { Loading } from 'components/Loading';
-import { mergeArray, normalizeSchema } from 'utils';
+import { normalizeSchema } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -283,7 +283,8 @@ export const Explorer = () => {
               ) : (
                 <>
                   <div className="filter-menu-skills-list">
-                    {mergeArray(information?.skills || [])
+                    {Krebit.utils
+                      .mergeArray(information?.skills || [])
                       .slice(
                         0,
                         shouldViewMoreSkills ? undefined : DEFAULT_SLICE_SKILLS
@@ -305,7 +306,7 @@ export const Explorer = () => {
                         </div>
                       ))}
                   </div>
-                  {mergeArray(information?.skills || []).length >
+                  {Krebit.utils.mergeArray(information?.skills || []).length >
                     DEFAULT_SLICE_SKILLS && (
                     <p
                       className="filter-menu-skills-view-more"
@@ -314,8 +315,8 @@ export const Explorer = () => {
                       {shouldViewMoreSkills
                         ? 'View less'
                         : `View more (${
-                            mergeArray(information?.skills || []).length -
-                            DEFAULT_SLICE_SKILLS
+                            Krebit.utils.mergeArray(information?.skills || [])
+                              .length - DEFAULT_SLICE_SKILLS
                           })`}
                     </p>
                   )}
@@ -355,7 +356,7 @@ export const Explorer = () => {
         <div className="explorer-container">
           <div className="explorer-header">
             <p className="explorer-header-title">
-              Profiles{' '}
+              Krebited Profiles{' '}
               <span className="explorer-header-span">
                 {information?.profiles?.length || 0} results
               </span>

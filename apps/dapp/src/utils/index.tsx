@@ -11,7 +11,6 @@ import { getWalletInformation } from './getWalletInformation';
 import { isValid } from './isValid';
 import { normalizeSchema } from './normalizeSchema';
 import { checkCredentialsURLs } from './checkCredentialsURLs';
-import { mergeArray } from './mergeArray';
 import { constants } from './constants';
 import { formatFilename } from './formatFilename';
 import { formatUrlImage } from './formatUrlImage';
@@ -32,7 +31,6 @@ export {
   isValid,
   normalizeSchema,
   checkCredentialsURLs,
-  mergeArray,
   constants,
   formatFilename,
   formatUrlImage,
