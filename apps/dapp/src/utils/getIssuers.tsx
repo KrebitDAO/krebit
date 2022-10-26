@@ -61,7 +61,6 @@ const PERSONHOOD_CREDENTIALS = [
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
   },
-
   {
     credentialType: 'PhoneNumber',
     entity: 'Phone',

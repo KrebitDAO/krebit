@@ -18,6 +18,7 @@ import {
 } from './styles';
 import { Bell, Close, Explore, Menu, Send } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
+import { Badge } from 'components/Badge';
 import { GeneralContext } from 'context';
 import { formatUrlImage } from 'utils';
 
@@ -29,7 +30,8 @@ const MENU_OPTIONS = [
   {
     title: 'Explore',
     href: '/explore',
-    icon: <Explore />
+    icon: <Explore />,
+    badgeText: 'New!'
   },
   {
     title: 'Inbox',
@@ -181,7 +183,17 @@ export const Layout: FunctionComponent<IProps> = props => {
         {MENU_OPTIONS.map((content, index) => (
           <Link href={content.href} key={index}>
             <NavBarOption isActive={asPath.includes(content.href)}>
-              <div className="option-icon">{content.icon}</div>
+              <div className="option-icon">
+                {content.badgeText ? (
+                  <Badge
+                    icon={content.icon}
+                    iconColor={asPath.includes(content.href) ? 'cyan' : 'gray'}
+                    text={content.badgeText}
+                  />
+                ) : (
+                  content.icon
+                )}
+              </div>
             </NavBarOption>
           </Link>
         ))}
@@ -200,7 +212,20 @@ export const Layout: FunctionComponent<IProps> = props => {
                 }
                 onMouseLeave={() => handleNavBarDesktopOptionHovered(undefined)}
               >
-                <div className="option-icon">{content.icon}</div>
+                <div className="option-icon">
+                  {content.badgeText ? (
+                    <Badge
+                      icon={content.icon}
+                      iconColor={
+                        asPath.includes(content.href) ? 'cyan' : 'gray'
+                      }
+                      text={content.badgeText}
+                      onClick={() => {}}
+                    />
+                  ) : (
+                    content.icon
+                  )}
+                </div>
                 {navBarDesktopOptionHovered === content.title && (
                   <p className="option-hover">{content.title}</p>
                 )}

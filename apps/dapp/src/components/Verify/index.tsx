@@ -3,6 +3,7 @@ import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { Wrapper } from './styles';
 import { ArrowForward, Close } from 'components/Icons';
 import { Button } from 'components/Button';
+import { Badge } from 'components/Badge';
 
 interface IInitialListProps {
   credentialType: string;
@@ -15,6 +16,7 @@ interface IInitialListProps {
   address: string;
   price: string;
   isDisabled?: boolean;
+  badgeText?: string;
 }
 type IViewStatusProps = 'init' | 'steps';
 type ICurrentIssuerProps = {
@@ -114,7 +116,11 @@ export const Verify = (props: IProps) => {
                 <div className="verify-box-item" key={index}>
                   <div className="verify-box-item-content">
                     <div className="verify-box-item-content-icon">
-                      {item.icon}
+                      {item.badgeText ? (
+                        <Badge icon={item.icon} text={item.badgeText} />
+                      ) : (
+                        item.icon
+                      )}
                     </div>
                     <p className="verify-box-item-content-text">
                       {item.entity}

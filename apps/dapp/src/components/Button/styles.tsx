@@ -2,7 +2,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-interface Props {
+interface IProps {
   styleType: string;
   primaryColor: string;
   secondaryColor: string;
@@ -10,7 +10,7 @@ interface Props {
   hasIcon: boolean;
 }
 
-export const Wrapper = styled.button<Props>`
+export const Wrapper = styled.button<IProps>`
   ${({
     theme,
     styleType,
