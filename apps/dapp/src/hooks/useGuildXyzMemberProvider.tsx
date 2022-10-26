@@ -61,8 +61,8 @@ export const useGuildXyzMemberProvider = () => {
     const claimValue = {
       entity: payload.name,
       name: `${payload.name} Guild.xyz Member`,
-      imageUrl: payload.imageUrl,
-      description: payload.description,
+      imageUrl: payload.imageUrl ? payload.imageUrl : '',
+      description: payload.description ? payload.description : '',
 
       proofs: {
         guildId: claimValues.guildId
