@@ -63,8 +63,8 @@ export const useGuildXyzAdminProvider = () => {
     const claimValue = {
       entity: payload.name,
       name: `${payload.name} Guild.xyz Admin`,
-      imageUrl: payload.imageUrl,
-      description: payload.description,
+      imageUrl: payload.imageUrl ? payload.imageUrl : '',
+      description: payload.description ? payload.description : '',
       role: 'admin',
       proofs: {
         guildId: claimValues.guildId

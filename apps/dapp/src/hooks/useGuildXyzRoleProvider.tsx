@@ -88,8 +88,12 @@ export const useGuildXyzRoleProvider = () => {
     const claimValue = {
       entity: payload.guildInfo.name,
       name: `${payload.roleInfo.name} Guild.xyz Role`,
-      imageUrl: `https://guild.xyz/${payload.roleInfo.imageUrl}`,
-      description: payload.roleInfo.description,
+      imageUrl: payload.roleInfo.imageUrl
+        ? `https://guild.xyz/${payload.roleInfo.imageUrl}`
+        : '',
+      description: payload.roleInfo.description
+        ? payload.roleInfo.description
+        : '',
       role: payload.roleInfo.name,
       proofs: {
         guildId: claimValues.guildId,
