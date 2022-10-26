@@ -38,7 +38,7 @@ export const Select = (props: IProps) => {
     <>
       <style global jsx>{`
         .MuiPaper-root,
-        .MuiButtonBase-root {
+        .MuiList-root > .MuiButtonBase-root {
           background-color: ${theme.colors.brightGray} !important;
           color: ${theme.colors.white};
         }

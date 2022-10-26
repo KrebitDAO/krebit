@@ -9,7 +9,9 @@ import { twilio } from './twilio';
 import { github } from './github';
 import { getPersonaDecision } from './getPersonaDecision';
 import { getNFTCredentialTypes, getTokenIds } from './getNFTCredentialTypes';
-import { getNftSvg } from './getNftSvg';
+import { guildXyz } from './guildXyz';
+import { wait } from './wait';
+import { getAge } from './getAge';
 
 export {
   connect,
@@ -24,5 +26,7 @@ export {
   getPersonaDecision,
   getNFTCredentialTypes,
   getTokenIds,
-  getNftSvg
+  guildXyz,
+  wait,
+  getAge
 };

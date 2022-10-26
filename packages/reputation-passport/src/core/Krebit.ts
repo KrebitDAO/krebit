@@ -72,7 +72,7 @@ export class Krebit {
     this.currentConfig = currentConfig;
 
     const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
-    this.address = props.address;
+    this.address = props.address.toLocaleLowerCase();
     this.ethProvider = props.ethProvider;
     this.ceramic = ceramicClient;
     this.wallet = props.wallet;
@@ -105,7 +105,7 @@ export class Krebit {
       });
     }
 
-    this.did = this.idx.id;
+    this.did = this.idx.id.toLocaleLowerCase();
 
     return this.did;
   };
@@ -123,7 +123,7 @@ export class Krebit {
       client: this.ceramic,
       session
     });
-    this.did = this.idx.id;
+    this.did = this.idx.id.toLocaleLowerCase();
 
     return this.idx.authenticated;
   };
@@ -384,19 +384,18 @@ export class Krebit {
   issue = async (claim: ClaimProps) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    // Check the types of the claim before issuing
-
     try {
+      // Check the types of the claim before issuing
       await utils.validateSchema({ idx: this.idx, claim });
+
+      return await utils.issueCredential({
+        wallet: this.wallet as ethers.Wallet,
+        idx: this.idx,
+        claim
+      });
     } catch (err) {
       throw new Error(err);
     }
-
-    return await utils.issueCredential({
-      wallet: this.wallet as ethers.Wallet,
-      idx: this.idx,
-      claim
-    });
   };
 
   // Stamp
@@ -406,48 +405,49 @@ export class Krebit {
 
     const balance = await this.wallet.getBalance();
     console.log('balance: ', balance);
+    /* TEMP enabling  gasless for all
     if (balance > ethers.constants.Zero) {
       return await this.stamp(w3cCredential);
-    } else {
-      // Pass connected wallet provider under walletProvider field
-      let biconomy = new Biconomy(
-        this.ethProvider as ethers.providers.ExternalProvider,
-        {
-          apiKey: this.currentConfig.biconomyKey,
-          debug: true,
-          walletProvider: this.ethProvider,
-          strictMode: false
-        }
-      );
+    } else {*/
+    // Pass connected wallet provider under walletProvider field
+    let biconomy = new Biconomy(
+      this.ethProvider as ethers.providers.ExternalProvider,
+      {
+        apiKey: this.currentConfig.biconomyKey,
+        debug: true,
+        walletProvider: this.ethProvider,
+        strictMode: false
+      }
+    );
 
-      return await new Promise(resolve =>
-        biconomy.onEvent(biconomy.READY, async () => {
-          const provider = biconomy.getEthersProvider();
+    return await new Promise(resolve =>
+      biconomy.onEvent(biconomy.READY, async () => {
+        const provider = biconomy.getEthersProvider();
 
-          // Initialize your dapp here like getting user accounts etc
-          const metaContract = new ethers.Contract(
-            schemas.krbToken[this.currentConfig.network].address,
-            schemas.krbToken.abi,
-            biconomy.getSignerByAddress(this.address)
-          );
+        // Initialize your dapp here like getting user accounts etc
+        const metaContract = new ethers.Contract(
+          schemas.krbToken[this.currentConfig.network].address,
+          schemas.krbToken.abi,
+          biconomy.getSignerByAddress(this.address)
+        );
 
-          const eip712credential = getEIP712Credential(w3cCredential);
+        const eip712credential = getEIP712Credential(w3cCredential);
 
-          let { data } = await metaContract.populateTransaction.registerVC(
-            eip712credential,
-            w3cCredential.proof.proofValue
-          );
-          let txParams = {
-            data: data,
-            to: schemas.krbToken[this.currentConfig.network].address,
-            from: this.address,
-            signatureType: 'EIP712_SIGN'
-          };
-          const tx = await provider.send('eth_sendTransaction', [txParams]);
-          resolve(tx);
-        })
-      );
-    }
+        let { data } = await metaContract.populateTransaction.registerVC(
+          eip712credential,
+          w3cCredential.proof.proofValue
+        );
+        let txParams = {
+          data: data,
+          to: schemas.krbToken[this.currentConfig.network].address,
+          from: this.address,
+          signatureType: 'EIP712_SIGN'
+        };
+        const tx = await provider.send('eth_sendTransaction', [txParams]);
+        resolve(tx);
+      })
+    );
+    //}
   };
 
   // Mint

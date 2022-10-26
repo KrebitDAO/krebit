@@ -1,4 +1,10 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import { useRouter } from 'next/router';
 import { debounce } from 'ts-debounce';
@@ -10,7 +16,7 @@ import { Close, Search, Tune } from 'components/Icons';
 import { Slider } from 'components/Slider';
 import { Button } from 'components/Button';
 import { Loading } from 'components/Loading';
-import { mergeArray, normalizeSchema } from 'utils';
+import { normalizeSchema } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -31,18 +37,21 @@ interface IInformation {
 }
 
 const initialFilterValues = {
-  skills: [],
-  krbs: [3, 99],
+  skill: '',
+  krbs: [1, 99],
   value: ''
 };
 
 const DEFAULT_SLICE_SKILLS = 5;
+// TODO: This big number should be replaced with '9' to follow a right pagination
+const DEFAULT_LIST_PAGINATION = 900;
 
 export const Explorer = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterValues, setFilterValues] = useState(initialFilterValues);
   const [status, setStatus] = useState('idle');
   const [information, setInformation] = useState<IInformation>();
+  const [currentPage, setCurrentPage] = useState(1);
   const [shouldViewMoreSkills, setShouldViewMoreSkills] = useState(false);
   const {
     walletInformation: { publicPassport, orbis }
@@ -58,16 +67,30 @@ export const Explorer = () => {
     }
   }, [isDesktop, isFilterOpen]);
 
+  const delayedInformation = useCallback(
+    debounce(
+      (
+        values = initialFilterValues,
+        first = DEFAULT_LIST_PAGINATION,
+        skip = 0
+      ) => searchInformation(values, first, skip),
+      500
+    ),
+    [publicPassport, orbis, filterValues.value, currentPage]
+  );
+
   useEffect(() => {
     if (!publicPassport) return;
     if (!orbis) return;
 
-    const getProfiles = async () => {
-      await searchInformation(filterValues);
-    };
+    delayedInformation(
+      filterValues,
+      DEFAULT_LIST_PAGINATION * currentPage,
+      currentPage === 1 ? 0 : DEFAULT_LIST_PAGINATION * (currentPage - 1)
+    );
 
-    getProfiles();
-  }, [publicPassport, orbis, filterValues.value]);
+    return delayedInformation.cancel;
+  }, [publicPassport, orbis, filterValues.value, currentPage]);
 
   const handleFilterOpen = () => {
     if (isDesktop) return;
@@ -88,6 +111,32 @@ export const Explorer = () => {
     }));
   };
 
+  const handleSkillValue = (value: string) => {
+    // TODO: Allow user to filter more than one skill
+    /* setFilterValues(prevStates => ({
+      ...prevStates,
+      skills: prevStates.skills.includes(value)
+        ? prevStates.skills.filter(skill => skill !== value)
+        : [...prevStates.skills, value]
+    })); */
+
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      skill: value
+    }));
+  };
+
+  const handleCleanSearchValue = () => {
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      value: ''
+    }));
+  };
+
+  const handleCurrentPage = () => {
+    setCurrentPage(prevValue => prevValue + 1);
+  };
+
   const handleCleanFilterValues = () => {
     setFilterValues(initialFilterValues);
   };
@@ -96,61 +145,71 @@ export const Explorer = () => {
     setShouldViewMoreSkills(prevStatus => !prevStatus);
   };
 
-  const searchInformation = async (values = initialFilterValues, first = 9) => {
+  const searchInformation = async (
+    values = initialFilterValues,
+    first = DEFAULT_LIST_PAGINATION,
+    skip = 0
+  ) => {
     try {
       setStatus('pending');
 
-      const erc20BalancesResponse = await Krebit.lib.graph.erc20BalancesQuery({
+      const response = await Krebit.lib.graph.exploreAccountsQuery({
         first,
-        orderDirection: 'desc',
-        orderBy: 'value',
+        skip,
         where: {
-          value_gte: values.krbs[0],
-          value_lte: values.krbs[1]
+          ERC20balances_: {
+            value_gte: values.krbs[0],
+            value_lte: values.krbs[1]
+          },
+          VerifiableCredentials_: {
+            _type_contains_nocase: values.value ? values.value : values.skill,
+            credentialStatus: 'Issued'
+          }
         }
       });
 
       const profiles = await Promise.all(
-        erc20BalancesResponse.map(async balance => {
-          if (!balance?.account?.id) return undefined;
+        response.map(async account => {
+          if (!account?.id) return undefined;
 
-          const defaultDID = await Krebit.lib.orbis.getDefaultDID(
-            balance.account.id
-          );
+          const defaultDID = await Krebit.lib.orbis.getDefaultDID(account.id);
           const did = defaultDID
             ? defaultDID
-            : `did:pkh:eip155:1:${balance.account.id}`;
+            : `did:pkh:eip155:1:${account.id}`;
 
-          const [profile, stamps] = await Promise.all([
-            normalizeSchema.profile({
-              orbis,
-              did,
-              reputation: balance.value
-            }),
-            Krebit.lib.graph.verifiableCredentialsQuery({
-              orderBy: 'issuanceDate',
-              orderDirection: 'desc',
-              where: {
-                credentialSubjectAddress: balance.account.id
-              }
-            })
-          ]);
+          const profile = await normalizeSchema.profile({
+            orbis,
+            did,
+            reputation: account.ERC20balances[0].value
+          });
 
-          const skills = stamps
-            .map(stamp => (stamp?._type ? JSON.parse(stamp._type) : []))
+          const skills = account.VerifiableCredentials.map(
+            values => values?._type
+          )
+            .map(credentials => (credentials ? JSON.parse(credentials) : []))
             .flatMap(skills => skills);
 
           return {
             ...profile,
-            stamps: stamps || [],
             skills: skills || []
           };
         })
-      ).then(profiles => profiles.filter(profile => profile !== undefined));
+      )
+        .then(profiles => profiles.filter(profile => profile !== undefined))
+        .then(profiles => profiles.sort((a, b) => b.reputation - a.reputation));
 
       const skills = profiles.flatMap(profile => profile.skills);
 
-      setInformation({ profiles, skills });
+      setInformation(prevValues =>
+        currentPage === 1
+          ? { profiles, skills }
+          : {
+              profiles: [...(prevValues?.profiles || []), ...profiles].sort(
+                (a, b) => b.reputation - a.reputation
+              ),
+              skills: [...(prevValues?.skills || []), ...skills]
+            }
+      );
       setStatus('resolved');
     } catch (error) {
       console.error(error);
@@ -160,6 +219,11 @@ export const Explorer = () => {
 
   const handleSearch = async () => {
     handleFilterOpen();
+    setCurrentPage(1);
+    setFilterValues(prevStates => ({
+      ...prevStates,
+      value: ''
+    }));
     await searchInformation(filterValues);
   };
 
@@ -219,13 +283,22 @@ export const Explorer = () => {
               ) : (
                 <>
                   <div className="filter-menu-skills-list">
-                    {mergeArray(information?.skills || [])
+                    {Krebit.utils
+                      .mergeArray(information?.skills || [])
                       .slice(
                         0,
-                        shouldViewMoreSkills ? -1 : DEFAULT_SLICE_SKILLS
+                        shouldViewMoreSkills ? undefined : DEFAULT_SLICE_SKILLS
                       )
                       .map((item, index) => (
-                        <div className="filter-menu-skills-item" key={index}>
+                        <div
+                          className={`filter-menu-skills-item ${
+                            filterValues.skill === item[0]
+                              ? 'filter-menu-skills-item-active'
+                              : ''
+                          }`}
+                          key={index}
+                          onClick={() => handleSkillValue(item[0])}
+                        >
                           <p className="filter-menu-skills-item-text">
                             {item[0]}{' '}
                             {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
@@ -233,15 +306,20 @@ export const Explorer = () => {
                         </div>
                       ))}
                   </div>
-                  <p
-                    className="filter-menu-skills-view-more"
-                    onClick={handleViewMoreSkills}
-                  >
-                    View more (
-                    {mergeArray(information?.skills || []).length -
-                      DEFAULT_SLICE_SKILLS}
-                    )
-                  </p>
+                  {Krebit.utils.mergeArray(information?.skills || []).length >
+                    DEFAULT_SLICE_SKILLS && (
+                    <p
+                      className="filter-menu-skills-view-more"
+                      onClick={handleViewMoreSkills}
+                    >
+                      {shouldViewMoreSkills
+                        ? 'View less'
+                        : `View more (${
+                            Krebit.utils.mergeArray(information?.skills || [])
+                              .length - DEFAULT_SLICE_SKILLS
+                          })`}
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -278,7 +356,7 @@ export const Explorer = () => {
         <div className="explorer-container">
           <div className="explorer-header">
             <p className="explorer-header-title">
-              Profiles{' '}
+              Krebited Profiles{' '}
               <span className="explorer-header-span">
                 {information?.profiles?.length || 0} results
               </span>
@@ -300,21 +378,16 @@ export const Explorer = () => {
               autoCorrect="off"
               spellCheck="false"
             />
-            <div className="explorer-searcher-icon explorer-searcher-icon-white">
+            <div
+              className="explorer-searcher-icon explorer-searcher-icon-white"
+              onClick={handleCleanSearchValue}
+            >
               <Close />
             </div>
           </div>
-          {isLoading ? (
-            <div className="explorer-cards">
-              {new Array(6).fill(0).map((_, index) => (
-                <div className="explorer-card-loading" key={index}>
-                  <Loading type="skeleton" />
-                </div>
-              ))}
-            </div>
-          ) : information?.profiles?.length === 0 ? (
+          {information?.profiles?.length === 0 ? (
             <p className="explore-card-not-found">No profiles found</p>
-          ) : (
+          ) : information?.profiles?.length > 0 ? (
             <div className="explorer-cards">
               {information?.profiles.map((profile, index) => (
                 <Card picture={profile.picture} key={index}>
@@ -352,6 +425,26 @@ export const Explorer = () => {
                   </div>
                 </Card>
               ))}
+            </div>
+          ) : null}
+          {isLoading && (
+            <div className="explorer-cards">
+              {new Array(6).fill(0).map((_, index) => (
+                <div className="explorer-card-loading" key={index}>
+                  <Loading type="skeleton" />
+                </div>
+              ))}
+            </div>
+          )}
+          {information?.profiles?.length >=
+            DEFAULT_LIST_PAGINATION * currentPage && (
+            <div className="explorer-cards-button">
+              <Button
+                text="View more"
+                onClick={handleCurrentPage}
+                styleType="border"
+                borderBackgroundColor="ebony"
+              />
             </div>
           )}
         </div>

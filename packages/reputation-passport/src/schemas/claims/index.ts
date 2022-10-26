@@ -6,9 +6,7 @@ import education from './education.json' assert { type: 'json' };
 import issuer from './issuer.json' assert { type: 'json' };
 import legalName from './legalName.json' assert { type: 'json' };
 import location from './location.json' assert { type: 'json' };
-import nationalID from './nationalID.json' assert { type: 'json' };
-import olderThan from './olderThan.json' assert { type: 'json' };
-import passport from './passport.json' assert { type: 'json' };
+import governmentId from './governmentId.json' assert { type: 'json' };
 import phoneNumber from './phoneNumber.json' assert { type: 'json' };
 import workExperience from './workExperience.json' assert { type: 'json' };
 import recommendation from './recommendation.json' assert { type: 'json' };
@@ -22,9 +20,7 @@ export const claims = {
   issuer,
   legalName,
   location,
-  nationalID,
-  olderThan,
-  passport,
+  governmentId,
   phoneNumber,
   workExperience,
   recommendation

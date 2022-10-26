@@ -29,7 +29,7 @@ export const Wrapper = styled.div`
     }
 
     .MuiInputBase-root:hover {
-      border: 1px solid ${theme.colors.white}B3;
+      border: none;
     }
 
     .MuiSvgIcon-root {

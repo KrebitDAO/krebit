@@ -30,8 +30,6 @@ export const Wrapper = styled.div<WalletProps>`
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
       padding: 36px 28px;
-      display: ${status === 'pending' ? 'initial' : 'grid'};
-      grid-gap: 48px;
 
       @media (min-width: ${theme.screens.lg}) {
         width: 426px;
@@ -46,6 +44,7 @@ export const Wrapper = styled.div<WalletProps>`
           font-size: ${theme.fonts.lg};
           color: ${theme.colors.white};
           margin: 0;
+          margin-bottom: 48px;
 
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts.xl};
@@ -73,7 +72,15 @@ export const Wrapper = styled.div<WalletProps>`
         }
       }
 
+      .wallet-remember-session {
+        display: flex;
+        justify-content: center;
+        margin-top: 26px;
+        margin-bottom: 30px;
+      }
+
       .wallet-read {
+        display: block;
         text-decoration: underline;
         color: ${theme.colors.white};
         font-size: ${theme.fonts.base};
