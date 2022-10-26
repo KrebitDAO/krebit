@@ -83,48 +83,39 @@ const PERSONHOOD_CREDENTIALS = [
   },
   {
     credentialType: 'VeriffAgeGT18',
-    entity: 'Age > 18 (Veriff)',
+    entity: 'Age > 18 (KYC)',
     description: 'Krebit Verification Node',
     icon: <Cake />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
-    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
+    badgeText: 'New'
   },
   {
     credentialType: 'VeriffGovernmentId',
-    entity: 'Verified Government Id (Veriff)',
+    entity: 'Verified Government Id (KYC)',
     description: 'Krebit Verification Node',
     icon: <Badge />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '1.5',
-    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
+    price: '0',
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
+    badgeText: 'New'
   },
   {
     credentialType: 'VeriffLegalName',
-    entity: 'Legal Name (Veriff)',
+    entity: 'Legal Name (KYC)',
     description: 'Krebit Verification Node',
     icon: <Person />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '1.5',
-    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED
-  },
-  {
-    credentialType: 'PersonaLegalName',
-    entity: 'Legal Name (Persona)',
-    description: 'Krebit Verification Node',
-    icon: <Person />,
-    verificationUrl:
-      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/persona'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
-    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '2.5',
-    isDisabled: !process.env.NEXT_PUBLIC_PERSONA_ENABLED
+    price: '0',
+    isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
+    badgeText: 'New'
   }
 ];
 
@@ -191,7 +182,8 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    price: '0',
+    badgeText: 'New'
   },
   {
     credentialType: 'GuildXyzAdmin',
@@ -203,7 +195,8 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    price: '0',
+    badgeText: 'New'
   },
   {
     credentialType: 'GuildXyzRole',
@@ -215,7 +208,8 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    price: '0',
+    badgeText: 'New'
   },
   {
     credentialType: 'TwitterFollowersGT1K',
