@@ -98,12 +98,40 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     isAuthenticated();
   }, []);
 
+  useEffect(() => {
+    if (!window) return;
+
+    const rememberSession = window.localStorage.getItem(
+      'krebit-remember-session'
+    );
+
+    if (rememberSession !== 'ACTIVE') return;
+
+    const handleTabClose = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+      window.localStorage.clear();
+    };
+
+    window.addEventListener('beforeunload', handleTabClose);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleTabClose);
+    };
+  }, []);
+
   const handleOpenConnectWallet = () => {
     setOpenConnectWallet(prevState => !prevState);
   };
 
   const handleSetProfile = (profile: IProfile) => {
     setProfile(profile);
+  };
+
+  const handleRememberSession = () => {
+    if (!window) return;
+
+    window.localStorage.setItem('krebit-remember-session', 'ACTIVE');
   };
 
   const connect = async (type: string) => {
@@ -171,12 +199,13 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     if (!window) return;
 
+    await orbis.logout();
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
-    orbis.logout();
+    window.localStorage.removeItem('krebit-remember-session');
     setProfile(undefined);
     setPassport(undefined);
     setIssuer(undefined);
@@ -194,7 +223,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           isAuthenticated: status === 'resolved' && !!passport?.did,
           status,
           did: passport?.did,
-          logout
+          logout,
+          handleRememberSession
         },
         walletInformation: {
           ...walletInformation,

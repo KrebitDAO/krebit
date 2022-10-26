@@ -6,7 +6,6 @@ import { DIDSession } from 'did-session';
 import { W3CCredential } from '@krebitdao/eip712-vc';
 import localStore from 'store2';
 
-import { schemas } from '../schemas/index.js';
 import { lib } from '../lib/index.js';
 import { utils } from '../utils/index.js';
 import { config, IConfigProps } from '../config/index.js';

@@ -3,6 +3,7 @@ import { FunctionComponent, useContext, useState } from 'react';
 import { Wrapper, WalletButton } from './styles';
 import { Close } from 'components/Icons';
 import { Loading } from 'components/Loading';
+import { Checkbox } from 'components/Checkbox';
 import { GeneralContext } from 'context';
 
 interface IProps {
@@ -14,14 +15,28 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
   const { isOpen = false, onClose } = props;
   const [status, setStatus] = useState('idle');
   const {
-    auth: { connect }
+    auth: { connect, handleRememberSession }
   } = useContext(GeneralContext);
+  const [shouldRememberSession, setShouldRememberSession] = useState(true);
 
-  const handlerConnect = async (type: string) => {
-    setStatus('pending');
+  const handleConnect = async (type: string) => {
+    try {
+      setStatus('pending');
 
-    await connect(type);
-    onClose();
+      if (!shouldRememberSession) {
+        handleRememberSession();
+      }
+
+      await connect(type);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected');
+    }
+  };
+
+  const handleShouldRememberSession = () => {
+    setShouldRememberSession(prevValue => !prevValue);
   };
 
   if (!isOpen) return;
@@ -52,14 +67,14 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
             <div className="wallet-buttons">
               <WalletButton
                 textColor="tango"
-                onClick={() => handlerConnect('metamask')}
+                onClick={() => handleConnect('metamask')}
               >
                 <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
                 Metamask
               </WalletButton>
               <WalletButton
                 textColor="white"
-                onClick={() => handlerConnect('wallet_connect')}
+                onClick={() => handleConnect('wallet_connect')}
               >
                 <img
                   src="/imgs/logos/wallet-connect.png"
@@ -68,6 +83,14 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 />{' '}
                 WalletConnect
               </WalletButton>
+            </div>
+            <div className="wallet-remember-session">
+              <Checkbox
+                placeholder="Remember session"
+                name="remember"
+                value={shouldRememberSession}
+                onChange={handleShouldRememberSession}
+              />
             </div>
             <a
               className="wallet-read"
