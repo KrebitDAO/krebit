@@ -203,7 +203,8 @@ export class Lit {
   public updateConditions = async (
     encryptedSymmetricKey: string,
     newAccessControlConditions: Array<Object>,
-    wallet: ethers.Signer
+    wallet: ethers.Signer,
+    permanent: boolean = false
   ) => {
     if (!this.litNodeClient) {
       await this.connect();
@@ -233,7 +234,7 @@ export class Lit {
         encryptedSymmetricKey: decodedKey,
         authSig,
         chain: this.currentConfig.network,
-        permanent: false
+        permanent
       }
     );
 

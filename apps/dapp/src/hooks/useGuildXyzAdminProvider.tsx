@@ -167,6 +167,9 @@ export const useGuildXyzAdminProvider = () => {
           );
           console.log('addedCredentialId: ', addedCredentialId);
 
+          //Restrict access to my claim again
+          await Issuer.removeAllEncryptedCredentialShares(claimedCredentialId);
+
           setCurrentCredential({
             ...issuedCredential,
             vcId: addedCredentialId
