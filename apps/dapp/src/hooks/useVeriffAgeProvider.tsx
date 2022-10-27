@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { debounce } from 'ts-debounce';
+import { format } from 'date-fns';
 
 import {
   getCredential,
@@ -12,7 +13,6 @@ import {
   IIsuerParams,
   constants
 } from 'utils';
-import { format } from 'date-fns';
 
 interface IClaimValues {
   date: string | number;
