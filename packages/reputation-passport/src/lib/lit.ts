@@ -173,8 +173,13 @@ export class Lit {
       const encryptedStringBase64 = await utils.base64.blobToBase64(
         encryptedString
       );
+
+      const conds = accessControlConditions.map(c =>
+        canonicalAccessControlConditionFormatter(c)
+      );
+
       const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-        accessControlConditions,
+        accessControlConditions: conds,
         symmetricKey,
         authSig,
         chain: this.currentConfig.network,
@@ -198,7 +203,8 @@ export class Lit {
   public updateConditions = async (
     encryptedSymmetricKey: string,
     newAccessControlConditions: Array<Object>,
-    wallet: ethers.Signer
+    wallet: ethers.Signer,
+    permanent: boolean = false
   ) => {
     if (!this.litNodeClient) {
       await this.connect();
@@ -217,13 +223,18 @@ export class Lit {
     const conds = newAccessControlConditions.map(c =>
       canonicalAccessControlConditionFormatter(c)
     );
+    const decodedKey = this.litSdk.uint8arrayFromString(
+      encryptedSymmetricKey,
+      'base16'
+    );
+
     const newEncryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey(
       {
         accessControlConditions: conds,
-        encryptedSymmetricKey: utils.base64.decodeb64(encryptedSymmetricKey),
+        encryptedSymmetricKey: decodedKey,
         authSig,
         chain: this.currentConfig.network,
-        permanent: false
+        permanent
       }
     );
 

@@ -196,13 +196,9 @@ export const usePhoneProvider = () => {
             issuedCredential
           );
           console.log('addedCredentialId: ', addedCredentialId);
-          /*
-          //TODO: Restrict access to my claim again
+
+          //Restrict access to my claim again
           await Issuer.removeAllEncryptedCredentialShares(claimedCredentialId);
-          console.log(
-            'EncryptedCredentialConditions: ',
-            await Issuer.getEncryptedCredentialConditions(claimedCredentialId)
-          );*/
 
           setCurrentCredential({
             ...issuedCredential,
