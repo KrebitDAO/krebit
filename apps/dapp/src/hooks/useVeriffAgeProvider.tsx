@@ -62,7 +62,9 @@ export const useVeriffAgeProvider = () => {
     setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
-        //callback: `${process.env.NEXT_PUBLIC_VERIFF_CALLBACK}?status=VeriffAgeGT18-${generateUID(10)}`,
+        callback: `${
+          process.env.NEXT_PUBLIC_VERIFF_CALLBACK
+        }?status=veriffAgeGT18-${generateUID(10)}`,
         timestamp: new Date().toISOString()
       }
     });
