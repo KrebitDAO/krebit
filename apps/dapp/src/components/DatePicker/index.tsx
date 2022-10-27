@@ -27,7 +27,7 @@ export const DatePicker = (props: IProps) => {
     placeholder,
     value,
     onChange,
-    inputFormat = 'MM/dd/yyyy',
+    inputFormat = 'yyyy-MM-dd',
     isDisabled,
     isRequired
   } = props;
