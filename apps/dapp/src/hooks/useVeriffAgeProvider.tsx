@@ -12,16 +12,17 @@ import {
   IIsuerParams,
   constants
 } from 'utils';
+import { format } from 'date-fns';
 
 interface IClaimValues {
-  date: string | number | boolean;
+  date: string | number;
   private: boolean;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const initialState = {
-  date: '2009-01-12',
+  date: '01/12/2009',
   private: true
 };
 
@@ -89,7 +90,7 @@ export const useVeriffAgeProvider = () => {
       typeSchema: 'krebit://schemas/birthDate',
       tags: ['VeriffAgeGT18', 'KYC', 'Adulthood', 'Age', 'Personhood'],
       value: {
-        date: claimValues.date,
+        date: format(new Date(claimValues.date), 'yyyy-MM-dd'),
         proofs: {
           ...veriffSession,
           nonce: `${generateUID(10)}`
