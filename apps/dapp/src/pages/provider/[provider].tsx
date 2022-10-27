@@ -158,7 +158,7 @@ const DynamicProvider = () => {
     const queryState = queryString.get('status');
 
     // if Veriff oauth then submit message to other windows and close self
-    if (queryState && queryState == 'VeriffLegalName') {
+    if (queryState && /^veriffLegalName-.*/.test(queryState)) {
       // shared message channel between windows (on the same domain)
       const channel = new BroadcastChannel(currentChannel);
 
@@ -167,7 +167,7 @@ const DynamicProvider = () => {
         target: 'VeriffLegalName',
         data: { state: queryState }
       });
-    } else if (queryState && queryState == 'VeriffAgeGT18') {
+    } else if (queryState && /^veriffAgeGT18-.*/.test(queryState)) {
       // shared message channel between windows (on the same domain)
       const channel = new BroadcastChannel(currentChannel);
 
@@ -176,7 +176,7 @@ const DynamicProvider = () => {
         target: 'VeriffAgeGT18',
         data: { state: queryState }
       });
-    } else if (queryState && queryState == 'VeriffGovernmentId') {
+    } else if (queryState && /^veriffGovernmentId-.*/.test(queryState)) {
       // shared message channel between windows (on the same domain)
       const channel = new BroadcastChannel(currentChannel);
 

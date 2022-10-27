@@ -57,6 +57,18 @@ export const VerifyCredential = (props: IProps) => {
         guildXyzMemberProvider.status === 'mint_resolved';
     }
 
+    if (credentialType === 'GuildXyzAdmin') {
+      isStatusResolved =
+        guildXyzAdminProvider.status === 'credential_resolved' ||
+        guildXyzAdminProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'GuildXyzRole') {
+      isStatusResolved =
+        guildXyzRoleProvider.status === 'credential_resolved' ||
+        guildXyzRoleProvider.status === 'mint_resolved';
+    }
+
     if (credentialType === 'DiscordGuildOwner') {
       isStatusResolved =
         discordGuildOwnerProvider.status === 'credential_resolved' ||
@@ -99,6 +111,14 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'GuildXyzMember') {
       guildXyzMemberProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GuildXyzAdmin') {
+      guildXyzAdminProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'GuildXyzRole') {
+      guildXyzRoleProvider.handleCleanClaimValues();
     }
 
     if (credentialType === 'DiscordGuildOwner') {

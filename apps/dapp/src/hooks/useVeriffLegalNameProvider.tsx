@@ -64,7 +64,9 @@ export const useVeriffLegalNameProvider = () => {
     setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
-        //callback: `${process.env.NEXT_PUBLIC_VERIFF_CALLBACK}?status=VeriffLegalName-${generateUID(10)}`,
+        callback: `${
+          process.env.NEXT_PUBLIC_VERIFF_CALLBACK
+        }?status=veriffLegalName-${generateUID(10)}`,
         person: {
           firstName: claimValues.firstName,
           lastName: claimValues.lastName

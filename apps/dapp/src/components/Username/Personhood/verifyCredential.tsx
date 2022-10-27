@@ -65,6 +65,12 @@ export const VerifyCredential = (props: IProps) => {
         veriffLegalNameProvider.status === 'mint_resolved';
     }
 
+    if (credentialType === 'VeriffGovernmentId') {
+      isStatusResolved =
+        veriffGovernmentIdProvider.status === 'credential_resolved' ||
+        veriffGovernmentIdProvider.status === 'mint_resolved';
+    }
+
     if (credentialType === 'PhoneNumber') {
       isStatusResolved =
         phoneProvider.status === 'credential_resolved' ||
@@ -111,6 +117,10 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'VeriffLegalName') {
       veriffLegalNameProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'VeriffGovernmentId') {
+      veriffGovernmentIdProvider.handleCleanClaimValues();
     }
 
     if (credentialType === 'PhoneNumber') {

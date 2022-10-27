@@ -64,7 +64,9 @@ export const useVeriffGovernmentIdProvider = () => {
     setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
-        //callback: `${process.env.NEXT_PUBLIC_VERIFF_CALLBACK}?status=VeriffGovernmentId-${generateUID(10)}`,
+        callback: `${
+          process.env.NEXT_PUBLIC_VERIFF_CALLBACK
+        }?status=veriffGovernmentId-${generateUID(10)}`,
         document: {
           country: claimValues.country,
           number: claimValues.number
