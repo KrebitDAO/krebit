@@ -114,7 +114,7 @@ export const NavBar = () => {
           </a>
         </Link>
         <div className="menu-content-button">
-          <Button text="Try the Beta" onClick={handleOpenWallet} />
+          <Button text="Try it now" onClick={handleOpenWallet} />
         </div>
       </div>
     </Wrapper>

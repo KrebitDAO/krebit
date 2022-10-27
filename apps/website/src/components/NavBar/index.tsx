@@ -55,7 +55,7 @@ export const NavBar = () => {
           </Link>
           <div className="menu-bar-button">
             <Button
-              text="Try the Beta"
+              text="Try it now"
               primaryColor="cyan"
               secondaryColor="rose"
               onClick={handleOnClick}
@@ -89,7 +89,7 @@ export const NavBar = () => {
         </Link>
         <div className="menu-content-button">
           <Button
-            text="Try the Beta"
+            text="Try it now"
             primaryColor="rose"
             secondaryColor="blueRibbon"
             onClick={handleOnClick}
