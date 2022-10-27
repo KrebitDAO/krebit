@@ -61,8 +61,8 @@ export const VeriffController = async (
       claimValue = await Issuer.decryptCredential(claimedCredential);
     } else {
       claimValue = JSON.parse(claimedCredential.credentialSubject.value);
-      console.log('Claim value: ', claimValue);
     }
+    console.log('Claim value: ', claimValue);
 
     const publicClaim: boolean =
       claimedCredential.credentialSubject.encrypted === 'none';
@@ -72,8 +72,13 @@ export const VeriffController = async (
       await wait(5000);
       veriffDecision = await getVeriffDecision(claimValue.proofs.id);
     }
-    console.log('veriffDecision: ', veriffDecision);
-    if (!veriffDecision || veriffDecision.status !== 'approved') {
+    if (
+      !veriffDecision ||
+      !(
+        veriffDecision.status === 'approved' ||
+        veriffDecision.status === 'success'
+      )
+    ) {
       throw new Error(`Wrong veriff ID: ${veriffDecision}`);
     }
 
@@ -84,8 +89,6 @@ export const VeriffController = async (
         claimValue.date === veriffDecision.person.dateOfBirth &&
         getAge(veriffDecision.person.dateOfBirth) > 18
       ) {
-        console.log('Valid veriff ID:', veriffDecision);
-
         const expirationDate = new Date();
         const expiresYears = parseInt('1', 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
