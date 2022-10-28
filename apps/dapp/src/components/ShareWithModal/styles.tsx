@@ -24,8 +24,10 @@ export const Wrapper = styled.div`
       }
 
       .lsm-share-modal-container {
-        width: 500px;
-        height: 650px;
+        @media (min-width: ${theme.screens.lg}) {
+          width: 500px;
+          height: 650px;
+        }
       }
 
       .lsm-back-button:hover {
