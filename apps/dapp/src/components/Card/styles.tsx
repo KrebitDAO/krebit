@@ -408,8 +408,7 @@ export const LongCardWrapper = styled.div<ICardProps>`
       z-index: 10;
 
       @media (min-width: ${theme.screens.lg}) {
-        bottom: 95px;
-        right: 45px;
+        bottom: 69px;
       }
     }
   `}
