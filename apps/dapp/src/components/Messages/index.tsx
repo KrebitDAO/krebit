@@ -30,6 +30,7 @@ export const Messages = () => {
   if (!auth?.isAuthenticated) {
     return (
       <LoadingWrapper>
+        {/* TODO: replace this connect wallet with the one defined in <Layout /> */}
         <ConnectWallet
           isOpen={openConnectWallet}
           onClose={handleOpenConnectWallet}

@@ -18,6 +18,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
     auth: { connect, handleRememberSession }
   } = useContext(GeneralContext);
   const [shouldRememberSession, setShouldRememberSession] = useState(true);
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true);
 
   const handleConnect = async (type: string) => {
     try {
@@ -37,6 +38,10 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
 
   const handleShouldRememberSession = () => {
     setShouldRememberSession(prevValue => !prevValue);
+  };
+
+  const handleHasAcceptedTerms = () => {
+    setHasAcceptedTerms(prevValue => !prevValue);
   };
 
   if (!isOpen) return;
@@ -67,6 +72,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
             <div className="wallet-buttons">
               <WalletButton
                 textColor="tango"
+                disabled={!hasAcceptedTerms}
                 onClick={() => handleConnect('metamask')}
               >
                 <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
@@ -74,6 +80,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
               </WalletButton>
               <WalletButton
                 textColor="white"
+                disabled={!hasAcceptedTerms}
                 onClick={() => handleConnect('wallet_connect')}
               >
                 <img
@@ -91,6 +98,25 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 value={shouldRememberSession}
                 onChange={handleShouldRememberSession}
               />
+            </div>
+            <div className="wallet-terms">
+              <Checkbox
+                placeholder=""
+                name="tems"
+                value={hasAcceptedTerms}
+                onChange={handleHasAcceptedTerms}
+              />
+              <p className="wallet-terms-text">
+                I have read and accept the{' '}
+                <a className="wallet-terms-text-link" href="/terms">
+                  terms
+                </a>{' '}
+                and{' '}
+                <a className="wallet-terms-text-link" href="/privacy">
+                  privacy policy
+                </a>
+                .
+              </p>
             </div>
             <a
               className="wallet-read"
