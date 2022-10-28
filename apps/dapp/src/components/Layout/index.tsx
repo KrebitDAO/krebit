@@ -16,7 +16,16 @@ import {
   NavBarOption,
   Wrapper
 } from './styles';
-import { Bell, Close, Explore, Menu, Send } from 'components/Icons';
+import {
+  AccountBalanceWallet,
+  Bell,
+  Close,
+  Explore,
+  Help,
+  Menu,
+  Send
+} from 'components/Icons';
+import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { Badge } from 'components/Badge';
 import { GeneralContext } from 'context';
@@ -31,7 +40,7 @@ const MENU_OPTIONS = [
     title: 'Explore',
     href: '/explore',
     icon: <Explore />,
-    badgeText: 'New!'
+    badgeText: 'New'
   },
   {
     title: 'Inbox',
@@ -50,7 +59,8 @@ export const Layout: FunctionComponent<IProps> = props => {
   const [isFilterOpenInView, setIsFilterOpenInView] = useState<string>();
   const {
     auth,
-    profileInformation: { profile }
+    profileInformation: { profile },
+    walletModal: { openConnectWallet, handleOpenConnectWallet }
   } = useContext(GeneralContext);
   const [isMenuContentMobileOpen, setIsMenuContentMobileOpen] = useState(false);
   const [navBarDesktopOptionHovered, setNavBarDesktopOptionHovered] =
@@ -85,133 +95,125 @@ export const Layout: FunctionComponent<IProps> = props => {
     setNavBarDesktopOptionHovered(value);
   };
 
+  const handleHelp = () => {
+    window.open('https://discord.gg/UD5YhCU2', '_blank');
+  };
+
   return (
-    <Wrapper>
-      <MenuMobile profilePicture={formatUrlImage(profile?.picture)}>
-        <div className="icon" onClick={handleMenuContentMobileOpen}>
-          {isMenuContentMobileOpen ? <Close /> : <Menu />}
-        </div>
-        {auth?.isAuthenticated && (
+    <>
+      <ConnectWallet
+        isOpen={openConnectWallet}
+        onClose={handleOpenConnectWallet}
+      />
+      <Wrapper>
+        <MenuMobile profilePicture={formatUrlImage(profile?.picture)}>
+          <div className="icon" onClick={handleMenuContentMobileOpen}>
+            {isMenuContentMobileOpen ? <Close /> : <Menu />}
+          </div>
           <div className="profile-menu">
-            <div
-              className="profile-menu-image"
-              onClick={() => handleFilterOpen('mobile')}
-              ref={parentDropdownMobileRef}
-            />
-            {isFilterOpenInView === 'mobile' && (
-              <div className="profile-menu-dropdown">
-                <InlineDropdown
-                  items={[
-                    {
-                      title: 'My profile',
-                      onClick: handlePushProfile
-                    },
-                    {
-                      title: 'Log out',
-                      onClick: handleLogout
-                    }
-                  ]}
-                  parentRef={parentDropdownMobileRef}
-                  onClose={() => handleFilterOpen(undefined)}
+            <div className="profile-menu-icon" onClick={handleHelp}>
+              <Help />
+            </div>
+            {auth?.isAuthenticated ? (
+              <>
+                <div
+                  className="profile-menu-image"
+                  onClick={() => handleFilterOpen('mobile')}
+                  ref={parentDropdownMobileRef}
                 />
+                {isFilterOpenInView === 'mobile' && (
+                  <div className="profile-menu-dropdown">
+                    <InlineDropdown
+                      items={[
+                        {
+                          title: 'My profile',
+                          onClick: handlePushProfile
+                        },
+                        {
+                          title: 'Log out',
+                          onClick: handleLogout
+                        }
+                      ]}
+                      parentRef={parentDropdownMobileRef}
+                      onClose={() => handleFilterOpen(undefined)}
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div
+                className="profile-menu-icon"
+                onClick={handleOpenConnectWallet}
+              >
+                <AccountBalanceWallet />
               </div>
             )}
           </div>
-        )}
-      </MenuMobile>
-      {isMenuContentMobileOpen && (
-        <>
-          <style global jsx>{`
-            html,
-            body {
-              overflow: hidden;
-            }
-          `}</style>
-          <MenuContentMobile>
-            <div className="menu-content-mobile">
-              <Link
-                href="https://discord.gg/y7sMYVjxrd"
-                rel="noopener noreferrer"
-              >
-                <a
-                  target="_blank"
-                  className="menu-content-mobile-item"
-                  onClick={handleMenuContentMobileOpen}
+        </MenuMobile>
+        {isMenuContentMobileOpen && (
+          <>
+            <style global jsx>{`
+              html,
+              body {
+                overflow: hidden;
+              }
+            `}</style>
+            <MenuContentMobile>
+              <div className="menu-content-mobile">
+                <Link
+                  href="https://discord.gg/UD5YhCU2"
+                  rel="noopener noreferrer"
                 >
-                  Discord
-                </a>
-              </Link>
-              <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
-                <a
-                  target="_blank"
-                  className="menu-content-mobile-item"
-                  onClick={handleMenuContentMobileOpen}
+                  <a
+                    target="_blank"
+                    className="menu-content-mobile-item"
+                    onClick={handleMenuContentMobileOpen}
+                  >
+                    Discord
+                  </a>
+                </Link>
+                <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
+                  <a
+                    target="_blank"
+                    className="menu-content-mobile-item"
+                    onClick={handleMenuContentMobileOpen}
+                  >
+                    Docs
+                  </a>
+                </Link>
+                <Link
+                  href="https://d3x2s82dzfa.typeform.com/to/B63Gz2v0"
+                  rel="noopener noreferrer"
                 >
-                  Docs
-                </a>
-              </Link>
-              <Link
-                href="https://d3x2s82dzfa.typeform.com/to/B63Gz2v0"
-                rel="noopener noreferrer"
-              >
-                <a
-                  target="_blank"
-                  className="menu-content-mobile-item"
-                  onClick={handleMenuContentMobileOpen}
+                  <a
+                    target="_blank"
+                    className="menu-content-mobile-item"
+                    onClick={handleMenuContentMobileOpen}
+                  >
+                    Recruiters
+                  </a>
+                </Link>
+                <Link
+                  href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
+                  rel="noopener noreferrer"
                 >
-                  Recruiters
-                </a>
-              </Link>
-              <Link
-                href="https://d3x2s82dzfa.typeform.com/to/AvZMdnRp"
-                rel="noopener noreferrer"
-              >
-                <a
-                  target="_blank"
-                  className="menu-content-mobile-item"
-                  onClick={handleMenuContentMobileOpen}
-                >
-                  Credential Issuers
-                </a>
-              </Link>
-            </div>
-          </MenuContentMobile>
-        </>
-      )}
-      {children}
-      <NavBarMobile>
-        {MENU_OPTIONS.map((content, index) => (
-          <Link href={content.href} key={index}>
-            <NavBarOption isActive={asPath.includes(content.href)}>
-              <div className="option-icon">
-                {content.badgeText ? (
-                  <Badge
-                    icon={content.icon}
-                    iconColor={asPath.includes(content.href) ? 'cyan' : 'gray'}
-                    text={content.badgeText}
-                  />
-                ) : (
-                  content.icon
-                )}
+                  <a
+                    target="_blank"
+                    className="menu-content-mobile-item"
+                    onClick={handleMenuContentMobileOpen}
+                  >
+                    Credential Issuers
+                  </a>
+                </Link>
               </div>
-            </NavBarOption>
-          </Link>
-        ))}
-      </NavBarMobile>
-      <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
-        <div className="options">
-          <div className="option-logo">
-            <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
-          </div>
+            </MenuContentMobile>
+          </>
+        )}
+        {children}
+        <NavBarMobile>
           {MENU_OPTIONS.map((content, index) => (
             <Link href={content.href} key={index}>
-              <NavBarOption
-                isActive={asPath.includes(content.href)}
-                onMouseEnter={() =>
-                  handleNavBarDesktopOptionHovered(content.title)
-                }
-                onMouseLeave={() => handleNavBarDesktopOptionHovered(undefined)}
-              >
+              <NavBarOption isActive={asPath.includes(content.href)}>
                 <div className="option-icon">
                   {content.badgeText ? (
                     <Badge
@@ -220,47 +222,110 @@ export const Layout: FunctionComponent<IProps> = props => {
                         asPath.includes(content.href) ? 'cyan' : 'gray'
                       }
                       text={content.badgeText}
-                      onClick={() => {}}
                     />
                   ) : (
                     content.icon
                   )}
                 </div>
-                {navBarDesktopOptionHovered === content.title && (
-                  <p className="option-hover">{content.title}</p>
-                )}
               </NavBarOption>
             </Link>
           ))}
-        </div>
-        {auth?.isAuthenticated && (
+        </NavBarMobile>
+        <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
+          <div className="options">
+            <div className="option-logo">
+              <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
+            </div>
+            {MENU_OPTIONS.map((content, index) => (
+              <Link href={content.href} key={index}>
+                <NavBarOption
+                  isActive={asPath.includes(content.href)}
+                  onMouseEnter={() =>
+                    handleNavBarDesktopOptionHovered(content.title)
+                  }
+                  onMouseLeave={() =>
+                    handleNavBarDesktopOptionHovered(undefined)
+                  }
+                >
+                  <div className="option-icon">
+                    {content.badgeText ? (
+                      <Badge
+                        icon={content.icon}
+                        iconColor={
+                          asPath.includes(content.href) ? 'cyan' : 'gray'
+                        }
+                        text={content.badgeText}
+                        onClick={() => {}}
+                      />
+                    ) : (
+                      content.icon
+                    )}
+                  </div>
+                  {navBarDesktopOptionHovered === content.title && (
+                    <p className="option-hover">{content.title}</p>
+                  )}
+                </NavBarOption>
+              </Link>
+            ))}
+          </div>
           <div className="option-profile-container">
-            <div
-              className="option-profile-image"
-              onClick={() => handleFilterOpen('desktop')}
-              ref={parentDropdownDesktopRef}
-            />
-            {isFilterOpenInView === 'desktop' && (
-              <div className="option-profile-dropdown">
-                <InlineDropdown
-                  items={[
-                    {
-                      title: 'My profile',
-                      onClick: handlePushProfile
-                    },
-                    {
-                      title: 'Log out',
-                      onClick: handleLogout
-                    }
-                  ]}
-                  parentRef={parentDropdownDesktopRef}
-                  onClose={() => handleFilterOpen(undefined)}
-                />
+            <NavBarOption
+              isActive={false}
+              onClick={handleHelp}
+              onMouseEnter={() => handleNavBarDesktopOptionHovered('help')}
+              onMouseLeave={() => handleNavBarDesktopOptionHovered(undefined)}
+            >
+              <div className="option-icon">
+                <Help />
               </div>
+              {navBarDesktopOptionHovered === 'help' && (
+                <p className="option-hover">help</p>
+              )}
+            </NavBarOption>
+            {auth?.isAuthenticated ? (
+              <div className="option-profile">
+                <div
+                  className="option-profile-image"
+                  onClick={() => handleFilterOpen('desktop')}
+                  ref={parentDropdownDesktopRef}
+                />
+                {isFilterOpenInView === 'desktop' && (
+                  <div className="option-profile-dropdown">
+                    <InlineDropdown
+                      items={[
+                        {
+                          title: 'My profile',
+                          onClick: handlePushProfile
+                        },
+                        {
+                          title: 'Log out',
+                          onClick: handleLogout
+                        }
+                      ]}
+                      parentRef={parentDropdownDesktopRef}
+                      onClose={() => handleFilterOpen(undefined)}
+                    />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <NavBarOption
+                isActive={false}
+                onClick={handleOpenConnectWallet}
+                onMouseEnter={() => handleNavBarDesktopOptionHovered('wallet')}
+                onMouseLeave={() => handleNavBarDesktopOptionHovered(undefined)}
+              >
+                <div className="option-icon">
+                  <AccountBalanceWallet />
+                </div>
+                {navBarDesktopOptionHovered === 'wallet' && (
+                  <p className="option-hover">Connect wallet</p>
+                )}
+              </NavBarOption>
             )}
           </div>
-        )}
-      </NavBarDesktop>
-    </Wrapper>
+        </NavBarDesktop>
+      </Wrapper>
+    </>
   );
 };

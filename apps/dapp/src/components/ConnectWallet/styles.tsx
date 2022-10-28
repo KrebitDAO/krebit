@@ -26,13 +26,13 @@ export const Wrapper = styled.div<WalletProps>`
 
     .wallet {
       background-color: ${theme.colors.bunting};
-      width: 313px;
+      width: 90%;
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
       padding: 36px 28px;
 
       @media (min-width: ${theme.screens.lg}) {
-        width: 426px;
+        width: 450px;
       }
 
       .wallet-header {
@@ -74,9 +74,30 @@ export const Wrapper = styled.div<WalletProps>`
 
       .wallet-remember-session {
         display: flex;
-        justify-content: center;
         margin-top: 26px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          justify-content: center;
+        }
+      }
+
+      .wallet-terms {
+        margin-top: 10px;
         margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+
+        .wallet-terms-text {
+          margin: 0;
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white};
+
+          .wallet-terms-text-link {
+            text-decoration: underline;
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.white};
+          }
+        }
       }
 
       .wallet-read {
@@ -144,6 +165,10 @@ export const WalletButton = styled.button<WalletButtonProps>`
     align-items: center;
     grid-gap: 20px;
     cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
 
     @media (min-width: ${theme.screens.lg}) {
       font-size: ${theme.fonts.xl};

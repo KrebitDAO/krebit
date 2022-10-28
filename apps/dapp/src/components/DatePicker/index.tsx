@@ -37,12 +37,10 @@ export const DatePicker = (props: IProps) => {
   const handleChange = (value: number | Date) => {
     if (!value) return;
 
-    const date = format(value, inputFormat);
-
     onChange({
       target: {
         name,
-        value: date
+        value
       }
     } as any);
   };

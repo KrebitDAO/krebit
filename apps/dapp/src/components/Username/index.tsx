@@ -11,7 +11,6 @@ import { EditProfile } from './EditProfile';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
-import { ConnectWallet } from 'components/ConnectWallet';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share } from 'components/Icons';
 import { isValid, normalizeSchema, formatUrlImage } from 'utils';
@@ -88,7 +87,7 @@ export const Username = () => {
     auth,
     storage,
     walletInformation: { publicPassport, passport, issuer, orbis },
-    walletModal: { openConnectWallet, handleOpenConnectWallet },
+    walletModal: { handleOpenConnectWallet },
     profileInformation: { handleSetProfile }
   } = useContext(GeneralContext);
   const windowSize = useWindowSize();
@@ -188,10 +187,6 @@ export const Username = () => {
 
   return (
     <>
-      <ConnectWallet
-        isOpen={openConnectWallet}
-        onClose={handleOpenConnectWallet}
-      />
       {isEditProfileOpen && (
         <EditProfile
           profile={profile}

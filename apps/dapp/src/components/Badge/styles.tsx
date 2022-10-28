@@ -38,6 +38,7 @@ export const Wrapper = styled.div<IProps>`
       height: 100%;
       fill: ${theme.colors[iconColor]};
 
+      & > path,
       & > g > path {
         fill: ${theme.colors[iconColor]};
       }

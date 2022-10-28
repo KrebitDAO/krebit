@@ -33,6 +33,10 @@ export const MenuMobile = styled.div<IMenuProps>`
     }
 
     .profile-menu {
+      position: relative;
+      display: flex;
+      grid-gap: 20px;
+
       .profile-menu-image {
         border: 2px solid ${theme.colors.white};
         border-radius: 9999px;
@@ -46,9 +50,20 @@ export const MenuMobile = styled.div<IMenuProps>`
 
       .profile-menu-dropdown {
         position: absolute;
-        top: 45px;
-        right: 25px;
+        top: 38px;
+        right: 0px;
         z-index: 10;
+      }
+
+      .profile-menu-icon {
+        width: 30px;
+        height: 30px;
+
+        & > svg {
+          width: 30px;
+          height: 30px;
+          fill: ${theme.colors.white};
+        }
       }
     }
 
@@ -144,27 +159,33 @@ export const NavBarDesktop = styled.div<IMenuProps>`
       .option-profile-container {
         position: absolute;
         bottom: 43px;
-        right: 0;
-        left: 0;
+        display: grid;
+        grid-gap: 46px;
+        grid-template-rows: repeat(2, auto);
+        justify-items: center;
+        width: 40px;
 
-        .option-profile-image {
-          margin: 0 auto;
-          cursor: pointer;
-          border: 2px solid ${theme.colors.white};
-          border-radius: 9999px;
-          width: 34px;
-          height: 34px;
-          background-image: url('${profilePicture}');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: cover;
-        }
+        .option-profile {
+          position: relative;
 
-        .option-profile-dropdown {
-          position: absolute;
-          top: -68px;
-          left: 68px;
-          z-index: 10;
+          .option-profile-image {
+            cursor: pointer;
+            border: 2px solid ${theme.colors.white};
+            border-radius: 9999px;
+            width: 34px;
+            height: 34px;
+            background-image: url('${profilePicture}');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+
+          .option-profile-dropdown {
+            position: absolute;
+            top: -68px;
+            left: 46px;
+            z-index: 10;
+          }
         }
       }
     }
@@ -211,6 +232,9 @@ export const NavBarOption = styled.div<INavBarOptionProps>`
         font-family: 'HelveticaNowDisplay-Medium';
         font-size: ${theme.fonts.xs};
         box-shadow: ${theme.shadows.small};
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
   `}
