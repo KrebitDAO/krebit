@@ -219,7 +219,7 @@ export const Username = () => {
                           {profile.name}
                         </span>{' '}
                         <span className="profile-info-token">
-                          KRB {profile.reputation}
+                          $KRB {profile.reputation}
                         </span>
                       </div>
                       <div className="profile-info-domains">

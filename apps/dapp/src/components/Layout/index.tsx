@@ -160,6 +160,15 @@ export const Layout: FunctionComponent<IProps> = props => {
             `}</style>
             <MenuContentMobile>
               <div className="menu-content-mobile">
+                <Link href="/" rel="noopener noreferrer">
+                  <a
+                    target=""
+                    className="menu-content-mobile-item"
+                    onClick={handleMenuContentMobileOpen}
+                  >
+                    Home
+                  </a>
+                </Link>
                 <Link
                   href="https://discord.gg/UD5YhCU2"
                   rel="noopener noreferrer"
@@ -234,7 +243,11 @@ export const Layout: FunctionComponent<IProps> = props => {
         <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
           <div className="options">
             <div className="option-logo">
-              <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
+              <Link href="/" rel="noopener noreferrer">
+                <a target="">
+                  <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
+                </a>
+              </Link>
             </div>
             {MENU_OPTIONS.map((content, index) => (
               <Link href={content.href} key={index}>
