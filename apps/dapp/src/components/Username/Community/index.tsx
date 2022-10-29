@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -8,6 +9,13 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
+
+const DynamicShareWithModal = dynamic(
+  () => import('../../ShareWithModal').then(c => c.ShareWithModal),
+  {
+    ssr: false
+  }
+);
 
 // types
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
@@ -44,8 +52,10 @@ export const Community = (props: IProps) => {
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
+  const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
+  const isCurrentUserAuthenticated = passport?.did;
 
   useEffect(() => {
     if (!window) return;
@@ -106,6 +116,17 @@ export const Community = (props: IProps) => {
     });
   };
 
+  const handleIsShareWithModalOpen = () => {
+    if (!isAuthenticated) return;
+
+    setIsShareWithModalOpen(prevState => !prevState);
+    setCurrentCommunitySelected({
+      credential: undefined,
+      stamps: [],
+      isMinted: false
+    });
+  };
+
   const handleIsRemoveModalOpen = () => {
     if (!isAuthenticated) return;
 
@@ -116,6 +137,11 @@ export const Community = (props: IProps) => {
   const handleCurrentCommunity = (type: string, values: ICredential) => {
     setCurrentCommunitySelected(values);
     setCurrentActionType(type);
+
+    if (type === 'share_with') {
+      if (!isAuthenticated) return;
+      setIsShareWithModalOpen(true);
+    }
 
     if (type === 'add_stamp') {
       if (!isAuthenticated) return;
@@ -128,6 +154,7 @@ export const Community = (props: IProps) => {
     }
 
     if (type === 'decrypt' || type === 'encrypt') {
+      if (!isCurrentUserAuthenticated) return;
       handleClaimValue(type, values.credential);
     }
 
@@ -253,6 +280,13 @@ export const Community = (props: IProps) => {
           onClose={handleIsVerifyCredentialOpen}
         />
       ) : null}
+      {isShareWithModalOpen ? (
+        <DynamicShareWithModal
+          currentPersonhood={currentCommunitySelected}
+          issuer={issuer}
+          onClose={handleIsShareWithModalOpen}
+        />
+      ) : null}
       {isRemoveModalOpen ? (
         <QuestionModal
           text="This action can't be undone."
@@ -356,6 +390,14 @@ export const Community = (props: IProps) => {
                             )
                         }
                       : undefined,
+                    isAuthenticated &&
+                    community.credential?.visualInformation.isEncryptedByDefault
+                      ? {
+                          title: 'Share with',
+                          onClick: () =>
+                            handleCurrentCommunity('share_with', community)
+                        }
+                      : undefined,
                     isAuthenticated && community.stamps?.length === 0
                       ? {
                           title: 'Add stamp',
@@ -363,6 +405,7 @@ export const Community = (props: IProps) => {
                             handleCurrentCommunity('add_stamp', community)
                         }
                       : undefined,
+                    isCurrentUserAuthenticated &&
                     community.credential?.visualInformation.isEncryptedByDefault
                       ? community.credential?.value?.encryptedString
                         ? {

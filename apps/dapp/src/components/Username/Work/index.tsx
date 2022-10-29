@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -8,6 +9,13 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
+
+const DynamicShareWithModal = dynamic(
+  () => import('../../ShareWithModal').then(c => c.ShareWithModal),
+  {
+    ssr: false
+  }
+);
 
 // types
 import { IProfile, ICredential } from 'utils/normalizeSchema';
@@ -43,8 +51,10 @@ export const Work = (props: IProps) => {
   const [currentActionType, setCurrentActionType] = useState<string>();
   const [isDropdownOpen, setIsDropdownOpen] = useState(undefined);
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
+  const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
+  const isCurrentUserAuthenticated = passport?.did;
 
   useEffect(() => {
     if (!window) return;
@@ -105,6 +115,17 @@ export const Work = (props: IProps) => {
     });
   };
 
+  const handleIsShareWithModalOpen = () => {
+    if (!isAuthenticated) return;
+
+    setIsShareWithModalOpen(prevState => !prevState);
+    setCurrentWorkSelected({
+      credential: undefined,
+      stamps: [],
+      isMinted: false
+    });
+  };
+
   const handleIsRemoveModalOpen = () => {
     if (!isAuthenticated) return;
 
@@ -115,6 +136,11 @@ export const Work = (props: IProps) => {
   const handleCurrentWork = (type: string, values: ICredential) => {
     setCurrentWorkSelected(values);
     setCurrentActionType(type);
+
+    if (type === 'share_with') {
+      if (!isAuthenticated) return;
+      setIsShareWithModalOpen(true);
+    }
 
     if (type === 'add_stamp') {
       if (!isAuthenticated) return;
@@ -127,6 +153,7 @@ export const Work = (props: IProps) => {
     }
 
     if (type === 'decrypt' || type === 'encrypt') {
+      if (!isCurrentUserAuthenticated) return;
       handleClaimValue(type, values.credential);
     }
 
@@ -251,6 +278,13 @@ export const Work = (props: IProps) => {
           onClose={handleIsVerifyCredentialOpen}
         />
       ) : null}
+      {isShareWithModalOpen ? (
+        <DynamicShareWithModal
+          currentPersonhood={currentWorkSelected}
+          issuer={issuer}
+          onClose={handleIsShareWithModalOpen}
+        />
+      ) : null}
       {isRemoveModalOpen ? (
         <QuestionModal
           text="This action can't be undone."
@@ -354,12 +388,20 @@ export const Work = (props: IProps) => {
                             )
                         }
                       : undefined,
+                    isAuthenticated &&
+                    work.credential?.visualInformation.isEncryptedByDefault
+                      ? {
+                          title: 'Share with',
+                          onClick: () => handleCurrentWork('share_with', work)
+                        }
+                      : undefined,
                     isAuthenticated && work.stamps?.length === 0
                       ? {
                           title: 'Add stamp',
                           onClick: () => handleCurrentWork('add_stamp', work)
                         }
                       : undefined,
+                    isCurrentUserAuthenticated &&
                     work.credential?.visualInformation.isEncryptedByDefault
                       ? work.credential?.value?.encryptedString
                         ? {

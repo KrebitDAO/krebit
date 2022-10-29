@@ -55,6 +55,7 @@ export const Personhood = (props: IProps) => {
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
+  const isCurrentUserAuthenticated = passport?.did;
 
   useEffect(() => {
     if (!window) return;
@@ -158,6 +159,7 @@ export const Personhood = (props: IProps) => {
     }
 
     if (type === 'decrypt' || type === 'encrypt') {
+      if (!isCurrentUserAuthenticated) return;
       handleClaimValue(type, values.credential);
     }
 
@@ -409,7 +411,6 @@ export const Personhood = (props: IProps) => {
                         }
                       : undefined,
                     isAuthenticated &&
-                    process.env.NEXT_PUBLIC_NETWORK === 'mumbai' &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? {
@@ -425,6 +426,7 @@ export const Personhood = (props: IProps) => {
                             handleCurrentPersonhood('add_stamp', personhood)
                         }
                       : undefined,
+                    isCurrentUserAuthenticated &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? personhood.credential?.value?.encryptedString
