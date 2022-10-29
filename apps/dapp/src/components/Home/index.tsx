@@ -539,7 +539,8 @@ export const Home = () => {
             </div>
             <p className="footer-content-left-text">
               Your Reputation Passport for Better Job Matching.
-              <br />© {new Date().getFullYear()} Krebit, All rights reserved.
+              <br />© {new Date().getFullYear()} Krebit ID LLC, All rights
+              reserved.
             </p>
           </div>
           <div className="footer-content-right">
