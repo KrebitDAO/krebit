@@ -22,7 +22,8 @@ import {
   Token,
   Code,
   Community,
-  Deal
+  Deal,
+  Approval
 } from 'components/Icons';
 import { NavBar } from 'components/NavBar';
 import { constants } from 'utils';
@@ -118,6 +119,13 @@ export const Home = () => {
             </h2>
           </Fade>
           <div className="actions-cards">
+            <div className="actions-card" onClick={handleOpenConnectWallet}>
+              <div className="actions-card-content">
+                <Approval />
+              </div>
+              <p className="actions-card-title">Get Verified</p>
+              <p className="actions-card-description">Import your Reputation</p>
+            </div>
             <div
               className="actions-card"
               onClick={() => handleRoute('/explore')}
