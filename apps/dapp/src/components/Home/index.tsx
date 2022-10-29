@@ -418,42 +418,40 @@ export const Home = () => {
           <Fade bottom>
             <h2 className="people-title">Passing the vibe check!</h2>
           </Fade>
-          <Fade bottom>
-            <div className="people-tweets">
-              {constants.DEFAULT_TWEET_PEOPLE.map((tweet, index) => (
-                <PeopleTweet
-                  image={tweet.image}
-                  onClick={() => handleRoute(tweet.url, true)}
-                  key={index}
-                >
-                  <div className="people-tweet-header">
-                    <div className="people-tweet-header-image"></div>
-                    <div className="people-tweet-header-texts">
-                      <p className="people-tweet-header-texts-name">
-                        {tweet.name}
-                      </p>
-                      <p className="people-tweet-header-texts-username">
-                        {tweet.username}
-                      </p>
-                    </div>
-                    <div className="people-tweet-header-icon">
-                      <Twitter />
-                    </div>
+          <div className="people-tweets">
+            {constants.DEFAULT_TWEET_PEOPLE.map((tweet, index) => (
+              <PeopleTweet
+                image={tweet.image}
+                onClick={() => handleRoute(tweet.url, true)}
+                key={index}
+              >
+                <div className="people-tweet-header">
+                  <div className="people-tweet-header-image"></div>
+                  <div className="people-tweet-header-texts">
+                    <p className="people-tweet-header-texts-name">
+                      {tweet.name}
+                    </p>
+                    <p className="people-tweet-header-texts-username">
+                      {tweet.username}
+                    </p>
                   </div>
-                  <div className="people-tweet-description">
-                    {tweet.description.map((desc, index) => (
-                      <React.Fragment key={index}>
-                        {desc}
-                        <br />
-                        <br />
-                      </React.Fragment>
-                    ))}
-                    {tweet.imageUrl && <img src={tweet.imageUrl} />}
+                  <div className="people-tweet-header-icon">
+                    <Twitter />
                   </div>
-                </PeopleTweet>
-              ))}
-            </div>
-          </Fade>
+                </div>
+                <div className="people-tweet-description">
+                  {tweet.description.map((desc, index) => (
+                    <React.Fragment key={index}>
+                      {desc}
+                      <br />
+                      <br />
+                    </React.Fragment>
+                  ))}
+                  {tweet.imageUrl && <img src={tweet.imageUrl} />}
+                </div>
+              </PeopleTweet>
+            ))}
+          </div>
         </div>
         <Fade bottom>
           <div id="web3" className="private private-different">
@@ -520,12 +518,10 @@ export const Home = () => {
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Reserve your Reputation Passport"
+              text="Try it now"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
-              onClick={() => {
-                window.open('https://d3x2s82dzfa.typeform.com/to/O9opkxQT');
-              }}
+              onClick={handleOpenConnectWallet}
             />
           </div>
         </div>
