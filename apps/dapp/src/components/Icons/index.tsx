@@ -37,6 +37,9 @@ import { ChromeReaderMode } from './ChromeReaderMode';
 import { Lock } from './Lock';
 import { AccountBalanceWallet } from './AccountBalanceWallet';
 import { Help } from './Help';
+import { Code } from './Code';
+import { Community } from './Community';
+import { Deal } from './Deal';
 
 export {
   Close,
@@ -77,5 +80,8 @@ export {
   ChromeReaderMode,
   Lock,
   AccountBalanceWallet,
-  Help
+  Help,
+  Code,
+  Community,
+  Deal
 };

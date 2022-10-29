@@ -13,7 +13,17 @@ import {
   PeopleTweet
 } from './styles';
 import { Button } from 'components/Button';
-import { Arrow, Explore, Krebit, Logo, Twitter } from 'components/Icons';
+import {
+  Arrow,
+  Explore,
+  Krebit,
+  Logo,
+  Twitter,
+  Token,
+  Code,
+  Community,
+  Deal
+} from 'components/Icons';
 import { NavBar } from 'components/NavBar';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { constants } from 'utils';
@@ -109,7 +119,7 @@ export const Home = () => {
         <div className="actions">
           <Fade bottom>
             <h2 className="actions-title">
-              These are the actions you can do with Krebit
+              Join the Web3 Professional Movement!
             </h2>
           </Fade>
           <div className="actions-cards">
@@ -121,47 +131,69 @@ export const Home = () => {
                 <Explore />
               </div>
               <p className="actions-card-title">Explore</p>
-              <p className="actions-card-description">texting</p>
+              <p className="actions-card-description">
+                Krebited (pre-vetted) profiles
+              </p>
             </div>
             <div
               className="actions-card"
-              onClick={() => handleRoute('/explore')}
+              onClick={() => handleRoute('https://discord.gg/UD5YhCU2', true)}
             >
               <div className="actions-card-content">
-                <Explore />
+                <Community />
               </div>
-              <p className="actions-card-title">Explore</p>
-              <p className="actions-card-description">texting</p>
+              <p className="actions-card-title">Join</p>
+              <p className="actions-card-description">
+                The Krebiters Community
+              </p>
             </div>
             <div
               className="actions-card"
-              onClick={() => handleRoute('/explore')}
+              onClick={() =>
+                handleRoute(
+                  'https://d3x2s82dzfa.typeform.com/to/AvZMdnRp',
+                  true
+                )
+              }
             >
               <div className="actions-card-content">
-                <Explore />
+                <Token />
               </div>
-              <p className="actions-card-title">Explore</p>
-              <p className="actions-card-description">texting</p>
+              <p className="actions-card-title">Issue</p>
+              <p className="actions-card-description">
+                Encripted Verifiable Credentials
+              </p>
             </div>
+
             <div
               className="actions-card"
-              onClick={() => handleRoute('/explore')}
+              onClick={() =>
+                handleRoute(
+                  'https://d3x2s82dzfa.typeform.com/to/B63Gz2v0',
+                  true
+                )
+              }
             >
               <div className="actions-card-content">
-                <Explore />
+                <Deal />
               </div>
-              <p className="actions-card-title">Explore</p>
-              <p className="actions-card-description">texting</p>
+              <p className="actions-card-title">Deal</p>
+              <p className="actions-card-description">
+                Offer/Hire professional services
+              </p>
             </div>
+
             <div
               className="actions-card"
-              onClick={() => handleRoute('/explore')}
+              onClick={() => handleRoute('https://docs.krebit.id/', true)}
             >
               <div className="actions-card-content">
-                <Explore />
+                <Code />
               </div>
-              <p className="actions-card-title">Explore</p>
-              <p className="actions-card-description">texting</p>
+              <p className="actions-card-title">Build</p>
+              <p className="actions-card-description">
+                Portable reputation in your dApp
+              </p>
             </div>
           </div>
         </div>
@@ -259,7 +291,7 @@ export const Home = () => {
                 <div className="decentralized-users-list-button">
                   <Button
                     onClick={() => handleRoute('/explore')}
-                    text="Explorer more"
+                    text="Explore Krebited Profiles"
                   />
                 </div>
               </div>
@@ -328,7 +360,9 @@ export const Home = () => {
         </Fade>
         <Fade bottom>
           <div className="brands">
-            <p className="brands-title">Powered by the best Web3 stack</p>
+            <p className="brands-title">
+              Integrated with the best Web3 partners
+            </p>
             <div className="brands-images">
               <div
                 className="brand-image"
@@ -366,6 +400,13 @@ export const Home = () => {
               >
                 <BrandImage image="/imgs/logos/spect.svg" />
                 <p className="brand-image-text">Spect</p>
+              </div>
+              <div
+                className="brand-image"
+                onClick={() => handleRoute('https://guild.xyz', true)}
+              >
+                <BrandImage image="/imgs/logos/guild.svg" />
+                <p className="brand-image-text">Guild</p>
               </div>
             </div>
           </div>
