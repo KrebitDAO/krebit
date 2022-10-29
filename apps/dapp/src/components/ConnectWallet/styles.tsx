@@ -39,12 +39,12 @@ export const Wrapper = styled.div<WalletProps>`
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 48px;
 
         .wallet-header-title {
           font-size: ${theme.fonts.lg};
           color: ${theme.colors.white};
           margin: 0;
-          margin-bottom: 48px;
 
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts.xl};

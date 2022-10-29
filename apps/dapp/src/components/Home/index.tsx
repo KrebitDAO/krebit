@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import Link from 'next/link';
@@ -25,7 +25,6 @@ import {
   Deal
 } from 'components/Icons';
 import { NavBar } from 'components/NavBar';
-import { ConnectWallet } from 'components/ConnectWallet';
 import { constants } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
@@ -34,7 +33,7 @@ export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(0);
   const {
-    walletModal: { handleOpenConnectWallet, openConnectWallet }
+    walletModal: { handleOpenConnectWallet }
   } = useContext(GeneralContext);
   const router = useRouter();
   const windowSize = useWindowSize();
@@ -69,10 +68,6 @@ export const Home = () => {
 
   return (
     <>
-      <ConnectWallet
-        isOpen={openConnectWallet}
-        onClose={handleOpenConnectWallet}
-      />
       <NavBar />
       <Wrapper
         currentDecentralizedCardImage={
@@ -439,19 +434,13 @@ export const Home = () => {
                   </div>
                   <div className="people-tweet-description">
                     {tweet.description.map((desc, index) => (
-                      <>
+                      <React.Fragment key={index}>
                         {desc}
                         <br />
                         <br />
-                      </>
+                      </React.Fragment>
                     ))}
-                    {tweet.imageUrl && (
-                      <img
-                        src={tweet.imageUrl}
-                        width={'100%'}
-                        height={'100%'}
-                      />
-                    )}
+                    {tweet.imageUrl && <img src={tweet.imageUrl} />}
                   </div>
                 </PeopleTweet>
               ))}

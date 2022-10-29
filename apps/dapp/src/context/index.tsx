@@ -121,6 +121,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   }, []);
 
   const handleOpenConnectWallet = () => {
+    if (passport?.did) {
+      push(`/${passport.did}`);
+      return;
+    }
+
     setOpenConnectWallet(prevState => !prevState);
   };
 
