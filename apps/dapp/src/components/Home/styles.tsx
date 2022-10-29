@@ -1,20 +1,24 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-interface Props {
+interface IProps {
   currentDecentralizedCardImage: string;
   isHigher: boolean;
 }
 
-interface DecentralizedUsersItemProps {
+interface IDecentralizedUsersItemProps {
   currentUserImage: string;
 }
 
-interface PrivateOptionQuestionProps {
+interface IPrivateOptionQuestionProps {
   isExtended: boolean;
 }
 
-export const Wrapper = styled.div<Props>`
+interface IImage {
+  image: string;
+}
+
+export const Wrapper = styled.div<IProps>`
   ${({ theme, currentDecentralizedCardImage, isHigher }) => css`
     max-width: 1474px;
     margin: 0 auto;
@@ -53,7 +57,7 @@ export const Wrapper = styled.div<Props>`
           position: relative;
           z-index: 10;
           line-height: 1.1;
-          margin-bottom: 10px; 
+          margin-bottom: 10px;
 
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts['7xl']};
@@ -166,6 +170,83 @@ export const Wrapper = styled.div<Props>`
           width: 20px;
           height: 20px;
           fill: ${isHigher ? theme.colors.white : theme.colors.bunting};
+        }
+      }
+    }
+
+    .actions {
+      margin: 75px 20px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        margin: 150px 0;
+      }
+
+      .actions-title {
+        font-family: 'HelveticaNowDisplay-Bold';
+        font-size: ${theme.fonts.xl};
+        color: ${theme.colors.white};
+        margin: 0;
+        margin-bottom: 39px;
+        text-align: center;
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts['3xl']};
+          margin-bottom: 47px;
+        }
+      }
+
+      .actions-cards {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        grid-gap: 39px 18px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          grid-gap: 0 88px;
+        }
+
+        .actions-card {
+          width: 80px;
+          cursor: pointer;
+
+          .actions-card-content {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid ${theme.colors.white}80;
+            border-radius: 20px;
+            background-color: ${theme.colors.brightGray};
+
+            & > svg {
+              width: 50px;
+              height: 50px;
+              fill: ${theme.colors.cyan};
+
+              & > g > path {
+                fill: ${theme.colors.cyan};
+              }
+            }
+          }
+
+          .actions-card-title {
+            margin: 0;
+            margin-top: 15px;
+            font-family: 'HelveticaNowDisplay-Medium';
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.white};
+            text-align: center;
+          }
+
+          .actions-card-description {
+            margin: 0;
+            margin-top: 5px;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.white}80;
+            text-align: center;
+          }
         }
       }
     }
@@ -307,6 +388,14 @@ export const Wrapper = styled.div<Props>`
                 width: 20px;
                 height: 20px;
                 margin-right: 5px;
+
+                & > .back {
+                  fill: ${theme.colors.blueRibbon};
+                }
+
+                & > .front {
+                  fill: ${theme.colors.cyan};
+                }
               }
 
               .decentralized-users-card-box-title {
@@ -407,6 +496,18 @@ export const Wrapper = styled.div<Props>`
 
           .is-active {
             border: 1px solid ${theme.colors.blueRibbon};
+          }
+
+          .decentralized-users-list-button {
+            margin: 0 auto;
+            margin-top: 20px;
+            width: 200px;
+            height: 58px;
+
+            @media (min-width: ${theme.screens.lg}) {
+              margin: 0;
+              margin-top: 20px;
+            }
           }
         }
       }
@@ -533,84 +634,148 @@ export const Wrapper = styled.div<Props>`
         grid-gap: 39px 18px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-gap: 0 88px;
+          grid-gap: 39px 70px;
         }
 
-        .brands-images-1 {
-          background-image: url('/imgs/logos/openzepellin-logo.png');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
-          width: 163px;
-          height: 19px;
+        .brand-image {
+          cursor: pointer;
 
-          @media (min-width: ${theme.screens.lg}) {
-            width: 249px;
-            height: 29px;
+          .brand-image-text {
+            margin: 0;
+            margin-top: 15px;
+            font-family: 'HelveticaNowDisplay-Medium';
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.white};
+            text-align: center;
           }
         }
+      }
+    }
 
-        .brands-images-2 {
-          background-image: url('/imgs/logos/ceramic.png');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
-          width: 115px;
-          height: 38px;
+    .people {
+      padding: 0 20px;
+      margin-bottom: 75px;
 
-          @media (min-width: ${theme.screens.lg}) {
-            width: 175px;
-            height: 56px;
-          }
+      @media (min-width: ${theme.screens.lg}) {
+        padding: 0;
+        margin-bottom: 150px;
+      }
+
+      .people-title {
+        font-family: 'HelveticaNowDisplay-Bold';
+        font-size: ${theme.fonts['4xl']};
+        color: ${theme.colors.white};
+        margin-bottom: 75px;
+        max-width: 904px;
+        text-align: center;
+        line-height: 1.1;
+
+        @media (min-width: ${theme.screens.lg}) {
+          margin: 0 auto;
+          margin-bottom: 100px;
+          font-size: ${theme.fonts['6xl']};
         }
+      }
 
-        .brands-images-3 {
-          background-image: url('/imgs/logos/ethereum-logo.png');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
-          width: 87px;
-          height: 34px;
+      .people-tweets {
+        padding: 0 20px;
+        display: grid;
+        grid-gap: 39px 18px;
 
-          @media (min-width: ${theme.screens.lg}) {
-            width: 141px;
-            height: 56px;
-          }
-        }
-
-        .brands-images-4 {
-          background-image: url('/imgs/logos/fleek-logo.png');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
-          width: 82px;
-          height: 34px;
-
-          @media (min-width: ${theme.screens.lg}) {
-            width: 128px;
-            height: 56px;
-          }
-        }
-
-        .brands-images-5 {
-          background-image: url('/imgs/logos/metamask-logo.png');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
-          width: 105px;
-          height: 34px;
-
-          @media (min-width: ${theme.screens.lg}) {
-            width: 187px;
-            height: 61px;
-          }
+        @media (min-width: ${theme.screens.lg}) {
+          grid-template-columns: repeat(3, auto);
         }
       }
     }
   `}
 `;
 
-export const DecentralizedUsersItem = styled.div<DecentralizedUsersItemProps>`
+export const BrandImage = styled.div<IImage>`
+  ${({ theme, image }) => css`
+    background-image: url('${image}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 115px;
+    height: 38px;
+    margin: 0 auto;
+
+    @media (min-width: ${theme.screens.lg}) {
+      width: 175px;
+      height: 56px;
+    }
+  `}
+`;
+
+export const PeopleTweet = styled.div<IImage>`
+  ${({ theme, image }) => css`
+    background-color: ${theme.colors.ebonyClay};
+    border-radius: 8px;
+    padding: 32px;
+    box-shadow: ${theme.shadows.small};
+    cursor: pointer;
+
+    .people-tweet-header {
+      display: grid;
+      grid-template-columns: 48px auto 24px;
+
+      .people-tweet-header-image {
+        background-image: url('${image}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        border-radius: 9999px;
+        width: 48px;
+        height: 48px;
+      }
+
+      .people-tweet-header-texts {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+
+        .people-tweet-header-texts-name {
+          margin: 0;
+          font-family: 'HelveticaNowDisplay-Medium';
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white};
+        }
+
+        .people-tweet-header-texts-username {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white}80;
+        }
+      }
+
+      .people-tweet-header-icon {
+        width: 24px;
+        height: 24px;
+
+        & > svg {
+          width: 24px;
+          height: 24px;
+          fill: ${theme.colors.white};
+        }
+      }
+    }
+
+    .people-tweet-description {
+      margin: 0;
+      margin-top: 10px;
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.white};
+
+      & > img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+      }
+    }
+  `}
+`;
+
+export const DecentralizedUsersItem = styled.div<IDecentralizedUsersItemProps>`
   ${({ theme, currentUserImage }) => css`
     width: 100%;
     border-radius: 5px;
@@ -657,7 +822,7 @@ export const DecentralizedUsersItem = styled.div<DecentralizedUsersItemProps>`
         height: 20px;
 
         & > .front {
-          fill: ${theme.colors.wildSand};
+          fill: ${theme.colors.blueCharcoal};
         }
       }
     }
@@ -674,7 +839,7 @@ export const DecentralizedUsersItem = styled.div<DecentralizedUsersItemProps>`
   `}
 `;
 
-export const PrivateOptionQuestion = styled.div<PrivateOptionQuestionProps>`
+export const PrivateOptionQuestion = styled.div<IPrivateOptionQuestionProps>`
   ${({ theme, isExtended }) => css`
     height: ${isExtended ? 'auto' : '66px'};
     border-bottom: 1px solid ${theme.colors.white}33;
@@ -817,15 +982,18 @@ export const Footer = styled.footer`
           margin: 0;
           font-size: ${theme.fonts.sm};
           color: ${theme.colors.white};
+          text-align: center;
 
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts.base};
+            text-align: initial;
           }
         }
       }
 
       .footer-content-right {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
         grid-gap: 36px;
 

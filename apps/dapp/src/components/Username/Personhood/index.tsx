@@ -55,6 +55,7 @@ export const Personhood = (props: IProps) => {
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
+  const isCurrentUserAuthenticated = passport?.did;
 
   useEffect(() => {
     if (!window) return;
@@ -158,6 +159,7 @@ export const Personhood = (props: IProps) => {
     }
 
     if (type === 'decrypt' || type === 'encrypt') {
+      if (!isCurrentUserAuthenticated) return;
       handleClaimValue(type, values.credential);
     }
 
@@ -236,6 +238,11 @@ export const Personhood = (props: IProps) => {
 
     let formattedValue = '';
 
+    if (value?.date) {
+      const [yyyy, mm, dd] = value?.date.split(/-/g);
+      formattedValue = `${mm}/${dd}/${yyyy}`;
+    }
+
     if (value?.protocol === 'Email') {
       formattedValue = formattedValue
         ?.concat(' / ')
@@ -266,6 +273,15 @@ export const Personhood = (props: IProps) => {
     }
 
     return formattedValue;
+  };
+
+  const formatCredentialType = (value: any) => {
+    return value
+      .replace('Github', ' Github')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace('#', '# ')
+      .replace('++', '++ ')
+      .replace('GT', '> ');
   };
 
   const handleCheckCredentialsURLs = (
@@ -308,7 +324,7 @@ export const Personhood = (props: IProps) => {
         <div className="person-header">
           <div className="person-header-text-container">
             <p className="person-header-text">Personhood Credentials</p>
-            {currentFilterOption === 'overview' && personhoods?.length !== 0 ? (
+            {currentFilterOption === 'overview' ? (
               <div
                 className="person-header-text-open-new"
                 onClick={() => onFilterOption('Personhood')}
@@ -355,7 +371,9 @@ export const Personhood = (props: IProps) => {
                 type="simple"
                 id={`personhood_${index}`}
                 icon={personhood.credential?.visualInformation?.icon}
-                title={personhood.credential?.visualInformation?.entity}
+                title={formatCredentialType(
+                  personhood.credential?.credentialSubject?.type
+                )}
                 description={formatCredentialName(personhood.credential?.value)}
                 dates={{
                   issuanceDate: {
@@ -393,7 +411,6 @@ export const Personhood = (props: IProps) => {
                         }
                       : undefined,
                     isAuthenticated &&
-                    process.env.NEXT_PUBLIC_NETWORK === 'mumbai' &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? {
@@ -409,6 +426,7 @@ export const Personhood = (props: IProps) => {
                             handleCurrentPersonhood('add_stamp', personhood)
                         }
                       : undefined,
+                    isCurrentUserAuthenticated &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
                       ? personhood.credential?.value?.encryptedString

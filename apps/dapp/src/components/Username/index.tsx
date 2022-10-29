@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
+import Krebit from '@krebitdao/reputation-passport';
 
 import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
@@ -10,10 +11,9 @@ import { EditProfile } from './EditProfile';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
-import { ConnectWallet } from 'components/ConnectWallet';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share } from 'components/Icons';
-import { isValid, normalizeSchema, mergeArray, formatUrlImage } from 'utils';
+import { isValid, normalizeSchema, formatUrlImage } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -87,7 +87,7 @@ export const Username = () => {
     auth,
     storage,
     walletInformation: { publicPassport, passport, issuer, orbis },
-    walletModal: { openConnectWallet, handleOpenConnectWallet },
+    walletModal: { handleOpenConnectWallet },
     profileInformation: { handleSetProfile }
   } = useContext(GeneralContext);
   const windowSize = useWindowSize();
@@ -106,10 +106,10 @@ export const Username = () => {
       try {
         await publicPassport.read((query.id as string).toLowerCase());
 
-        const currentProfile = await normalizeSchema.profile(
-          publicPassport,
+        const currentProfile = await normalizeSchema.profile({
+          passport: publicPassport,
           orbis
-        );
+        });
 
         const currentDIDFromURL = publicPassport.did;
         if (!isValid('did', currentDIDFromURL)) setStatus('rejected');
@@ -134,6 +134,8 @@ export const Username = () => {
   };
 
   const handleFilterOption = (value: string) => {
+    if (value === currentFilterOption) return;
+
     setProfile({ ...profile, skills: [] });
     setCurrentFilterOption(value);
   };
@@ -185,10 +187,6 @@ export const Username = () => {
 
   return (
     <>
-      <ConnectWallet
-        isOpen={openConnectWallet}
-        onClose={handleOpenConnectWallet}
-      />
       {isEditProfileOpen && (
         <EditProfile
           profile={profile}
@@ -206,9 +204,7 @@ export const Username = () => {
           </LoadingWrapper>
         ) : (
           <Wrapper
-            profilePicture={
-              formatUrlImage(profile?.picture) || '/imgs/logos/Krebit.svg'
-            }
+            profilePicture={formatUrlImage(profile?.picture)}
             isCurrentProfile={currentDIDFromURL !== auth?.did}
           >
             <div className="profile-container">
@@ -223,7 +219,7 @@ export const Username = () => {
                           {profile.name}
                         </span>{' '}
                         <span className="profile-info-token">
-                          KRB {profile.reputation}
+                          $KRB {profile.reputation}
                         </span>
                       </div>
                       <div className="profile-info-domains">
@@ -343,14 +339,18 @@ export const Username = () => {
                     </div>
                   ) : (
                     <div className="skills-box">
-                      {mergeArray(profile.skills).map((item, index) => (
-                        <div className="skills-box-item" key={index}>
-                          <p className="skills-box-item-text">
-                            {item[0]}{' '}
-                            {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
-                          </p>
-                        </div>
-                      ))}
+                      {Krebit.utils
+                        .mergeArray(profile.skills)
+                        .map((item, index) => (
+                          <div className="skills-box-item" key={index}>
+                            <p className="skills-box-item-text">
+                              {item[0]}{' '}
+                              {parseInt(item[1]) === 1
+                                ? ''
+                                : '(' + item[1] + ')'}
+                            </p>
+                          </div>
+                        ))}
                     </div>
                   )}
                 </Skills>

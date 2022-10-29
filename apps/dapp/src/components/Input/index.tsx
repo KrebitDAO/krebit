@@ -3,7 +3,7 @@ import { ChangeEvent } from 'react';
 import { InputWrapper } from './styles';
 
 import { StyledEngineProvider } from '@mui/material';
-import { TextField } from '@mui/material';
+import TextField from '@mui/material/TextField';
 
 interface IProps {
   name: string;

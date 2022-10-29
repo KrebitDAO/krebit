@@ -13,11 +13,11 @@ const getDefaultDID = async (address: string) => {
   const orbis = new Orbis();
   /** Check if the user trying to connect already has an existing did on Orbis */
   let dids = await orbis.getDids(address);
-  console.log('dids', dids);
   let { data: existingDids, error: errorDids } = dids;
+
   if (existingDids && existingDids.length > 0) {
     let sortedDids = sortByKey(existingDids, 'count_followers');
-    console.log('sortedDids', sortedDids);
+
     if (sortedDids[0].did.includes('eip155')) {
       return sortedDids[0].did;
     } else return null;

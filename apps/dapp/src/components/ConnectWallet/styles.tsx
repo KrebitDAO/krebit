@@ -26,21 +26,20 @@ export const Wrapper = styled.div<WalletProps>`
 
     .wallet {
       background-color: ${theme.colors.bunting};
-      width: 313px;
+      width: 90%;
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
       padding: 36px 28px;
-      display: ${status === 'pending' ? 'initial' : 'grid'};
-      grid-gap: 48px;
 
       @media (min-width: ${theme.screens.lg}) {
-        width: 426px;
+        width: 450px;
       }
 
       .wallet-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 48px;
 
         .wallet-header-title {
           font-size: ${theme.fonts.lg};
@@ -65,16 +64,44 @@ export const Wrapper = styled.div<WalletProps>`
 
       .wallet-buttons {
         display: grid;
-        // TODO: IF wallet_connect IS GOING TO BE ADDED, CHAGE TO "repeat(2, xPX)"
-        grid-template-rows: repeat(1, 56px);
+        grid-template-rows: repeat(2, 56px);
         grid-gap: 16px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-template-rows: repeat(1, 69px);
+          grid-template-rows: repeat(2, 69px);
+        }
+      }
+
+      .wallet-remember-session {
+        display: flex;
+        margin-top: 26px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          justify-content: center;
+        }
+      }
+
+      .wallet-terms {
+        margin-top: 10px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+
+        .wallet-terms-text {
+          margin: 0;
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white};
+
+          .wallet-terms-text-link {
+            text-decoration: underline;
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.white};
+          }
         }
       }
 
       .wallet-read {
+        display: block;
         text-decoration: underline;
         color: ${theme.colors.white};
         font-size: ${theme.fonts.base};
@@ -138,6 +165,10 @@ export const WalletButton = styled.button<WalletButtonProps>`
     align-items: center;
     grid-gap: 20px;
     cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
 
     @media (min-width: ${theme.screens.lg}) {
       font-size: ${theme.fonts.xl};

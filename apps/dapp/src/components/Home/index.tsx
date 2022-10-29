@@ -1,60 +1,42 @@
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import {
   Wrapper,
   PrivateOptionQuestion,
   Footer,
-  DecentralizedUsersItem
+  DecentralizedUsersItem,
+  BrandImage,
+  PeopleTweet
 } from './styles';
 import { Button } from 'components/Button';
-import { Arrow, Krebit, Logo } from 'components/Icons';
+import {
+  Arrow,
+  Explore,
+  Krebit,
+  Logo,
+  Twitter,
+  Token,
+  Code,
+  Community,
+  Deal,
+  Approval
+} from 'components/Icons';
 import { NavBar } from 'components/NavBar';
-import { ConnectWallet } from 'components/ConnectWallet';
+import { constants } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
-
-const BOXES = [
-  {
-    box: 'KRB 180',
-    username: 'fuano.eth',
-    image: '/imgs/images/rare-buddies-1.png',
-    skills: ['Illustrator', 'NFT Creator', 'UI']
-  },
-  {
-    box: 'KRB 171',
-    username: 'alerios.eth',
-    image: '/imgs/images/alerios.jpg',
-    skills: ['Developer', 'Product']
-  },
-  {
-    box: 'KRB 152',
-    username: 'texasfr.eth',
-    image: '/imgs/images/texasfr.png',
-    skills: ['Talent', 'Software', 'QA']
-  },
-  {
-    box: 'KRB 150',
-    username: 'andresmontoya.eth',
-    image: '/imgs/images/andresmontoya.jpeg',
-    skills: ['Javascript', 'UX', 'Frontend']
-  },
-  {
-    box: 'KRB 143',
-    username: 'piraseligman.eth',
-    image: '/imgs/images/piraseligman.png',
-    skills: ['Growth', 'Innovation', 'Design']
-  }
-];
 
 export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(0);
   const {
-    walletModal: { handleOpenConnectWallet, openConnectWallet }
+    walletModal: { handleOpenConnectWallet }
   } = useContext(GeneralContext);
+  const router = useRouter();
   const windowSize = useWindowSize();
   const isHigher = windowSize.height >= 750;
 
@@ -76,15 +58,22 @@ export const Home = () => {
     setCurrentUser(index);
   };
 
+  const handleRoute = (url: string, newTab = false) => {
+    if (newTab) {
+      window.open(url, '_blank');
+      return;
+    }
+
+    router.push(url);
+  };
+
   return (
     <>
-      <ConnectWallet
-        isOpen={openConnectWallet}
-        onClose={handleOpenConnectWallet}
-      />
       <NavBar />
       <Wrapper
-        currentDecentralizedCardImage={BOXES[currentUser].image}
+        currentDecentralizedCardImage={
+          constants.DEFAULT_HOME_BOXES[currentUser].image
+        }
         isHigher={isHigher}
       >
         <div className="main">
@@ -123,6 +112,94 @@ export const Home = () => {
             <Arrow />
           </div>
         </div>
+        <div className="actions">
+          <Fade bottom>
+            <h2 className="actions-title">
+              Join the Web3 Professional Movement!
+            </h2>
+          </Fade>
+          <div className="actions-cards">
+            <div className="actions-card" onClick={handleOpenConnectWallet}>
+              <div className="actions-card-content">
+                <Approval />
+              </div>
+              <p className="actions-card-title">Get Verified</p>
+              <p className="actions-card-description">Import your Reputation</p>
+            </div>
+            <div
+              className="actions-card"
+              onClick={() => handleRoute('/explore')}
+            >
+              <div className="actions-card-content">
+                <Explore />
+              </div>
+              <p className="actions-card-title">Explore</p>
+              <p className="actions-card-description">
+                Krebited (pre-vetted) profiles
+              </p>
+            </div>
+            <div
+              className="actions-card"
+              onClick={() => handleRoute('https://discord.gg/UD5YhCU2', true)}
+            >
+              <div className="actions-card-content">
+                <Community />
+              </div>
+              <p className="actions-card-title">Join</p>
+              <p className="actions-card-description">
+                The Krebiters Community
+              </p>
+            </div>
+            <div
+              className="actions-card"
+              onClick={() =>
+                handleRoute(
+                  'https://d3x2s82dzfa.typeform.com/to/AvZMdnRp',
+                  true
+                )
+              }
+            >
+              <div className="actions-card-content">
+                <Token />
+              </div>
+              <p className="actions-card-title">Issue</p>
+              <p className="actions-card-description">
+                Encripted Verifiable Credentials
+              </p>
+            </div>
+
+            <div
+              className="actions-card"
+              onClick={() =>
+                handleRoute(
+                  'https://d3x2s82dzfa.typeform.com/to/B63Gz2v0',
+                  true
+                )
+              }
+            >
+              <div className="actions-card-content">
+                <Deal />
+              </div>
+              <p className="actions-card-title">Deal</p>
+              <p className="actions-card-description">
+                Offer/Hire professional services
+              </p>
+            </div>
+
+            <div
+              className="actions-card"
+              onClick={() => handleRoute('https://docs.krebit.id/', true)}
+            >
+              <div className="actions-card-content">
+                <Code />
+              </div>
+              <p className="actions-card-title">Build</p>
+              <p className="actions-card-description">
+                Portable reputation in your dApp
+              </p>
+            </div>
+          </div>
+        </div>
         <div id="hire" className="decentralized">
           <Fade bottom>
             <h2 className="decentralized-title">
@@ -145,7 +222,7 @@ export const Home = () => {
               </div>
               <SwitchTransition mode="out-in">
                 <CSSTransition
-                  key={BOXES[currentUser].username}
+                  key={constants.DEFAULT_HOME_BOXES[currentUser].username}
                   addEndListener={
                     ((node: HTMLElement, done: () => void) =>
                       node.addEventListener(
@@ -162,7 +239,7 @@ export const Home = () => {
                         <div className="decentralized-users-card-box">
                           <Krebit />
                           <p className="decentralized-users-card-box-title">
-                            {BOXES[currentUser].box}
+                            {constants.DEFAULT_HOME_BOXES[currentUser].box}
                           </p>
                         </div>
                         <div className="decentralized-users-card-image"></div>
@@ -170,11 +247,16 @@ export const Home = () => {
                           <div className="decentralized-users-card-bottom-presentration">
                             <div className="decentralized-users-card-bottom-presentration-image"></div>
                             <p className="decentralized-users-card-bottom-presentration-title">
-                              {BOXES[currentUser].username}
+                              {
+                                constants.DEFAULT_HOME_BOXES[currentUser]
+                                  .username
+                              }
                             </p>
                           </div>
                           <div className="decentralized-users-card-bottom-skills">
-                            {BOXES[currentUser].skills.map((skill, index) => (
+                            {constants.DEFAULT_HOME_BOXES[
+                              currentUser
+                            ].skills.map((skill, index) => (
                               <p
                                 className="decentralized-users-card-bottom-skill"
                                 key={index}
@@ -190,7 +272,7 @@ export const Home = () => {
                 </CSSTransition>
               </SwitchTransition>
               <div className="decentralized-users-list">
-                {BOXES.map((user, index) => (
+                {constants.DEFAULT_HOME_BOXES.map((user, index) => (
                   <DecentralizedUsersItem
                     key={index}
                     currentUserImage={user.image}
@@ -209,6 +291,12 @@ export const Home = () => {
                     </p>
                   </DecentralizedUsersItem>
                 ))}
+                <div className="decentralized-users-list-button">
+                  <Button
+                    onClick={() => handleRoute('/explore')}
+                    text="Explore Krebited Profiles"
+                  />
+                </div>
               </div>
             </div>
           </Fade>
@@ -275,16 +363,96 @@ export const Home = () => {
         </Fade>
         <Fade bottom>
           <div className="brands">
-            <p className="brands-title">Powered by the best Web3 stack</p>
+            <p className="brands-title">
+              Integrated with the best Web3 partners
+            </p>
             <div className="brands-images">
-              <div className="brands-images-1" />
-              <div className="brands-images-2" />
-              <div className="brands-images-3" />
-              <div className="brands-images-4" />
-              <div className="brands-images-5" />
+              <div
+                className="brand-image"
+                onClick={() => handleRoute('https://ceramic.network/', true)}
+              >
+                <BrandImage image="/imgs/logos/ceramic.png" />
+                <p className="brand-image-text">Ceramic</p>
+              </div>
+              <div
+                className="brand-image"
+                onClick={() => handleRoute('https://orbis.club/', true)}
+              >
+                <BrandImage image="/imgs/logos/orbis.png" />
+                <p className="brand-image-text">Orbis</p>
+              </div>
+              <div
+                className="brand-image"
+                onClick={() => handleRoute('https://litprotocol.com/', true)}
+              >
+                <BrandImage image="/imgs/logos/lit.svg" />
+                <p className="brand-image-text">Lit</p>
+              </div>
+              <div
+                className="brand-image"
+                onClick={() =>
+                  handleRoute('https://unstoppabledomains.com/', true)
+                }
+              >
+                <BrandImage image="/imgs/logos/UD.svg" />
+                <p className="brand-image-text">Unstoppable Domains</p>
+              </div>
+              <div
+                className="brand-image"
+                onClick={() => handleRoute('https://spect.network/', true)}
+              >
+                <BrandImage image="/imgs/logos/spect.svg" />
+                <p className="brand-image-text">Spect</p>
+              </div>
+              <div
+                className="brand-image"
+                onClick={() => handleRoute('https://guild.xyz', true)}
+              >
+                <BrandImage image="/imgs/logos/guild.svg" />
+                <p className="brand-image-text">Guild</p>
+              </div>
             </div>
           </div>
         </Fade>
+        <div className="people">
+          <Fade bottom>
+            <h2 className="people-title">Passing the vibe check!</h2>
+          </Fade>
+          <div className="people-tweets">
+            {constants.DEFAULT_TWEET_PEOPLE.map((tweet, index) => (
+              <PeopleTweet
+                image={tweet.image}
+                onClick={() => handleRoute(tweet.url, true)}
+                key={index}
+              >
+                <div className="people-tweet-header">
+                  <div className="people-tweet-header-image"></div>
+                  <div className="people-tweet-header-texts">
+                    <p className="people-tweet-header-texts-name">
+                      {tweet.name}
+                    </p>
+                    <p className="people-tweet-header-texts-username">
+                      {tweet.username}
+                    </p>
+                  </div>
+                  <div className="people-tweet-header-icon">
+                    <Twitter />
+                  </div>
+                </div>
+                <div className="people-tweet-description">
+                  {tweet.description.map((desc, index) => (
+                    <React.Fragment key={index}>
+                      {desc}
+                      <br />
+                      <br />
+                    </React.Fragment>
+                  ))}
+                  {tweet.imageUrl && <img src={tweet.imageUrl} />}
+                </div>
+              </PeopleTweet>
+            ))}
+          </div>
+        </div>
         <Fade bottom>
           <div id="web3" className="private private-different">
             <div className="private-image private-image-second"></div>
@@ -350,12 +518,10 @@ export const Home = () => {
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Reserve your Reputation Passport"
+              text="Try it now"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
-              onClick={() => {
-                window.open('https://d3x2s82dzfa.typeform.com/to/O9opkxQT');
-              }}
+              onClick={handleOpenConnectWallet}
             />
           </div>
         </div>
@@ -366,7 +532,8 @@ export const Home = () => {
             </div>
             <p className="footer-content-left-text">
               Your Reputation Passport for Better Job Matching.
-              <br />© {new Date().getFullYear()} Krebit, All rights reserved.
+              <br />© {new Date().getFullYear()} Krebit ID LLC, All rights
+              reserved.
             </p>
           </div>
           <div className="footer-content-right">
@@ -390,6 +557,12 @@ export const Home = () => {
               <a target="_blank" className="footer-content-right-option">
                 Gitcoin Grant
               </a>
+            </Link>
+            <Link href="/privacy">
+              <a className="footer-content-right-option">Privacy policy</a>
+            </Link>
+            <Link href="/terms">
+              <a className="footer-content-right-option">Terms of use</a>
             </Link>
           </div>
         </div>

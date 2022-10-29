@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { debounce } from 'ts-debounce';
+import { format } from 'date-fns';
 
 import {
   getCredential,
@@ -14,20 +15,18 @@ import {
 } from 'utils';
 
 interface IClaimValues {
-  firstName: string;
-  lastName: string;
+  date: string | number;
   private: boolean;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const initialState = {
-  firstName: '',
-  lastName: '',
+  date: '01/12/2009',
   private: true
 };
 
-export const useVeriffProvider = () => {
+export const useVeriffAgeProvider = () => {
   const [veriffSession, setVeriffSession] = useState({});
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
@@ -64,10 +63,9 @@ export const useVeriffProvider = () => {
     setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
-        person: {
-          ...claimValues
-        },
-        vendorData: address,
+        callback: `${
+          process.env.NEXT_PUBLIC_VERIFF_CALLBACK
+        }?status=veriffAgeGT18-${generateUID(10)}`,
         timestamp: new Date().toISOString()
       }
     });
@@ -88,15 +86,11 @@ export const useVeriffProvider = () => {
       id: proofs.state,
       did,
       ethereumAddress: address,
-      type: 'LegalName',
-      typeSchema: 'krebit://schemas/legalName',
-      tags: ['Veriff', 'KYC', 'Personhood'],
+      type: 'AgeGT18',
+      typeSchema: 'krebit://schemas/birthDate',
+      tags: ['VeriffAgeGT18', 'KYC', 'Adulthood', 'Age', 'Personhood'],
       value: {
-        firstName: claimValues.firstName,
-        lastName: claimValues.lastName,
-        fullName: claimValues.firstName
-          ?.concat(' ')
-          ?.concat(claimValues.lastName),
+        date: format(new Date(claimValues.date), 'yyyy-MM-dd'),
         proofs: {
           ...veriffSession,
           nonce: `${generateUID(10)}`
@@ -116,8 +110,8 @@ export const useVeriffProvider = () => {
 
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
-      if (e.target === 'veriff') {
-        console.log('Saving Stamp', { type: 'LegalName', proof: e.data });
+      if (e.target === 'VeriffAgeGT18') {
+        console.log('Saving Stamp', { type: 'AgeGT18', proof: e.data });
 
         const session = window.localStorage.getItem('did-session');
         const currentSession = JSON.parse(session);
@@ -188,6 +182,11 @@ export const useVeriffProvider = () => {
               issuedCredential
             );
             console.log('addedCredentialId: ', addedCredentialId);
+
+            //Restrict access to my claim again
+            await Issuer.removeAllEncryptedCredentialShares(
+              claimedCredentialId
+            );
 
             setCurrentCredential({
               ...issuedCredential,

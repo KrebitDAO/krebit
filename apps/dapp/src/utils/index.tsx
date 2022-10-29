@@ -11,10 +11,11 @@ import { getWalletInformation } from './getWalletInformation';
 import { isValid } from './isValid';
 import { normalizeSchema } from './normalizeSchema';
 import { checkCredentialsURLs } from './checkCredentialsURLs';
-import { mergeArray } from './mergeArray';
 import { constants } from './constants';
 import { formatFilename } from './formatFilename';
 import { formatUrlImage } from './formatUrlImage';
+import { countries } from './countries';
+import { guildXyz } from './guildXyz';
 
 export {
   createEmotionCache,
@@ -30,9 +31,10 @@ export {
   isValid,
   normalizeSchema,
   checkCredentialsURLs,
-  mergeArray,
   constants,
   formatFilename,
-  formatUrlImage
+  formatUrlImage,
+  countries,
+  guildXyz
 };
 export type { IIsuerParams };

@@ -6,10 +6,10 @@ import { config } from '../config/index.js';
 
 const currentConfig = config.get();
 
-const getWeb3Provider = async () => {
-  if ((window as any).ethereum) {
+const switchNetwork = async (provider: any) => {
+  if (provider) {
     try {
-      await (window as any).ethereum.request({
+      await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [
           {
@@ -22,7 +22,7 @@ const getWeb3Provider = async () => {
     } catch (switchError) {
       if (switchError.code === 4902) {
         try {
-          await (window as any).ethereum.request({
+          await provider.request({
             method: 'wallet_addEthereumChain',
             params: [
               {
@@ -49,11 +49,7 @@ const getWeb3Provider = async () => {
 
       console.error('Error switching network: ', switchError);
     } finally {
-      const provider = new ethers.providers.Web3Provider(
-        (window as any).ethereum
-      );
-
-      (window as any).ethereum.on('chainChanged', (newNetwork: string) => {
+      provider.on('chainChanged', (newNetwork: string) => {
         if (
           newNetwork !=
           `0x${Number(
@@ -78,5 +74,5 @@ const getProvider = () => {
 
 export const ethereum = {
   getProvider,
-  getWeb3Provider
+  switchNetwork
 };

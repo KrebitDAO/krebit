@@ -48,7 +48,7 @@ export const ShareWithModal = (props: IProps) => {
   const onUnifiedAccessControlConditionsSelected = async shareModalOutput => {
     try {
       setStatus('pending');
-
+      console.log('shareModalOutput', shareModalOutput);
       const newConditions = shareModalOutput.unifiedAccessControlConditions.map(
         condition => {
           if (
@@ -73,7 +73,8 @@ export const ShareWithModal = (props: IProps) => {
       console.log('newConditions', newConditions);
       await issuer.shareEncryptedCredentialWith(
         currentPersonhood.credential.id,
-        shareModalOutput.unifiedAccessControlConditions
+        shareModalOutput.unifiedAccessControlConditions,
+        shareModalOutput.permanent
       );
       setStatus('resolved');
       onClose();

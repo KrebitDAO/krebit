@@ -28,6 +28,18 @@ import { Share } from './Share';
 import { Facebook } from './Facebook';
 import { Telegram } from './Telegram';
 import { Whatsapp } from './Whatsapp';
+import { Tune } from './Tune';
+import { Search } from './Search';
+import { Cake } from './Cake';
+import { Person } from './Person';
+import { Guild } from './Guild';
+import { ChromeReaderMode } from './ChromeReaderMode';
+import { Lock } from './Lock';
+import { AccountBalanceWallet } from './AccountBalanceWallet';
+import { Help } from './Help';
+import { Code } from './Code';
+import { Community } from './Community';
+import { Deal } from './Deal';
 
 export {
   Close,
@@ -59,5 +71,17 @@ export {
   Share,
   Facebook,
   Telegram,
-  Whatsapp
+  Whatsapp,
+  Tune,
+  Search,
+  Cake,
+  Person,
+  Guild,
+  ChromeReaderMode,
+  Lock,
+  AccountBalanceWallet,
+  Help,
+  Code,
+  Community,
+  Deal
 };

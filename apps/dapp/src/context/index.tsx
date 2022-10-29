@@ -82,7 +82,10 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const isOrbisConnected = await orbis.isConnected();
 
       if (isPassportConnected && isIssuerConnected && isOrbisConnected) {
-        const currentProfile = await normalizeSchema.profile(passport, orbis);
+        const currentProfile = await normalizeSchema.profile({
+          passport,
+          orbis
+        });
 
         setPassport(passport);
         setIssuer(issuer);
@@ -95,12 +98,45 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     isAuthenticated();
   }, []);
 
+  useEffect(() => {
+    if (!window) return;
+
+    const rememberSession = window.localStorage.getItem(
+      'krebit-remember-session'
+    );
+
+    if (rememberSession !== 'ACTIVE') return;
+
+    const handleTabClose = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+      window.localStorage.clear();
+    };
+
+    window.addEventListener('beforeunload', handleTabClose);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleTabClose);
+    };
+  }, []);
+
   const handleOpenConnectWallet = () => {
+    if (passport?.did) {
+      push(`/${passport.did}`);
+      return;
+    }
+
     setOpenConnectWallet(prevState => !prevState);
   };
 
   const handleSetProfile = (profile: IProfile) => {
     setProfile(profile);
+  };
+
+  const handleRememberSession = () => {
+    if (!window) return;
+
+    window.localStorage.setItem('krebit-remember-session', 'ACTIVE');
   };
 
   const connect = async (type: string) => {
@@ -119,12 +155,12 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       let defaultDID = await Krebit.lib.orbis.getDefaultDID(
         information.address
       );
-      console.log('defaultDID', defaultDID);
+
       if (defaultDID) {
         let _didArr = defaultDID.split(':');
         defaultChainId = _didArr[3];
       }
-      console.log('defaultChainId', defaultChainId);
+
       const passport = new Krebit.core.Passport({
         ...information,
         litSdk: LitJsSdk,
@@ -146,10 +182,16 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         setPassport(passport);
         setIssuer(issuer);
 
-        const orbisConnection = orbis.connect();
+        const orbisConnection = orbis.connect_v2({
+          provider: information.ethProvider,
+          lit: true
+        });
 
         if (orbisConnection) {
-          const currentProfile = await normalizeSchema.profile(passport, orbis);
+          const currentProfile = await normalizeSchema.profile({
+            passport,
+            orbis
+          });
 
           setProfile(currentProfile);
           setStatus('resolved');
@@ -162,14 +204,16 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     if (!window) return;
 
+    await orbis.logout();
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
-    orbis.logout();
+    window.localStorage.removeItem('krebit-remember-session');
     setProfile(undefined);
     setPassport(undefined);
+    setIssuer(undefined);
   };
 
   return (
@@ -184,7 +228,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           isAuthenticated: status === 'resolved' && !!passport?.did,
           status,
           did: passport?.did,
-          logout
+          logout,
+          handleRememberSession
         },
         walletInformation: {
           ...walletInformation,

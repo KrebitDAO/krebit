@@ -8,7 +8,8 @@ import {
   credentialRegistries,
   credentialRegistry,
   erc20Balance,
-  erc20Balances
+  erc20Balances,
+  exploreAccounts
 } from '../queries/index.js';
 import { config } from '../config/index.js';
 
@@ -19,6 +20,7 @@ export interface ClientProps {
 
 export interface ListProps {
   first?: number;
+  skip?: number;
   orderBy?: string;
   orderDirection?: string;
   where?: object;
@@ -114,6 +116,15 @@ const erc20BalanceQuery = async (address: string) => {
   return response.data.erc20Balance;
 };
 
+const exploreAccountsQuery = async (props: ListProps) => {
+  const response = await client({
+    query: exploreAccounts,
+    variables: props
+  });
+
+  return response.data.accounts;
+};
+
 export const graph = {
   client,
   verifiableCredentialsQuery,
@@ -122,5 +133,6 @@ export const graph = {
   credentialRegistriesQuery,
   credentialRegistryQuery,
   erc20BalanceQuery,
-  erc20BalancesQuery
+  erc20BalancesQuery,
+  exploreAccountsQuery
 };

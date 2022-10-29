@@ -15,31 +15,31 @@ import { useWindowSize } from 'hooks';
 
 const BOXES = [
   {
-    box: 'KRB 180',
+    box: '$KRB 180',
     username: 'fuano.eth',
     image: '/imgs/images/rare-buddies-1.png',
     skills: ['Illustrator', 'NFT Creator', 'UI']
   },
   {
-    box: 'KRB 171',
+    box: '$KRB 171',
     username: 'alerios.eth',
     image: '/imgs/images/alerios.jpg',
     skills: ['Developer', 'Product']
   },
   {
-    box: 'KRB 152',
+    box: '$KRB 152',
     username: 'texasfr.eth',
     image: '/imgs/images/texasfr.png',
     skills: ['Talent', 'Software', 'QA']
   },
   {
-    box: 'KRB 150',
+    box: '$KRB 150',
     username: 'andresmontoya.eth',
     image: '/imgs/images/andresmontoya.jpeg',
     skills: ['Javascript', 'UX', 'Frontend']
   },
   {
-    box: 'KRB 143',
+    box: '$KRB 143',
     username: 'piraseligman.eth',
     image: '/imgs/images/piraseligman.png',
     skills: ['Growth', 'Innovation', 'Design']

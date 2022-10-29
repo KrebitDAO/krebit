@@ -1,8 +1,9 @@
-import { FunctionComponent, MouseEvent, useContext, useState } from 'react';
+import { FunctionComponent, useContext, useState } from 'react';
 
 import { Wrapper, WalletButton } from './styles';
 import { Close } from 'components/Icons';
 import { Loading } from 'components/Loading';
+import { Checkbox } from 'components/Checkbox';
 import { GeneralContext } from 'context';
 
 interface IProps {
@@ -14,14 +15,33 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
   const { isOpen = false, onClose } = props;
   const [status, setStatus] = useState('idle');
   const {
-    auth: { connect }
+    auth: { connect, handleRememberSession }
   } = useContext(GeneralContext);
+  const [shouldRememberSession, setShouldRememberSession] = useState(true);
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true);
 
-  const handlerConnect = async (type: string) => {
-    setStatus('pending');
+  const handleConnect = async (type: string) => {
+    try {
+      setStatus('pending');
 
-    await connect(type);
-    onClose();
+      if (!shouldRememberSession) {
+        handleRememberSession();
+      }
+
+      await connect(type);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected');
+    }
+  };
+
+  const handleShouldRememberSession = () => {
+    setShouldRememberSession(prevValue => !prevValue);
+  };
+
+  const handleHasAcceptedTerms = () => {
+    setHasAcceptedTerms(prevValue => !prevValue);
   };
 
   if (!isOpen) return;
@@ -52,14 +72,16 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
             <div className="wallet-buttons">
               <WalletButton
                 textColor="tango"
-                onClick={() => handlerConnect('metamask')}
+                disabled={!hasAcceptedTerms}
+                onClick={() => handleConnect('metamask')}
               >
                 <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
                 Metamask
               </WalletButton>
-              {/* <WalletButton
+              <WalletButton
                 textColor="white"
-                onClick={() => handlerConnect('wallet_connect')}
+                disabled={!hasAcceptedTerms}
+                onClick={() => handleConnect('wallet_connect')}
               >
                 <img
                   src="/imgs/logos/wallet-connect.png"
@@ -67,7 +89,34 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                   height={24}
                 />{' '}
                 WalletConnect
-              </WalletButton> */}
+              </WalletButton>
+            </div>
+            <div className="wallet-remember-session">
+              <Checkbox
+                placeholder="Remember session"
+                name="remember"
+                value={shouldRememberSession}
+                onChange={handleShouldRememberSession}
+              />
+            </div>
+            <div className="wallet-terms">
+              <Checkbox
+                placeholder=""
+                name="tems"
+                value={hasAcceptedTerms}
+                onChange={handleHasAcceptedTerms}
+              />
+              <p className="wallet-terms-text">
+                I have read and accept the{' '}
+                <a className="wallet-terms-text-link" href="/terms">
+                  terms
+                </a>{' '}
+                and{' '}
+                <a className="wallet-terms-text-link" href="/privacy">
+                  privacy policy
+                </a>
+                .
+              </p>
             </div>
             <a
               className="wallet-read"

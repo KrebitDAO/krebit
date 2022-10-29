@@ -32,7 +32,7 @@ export const NavBar = () => {
           {isMenuOpen ? <Close /> : <Menu />}
         </div>
         <div className="menu-bar">
-          <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
+          <Link href="https://discord.gg/UD5YhCU2" rel="noopener noreferrer">
             <a target="_blank" className="menu-bar-item">
               Discord
             </a>
@@ -55,7 +55,7 @@ export const NavBar = () => {
           </Link>
           <div className="menu-bar-button">
             <Button
-              text="Try the Beta"
+              text="Try it now"
               primaryColor="cyan"
               secondaryColor="rose"
               onClick={handleOnClick}
@@ -64,7 +64,7 @@ export const NavBar = () => {
         </div>
       </div>
       <div className="menu-content">
-        <Link href="https://discord.gg/y7sMYVjxrd" rel="noopener noreferrer">
+        <Link href="https://discord.gg/UD5YhCU2" rel="noopener noreferrer">
           <a target="_blank" className="menu-content-item">
             Discord
           </a>
@@ -89,7 +89,7 @@ export const NavBar = () => {
         </Link>
         <div className="menu-content-button">
           <Button
-            text="Try the Beta"
+            text="Try it now"
             primaryColor="rose"
             secondaryColor="blueRibbon"
             onClick={handleOnClick}

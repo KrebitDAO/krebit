@@ -32,12 +32,13 @@ export const Switch = (props: IProps) => {
           control={
             <MaterialSwitch
               checked={value}
-              onChange={onChange}
+              onChange={isDisabled ? undefined : onChange}
               name={name}
               disabled={isDisabled}
               required={isRequired}
             />
           }
+          disabled={isDisabled}
           label={label}
         />
       </Wrapper>

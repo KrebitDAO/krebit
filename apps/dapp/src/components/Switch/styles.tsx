@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
     }
 
     .Mui-disabled {
-      color: ${theme.colors.white} !important;
+      color: ${theme.colors.white}80 !important;
     }
 
     & .MuiSwitch-switchBase.Mui-checked {

@@ -101,7 +101,7 @@ export const EditProfile = (props: IProps) => {
         const node = await storage.put([pictureImage] as any);
 
         if (node) {
-          pictureImage = `${process.env.NEXT_PUBLIC_IPFS_GATEWAY}/ipfs/${node}/${pictureImage.name}`;
+          pictureImage = `https://${node}.ipfs.dweb.link/${pictureImage.name}`;
         }
       }
 
@@ -109,7 +109,7 @@ export const EditProfile = (props: IProps) => {
         const node = await storage.put([backgroundImage] as any);
 
         if (node) {
-          backgroundImage = `${process.env.NEXT_PUBLIC_IPFS_GATEWAY}/ipfs/${node}/${backgroundImage.name}`;
+          backgroundImage = `https://${node}.ipfs.dweb.link/${backgroundImage.name}`;
         }
       }
 

@@ -7,6 +7,7 @@ import {
 } from './issueCredential.js';
 import { base64 } from './base64.js';
 import { regexValidations } from './regexValidations.js';
+import { mergeArray } from './mergeArray.js';
 
 export const utils = {
   WalletProvider,
@@ -14,6 +15,7 @@ export const utils = {
   validateSchema,
   base64,
   hashClaimValue,
-  regexValidations
+  regexValidations,
+  mergeArray
 };
 export type { ClaimProps };
