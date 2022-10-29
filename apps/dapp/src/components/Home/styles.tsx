@@ -223,7 +223,7 @@ export const Wrapper = styled.div<IProps>`
             & > svg {
               width: 50px;
               height: 50px;
-              fill: ${theme.colors.cyan}80;
+              fill: ${theme.colors.cyan};
 
               & > g > path {
                 fill: ${theme.colors.cyan};
@@ -242,6 +242,7 @@ export const Wrapper = styled.div<IProps>`
 
           .actions-card-description {
             margin: 0;
+            margin-top: 5px;
             font-size: ${theme.fonts.sm};
             color: ${theme.colors.white}80;
             text-align: center;
@@ -633,7 +634,7 @@ export const Wrapper = styled.div<IProps>`
         grid-gap: 39px 18px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-gap: 0 88px;
+          grid-gap: 39px 70px;
         }
 
         .brand-image {
@@ -677,6 +678,7 @@ export const Wrapper = styled.div<IProps>`
       }
 
       .people-tweets {
+        padding: 0 20px;
         display: grid;
         grid-gap: 39px 18px;
 
@@ -763,6 +765,12 @@ export const PeopleTweet = styled.div<IImage>`
       margin-top: 10px;
       font-size: ${theme.fonts.base};
       color: ${theme.colors.white};
+
+      & > img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+      }
     }
   `}
 `;
