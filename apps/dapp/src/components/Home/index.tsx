@@ -383,7 +383,7 @@ export const Home = () => {
                 onClick={() => handleRoute('https://litprotocol.com/', true)}
               >
                 <BrandImage image="/imgs/logos/lit.svg" />
-                <p className="brand-image-text">LIT</p>
+                <p className="brand-image-text">Lit</p>
               </div>
               <div
                 className="brand-image"
@@ -413,7 +413,7 @@ export const Home = () => {
         </Fade>
         <div className="people">
           <Fade bottom>
-            <h2 className="people-title">Loved by people</h2>
+            <h2 className="people-title">Passing the vibe check!</h2>
           </Fade>
           <Fade bottom>
             <div className="people-tweets">
@@ -438,7 +438,20 @@ export const Home = () => {
                     </div>
                   </div>
                   <div className="people-tweet-description">
-                    {tweet.description}
+                    {tweet.description.map((desc, index) => (
+                      <>
+                        {desc}
+                        <br />
+                        <br />
+                      </>
+                    ))}
+                    {tweet.imageUrl && (
+                      <img
+                        src={tweet.imageUrl}
+                        width={'100%'}
+                        height={'100%'}
+                      />
+                    )}
                   </div>
                 </PeopleTweet>
               ))}
