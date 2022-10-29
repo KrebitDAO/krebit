@@ -46,7 +46,7 @@ export const connect = async () => {
       );
 
       if (krbBalance < minBalanceToIssue) {
-        throw new Error('Not enough KRB balance to Issue');
+        throw new Error('Not enough $KRB balance to Issue');
       }
 
       return { wallet, ethProvider };

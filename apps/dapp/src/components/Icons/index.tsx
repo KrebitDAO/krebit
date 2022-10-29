@@ -35,6 +35,11 @@ import { Person } from './Person';
 import { Guild } from './Guild';
 import { ChromeReaderMode } from './ChromeReaderMode';
 import { Lock } from './Lock';
+import { AccountBalanceWallet } from './AccountBalanceWallet';
+import { Help } from './Help';
+import { Code } from './Code';
+import { Community } from './Community';
+import { Deal } from './Deal';
 
 export {
   Close,
@@ -73,5 +78,10 @@ export {
   Person,
   Guild,
   ChromeReaderMode,
-  Lock
+  Lock,
+  AccountBalanceWallet,
+  Help,
+  Code,
+  Community,
+  Deal
 };

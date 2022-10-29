@@ -17,6 +17,8 @@ interface IInitialListProps {
   price: string;
   isDisabled?: boolean;
   badgeText?: string;
+  badgeColor?: string;
+  badgeIconColor?: string;
 }
 type IViewStatusProps = 'init' | 'steps';
 type ICurrentIssuerProps = {
@@ -117,7 +119,12 @@ export const Verify = (props: IProps) => {
                   <div className="verify-box-item-content">
                     <div className="verify-box-item-content-icon">
                       {item.badgeText ? (
-                        <Badge icon={item.icon} text={item.badgeText} />
+                        <Badge
+                          icon={item.icon}
+                          text={item.badgeText}
+                          color={item.badgeColor}
+                          iconColor={item.badgeIconColor}
+                        />
                       ) : (
                         item.icon
                       )}

@@ -91,7 +91,8 @@ const PERSONHOOD_CREDENTIALS = [
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
     isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
-    badgeText: 'New'
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     credentialType: 'VeriffGovernmentId',
@@ -103,7 +104,8 @@ const PERSONHOOD_CREDENTIALS = [
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
     isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
-    badgeText: 'New'
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     credentialType: 'VeriffLegalName',
@@ -115,7 +117,8 @@ const PERSONHOOD_CREDENTIALS = [
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
     isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
-    badgeText: 'New'
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   }
 ];
 
