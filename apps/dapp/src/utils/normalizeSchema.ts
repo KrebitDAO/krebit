@@ -27,6 +27,7 @@ export interface IProfile {
   reputation: string | number;
   countFollowers: number;
   countFollowing: number;
+  isFollowingUser?: boolean;
   ensDomain?: string;
   unsDomain?: string;
   personhoods?: ICredential[];
