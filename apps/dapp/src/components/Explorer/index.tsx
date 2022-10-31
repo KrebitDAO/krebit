@@ -16,7 +16,7 @@ import { Close, Search, Tune } from 'components/Icons';
 import { Slider } from 'components/Slider';
 import { Button } from 'components/Button';
 import { Loading } from 'components/Loading';
-import { normalizeSchema } from 'utils';
+import { formatUrlImage, normalizeSchema } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -390,7 +390,7 @@ export const Explorer = () => {
           ) : information?.profiles?.length > 0 ? (
             <div className="explorer-cards">
               {information?.profiles.map((profile, index) => (
-                <Card picture={profile.picture} key={index}>
+                <Card picture={formatUrlImage(profile.picture)} key={index}>
                   <div className="explorer-card-picture"></div>
                   <p className="explorer-card-title">{profile.name}</p>
                   <p className="explorer-card-description">

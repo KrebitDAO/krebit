@@ -99,6 +99,7 @@ export const Username = () => {
     if (!window) return;
     if (!publicPassport) return;
     if (!query.id) return;
+    if (auth.status !== 'resolved') return;
 
     setStatus('pending');
 
@@ -114,8 +115,16 @@ export const Username = () => {
         const currentDIDFromURL = publicPassport.did;
         if (!isValid('did', currentDIDFromURL)) setStatus('rejected');
 
+        let isFollowingUser = false;
+
+        if (auth?.did !== currentDIDFromURL) {
+          const response = await orbis.getIsFollowing(auth.did, query.id);
+          isFollowingUser = response?.data;
+        }
+
         setProfile({
           ...currentProfile,
+          isFollowingUser,
           skills: []
         });
         setCurrentDIDFromURL(currentDIDFromURL);
@@ -127,7 +136,7 @@ export const Username = () => {
     };
 
     getProfile();
-  }, [publicPassport, query.id]);
+  }, [publicPassport, auth.status, auth?.did, query.id]);
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
@@ -163,6 +172,44 @@ export const Username = () => {
 
   const handleOpenDomainPage = async (domain: string) => {
     window.open(`/${domain}`);
+  };
+
+  const handleFollowUser = async (isFollowing = false) => {
+    if (!auth?.isAuthenticated) {
+      handleOpenConnectWallet();
+      return;
+    }
+
+    if (auth.did === currentDIDFromURL) return;
+
+    try {
+      setStatus('follow_pending');
+
+      const isValidID = isValid('did', query.id as string);
+
+      if (!isValidID) {
+        setStatus('follow_rejected');
+        return;
+      }
+
+      const response = await orbis.setFollow(query.id, isFollowing);
+
+      if (response?.doc) {
+        setProfile(prevState => ({
+          ...prevState,
+          countFollowers: isFollowing
+            ? prevState.countFollowers + 1
+            : prevState.countFollowers === 0
+            ? prevState.countFollowers
+            : prevState.countFollowers - 1,
+          isFollowingUser: isFollowing
+        }));
+        setStatus('follow_resolved');
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus('follow_rejected');
+    }
   };
 
   const handleSendMessage = () => {
@@ -271,7 +318,15 @@ export const Username = () => {
                   {currentDIDFromURL !== auth?.did ? (
                     <>
                       <div className="profile-buttons-container">
-                        <Button text="Follow" onClick={() => {}} />
+                        <Button
+                          text={
+                            profile.isFollowingUser ? 'Following' : 'Follow'
+                          }
+                          isDisabled={status === 'follow_pending'}
+                          onClick={() =>
+                            handleFollowUser(!profile.isFollowingUser)
+                          }
+                        />
                       </div>
                       <div className="profile-buttons-container">
                         <Button
