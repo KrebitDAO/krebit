@@ -40,6 +40,8 @@ import { Help } from './Help';
 import { Code } from './Code';
 import { Community } from './Community';
 import { Deal } from './Deal';
+import { Dework } from './Dework';
+import { Stack } from './Stack';
 
 export {
   Close,
@@ -83,5 +85,7 @@ export {
   Help,
   Code,
   Community,
-  Deal
+  Deal,
+  Dework,
+  Stack
 };

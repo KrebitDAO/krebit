@@ -11,6 +11,7 @@ import { GithubController } from './github';
 import { PersonaController } from './persona';
 import { MetadataController } from './metadata';
 import { GuildController } from './guild';
+import { StackController } from './stack';
 
 export {
   QuestappController,
@@ -25,5 +26,6 @@ export {
   GithubController,
   PersonaController,
   MetadataController,
-  GuildController
+  GuildController,
+  StackController
 };

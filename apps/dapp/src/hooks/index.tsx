@@ -21,6 +21,8 @@ import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
 import { useGuildXyzMemberProvider } from './useGuildXyzMemberProvider';
 import { useGuildXyzAdminProvider } from './useGuildXyzAdminProvider';
 import { useGuildXyzRoleProvider } from './useGuildXyzRoleProvider';
+import { useDeworkCompletedProvider } from './useDeworkCompletedProvider';
+import { useStackReputationProvider } from './useStackReputationProvider';
 
 export {
   useWindowSize,
@@ -45,5 +47,7 @@ export {
   useVeriffGovernmentIdProvider,
   useGuildXyzMemberProvider,
   useGuildXyzAdminProvider,
-  useGuildXyzRoleProvider
+  useGuildXyzRoleProvider,
+  useDeworkCompletedProvider,
+  useStackReputationProvider
 };

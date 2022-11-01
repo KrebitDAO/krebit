@@ -1,18 +1,19 @@
 import express from 'express';
-import krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-nodejs';
+import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getDeworkUser } from '../../utils';
+import { connect, stack } from '../../utils';
 
 const {
   SERVER_EXPIRES_YEARS,
   SERVER_TRUST,
   SERVER_STAKE,
   SERVER_PRICE,
-  SERVER_CERAMIC_URL
+  SERVER_CERAMIC_URL,
+  SERVER_NETWORK
 } = process.env;
 
-export const DeworkController = async (
+export const StackController = async (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction
@@ -34,15 +35,18 @@ export const DeworkController = async (
       wallet,
       ethProvider,
       address: wallet.address,
-      ceramicUrl: SERVER_CERAMIC_URL,
-      litSdk: LitJsSdk
+      litSdk: LitJsSdk,
+      ceramicUrl: SERVER_CERAMIC_URL
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
 
     const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
-    console.log('Verifying Dework with claimedCredential: ', claimedCredential);
+    console.log(
+      'Verifying stack overflow with claimedCredential: ',
+      claimedCredential
+    );
 
     // Check self-signature
     console.log('checkCredential: ', Issuer.checkCredential(claimedCredential));
@@ -59,45 +63,38 @@ export const DeworkController = async (
     const publicClaim: boolean =
       claimedCredential.credentialSubject.encrypted === 'none';
 
-    //Tasks for a specific  Organization
+    // TODO: Check if the claim already has verifications by me?
+
+    // If claim is digitalProperty "stack overflow"
     if (
-      claimedCredential?.credentialSubject?.type === 'DeworkCompletedTasksGT10'
+      claimedCredential?.credentialSubject?.type ===
+      'StackOverflowReputationGT1K'
     ) {
-      // Connect to dework and get reputation from address
-
-      const dework = await getDeworkUser({
-        address: claimedCredential.credentialSubject.ethereumAddress
+      // Connect to stack overflow and get user ID from token
+      const stackUser = await stack.getStackUser({
+        accessToken: claimValue.proofs.accessToken
       });
-      console.log('Importing from Dework:', dework);
 
-      const orgTask = dework.tasks.filter(
-        task =>
-          task?.workspace?.organization?.name.toLowerCase() ===
-          claimValue?.entity.toLowerCase()
-      );
+      // If stack overflow userID == the VC userID
+      if (
+        stackUser.user_id.toString() === claimValue.id &&
+        stackUser.reputation > 1000
+      ) {
+        // Issue Verifiable credential
+        console.log('Valid stack overflow:', stackUser);
 
-      if (orgTask.length > 10) {
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
         console.log('expirationDate: ', expirationDate);
-        const skills = orgTask
-          .map(task => {
-            return task.tags.flatMap(tag => {
-              return tag.label;
-            });
-          })
-          .flatMap(skill => {
-            return skill != undefined ? skill : 'Other';
-          });
-        const skillSet = [...new Set(skills)] as string[];
+
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(2)?.concat(skillSet),
+          tags: claimedCredential.type.slice(2),
           value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
@@ -106,17 +103,8 @@ export const DeworkController = async (
         };
         if (!publicClaim) {
           claim['encrypt'] = 'hash' as 'hash';
-        } else {
-          claim.value['skills'] = skillSet.map(skill => {
-            return {
-              skillId: skill,
-              score: 100
-            };
-          });
         }
         console.log('claim: ', claim);
-
-        // Issue Verifiable credential
 
         const issuedCredential = await Issuer.issue(claim);
         console.log('issuedCredential: ', issuedCredential);
@@ -125,7 +113,7 @@ export const DeworkController = async (
           return response.json(issuedCredential);
         }
       } else {
-        throw new Error(`Wrong Dework ID: ${dework}`);
+        throw new Error(`Wrong stack overflow: ${stackUser}`);
       }
     }
   } catch (err) {
