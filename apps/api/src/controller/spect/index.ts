@@ -69,34 +69,40 @@ export const SpectController = async (
       });
       console.log('Importing from Spect:', spect);
 
-      if (spect.assignedClosedCards && spect.assignedClosedCards.length > 10) {
+      const circleTasks = spect.assignedClosedCards
+        .map(task => {
+          if (
+            spect.cardDetails[task] &&
+            spect.cardDetails[task].circle.slug.toLowerCase() ===
+              claimValue.entity.toLowerCase()
+          ) {
+            return spect.cardDetails[task];
+          }
+        })
+        .filter(task => {
+          if (task != undefined) return task;
+        });
+
+      if (circleTasks.length > 10) {
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
         console.log('expirationDate: ', expirationDate);
-        let avatar = undefined;
-        const skills = spect.assignedClosedCards
+        const skills = circleTasks
           .map(task => {
-            if (
-              spect.cardDetails[task] &&
-              spect.cardDetails[task].circle.slug.toLowerCase() ===
-                claimValue.entity.toLowerCase()
-            ) {
-              avatar = spect.cardDetails[task].circle.avatar;
-              return spect.cardDetails[task].labels;
-            }
+            return task.labels;
           })
-          .flatMap(task => {
-            return task != undefined ? task : 'Other';
+          .flatMap(skill => {
+            return skill != undefined ? skill : 'Other';
           });
-
+        const skillSet = [...new Set(skills)] as string[];
         const claim = {
           id: claimedCredentialId,
           ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
           did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(2)?.concat(skills),
+          tags: claimedCredential.type.slice(2)?.concat(skillSet),
           value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
@@ -106,8 +112,12 @@ export const SpectController = async (
         if (!publicClaim) {
           claim['encrypt'] = 'hash' as 'hash';
         } else {
-          if (avatar) claim.value['imageUrl'] = avatar;
-          claim.value['skills'] = krebit.utils.mergeArray(skills);
+          claim.value['skills'] = skillSet.map(skill => {
+            return {
+              skillId: skill,
+              score: 100
+            };
+          });
         }
         console.log('claim: ', claim);
 

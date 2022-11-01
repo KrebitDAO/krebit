@@ -5,7 +5,8 @@ import {
   useGithubFollowersProvider,
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider,
-  useSpectCompletedProvider
+  useSpectCompletedProvider,
+  useDeworkCompletedProvider
 } from 'hooks';
 
 // types
@@ -23,6 +24,7 @@ export const VerifyCredential = (props: IProps) => {
   const githubRepoProvider = useGithubRepoProvider();
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
   const spectCompletedProvider = useSpectCompletedProvider();
+  const deworkCompletedProvider = useDeworkCompletedProvider();
 
   const handleClose = async (credentialType: string) => {
     let isStatusResolved = false;
@@ -51,6 +53,12 @@ export const VerifyCredential = (props: IProps) => {
         spectCompletedProvider.status === 'mint_resolved';
     }
 
+    if (credentialType === 'DeworkCompletedTasksGT10') {
+      isStatusResolved =
+        deworkCompletedProvider.status === 'credential_resolved' ||
+        deworkCompletedProvider.status === 'mint_resolved';
+    }
+
     if (isStatusResolved) {
       await getInformation();
     }
@@ -73,6 +81,10 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'SpectCompletedTasksGT10') {
       spectCompletedProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'DeworkCompletedTasksGT10') {
+      deworkCompletedProvider.handleCleanClaimValues();
     }
   };
 
@@ -481,7 +493,7 @@ export const VerifyCredential = (props: IProps) => {
                   spectCompletedProvider.currentCredential ||
                   currentWork?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim your github repo'
+                    : 'Claim your Spect completed tasks'
                 }
                 form={{
                   fields:
@@ -576,6 +588,124 @@ export const VerifyCredential = (props: IProps) => {
                 loadingMessage={spectCompletedProvider.statusMessage}
                 isError={spectCompletedProvider.status === 'mint_rejected'}
                 errorMessage={spectCompletedProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'DeworkCompletedTasksGT10' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  deworkCompletedProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your Dework completed tasks'
+                }
+                form={{
+                  fields:
+                    deworkCompletedProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'organization',
+                            placeholder: 'Enter the Dework organization',
+                            value:
+                              deworkCompletedProvider.claimValues.organization,
+                            onChange: deworkCompletedProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: deworkCompletedProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: deworkCompletedProvider.claimValues.private,
+                            onChange: deworkCompletedProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    deworkCompletedProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              deworkCompletedProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !deworkCompletedProvider.claimValues.organization ||
+                            deworkCompletedProvider.claimValues.organization ===
+                              ''
+                              ? undefined
+                              : () =>
+                                  deworkCompletedProvider.handleGetCredential(
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !deworkCompletedProvider.claimValues.organization ||
+                            deworkCompletedProvider.claimValues.organization ===
+                              ''
+                        }
+                }}
+                isLoading={
+                  deworkCompletedProvider.status === 'credential_pending'
+                }
+                loadingMessage={deworkCompletedProvider.statusMessage}
+                isError={
+                  deworkCompletedProvider.status === 'credential_rejected'
+                }
+                errorMessage={deworkCompletedProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  deworkCompletedProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    deworkCompletedProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              deworkCompletedProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            deworkCompletedProvider.handleMintCredential(
+                              deworkCompletedProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={deworkCompletedProvider.status === 'mint_pending'}
+                loadingMessage={deworkCompletedProvider.statusMessage}
+                isError={deworkCompletedProvider.status === 'mint_rejected'}
+                errorMessage={deworkCompletedProvider.errorMessage}
                 iconType="stamp"
               />
             </>

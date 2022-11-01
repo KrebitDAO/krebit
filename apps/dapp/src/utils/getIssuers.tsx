@@ -9,7 +9,8 @@ import {
   Spect,
   Cake,
   Person,
-  Guild
+  Guild,
+  Dework
 } from 'components/Icons';
 import { ReactNode } from 'react';
 
@@ -132,6 +133,17 @@ const WORK_CREDENTIALS = [
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
+  },
+  {
+    credentialType: 'DeworkCompletedTasksGT10',
+    entity: 'Dework Completed Tasks > 10',
+    description: 'Krebit Verification Node',
+    icon: <Dework />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/dework'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'New'
   },
   {
     credentialType: 'GithubFollowersGT10',
