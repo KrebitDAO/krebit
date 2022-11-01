@@ -12,6 +12,7 @@ import { getNFTCredentialTypes, getTokenIds } from './getNFTCredentialTypes';
 import { guildXyz } from './guildXyz';
 import { wait } from './wait';
 import { getAge } from './getAge';
+import { stack } from './stack';
 
 export {
   connect,
@@ -28,5 +29,6 @@ export {
   getTokenIds,
   guildXyz,
   wait,
-  getAge
+  getAge,
+  stack
 };

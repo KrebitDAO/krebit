@@ -41,6 +41,7 @@ import { Code } from './Code';
 import { Community } from './Community';
 import { Deal } from './Deal';
 import { Dework } from './Dework';
+import { Stack } from './Stack';
 
 export {
   Close,
@@ -85,5 +86,6 @@ export {
   Code,
   Community,
   Deal,
-  Dework
+  Dework,
+  Stack
 };

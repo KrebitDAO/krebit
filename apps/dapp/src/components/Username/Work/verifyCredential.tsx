@@ -6,7 +6,8 @@ import {
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider,
   useSpectCompletedProvider,
-  useDeworkCompletedProvider
+  useDeworkCompletedProvider,
+  useStackReputationProvider
 } from 'hooks';
 
 // types
@@ -25,6 +26,7 @@ export const VerifyCredential = (props: IProps) => {
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
   const spectCompletedProvider = useSpectCompletedProvider();
   const deworkCompletedProvider = useDeworkCompletedProvider();
+  const stackReputationProvider = useStackReputationProvider();
 
   const handleClose = async (credentialType: string) => {
     let isStatusResolved = false;
@@ -59,6 +61,12 @@ export const VerifyCredential = (props: IProps) => {
         deworkCompletedProvider.status === 'mint_resolved';
     }
 
+    if (credentialType === 'StackOverflowReputationGT1K') {
+      isStatusResolved =
+        stackReputationProvider.status === 'credential_resolved' ||
+        stackReputationProvider.status === 'mint_resolved';
+    }
+
     if (isStatusResolved) {
       await getInformation();
     }
@@ -85,6 +93,10 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'DeworkCompletedTasksGT10') {
       deworkCompletedProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'StackOverflowReputationGT1K') {
+      stackReputationProvider.handleCleanClaimValues();
     }
   };
 
@@ -706,6 +718,108 @@ export const VerifyCredential = (props: IProps) => {
                 loadingMessage={deworkCompletedProvider.statusMessage}
                 isError={deworkCompletedProvider.status === 'mint_rejected'}
                 errorMessage={deworkCompletedProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'StackOverflowReputationGT1K' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  stackReputationProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that your StackOverflow profile has more than 1K of reputation'
+                }
+                form={{
+                  fields:
+                    stackReputationProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: stackReputationProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: stackReputationProvider.claimValues.private,
+                            onChange: stackReputationProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    stackReputationProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              stackReputationProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick: () =>
+                            stackReputationProvider.handleFetchOAuth(
+                              currentVerify
+                            )
+                        }
+                }}
+                isLoading={
+                  stackReputationProvider.status === 'credential_pending'
+                }
+                loadingMessage={stackReputationProvider.statusMessage}
+                isError={
+                  stackReputationProvider.status === 'credential_rejected'
+                }
+                errorMessage={stackReputationProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  stackReputationProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    stackReputationProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              stackReputationProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            stackReputationProvider.handleMintCredential(
+                              stackReputationProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={stackReputationProvider.status === 'mint_pending'}
+                loadingMessage={stackReputationProvider.statusMessage}
+                isError={stackReputationProvider.status === 'mint_rejected'}
+                errorMessage={stackReputationProvider.errorMessage}
                 iconType="stamp"
               />
             </>

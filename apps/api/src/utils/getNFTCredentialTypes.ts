@@ -88,7 +88,8 @@ const CREDENTIAL_TYPES = [
   'GuildXyzAdmin',
   'GuildXyzMember',
   'GuildXyzRole',
-  'VerifiableCredential'
+  'VerifiableCredential',
+  'DeworkCompletedTasksGT10'
 ];
 
 export const getNFTCredentialTypes = () => {

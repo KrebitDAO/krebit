@@ -10,7 +10,8 @@ import {
   Cake,
   Person,
   Guild,
-  Dework
+  Dework,
+  Stack
 } from 'components/Icons';
 import { ReactNode } from 'react';
 
@@ -125,14 +126,15 @@ const PERSONHOOD_CREDENTIALS = [
 
 const WORK_CREDENTIALS = [
   {
-    credentialType: 'SpectCompletedTasksGT10',
-    entity: 'Spect Completed Tasks > 10',
+    credentialType: 'StackOverflowReputationGT1K',
+    entity: 'Stack Overflow Reputation > 1K',
     description: 'Krebit Verification Node',
-    icon: <Spect />,
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
+    icon: <Stack />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    price: '0',
+    badgeText: 'New'
   },
   {
     credentialType: 'DeworkCompletedTasksGT10',
@@ -144,6 +146,17 @@ const WORK_CREDENTIALS = [
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
     badgeText: 'New'
+  },
+
+  {
+    credentialType: 'SpectCompletedTasksGT10',
+    entity: 'Spect Completed Tasks > 10',
+    description: 'Krebit Verification Node',
+    icon: <Spect />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0'
   },
   {
     credentialType: 'GithubFollowersGT10',

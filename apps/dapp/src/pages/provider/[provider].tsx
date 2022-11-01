@@ -7,7 +7,8 @@ const currentProviderChannel = {
   twitter: 'twitter_oauth_channel',
   veriff: 'veriff_oauth_channel',
   github: 'github_oauth_channel',
-  persona: 'persona_oauth_channel'
+  persona: 'persona_oauth_channel',
+  stack: 'stack_oauth_channel'
 };
 
 const DynamicProvider = () => {
@@ -37,6 +38,10 @@ const DynamicProvider = () => {
 
     if (query.provider === 'persona') {
       personaChannel();
+    }
+
+    if (query.provider === 'stack') {
+      stackChannel();
     }
   }, [query.provider, currentChannel]);
 
@@ -307,6 +312,37 @@ const DynamicProvider = () => {
       // always close the redirected window
       window.close();
     }
+  };
+
+  const stackChannel = () => {
+    const queryString = new URLSearchParams(window?.location?.hash);
+
+    const [queryError, queryState, accessToken] = [
+      queryString.get('error'),
+      queryString.get('state'),
+      queryString.get('#access_token')
+    ];
+    console.log('queryString', queryString);
+
+    // if stackReputation oauth then submit message to other windows and close self
+    if (
+      (queryError || accessToken) &&
+      queryState &&
+      /^stackReputation-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (accessToken) {
+        channel.postMessage({
+          target: 'StackOverflowReputationGT1K',
+          data: { accessToken, state: queryState }
+        });
+      }
+    }
+    // always close the redirected window
+    window.close();
   };
 
   return <></>;
