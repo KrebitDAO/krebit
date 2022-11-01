@@ -79,9 +79,7 @@ export const SpectController = async (
             return spect.cardDetails[task];
           }
         })
-        .filter(task => {
-          if (task != undefined) return task;
-        });
+        .filter(task => task !== undefined);
 
       if (circleTasks.length > 10) {
         const expirationDate = new Date();

@@ -137,6 +137,18 @@ const WORK_CREDENTIALS = [
     badgeText: 'New'
   },
   {
+    credentialType: 'StackOverflowScoreGT10',
+    entity: 'Stack Overflow Tag Score > 10',
+    description: 'Krebit Verification Node',
+    icon: <Stack />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'New',
+    isDisabled: true
+  },
+  {
     credentialType: 'DeworkCompletedTasksGT10',
     entity: 'Dework Completed Tasks > 10',
     description: 'Krebit Verification Node',

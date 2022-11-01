@@ -70,14 +70,11 @@ export const DeworkController = async (
       });
       console.log('Importing from Dework:', dework);
 
-      const orgTask = dework.tasks.filter(task => {
-        if (
-          task.workspace.organization.name.toLowerCase() ===
-          claimValue.entity.toLowerCase()
-        )
-          return true;
-        return false;
-      });
+      const orgTask = dework.tasks.filter(
+        task =>
+          task?.workspace?.organization?.name.toLowerCase() ===
+          claimValue?.entity.toLowerCase()
+      );
 
       if (orgTask.length > 10) {
         const expirationDate = new Date();
