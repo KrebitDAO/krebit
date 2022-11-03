@@ -1,5 +1,4 @@
-import krbToken from '@krebitdao/reputation-passport/dist/schemas/krbToken.json';
-import krebitNFT from '@krebitdao/reputation-passport/dist/schemas/krebitNFT.json';
+import { schemas } from '@krebitdao/reputation-passport/dist/schemas';
 import ethers from 'ethers';
 
 export const checkCredentialsURLs = (
@@ -36,13 +35,13 @@ export const checkCredentialsURLs = (
   }
 
   if (type === 'polygon') {
-    let url = krbToken[process.env.NEXT_PUBLIC_NETWORK]?.txUrl;
+    let url = schemas.krbToken[process.env.NEXT_PUBLIC_NETWORK]?.txUrl;
 
     currentUrl = `${url}${value}`;
   }
 
   if (type === 'rarible') {
-    let contract = krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address;
+    let contract = schemas.krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address;
     currentUrl =
       process.env.NEXT_PUBLIC_NETWORK === 'polygon'
         ? `https://rarible.com/token/polygon/${contract}:${value}`

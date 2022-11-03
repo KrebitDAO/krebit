@@ -5,7 +5,7 @@ import { erc20Balances } from './erc20Balances.js';
 import { erc20Contract } from './erc20Contract.js';
 import { verifiableCredential } from './verifiableCredential.js';
 import { verifiableCredentials } from './verifiableCredentials.js';
-import { exploreAccounts } from './exploreAccounts';
+import { exploreAccounts } from './exploreAccounts.js';
 import { ensResolvedAddress } from './ensResolvedAddress.js';
 import { ensDomains } from './ensDomains.js';
 
