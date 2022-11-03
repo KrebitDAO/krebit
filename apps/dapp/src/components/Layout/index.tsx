@@ -19,6 +19,7 @@ import {
 import {
   AccountBalanceWallet,
   Bell,
+  ChromeReaderMode,
   Close,
   Explore,
   Help,
@@ -27,6 +28,7 @@ import {
 } from 'components/Icons';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
+import { Loading } from 'components/Loading';
 import { Badge } from 'components/Badge';
 import { GeneralContext } from 'context';
 import { formatUrlImage } from 'utils';
@@ -41,6 +43,12 @@ const MENU_OPTIONS = [
     href: '/explore',
     icon: <Explore />,
     badgeText: 'New'
+  },
+  {
+    title: 'Credentials Builder',
+    href: '/credentials',
+    icon: <ChromeReaderMode />,
+    isPrivate: true
   },
   {
     title: 'Inbox',
@@ -68,6 +76,7 @@ export const Layout: FunctionComponent<IProps> = props => {
   const parentDropdownMobileRef = useRef(null);
   const parentDropdownDesktopRef = useRef(null);
   const { push, asPath } = useRouter();
+  const isLoading = auth.status === 'pending';
 
   const handlePushProfile = () => {
     if (!auth.isAuthenticated) return;
@@ -114,7 +123,11 @@ export const Layout: FunctionComponent<IProps> = props => {
             <div className="profile-menu-icon" onClick={handleHelp}>
               <Help />
             </div>
-            {auth?.isAuthenticated ? (
+            {isLoading ? (
+              <div className="profile-menu-loading">
+                <Loading type="skeleton" />
+              </div>
+            ) : auth?.isAuthenticated ? (
               <>
                 <div
                   className="profile-menu-image"
@@ -219,67 +232,83 @@ export const Layout: FunctionComponent<IProps> = props => {
           </>
         )}
         {children}
-        <NavBarMobile>
-          {MENU_OPTIONS.map((content, index) => (
-            <Link href={content.href} key={index}>
-              <NavBarOption isActive={asPath.includes(content.href)}>
-                <div className="option-icon">
-                  {content.badgeText ? (
-                    <Badge
-                      icon={content.icon}
-                      iconColor={
-                        asPath.includes(content.href) ? 'cyan' : 'gray'
-                      }
-                      text={content.badgeText}
-                    />
-                  ) : (
-                    content.icon
-                  )}
+        <NavBarMobile isAuthenticated={auth.isAuthenticated}>
+          {isLoading
+            ? new Array(3).fill(0).map((_, index) => (
+                <div className="navbar-mobile-loading" key={index}>
+                  <Loading type="skeleton" />
                 </div>
-              </NavBarOption>
-            </Link>
-          ))}
+              ))
+            : MENU_OPTIONS.filter(option =>
+                auth.isAuthenticated ? option : !option.isPrivate
+              ).map((content, index) => (
+                <Link href={content.href} key={index}>
+                  <NavBarOption isActive={asPath.includes(content.href)}>
+                    <div className="option-icon">
+                      {content.badgeText ? (
+                        <Badge
+                          icon={content.icon}
+                          iconColor={
+                            asPath.includes(content.href) ? 'cyan' : 'gray'
+                          }
+                          text={content.badgeText}
+                        />
+                      ) : (
+                        content.icon
+                      )}
+                    </div>
+                  </NavBarOption>
+                </Link>
+              ))}
         </NavBarMobile>
         <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
           <div className="options">
             <div className="option-logo">
               <Link href="/" rel="noopener noreferrer">
-                <a target="">
+                <a>
                   <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
                 </a>
               </Link>
             </div>
-            {MENU_OPTIONS.map((content, index) => (
-              <Link href={content.href} key={index}>
-                <NavBarOption
-                  isActive={asPath.includes(content.href)}
-                  onMouseEnter={() =>
-                    handleNavBarDesktopOptionHovered(content.title)
-                  }
-                  onMouseLeave={() =>
-                    handleNavBarDesktopOptionHovered(undefined)
-                  }
-                >
-                  <div className="option-icon">
-                    {content.badgeText ? (
-                      <Badge
-                        icon={content.icon}
-                        iconColor={
-                          asPath.includes(content.href) ? 'cyan' : 'gray'
-                        }
-                        text={content.badgeText}
-                        onClick={() => {}}
-                      />
-                    ) : (
-                      content.icon
-                    )}
+            {isLoading
+              ? new Array(3).fill(0).map((_, index) => (
+                  <div className="option-loading" key={index}>
+                    <Loading type="skeleton" />
                   </div>
-                  {navBarDesktopOptionHovered === content.title && (
-                    <p className="option-hover">{content.title}</p>
-                  )}
-                </NavBarOption>
-              </Link>
-            ))}
+                ))
+              : MENU_OPTIONS.filter(option =>
+                  auth.isAuthenticated ? option : !option.isPrivate
+                ).map((content, index) => (
+                  <Link href={content.href} key={index}>
+                    <NavBarOption
+                      isActive={asPath.includes(content.href)}
+                      onMouseEnter={() =>
+                        handleNavBarDesktopOptionHovered(content.title)
+                      }
+                      onMouseLeave={() =>
+                        handleNavBarDesktopOptionHovered(undefined)
+                      }
+                    >
+                      <div className="option-icon">
+                        {content.badgeText ? (
+                          <Badge
+                            icon={content.icon}
+                            iconColor={
+                              asPath.includes(content.href) ? 'cyan' : 'gray'
+                            }
+                            text={content.badgeText}
+                            onClick={() => {}}
+                          />
+                        ) : (
+                          content.icon
+                        )}
+                      </div>
+                      {navBarDesktopOptionHovered === content.title && (
+                        <p className="option-hover">{content.title}</p>
+                      )}
+                    </NavBarOption>
+                  </Link>
+                ))}
           </div>
           <div className="option-profile-container">
             <NavBarOption
@@ -295,7 +324,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <p className="option-hover">help</p>
               )}
             </NavBarOption>
-            {auth?.isAuthenticated ? (
+            {isLoading ? (
+              <div className="option-profile-loading">
+                <Loading type="skeleton" />
+              </div>
+            ) : auth?.isAuthenticated ? (
               <div className="option-profile">
                 <div
                   className="option-profile-image"

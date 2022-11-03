@@ -42,6 +42,8 @@ import { Community } from './Community';
 import { Deal } from './Deal';
 import { Dework } from './Dework';
 import { Stack } from './Stack';
+import { AddPhotoAlternate } from './AddPhotoAlternate';
+import { Add } from './Add';
 
 export {
   Close,
@@ -87,5 +89,7 @@ export {
   Community,
   Deal,
   Dework,
-  Stack
+  Stack,
+  AddPhotoAlternate,
+  Add
 };
