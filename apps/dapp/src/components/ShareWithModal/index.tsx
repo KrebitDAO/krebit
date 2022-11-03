@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import ShareModal from 'lit-share-modal-v3';
 import { ethers } from 'ethers';
+import { schemas } from '@krebitdao/reputation-passport/dist/schemas';
 
 import { Wrapper } from './styles';
 import { theme } from 'theme';
 import { Loading } from 'components/Loading';
-import { schemas } from '@krebitdao/reputation-passport/dist/schemas';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
