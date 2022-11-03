@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { Wrapper } from './styles';
 import { theme } from 'theme';
 import { Loading } from 'components/Loading';
-import krebitNFT from '@krebitdao/reputation-passport/dist/schemas/krebitNFT.json';
+import { schemas } from '@krebitdao/reputation-passport/dist/schemas';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
@@ -53,7 +53,7 @@ export const ShareWithModal = (props: IProps) => {
         condition => {
           if (
             condition.contractAddress ===
-              krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address &&
+              schemas.krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address &&
             isNaN(Number(condition.parameters[1]))
           ) {
             const tokenIdHex = ethers.utils.keccak256(
@@ -127,7 +127,8 @@ export const ShareWithModal = (props: IProps) => {
                   logo:
                     process.env.NEXT_PUBLIC_IPFS_GATEWAY +
                     '/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-icon.png',
-                  value: krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address,
+                  value:
+                    schemas.krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address,
                   symbol: 'Krebit NFT',
                   chain: process.env.NEXT_PUBLIC_NETWORK,
                   standard: 'ERC1155'

@@ -1,15 +1,15 @@
-import badge from './badge.json' assert { type: 'json' };
-import birthDate from './birthDate.json' assert { type: 'json' };
-import certificate from './certificate.json' assert { type: 'json' };
-import digitalProperty from './digitalProperty.json' assert { type: 'json' };
-import education from './education.json' assert { type: 'json' };
-import issuer from './issuer.json' assert { type: 'json' };
-import legalName from './legalName.json' assert { type: 'json' };
-import location from './location.json' assert { type: 'json' };
-import governmentId from './governmentId.json' assert { type: 'json' };
-import phoneNumber from './phoneNumber.json' assert { type: 'json' };
-import workExperience from './workExperience.json' assert { type: 'json' };
-import recommendation from './recommendation.json' assert { type: 'json' };
+import { badge } from './badge.js';
+import { birthDate } from './birthDate.js';
+import { certificate } from './certificate.js';
+import { digitalProperty } from './digitalProperty.js';
+import { education } from './education.js';
+import { issuer } from './issuer.js';
+import { legalName } from './legalName.js';
+import { location } from './location.js';
+import { governmentId } from './governmentId.js';
+import { phoneNumber } from './phoneNumber.js';
+import { workExperience } from './workExperience.js';
+import { recommendation } from './recommendation.js';
 
 export const claims = {
   badge,
