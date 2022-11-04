@@ -1,9 +1,13 @@
-import { MouseEvent, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { Cake } from 'components/Icons';
 
 // types
 import { IItems } from 'components/Select';
+
+export interface IFormValues {
+  [key: string]: string | number | string[] | number[] | boolean | File;
+}
 
 export interface ICredentialsState {
   id: string;
@@ -23,9 +27,13 @@ export interface ICredentialsState {
       isMultiline?: boolean;
       items?: IItems[];
     }[];
+    issueTo?: {
+      name: string;
+      placeholder: string;
+    };
     button?: {
       text: string;
-      onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+      onClick: (values: IFormValues) => string | Promise<string>;
       isDisabled?: boolean;
     };
   };
@@ -91,7 +99,18 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'datepicker',
           placeholder: 'datepicker'
         }
-      ]
+      ],
+      issueTo: {
+        name: 'issueTo',
+        placeholder: 'Issue to'
+      },
+      button: {
+        text: 'Create credentials',
+        onClick: async values => {
+          console.log(values);
+          return '123';
+        }
+      }
     }
   }
 ];

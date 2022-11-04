@@ -22,7 +22,7 @@ interface IClaimValues {
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 
 const initialState = {
-  date: '01/12/2009',
+  date: constants.DEFAULT_DATE,
   private: true
 };
 

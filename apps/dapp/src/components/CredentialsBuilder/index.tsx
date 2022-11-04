@@ -1,4 +1,10 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  MouseEvent,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
 
@@ -19,7 +25,8 @@ import { DatePicker } from 'components/DatePicker';
 import { Switch } from 'components/Switch';
 import {
   CREDENTIALS_INITIAL_STATE,
-  ICredentialsState
+  ICredentialsState,
+  IFormValues
 } from '../Credentials/initialState';
 import { GeneralContext } from 'context';
 import { constants, formatFilename, formatUrlImage } from 'utils';
@@ -27,13 +34,10 @@ import { constants, formatFilename, formatUrlImage } from 'utils';
 // types
 import { SelectChangeEvent } from '@mui/material';
 import { QuestionModal } from 'components/QuestionModal';
-
-interface IFormValues {
-  [key: string]: string | string[] | number | boolean | File;
-}
+import { Button } from 'components/Button';
 
 interface ICurrentInputModal {
-  [name: string]: string;
+  [name: string]: string | string[] | number[];
 }
 
 export const CredentialsBuilder = () => {
@@ -42,9 +46,11 @@ export const CredentialsBuilder = () => {
   const [formValues, setFormValues] = useState<IFormValues>({});
   const [currentInputModal, setCurrentInputModal] =
     useState<ICurrentInputModal>({});
-  const { query } = useRouter();
+  const [issueId, setIssueId] = useState<string>();
+  const { query, push } = useRouter();
   const { auth } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
+  const isFormLoading = status === 'form_pending';
 
   useEffect(() => {
     if (!query?.type) return;
@@ -65,7 +71,26 @@ export const CredentialsBuilder = () => {
         throw new Error('Not authorized');
       }
 
+      const formValues = values.form?.fields?.reduce(
+        (a, v) => ({
+          ...a,
+          ...(values.form?.issueTo
+            ? { [values.form.issueTo.name]: [] as string[] }
+            : undefined),
+          [v.name]:
+            v.type === 'datepicker'
+              ? constants.DEFAULT_DATE
+              : v.type === 'switch'
+              ? false
+              : v.type === 'boxes'
+              ? ([] as string[] | number[])
+              : ''
+        }),
+        {}
+      );
+
       setValues(values);
+      setFormValues(formValues);
       setStatus('resolved');
     } catch (error) {
       console.error(error);
@@ -104,7 +129,7 @@ export const CredentialsBuilder = () => {
     }
   };
 
-  const handleChangeBoxes = (name: string, value: string) => {
+  const handleChangeArrayValues = (name: string, value: string) => {
     if (!name || !value) return;
 
     setFormValues(prevValues => ({
@@ -128,21 +153,64 @@ export const CredentialsBuilder = () => {
     }));
   };
 
+  const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    try {
+      const id = await values.form.button.onClick(formValues);
+      setIssueId(id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCopyIssuedId = async () => {
+    setStatus('form_pending');
+
+    const url = `https://krebit.id/issuer/${issueId}`;
+
+    try {
+      await navigator?.clipboard?.writeText(url).then(() => {
+        push(`/${auth.did}`);
+      });
+      setStatus('form_resolved');
+    } catch (error) {
+      setStatus('form_rejected');
+      console.error(error);
+    }
+  };
+
+  const handleCloseIssueIdModal = () => {
+    setIssueId(undefined);
+  };
+
+  const handleGoBack = () => {
+    push('/credentials');
+  };
+
   if (status === 'rejected') {
     return <ErrorWrapper statusCode={404} />;
   }
 
   return (
     <>
+      {issueId && (
+        <QuestionModal
+          title="Credential Issued"
+          text="The credential has been issued! You can now copy it and share it everywhere."
+          continueButton={{ text: 'Copy URL', onClick: handleCopyIssuedId }}
+          cancelButton={{ text: 'Close', onClick: handleCloseIssueIdModal }}
+        />
+      )}
       {Object.keys(currentInputModal).length !== 0 && (
         <QuestionModal
           title="Add new value to form"
           continueButton={{
             text: 'Add',
             onClick: () =>
-              handleChangeBoxes(
+              handleChangeArrayValues(
                 Object.keys(currentInputModal)[0],
-                Object.values(currentInputModal)[0]
+                Object.values(currentInputModal)[0] as string
               )
           }}
           cancelButton={{
@@ -152,7 +220,7 @@ export const CredentialsBuilder = () => {
           component={() => (
             <Input
               name={Object.keys(currentInputModal)[0]}
-              value={Object.values(currentInputModal)[0]}
+              value={Object.values(currentInputModal)[0] as string}
               onChange={event =>
                 handleCurrentInputModal(event.target.name, event.target.value)
               }
@@ -168,14 +236,17 @@ export const CredentialsBuilder = () => {
               <Loading />
             </div>
           ) : (
-            <>
+            <div className="credential-container">
               <div className="credential-header">
-                <div className="credential-header-icon">
+                <div className="credential-header-icon" onClick={handleGoBack}>
                   <ArrowForward />
                 </div>
                 <div className="credential-header-texts">
-                  <p className="credential-header-texts-title">
-                    Work credential
+                  <p
+                    className="credential-header-texts-title"
+                    onClick={handleGoBack}
+                  >
+                    {values.title}
                   </p>
                   <p className="credential-header-texts-subtitle">
                     Organization: <span>andresmontoya.eth</span>
@@ -226,7 +297,7 @@ export const CredentialsBuilder = () => {
                                 className="credential-form-box"
                                 key={index}
                                 onClick={() =>
-                                  handleChangeBoxes(input.name, value)
+                                  handleChangeArrayValues(input.name, value)
                                 }
                               >
                                 <div className="credential-form-box-close">
@@ -342,20 +413,55 @@ export const CredentialsBuilder = () => {
                   );
                 })}
               </div>
-              <div className="credential-issue-to">
-                <p className="credential-issue-to-title">Issue to</p>
-                <div className="credential-issue-to-list">
-                  <div className="credential-issue-to-item">
-                    <p className="credential-issue-to-item-text">
-                      x0e4rdee14xf184010371c782rcykk
-                    </p>
-                    <div className="credential-issue-to-item-close">
-                      <Close />
+              {values.form?.issueTo && (
+                <div className="credential-issue-to">
+                  <p className="credential-issue-to-title">
+                    {values.form.issueTo.placeholder}
+                  </p>
+                  <div className="credential-issue-to-list">
+                    {(
+                      (formValues[values.form.issueTo.name] as string[]) || []
+                    ).map((value, index) => (
+                      <div
+                        className="credential-issue-to-item"
+                        key={index}
+                        onClick={() =>
+                          handleChangeArrayValues(
+                            values.form.issueTo.name,
+                            value
+                          )
+                        }
+                      >
+                        <p className="credential-issue-to-item-text">{value}</p>
+                        <div className="credential-issue-to-item-close">
+                          <Close />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div
+                    className="credential-issue-to-new-cred"
+                    onClick={() =>
+                      handleCurrentInputModal(values.form.issueTo.name)
+                    }
+                  >
+                    <div className="credential-issue-to-new-cred-icon">
+                      <Add />
                     </div>
+                    <p className="credential-issue-to-new-cred-text">
+                      Add new address
+                    </p>
                   </div>
                 </div>
+              )}
+              <div className="credential-button">
+                <Button
+                  text="Issue credential"
+                  onClick={handleSubmit}
+                  isDisabled={isFormLoading}
+                />
               </div>
-            </>
+            </div>
           )}
         </Wrapper>
       </Layout>
