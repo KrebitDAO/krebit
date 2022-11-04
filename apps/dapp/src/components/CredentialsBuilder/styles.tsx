@@ -364,3 +364,17 @@ export const Wrapper = styled.div<IProps>`
     }
   `}
 `;
+
+export const QuestionModalText = styled.div`
+  ${({ theme }) => css`
+    margin: 0;
+    font-size: ${theme.fonts.base};
+    color: ${theme.colors.white}B3;
+
+    & > a {
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.white}B3;
+      text-decoration: underline;
+    }
+  `}
+`;

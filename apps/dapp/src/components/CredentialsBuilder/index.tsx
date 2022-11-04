@@ -8,7 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
 
-import { Wrapper } from './styles';
+import { QuestionModalText, Wrapper } from './styles';
 import { Card } from 'components/Credentials/styles';
 import { Layout } from 'components/Layout';
 import {
@@ -39,6 +39,8 @@ import { Button } from 'components/Button';
 interface ICurrentInputModal {
   [name: string]: string | string[] | number[];
 }
+
+const BASE_URL = 'https://krebit.id/issuer';
 
 export const CredentialsBuilder = () => {
   const [status, setStatus] = useState('idle');
@@ -172,7 +174,7 @@ export const CredentialsBuilder = () => {
   const handleCopyIssuedId = async () => {
     setStatus('form_pending');
 
-    const url = `https://krebit.id/issue/${issueId}`;
+    const url = `${BASE_URL}/${issueId}`;
 
     try {
       await navigator?.clipboard?.writeText(url).then(() => {
@@ -202,7 +204,15 @@ export const CredentialsBuilder = () => {
       {issueId && (
         <QuestionModal
           title="Credential Issued"
-          text="The credential has been issued! You can now copy it and share it everywhere."
+          component={() => (
+            <QuestionModalText>
+              The credential has been issued! You can now copy and share it
+              everywhere.{' '}
+              <a href={`${BASE_URL}/${issueId}`} target="_blank">
+                {BASE_URL}/{issueId}
+              </a>
+            </QuestionModalText>
+          )}
           continueButton={{ text: 'Copy URL', onClick: handleCopyIssuedId }}
           cancelButton={{ text: 'Close', onClick: handleCloseIssueIdModal }}
         />
