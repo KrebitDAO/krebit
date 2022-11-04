@@ -158,6 +158,11 @@ export const CredentialsBuilder = () => {
 
     try {
       const id = await values.form.button.onClick(formValues);
+
+      if (!id) {
+        throw new Error('Not id found');
+      }
+
       setIssueId(id);
     } catch (error) {
       console.error(error);
@@ -167,7 +172,7 @@ export const CredentialsBuilder = () => {
   const handleCopyIssuedId = async () => {
     setStatus('form_pending');
 
-    const url = `https://krebit.id/issuer/${issueId}`;
+    const url = `https://krebit.id/issue/${issueId}`;
 
     try {
       await navigator?.clipboard?.writeText(url).then(() => {
