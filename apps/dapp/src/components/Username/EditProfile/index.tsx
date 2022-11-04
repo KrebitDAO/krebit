@@ -14,7 +14,7 @@ import { Input } from 'components/Input';
 import { Button } from 'components/Button';
 import { Loading } from 'components/Loading';
 import { Close, Upload } from 'components/Icons';
-import { formatFilename, formatUrlImage } from 'utils';
+import { constants, formatFilename, formatUrlImage } from 'utils';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
@@ -34,8 +34,6 @@ interface IProps {
   orbis: Orbis;
   storage: Web3Storage;
 }
-
-const fileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 
 export const EditProfile = (props: IProps) => {
   const {
@@ -74,7 +72,7 @@ export const EditProfile = (props: IProps) => {
         type: files[0].type
       });
 
-      if (!fileTypes.includes(file.type)) return;
+      if (!constants.DEFAULT_IMAGE_FILE_TYPES.includes(file.type)) return;
 
       reader.readAsDataURL(files[0]);
       setValues(prevValues => ({

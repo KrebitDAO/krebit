@@ -7,6 +7,8 @@ import {
   Whatsapp
 } from 'components/Icons';
 
+const DEFAULT_DATE = '01/12/2009';
+
 const DEFAULT_HOME_BOXES = [
   {
     box: '$KRB 180',
@@ -260,7 +262,10 @@ const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
   ERROR_CREDENTIAL: 'Error saving credential. Please check later'
 };
 
+const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
 export const constants = {
+  DEFAULT_DATE,
   DEFAULT_HOME_BOXES,
   DEFAULT_TWEET_PEOPLE,
   DEFAULT_EMPTY_CARD_PERSONHOOD,
@@ -268,5 +273,6 @@ export const constants = {
   DEFAULT_EMPTY_CARD_COMMUNITY,
   DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS,
   DEFAULT_MESSAGES_FOR_PROVIDERS,
-  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS
+  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS,
+  DEFAULT_IMAGE_FILE_TYPES
 };
