@@ -112,5 +112,44 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         }
       }
     }
+  },
+  {
+    id: 'education',
+    title: 'education',
+    description: 'this is education',
+    primaryColor: 'melrose',
+    secondaryColor: 'blueRibbon',
+    icon: <Cake />,
+    form: {
+      fields: [
+        {
+          type: 'datepicker',
+          name: 'fecha',
+          placeholder: 'cuando termina el año'
+        },
+        {
+          name: 'name',
+          placeholder: 'this is the name'
+        },
+        {
+          type: 'text',
+          name: 'name1',
+          placeholder: 'hola a todos'
+        },
+        ,
+        {
+          type: 'text',
+          name: 'name2',
+          placeholder: 'hola a todos'
+        }
+      ],
+      button: {
+        text: 'create education',
+        onClick: async values => {
+          console.log(values);
+          return '456';
+        }
+      }
+    }
   }
 ];
