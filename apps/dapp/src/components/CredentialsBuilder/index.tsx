@@ -81,12 +81,12 @@ export const CredentialsBuilder = () => {
             : undefined),
           [v.name]:
             v.type === 'datepicker'
-              ? constants.DEFAULT_DATE
+              ? v?.defaultValue || constants.DEFAULT_DATE
               : v.type === 'switch'
-              ? false
+              ? v?.defaultValue || false
               : v.type === 'boxes'
-              ? ([] as string[] | number[])
-              : ''
+              ? v?.defaultValue || []
+              : v?.defaultValue || ''
         }),
         {}
       );
