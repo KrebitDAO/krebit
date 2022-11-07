@@ -21,6 +21,7 @@ export interface ICredentialsState {
       name: string;
       placeholder: string;
       type?: string;
+      defaultValue?: string | number | string[] | number[] | boolean;
       pattern?: string;
       isDisabled?: boolean;
       isRequired?: boolean;
