@@ -476,7 +476,7 @@ export const VerifyCredential = (props: IProps) => {
                         ],
                   button:
                     issuerProvider.currentCredential ||
-                    currentCommunity?.credential
+                    !currentCommunity?.isCustomCredential // ESTA VALIDACION LA AÑADI PARA VERIFICAR QUE ES UNA CREDENCIAL QUE VIENE DE OTRA PERSONA
                       ? {
                           text: 'Check it',
                           onClick: () =>

@@ -40,7 +40,7 @@ interface ICurrentInputModal {
   [name: string]: string | string[] | number[];
 }
 
-const BASE_URL = 'https://krebit.id/issuer';
+const BASE_URL = 'https://krebit.id/claim';
 
 export const CredentialsBuilder = () => {
   const [status, setStatus] = useState('idle');
@@ -48,7 +48,7 @@ export const CredentialsBuilder = () => {
   const [formValues, setFormValues] = useState<IFormValues>({});
   const [currentInputModal, setCurrentInputModal] =
     useState<ICurrentInputModal>({});
-  const [issueId, setIssueId] = useState<string>();
+  const [credentialId, setCredentialId] = useState<string>();
   const { query, push } = useRouter();
   const { auth } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
@@ -165,7 +165,7 @@ export const CredentialsBuilder = () => {
         throw new Error('Not id found');
       }
 
-      setIssueId(id);
+      setCredentialId(id);
     } catch (error) {
       console.error(error);
     }
@@ -174,7 +174,7 @@ export const CredentialsBuilder = () => {
   const handleCopyIssuedId = async () => {
     setStatus('form_pending');
 
-    const url = `${BASE_URL}/${issueId}`;
+    const url = `${BASE_URL}/?credential_id=${credentialId}`;
 
     try {
       await navigator?.clipboard?.writeText(url).then(() => {
@@ -187,8 +187,8 @@ export const CredentialsBuilder = () => {
     }
   };
 
-  const handleCloseIssueIdModal = () => {
-    setIssueId(undefined);
+  const handleCloseCredentialIdModal = () => {
+    setCredentialId(undefined);
   };
 
   const handleGoBack = () => {
@@ -201,20 +201,26 @@ export const CredentialsBuilder = () => {
 
   return (
     <>
-      {issueId && (
+      {credentialId && (
         <QuestionModal
           title="Credential Issued"
           component={() => (
             <QuestionModalText>
               The credential has been issued! You can now copy and share it
               everywhere.{' '}
-              <a href={`${BASE_URL}/${issueId}`} target="_blank">
-                {BASE_URL}/{issueId}
+              <a
+                href={`${BASE_URL}/?credential_id=${credentialId}`}
+                target="_blank"
+              >
+                {BASE_URL}/?credential_id={credentialId}
               </a>
             </QuestionModalText>
           )}
           continueButton={{ text: 'Copy URL', onClick: handleCopyIssuedId }}
-          cancelButton={{ text: 'Close', onClick: handleCloseIssueIdModal }}
+          cancelButton={{
+            text: 'Close',
+            onClick: handleCloseCredentialIdModal
+          }}
         />
       )}
       {Object.keys(currentInputModal).length !== 0 && (

@@ -13,12 +13,12 @@ import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share } from 'components/Icons';
-import { isValid, normalizeSchema, formatUrlImage } from 'utils';
+import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
 // types
-import { IProfile } from 'utils/normalizeSchema';
+import { ICredential, IProfile } from 'utils/normalizeSchema';
 
 interface IFilterMenuProps {
   currentFilter: string;
@@ -80,6 +80,8 @@ export const Username = () => {
   const [profile, setProfile] = useState<IProfile | undefined>();
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
+  const [currentCustomCredential, setCurrentCustomCredential] =
+    useState<ICredential>();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const { query, push } = useRouter();
@@ -138,6 +140,47 @@ export const Username = () => {
     getProfile();
   }, [publicPassport, auth.status, auth?.did, query.id]);
 
+  useEffect(() => {
+    if (!window) return;
+    if (!issuer) return;
+    if (!query.id) return;
+    if (!query.credential_id) return;
+    if (!auth?.isAuthenticated) return;
+    if (auth.status !== 'resolved') return;
+
+    const validateCredential = async () => {
+      try {
+        const currentCredential = await issuer.getCredential(
+          query.credential_id
+        );
+
+        if (currentCredential) {
+          const isCredentialValid = await issuer.checkCredential(
+            currentCredential
+          );
+          const hasCorrectTypes = currentCredential?.type?.some(
+            (type: string) =>
+              constants.DEFAULT_CLAIM_CREDENTIAL_TYPES.includes(type)
+          );
+
+          if (isCredentialValid && hasCorrectTypes) {
+            handleCurrentCustomCredential(currentCredential);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    validateCredential();
+  }, [
+    issuer,
+    auth?.isAuthenticated,
+    auth.status,
+    query.id,
+    query.credential_id
+  ]);
+
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
   };
@@ -153,6 +196,10 @@ export const Username = () => {
     if (!auth?.isAuthenticated) return;
 
     setIsEditProfileOpen(prevState => !prevState);
+  };
+
+  const handleCurrentCustomCredential = (credential: any) => {
+    setCurrentCustomCredential(credential);
   };
 
   const handleIsShareContentOpen = async () => {
@@ -466,6 +513,8 @@ export const Username = () => {
                     currentFilterOption !== 'Community'
                   }
                   handleProfile={handleProfile}
+                  customCredential={currentCustomCredential}
+                  onCustomCredential={handleCurrentCustomCredential}
                 />
               </div>
             </div>
