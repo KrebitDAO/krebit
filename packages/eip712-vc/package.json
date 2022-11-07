@@ -1,6 +1,6 @@
 {
   "name": "@krebitdao/eip712-vc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Krebit SDK for EIP712 Verified Credentials",
   "type": "module",
   "main": "./dist/index.js",

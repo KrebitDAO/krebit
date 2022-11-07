@@ -139,6 +139,66 @@ export const TwitterController = async (
         throw new Error(`Wrong twitter ID: ${twitterUser}`);
       }
     } else if (
+      claimedCredential?.credentialSubject?.type === 'TwitterVerified'
+    ) {
+      // Connect to twitter and get user ID from code
+      const twitterUser = await twitter.getTwitterUser({
+        client: authClient,
+        state: claimValue.proofs.state,
+        code_challenge: claimedCredential.credentialSubject.ethereumAddress,
+        code: claimValue.proofs.code
+      });
+      console.log('twitterUser: ', twitterUser);
+
+      // If valid twitterID
+      if (
+        claimValue.host === 'twitter.com' &&
+        twitterUser &&
+        twitterUser.username.toLowerCase() ===
+          claimValue.username.toLowerCase() &&
+        twitterUser.verified
+      ) {
+        console.log('Valid twitter ID:', twitterUser);
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: claimedCredential.credentialSubject.id,
+          type: claimedCredential.credentialSubject.type,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: claimedCredential.type.slice(2),
+          value: {
+            ...claimValue,
+            ...twitterUser
+          },
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
+        console.log('claim: ', claim);
+
+        // Issue Verifiable credential (twitterUsername)
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        await twitter.revokeTwitterToken(claimValue.proofs.code);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong twitter ID: ${twitterUser}`);
+      }
+    } else if (
       claimedCredential?.credentialSubject?.type === 'TwitterFollowersGT1K'
     ) {
       // Connect to twitter and get user ID from code
