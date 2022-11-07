@@ -14,11 +14,11 @@ interface IProps {
 export const ConnectWallet: FunctionComponent<IProps> = props => {
   const { isOpen = false, onClose } = props;
   const [status, setStatus] = useState('idle');
+  const [shouldRememberSession, setShouldRememberSession] = useState(true);
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true);
   const {
     auth: { connect, handleRememberSession }
   } = useContext(GeneralContext);
-  const [shouldRememberSession, setShouldRememberSession] = useState(true);
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true);
 
   const handleConnect = async (type: string) => {
     try {

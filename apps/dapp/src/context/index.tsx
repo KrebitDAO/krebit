@@ -39,7 +39,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [walletInformation, setWalletInformation] = useState<
     IWalletInformation | undefined
   >();
-  const { push } = useRouter();
+  const { push, query } = useRouter();
   const storage = new Web3Storage({ token: NEXT_PUBLIC_WEB3_STORAGE });
 
   useEffect(() => {
@@ -196,7 +196,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           setProfile(currentProfile);
           setStatus('resolved');
 
-          push(`/${passport.did}`);
+          if (query?.credential_id) {
+            push(`/${passport.did}/?credential_id=${query.credential_id}`);
+          } else {
+            push(`/${passport.did}`);
+          }
         }
       }
     } catch (error) {

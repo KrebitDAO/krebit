@@ -8,6 +8,7 @@ import { Privacy } from './Privacy';
 import { Terms } from './Terms';
 import { Credentials } from './Credentials';
 import { CredentialsBuilder } from './CredentialsBuilder';
+import { ClaimCredential } from './ClaimCredential';
 
 export {
   NavBar,
@@ -19,5 +20,6 @@ export {
   Privacy,
   Terms,
   Credentials,
-  CredentialsBuilder
+  CredentialsBuilder,
+  ClaimCredential
 };

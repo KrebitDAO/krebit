@@ -108,7 +108,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         text: 'Create credentials',
         onClick: async values => {
           console.log(values);
-          return '123';
+          return 'ceramic://kjzl6cwe1jw14616fdgi98yg5sipgb1sc55232pv66ri50mbs7523gx39lt39nm';
         }
       }
     }
