@@ -23,6 +23,7 @@ import { Input } from 'components/Input';
 import { Select } from 'components/Select';
 import { DatePicker } from 'components/DatePicker';
 import { Switch } from 'components/Switch';
+import { Rating } from 'components/Rating';
 import {
   CREDENTIALS_INITIAL_STATE,
   ICredentialsState,
@@ -40,7 +41,7 @@ interface ICurrentInputModal {
   [name: string]: string | string[] | number[];
 }
 
-const BASE_URL = 'https://krebit.id/issuer';
+const BASE_URL = 'https://krebit.id/claim';
 
 export const CredentialsBuilder = () => {
   const [status, setStatus] = useState('idle');
@@ -50,7 +51,10 @@ export const CredentialsBuilder = () => {
     useState<ICurrentInputModal>({});
   const [issueId, setIssueId] = useState<string>();
   const { query, push } = useRouter();
-  const { auth } = useContext(GeneralContext);
+  const {
+    auth,
+    profileInformation: { profile }
+  } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
   const isFormLoading = status === 'form_pending';
 
@@ -66,7 +70,7 @@ export const CredentialsBuilder = () => {
       }
 
       const values = CREDENTIALS_INITIAL_STATE.find(
-        values => values.id === query.type
+        values => values.type === query.type
       );
 
       if (!values) {
@@ -81,7 +85,7 @@ export const CredentialsBuilder = () => {
             : undefined),
           [v.name]:
             v.type === 'datepicker'
-              ? constants.DEFAULT_DATE
+              ? new Date()
               : v.type === 'switch'
               ? false
               : v.type === 'boxes'
@@ -192,7 +196,7 @@ export const CredentialsBuilder = () => {
   };
 
   const handleGoBack = () => {
-    push('/credentials');
+    push('/create');
   };
 
   if (status === 'rejected') {
@@ -206,8 +210,8 @@ export const CredentialsBuilder = () => {
           title="Credential Issued"
           component={() => (
             <QuestionModalText>
-              The credential has been issued! You can now copy and share it
-              everywhere.{' '}
+              The credential is ready to be claimed! You can now copy and share
+              it with the recipients.{' '}
               <a href={`${BASE_URL}/${issueId}`} target="_blank">
                 {BASE_URL}/{issueId}
               </a>
@@ -263,36 +267,28 @@ export const CredentialsBuilder = () => {
                   >
                     {values.title}
                   </p>
-                  <p className="credential-header-texts-subtitle">
-                    Organization: <span>andresmontoya.eth</span>
-                  </p>
                 </div>
               </div>
               <div className="credential-card">
                 <div className="credential-card-header">
-                  <p className="credential-card-header-title">
-                    Preview: <span>krebit.id/claim/140</span>
-                  </p>
-                  <div className="credential-card-header-icon">
-                    <OpenInNew />
-                  </div>
+                  <p className="credential-card-header-title">Preview:</p>
                 </div>
                 <Card
                   primaryColor={values.primaryColor}
                   secondaryColor={values.secondaryColor}
                 >
                   <p className="card-title">
-                    {(formValues?.name as string) || 'Name'}
+                    {(formValues?.name as string) || 'Credential Title'}
                   </p>
                   <p className="card-description">
                     {(formValues?.description as string) ||
-                      'Here your description'}
+                      'Credential description'}
                   </p>
                   <div className="card-brand">
                     {(formValues?.image as string) ? (
                       <img src={formatUrlImage(formValues?.image as string)} />
                     ) : (
-                      <p className="card-title">Image</p>
+                      values.icon
                     )}
                   </div>
                 </Card>
@@ -368,6 +364,22 @@ export const CredentialsBuilder = () => {
                         }
                         onChange={handleChange}
                         items={input.items}
+                        isDisabled={input.isDisabled}
+                        isRequired={input.isRequired}
+                      />
+                    );
+                  }
+
+                  if (input.type === 'rating') {
+                    return (
+                      <Rating
+                        key={index}
+                        label={input.placeholder}
+                        name={input.name}
+                        value={
+                          formValues[values.form.fields[index].name] as number
+                        }
+                        onChange={handleChange}
                         isDisabled={input.isDisabled}
                         isRequired={input.isRequired}
                       />
@@ -471,7 +483,11 @@ export const CredentialsBuilder = () => {
               )}
               <div className="credential-button">
                 <Button
-                  text="Issue credential"
+                  text={
+                    values.form.button.text
+                      ? values.form.button.text
+                      : 'Issue credential'
+                  }
                   onClick={handleSubmit}
                   isDisabled={isFormLoading}
                 />

@@ -53,6 +53,12 @@ export const VerifyCredential = (props: IProps) => {
         twitterProvider.status === 'mint_resolved';
     }
 
+    if (credentialType === 'TwitterVerified') {
+      isStatusResolved =
+        twitterProvider.status === 'credential_resolved' ||
+        twitterProvider.status === 'mint_resolved';
+    }
+
     if (credentialType === 'VeriffAgeGT18') {
       isStatusResolved =
         veriffAgeProvider.status === 'credential_resolved' ||
@@ -108,6 +114,10 @@ export const VerifyCredential = (props: IProps) => {
     }
 
     if (credentialType === 'Twitter') {
+      twitterProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'TwitterVerified') {
       twitterProvider.handleCleanClaimValues();
     }
 
@@ -262,6 +272,117 @@ export const VerifyCredential = (props: IProps) => {
                   currentPersonhood?.credential
                     ? 'Step completed, you can now check your credential'
                     : 'Claim your twitter profile'
+                }
+                form={{
+                  fields:
+                    twitterProvider.currentCredential ||
+                    currentPersonhood?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'username',
+                            placeholder: 'Enter you twitter handle',
+                            value: twitterProvider.claimValues.username,
+                            onChange: twitterProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: twitterProvider.claimValues.private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: twitterProvider.claimValues.private,
+                            onChange: twitterProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    twitterProvider.currentCredential ||
+                    currentPersonhood.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              twitterProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !twitterProvider.claimValues.username ||
+                            twitterProvider.claimValues.username === ''
+                              ? undefined
+                              : () =>
+                                  twitterProvider.handleFetchOAuth(
+                                    walletInformation.address,
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !twitterProvider.claimValues.username ||
+                            twitterProvider.claimValues.username === ''
+                        }
+                }}
+                isLoading={twitterProvider.status === 'credential_pending'}
+                loadingMessage={twitterProvider.statusMessage}
+                isError={twitterProvider.status === 'credential_rejected'}
+                errorMessage={twitterProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  twitterProvider.currentMint || currentPersonhood?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    twitterProvider.currentMint || currentPersonhood?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              twitterProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            twitterProvider.handleMintCredential(
+                              twitterProvider.currentCredential ||
+                                currentPersonhood?.credential
+                            )
+                        }
+                }}
+                isLoading={twitterProvider.status === 'mint_pending'}
+                loadingMessage={twitterProvider.statusMessage}
+                isError={twitterProvider.status === 'mint_rejected'}
+                errorMessage={twitterProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'TwitterVerified' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  twitterProvider.currentCredential ||
+                  currentPersonhood?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your Verified twitter profile (has blue checkmark)'
                 }
                 form={{
                   fields:

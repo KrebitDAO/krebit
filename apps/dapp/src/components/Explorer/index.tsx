@@ -324,10 +324,10 @@ export const Explorer = () => {
               )}
             </div>
             <div className="filter-menu-slider">
-              <p className="filter-menu-slider-text">$KRB Reputation</p>
+              <p className="filter-menu-slider-text">Krebits Reputation</p>
               <div className="filter-menu-slider-component">
                 <Slider
-                  ariaLabel="$KRB Reputation"
+                  ariaLabel="Reputation"
                   name="krbs"
                   value={filterValues.krbs}
                   onChange={handleFilterValues}
@@ -335,10 +335,10 @@ export const Explorer = () => {
               </div>
               <div className="filter-menu-slider-bottom">
                 <p className="filter-menu-slider-bottom-text">
-                  {filterValues.krbs[0]} $KRB
+                  {filterValues.krbs[0]} Krebits
                 </p>
                 <p className="filter-menu-slider-bottom-text">
-                  {filterValues.krbs[1]} $KRB
+                  {filterValues.krbs[1]} Krebits
                 </p>
               </div>
             </div>
@@ -394,7 +394,7 @@ export const Explorer = () => {
                   <div className="explorer-card-picture"></div>
                   <p className="explorer-card-title">{profile.name}</p>
                   <p className="explorer-card-description">
-                    $KRB {profile.reputation}
+                    {profile.reputation} Krebits
                   </p>
                   <div className="explorer-card-followers">
                     <span className="explorer-card-follow">

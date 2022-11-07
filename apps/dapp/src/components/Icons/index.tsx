@@ -44,6 +44,11 @@ import { Dework } from './Dework';
 import { Stack } from './Stack';
 import { AddPhotoAlternate } from './AddPhotoAlternate';
 import { Add } from './Add';
+import { Attendance } from './Attendance';
+import { School } from './School';
+import { WorkExperience } from './WorkExperience';
+import { Star } from './Star';
+import { Vote } from './Vote';
 
 export {
   Close,
@@ -91,5 +96,10 @@ export {
   Dework,
   Stack,
   AddPhotoAlternate,
-  Add
+  Add,
+  Attendance,
+  School,
+  WorkExperience,
+  Star,
+  Vote
 };

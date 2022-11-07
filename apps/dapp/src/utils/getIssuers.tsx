@@ -51,6 +51,19 @@ const PERSONHOOD_CREDENTIALS = [
     price: '0'
   },
   {
+    credentialType: 'TwitterVerified',
+    entity: 'Twitter Verified (blue checkmark)',
+    description: 'Krebit Verification Node',
+    icon: <Twitter />,
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
+  },
+  {
     credentialType: 'Github',
     entity: 'Github',
     description: 'Krebit Verification Node',
@@ -331,8 +344,7 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    isDisabled: true
+    price: '0'
   }
 ];
 

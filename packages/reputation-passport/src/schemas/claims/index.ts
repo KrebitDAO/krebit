@@ -10,6 +10,7 @@ import { governmentId } from './governmentId.js';
 import { phoneNumber } from './phoneNumber.js';
 import { workExperience } from './workExperience.js';
 import { recommendation } from './recommendation.js';
+import { attendance } from './attendance.js';
 
 export const claims = {
   badge,
@@ -23,5 +24,6 @@ export const claims = {
   governmentId,
   phoneNumber,
   workExperience,
-  recommendation
+  recommendation,
+  attendance
 };
