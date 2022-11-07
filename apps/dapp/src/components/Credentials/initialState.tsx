@@ -47,6 +47,7 @@ export interface ICredentialsState {
       name: string;
       placeholder: string;
       type?: string;
+      defaultValue?: string | number | string[] | number[] | boolean;
       pattern?: string;
       isDisabled?: boolean;
       isRequired?: boolean;
@@ -570,7 +571,6 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         text: 'Issue Credential',
         onClick: async values => {
           console.log(values);
-
           let imageUrl = '';
           if (values.image) {
             //upload image

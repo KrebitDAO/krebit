@@ -9,6 +9,8 @@ import {
 
 const DEFAULT_DATE = '01/12/2009';
 
+const DEFAULT_CLAIM_CREDENTIAL_TYPES = ['Issuer', 'Community'];
+
 const DEFAULT_HOME_BOXES = [
   {
     box: '180 Krebits',
@@ -249,6 +251,12 @@ const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
   }
 ];
 
+const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+const DEFAULT_ERROR_MESSAGES = {
+  NOT_ID_FOUND: 'Not id found'
+};
+
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {
   INITIAL: 'Approve signature on your Wallet...',
   ISSUER_CONNECTION: 'Connecting to issuer...',
@@ -262,17 +270,17 @@ const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
   ERROR_CREDENTIAL: 'Error saving credential. Please check later'
 };
 
-const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
-
 export const constants = {
   DEFAULT_DATE,
+  DEFAULT_CLAIM_CREDENTIAL_TYPES,
   DEFAULT_HOME_BOXES,
   DEFAULT_TWEET_PEOPLE,
   DEFAULT_EMPTY_CARD_PERSONHOOD,
   DEFAULT_EMPTY_CARD_WORK,
   DEFAULT_EMPTY_CARD_COMMUNITY,
   DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS,
+  DEFAULT_IMAGE_FILE_TYPES,
+  DEFAULT_ERROR_MESSAGES,
   DEFAULT_MESSAGES_FOR_PROVIDERS,
-  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS,
-  DEFAULT_IMAGE_FILE_TYPES
+  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS
 };
