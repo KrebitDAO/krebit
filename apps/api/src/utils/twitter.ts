@@ -6,6 +6,7 @@ export type TwitterUserResponse = {
   username?: string;
   followers?: number;
   posts?: number;
+  verified?: boolean;
 };
 
 interface TwitterAuthProps {
@@ -72,7 +73,9 @@ export const getTwitterUser = async (
     const twitterClient = new Client(code);
 
     // return information about the (authenticated) requesting user
-    const myUser = await twitterClient.users.findMyUser();
+    const myUser = await twitterClient.users.findMyUser({
+      'user.fields': ['verified']
+    });
     return { ...myUser.data };
   } catch (err) {
     console.log('err: ', err);

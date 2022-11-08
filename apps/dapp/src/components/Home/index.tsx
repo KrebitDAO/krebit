@@ -140,7 +140,7 @@ export const Home = () => {
             </div>
             <div
               className="actions-card"
-              onClick={() => handleRoute('https://discord.gg/UD5YhCU2', true)}
+              onClick={() => handleRoute('https://discord.gg/VHSq4ABsfz', true)}
             >
               <div className="actions-card-content">
                 <Community />

@@ -43,7 +43,10 @@ export const NavBar = () => {
             {isMenuOpen ? <Close /> : <Menu />}
           </div>
           <div className="menu-bar">
-            <Link href="https://discord.gg/UD5YhCU2" rel="noopener noreferrer">
+            <Link
+              href="https://discord.gg/VHSq4ABsfz"
+              rel="noopener noreferrer"
+            >
               <a
                 target="_blank"
                 className="menu-bar-item"
@@ -84,7 +87,7 @@ export const NavBar = () => {
           </div>
         </div>
         <div className="menu-content">
-          <Link href="https://discord.gg/UD5YhCU2" rel="noopener noreferrer">
+          <Link href="https://discord.gg/VHSq4ABsfz" rel="noopener noreferrer">
             <a
               target="_blank"
               className="menu-content-item"

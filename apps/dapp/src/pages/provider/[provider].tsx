@@ -141,6 +141,21 @@ const DynamicProvider = () => {
     } else if (
       (queryError || queryCode) &&
       queryState &&
+      /^twitterVerified-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (queryCode) {
+        channel.postMessage({
+          target: 'TwitterVerified',
+          data: { code: queryCode, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || queryCode) &&
+      queryState &&
       /^twitterFollowers-.*/.test(queryState)
     ) {
       // shared message channel between windows (on the same domain)

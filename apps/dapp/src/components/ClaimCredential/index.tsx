@@ -23,7 +23,7 @@ export const ClaimCredential = () => {
     const validateCredential = async () => {
       try {
         if (!query?.credential_id) {
-          setErrorMessage(constants.DEFAULT_ERROR_MESSAGES.NOT_ID_FOUND);
+          setErrorMessage(constants.DEFAULT_ERROR_MESSAGES.ID_NOT_FOUND);
           return;
         }
 
@@ -51,11 +51,11 @@ export const ClaimCredential = () => {
               return;
             }
 
-            setErrorMessage(constants.DEFAULT_ERROR_MESSAGES.NOT_ID_FOUND);
+            setErrorMessage(constants.DEFAULT_ERROR_MESSAGES.ID_NOT_FOUND);
             return;
           }
 
-          setErrorMessage(constants.DEFAULT_ERROR_MESSAGES.NOT_ID_FOUND);
+          setErrorMessage(constants.DEFAULT_ERROR_MESSAGES.ID_NOT_FOUND);
         }
       } catch (error) {
         console.error(error);

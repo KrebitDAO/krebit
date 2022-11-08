@@ -140,6 +140,9 @@ export const issueCredential = async (props: IssueProps) => {
         unifiedAccessControlConditions,
         wallet
       );
+      if (!encryptedContent) {
+        throw new Error('Problem creating encryptedContent');
+      }
       const stream = await TileDocument.create(
         idx.ceramic,
         unifiedAccessControlConditions

@@ -7,29 +7,33 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
+import Krebit from '@krebitdao/reputation-passport';
+import LitJsSdk from '@lit-protocol/sdk-browser';
 
 import { QuestionModalText, Wrapper } from './styles';
 import { Card } from 'components/Credentials/styles';
 import { Layout } from 'components/Layout';
-import {
-  Add,
-  AddPhotoAlternate,
-  ArrowForward,
-  Close,
-  OpenInNew
-} from 'components/Icons';
+import { Add, AddPhotoAlternate, ArrowForward, Close } from 'components/Icons';
 import { Loading } from 'components/Loading';
 import { Input } from 'components/Input';
 import { Select } from 'components/Select';
 import { DatePicker } from 'components/DatePicker';
 import { Switch } from 'components/Switch';
+import { Rating } from 'components/Rating';
 import {
   CREDENTIALS_INITIAL_STATE,
   ICredentialsState,
   IFormValues
 } from '../Credentials/initialState';
 import { GeneralContext } from 'context';
-import { constants, formatFilename, formatUrlImage } from 'utils';
+import {
+  constants,
+  formatFilename,
+  formatUrlImage,
+  generateUID,
+  getCredential,
+  sortByDate
+} from 'utils';
 
 // types
 import { SelectChangeEvent } from '@mui/material';
@@ -49,56 +53,136 @@ export const CredentialsBuilder = () => {
   const [currentInputModal, setCurrentInputModal] =
     useState<ICurrentInputModal>({});
   const [credentialId, setCredentialId] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>();
   const { query, push } = useRouter();
-  const { auth } = useContext(GeneralContext);
+  const {
+    auth,
+    walletInformation: { passport, issuer, address },
+    storage
+  } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
   const isFormLoading = status === 'form_pending';
 
   useEffect(() => {
+    if (!passport) return;
+    if (!issuer) return;
     if (!query?.type) return;
     if (auth.status !== 'resolved') return;
 
     setStatus('pending');
 
+    const validateFormValues = async () => {
+      try {
+        if (!auth?.isAuthenticated) {
+          throw new Error('Not authorized');
+        }
+
+        const values = CREDENTIALS_INITIAL_STATE.find(
+          values => values.type === query.type
+        );
+
+        if (!values) {
+          throw new Error('Not authorized');
+        }
+
+        const entities = await getEntities();
+
+        /*  const organizedValues = values.form?.fields?.map(field => ({
+          ...field,
+          items: entities
+        })); */
+
+        const formValues = values.form?.fields?.reduce(
+          (a, v) => ({
+            ...a,
+            ...(values.form?.issueTo
+              ? { [values.form.issueTo.name]: [] as string[] }
+              : undefined),
+            [v.name]:
+              v.type === 'datepicker'
+                ? v?.defaultValue || constants.DEFAULT_DATE
+                : v.type === 'switch'
+                ? v?.defaultValue || false
+                : v.type === 'boxes'
+                ? v?.defaultValue || []
+                : v?.defaultValue || ''
+          }),
+          {}
+        );
+
+        setValues(values);
+        setFormValues(formValues);
+        setStatus('resolved');
+      } catch (error) {
+        console.error(error);
+        setStatus('rejected');
+      }
+    };
+
+    validateFormValues();
+  }, [passport, issuer, query?.type, auth.status, auth?.isAuthenticated]);
+
+  const getEntities = async () => {
     try {
-      if (!auth?.isAuthenticated) {
-        throw new Error('Not authorized');
+      const guildAdminCredentials = (
+        await passport.getCredentials(undefined, 'GuildXyzAdmin')
+      )
+        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
+        .slice(0, 10);
+      const discordOwnerCredentials = (
+        await passport.getCredentials(undefined, 'DiscordGuildOwner')
+      )
+        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
+        .slice(0, 10);
+      const gitHubCredentials = (
+        await passport.getCredentials(undefined, 'GithubOrgMember')
+      )
+        .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
+        .slice(0, 10);
+
+      const currentCredentials = [
+        ...guildAdminCredentials,
+        ...discordOwnerCredentials,
+        ...gitHubCredentials
+      ];
+      console.log('admincredentials', currentCredentials);
+
+      if (currentCredentials.length > 0) {
+        const decriptedEntities = await Promise.all(
+          currentCredentials.map(async credential => {
+            //const stamps = await passport.getStamps({
+            //  claimId: credential.id
+            //});
+            let claimValue = null;
+            const value = await passport.getClaimValue(credential);
+
+            if (value?.encryptedString) {
+              claimValue = await issuer.decryptClaimValue(value);
+            }
+
+            if (claimValue) {
+              return {
+                text: `${claimValue.entity} [${credential.credentialSubject.type}]`,
+                value: claimValue.entity
+              };
+            }
+          })
+        ).then(values => values.filter(val => val !== undefined));
+
+        let entities = [{ text: 'Personal', value: 'personal' }];
+
+        if (decriptedEntities.length > 0) {
+          entities = entities.concat(decriptedEntities);
+        }
+
+        return entities;
       }
 
-      const values = CREDENTIALS_INITIAL_STATE.find(
-        values => values.id === query.type
-      );
-
-      if (!values) {
-        throw new Error('Not authorized');
-      }
-
-      const formValues = values.form?.fields?.reduce(
-        (a, v) => ({
-          ...a,
-          ...(values.form?.issueTo
-            ? { [values.form.issueTo.name]: [] as string[] }
-            : undefined),
-          [v.name]:
-            v.type === 'datepicker'
-              ? v?.defaultValue || constants.DEFAULT_DATE
-              : v.type === 'switch'
-              ? v?.defaultValue || false
-              : v.type === 'boxes'
-              ? v?.defaultValue || []
-              : v?.defaultValue || ''
-        }),
-        {}
-      );
-
-      setValues(values);
-      setFormValues(formValues);
-      setStatus('resolved');
+      return [];
     } catch (error) {
-      console.error(error);
-      setStatus('rejected');
+      console.log('error: ', error);
     }
-  }, [query?.type, auth.status, auth?.isAuthenticated]);
+  };
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement> & SelectChangeEvent
@@ -134,12 +218,23 @@ export const CredentialsBuilder = () => {
   const handleChangeArrayValues = (name: string, value: string) => {
     if (!name || !value) return;
 
-    setFormValues(prevValues => ({
-      ...prevValues,
-      [name]: (prevValues[name] as string[])?.includes(value)
-        ? (prevValues[name] as string[]).filter(val => val !== value)
-        : [...((prevValues[name] as string[]) || []), value]
-    }));
+    if (value.indexOf(',') != -1) {
+      setFormValues(prevValues => ({
+        ...prevValues,
+        [name]: [
+          ...((prevValues[name] as string[]) || []),
+          ...value.split(',').filter(val => (!val ? undefined : val.trim()))
+        ]
+      }));
+    } else {
+      setFormValues(prevValues => ({
+        ...prevValues,
+        [name]: (prevValues[name] as string[])?.includes(value)
+          ? (prevValues[name] as string[]).filter(val => val !== value)
+          : [...((prevValues[name] as string[]) || []), value]
+      }));
+    }
+
     handleCurrentInputModal(undefined);
   };
 
@@ -157,16 +252,88 @@ export const CredentialsBuilder = () => {
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setStatus('form_pending');
+
+    let imageUrl = '';
+
+    if (formValues?.image instanceof File) {
+      const node = await storage.put([formValues?.image] as any);
+
+      if (node) {
+        imageUrl = `https://${node}.ipfs.dweb.link/${formValues?.image.name}`;
+      }
+    }
+
+    const currentValues = values.form.button.onClick({
+      ...formValues,
+      image: imageUrl
+    });
 
     try {
-      const id = await values.form.button.onClick(formValues);
+      // Step 1-A:  Get credential from Master Issuer based on claim:
+      // Issue self-signed credential to become an Issuer
+      console.log('add: ', address);
+      console.log('did: ', issuer.did);
 
-      if (!id) {
-        throw new Error('Not id found');
+      let typeSchemaUrl = await issuer.getTypeSchema('Issuer');
+
+      if (!typeSchemaUrl) {
+        const issuerSchema = Krebit.schemas.claims.issuer;
+        typeSchemaUrl = await issuer.setTypeSchema('Issuer', issuerSchema);
       }
 
-      setCredentialId(id);
+      const expirationDate = new Date();
+      const expiresYears = 1;
+      expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+      console.log('expirationDate: ', expirationDate);
+
+      const claim = {
+        id: `issuer-${generateUID(10)}`,
+        did: issuer.did,
+        ethereumAddress: address,
+        type: 'Issuer',
+        typeSchema: 'krebit://schemas/issuer',
+        tags: ['Community', `${currentValues.credentialType}Issuer`],
+        value: currentValues,
+        expirationDate: new Date(expirationDate).toISOString()
+      };
+      console.log('claim: ', claim);
+
+      const delegatedCredential = await issuer.issue(claim);
+      console.log('delegatedCredential: ', delegatedCredential);
+
+      // Save delegatedCredential
+      if (delegatedCredential) {
+        const delegatedCredentialId = await passport.addIssued(
+          delegatedCredential
+        );
+        console.log('delegatedCredentialId: ', delegatedCredentialId);
+
+        // Step 1-B: Send self-signed credential to the Issuer for verification
+        const issuedCredential = await getCredential({
+          verifyUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
+          claimedCredentialId: delegatedCredentialId
+        });
+
+        console.log('issuedCredential: ', issuedCredential);
+
+        // Step 1-C: Get the verifiable credential, and save it to the passport
+        if (issuedCredential) {
+          const addedCredentialId = await passport.addCredential(
+            issuedCredential
+          );
+
+          console.log('addedCredentialId: ', addedCredentialId);
+
+          setCredentialId(addedCredentialId);
+          setStatus('form_resolved');
+        }
+      }
     } catch (error) {
+      setStatus('form_rejected');
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
       console.error(error);
     }
   };
@@ -187,12 +354,13 @@ export const CredentialsBuilder = () => {
     }
   };
 
-  const handleCloseCredentialIdModal = () => {
+  const handleCloseModal = () => {
     setCredentialId(undefined);
+    setErrorMessage(undefined);
   };
 
   const handleGoBack = () => {
-    push('/credentials');
+    push('/create');
   };
 
   if (status === 'rejected') {
@@ -206,8 +374,8 @@ export const CredentialsBuilder = () => {
           title="Credential Issued"
           component={() => (
             <QuestionModalText>
-              The credential has been issued! You can now copy and share it
-              everywhere.{' '}
+              The credential is ready to be claimed! You can now copy and share
+              it with the recipients.{' '}
               <a
                 href={`${BASE_URL}/?credential_id=${credentialId}`}
                 target="_blank"
@@ -219,7 +387,18 @@ export const CredentialsBuilder = () => {
           continueButton={{ text: 'Copy URL', onClick: handleCopyIssuedId }}
           cancelButton={{
             text: 'Close',
-            onClick: handleCloseCredentialIdModal
+            onClick: handleCloseModal
+          }}
+        />
+      )}
+      {errorMessage && (
+        <QuestionModal
+          title="Error creating credential"
+          text={errorMessage}
+          continueButton={{ text: 'Accept', onClick: handleCloseModal }}
+          cancelButton={{
+            text: 'Close',
+            onClick: handleCloseModal
           }}
         />
       )}
@@ -269,36 +448,28 @@ export const CredentialsBuilder = () => {
                   >
                     {values.title}
                   </p>
-                  <p className="credential-header-texts-subtitle">
-                    Organization: <span>andresmontoya.eth</span>
-                  </p>
                 </div>
               </div>
               <div className="credential-card">
                 <div className="credential-card-header">
-                  <p className="credential-card-header-title">
-                    Preview: <span>krebit.id/claim/140</span>
-                  </p>
-                  <div className="credential-card-header-icon">
-                    <OpenInNew />
-                  </div>
+                  <p className="credential-card-header-title">Preview:</p>
                 </div>
                 <Card
                   primaryColor={values.primaryColor}
                   secondaryColor={values.secondaryColor}
                 >
                   <p className="card-title">
-                    {(formValues?.name as string) || 'Name'}
+                    {(formValues?.name as string) || 'Credential Title'}
                   </p>
                   <p className="card-description">
                     {(formValues?.description as string) ||
-                      'Here your description'}
+                      'Credential description'}
                   </p>
                   <div className="card-brand">
                     {(formValues?.image as string) ? (
                       <img src={formatUrlImage(formValues?.image as string)} />
                     ) : (
-                      <p className="card-title">Image</p>
+                      values.icon
                     )}
                   </div>
                 </Card>
@@ -376,6 +547,21 @@ export const CredentialsBuilder = () => {
                         items={input.items}
                         isDisabled={input.isDisabled}
                         isRequired={input.isRequired}
+                      />
+                    );
+                  }
+
+                  if (input.type === 'rating') {
+                    return (
+                      <Rating
+                        key={index}
+                        label={input.placeholder}
+                        name={input.name}
+                        value={
+                          formValues[values.form.fields[index].name] as number
+                        }
+                        onChange={handleChange}
+                        isDisabled={input.isDisabled}
                       />
                     );
                   }
@@ -477,7 +663,11 @@ export const CredentialsBuilder = () => {
               )}
               <div className="credential-button">
                 <Button
-                  text="Issue credential"
+                  text={
+                    values.form.button.text
+                      ? values.form.button.text
+                      : 'Issue credential'
+                  }
                   onClick={handleSubmit}
                   isDisabled={isFormLoading}
                 />

@@ -167,6 +167,67 @@ export const useIssuerProvider = () => {
     }
   };
 
+  const handleClaimCredential = async delegatedCredential => {
+    console.log('delegatedCredential', delegatedCredential);
+    setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
+
+    try {
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      if (!currentSession) return;
+
+      const currentType = localStorage.getItem('auth-type');
+      const walletInformation = await getWalletInformation(currentType);
+
+      const passport = new Krebit.core.Passport({
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.connect(currentSession);
+      // Save claimedCredential
+      if (delegatedCredential) {
+        setStatusMessage(
+          constants.DEFAULT_MESSAGES_FOR_PROVIDERS.SAVING_CLAIMED_CREDENTIAL
+        );
+
+        // Step 1-B: Send self-signed credential to the Issuer for verification
+        const issuedCredential = await getCredential({
+          verifyUrl: delegatedCredential.value?.verificationUrl,
+          claimedCredentialId: delegatedCredential.id,
+          credentialSubjectAddress: walletInformation.address,
+          credentialSubjectAddressDID: passport.did
+        });
+
+        console.log('issuedCredential: ', issuedCredential);
+
+        // Step 1-C: Get the verifiable credential, and save it to the passport
+        if (issuedCredential) {
+          setStatusMessage(
+            constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+          );
+          const addedCredentialId = await passport.addCredential(
+            issuedCredential
+          );
+          console.log('addedCredentialId: ', addedCredentialId);
+
+          setCurrentCredential({
+            ...issuedCredential,
+            vcId: addedCredentialId
+          });
+          setStatus('credential_resolved');
+        }
+      }
+    } catch (error) {
+      setStatus('credential_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
+    }
+  };
+
   const handleMintCredential = async credential => {
     try {
       setStatus('mint_pending');
@@ -221,6 +282,7 @@ export const useIssuerProvider = () => {
 
   return {
     handleGetCredential,
+    handleClaimCredential,
     handleClaimValues,
     handleMintCredential,
     handleCleanClaimValues,

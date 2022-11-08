@@ -15,6 +15,6 @@ export const issuer = {
     expirationMonths: { type: 'number' },
     proofs: { type: 'object' }
   },
-  required: ['did', 'entity', 'credentialType'],
+  required: ['did', 'credentialType'],
   additionalProperties: true
 };

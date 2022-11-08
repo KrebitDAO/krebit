@@ -13,31 +13,31 @@ const DEFAULT_CLAIM_CREDENTIAL_TYPES = ['Issuer', 'Community'];
 
 const DEFAULT_HOME_BOXES = [
   {
-    box: '$KRB 180',
+    box: '180 Krebits',
     username: 'fuano.eth',
     image: '/imgs/images/rare-buddies-1.png',
     skills: ['Illustrator', 'NFT Creator', 'UI']
   },
   {
-    box: '$KRB 171',
+    box: '171 Krebits',
     username: 'alerios.eth',
     image: '/imgs/images/alerios.jpg',
     skills: ['Developer', 'Product']
   },
   {
-    box: '$KRB 152',
+    box: '152 Krebits',
     username: 'texasfr.eth',
     image: '/imgs/images/texasfr.png',
     skills: ['Talent', 'Software', 'QA']
   },
   {
-    box: '$KRB 150',
+    box: '150 Krebits',
     username: 'andresmontoya.eth',
     image: '/imgs/images/andresmontoya.jpeg',
     skills: ['Javascript', 'UX', 'Frontend']
   },
   {
-    box: '$KRB 143',
+    box: '143 Krebits',
     username: 'piraseligman.eth',
     image: '/imgs/images/piraseligman.png',
     skills: ['Growth', 'Innovation', 'Design']
@@ -254,7 +254,7 @@ const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
 const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 const DEFAULT_ERROR_MESSAGES = {
-  NOT_ID_FOUND: 'Not id found'
+  ID_NOT_FOUND: 'Not found'
 };
 
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {

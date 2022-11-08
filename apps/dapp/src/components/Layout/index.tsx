@@ -41,14 +41,14 @@ const MENU_OPTIONS = [
   {
     title: 'Explore',
     href: '/explore',
-    icon: <Explore />,
-    badgeText: 'New'
+    icon: <Explore />
   },
   {
-    title: 'Credentials Builder',
-    href: '/credentials',
+    title: 'Create',
+    href: '/create',
     icon: <ChromeReaderMode />,
-    isPrivate: true
+    isPrivate: true,
+    badgeText: 'New'
   },
   {
     title: 'Inbox',
@@ -105,7 +105,7 @@ export const Layout: FunctionComponent<IProps> = props => {
   };
 
   const handleHelp = () => {
-    window.open('https://discord.gg/UD5YhCU2', '_blank');
+    window.open('https://discord.gg/VHSq4ABsfz', '_blank');
   };
 
   return (
@@ -183,7 +183,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                   </a>
                 </Link>
                 <Link
-                  href="https://discord.gg/UD5YhCU2"
+                  href="https://discord.gg/VHSq4ABsfz"
                   rel="noopener noreferrer"
                 >
                   <a

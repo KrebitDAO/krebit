@@ -80,7 +80,17 @@ export const Community = (props: IProps) => {
       try {
         const values = await buildCredential({
           type: 'Community',
-          credential: customCredential,
+          credential: {
+            ...customCredential,
+            credential: {
+              ...customCredential.credential,
+              value: customCredential.credential?.credentialsubject?.value
+                ? JSON.parse(
+                    customCredential.credential?.credentialsubject?.value
+                  )
+                : {}
+            }
+          },
           passport,
           isCustomCredential: true
         });

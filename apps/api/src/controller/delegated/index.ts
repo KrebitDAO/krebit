@@ -1,5 +1,7 @@
+// TODO: Validate if address deserves the badge
+
 import express from 'express';
-//import LitJsSdk from "@lit-protocol/sdk-nodejs";
+import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, generateUID } from '../../utils';
@@ -12,7 +14,7 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
-export const IssuerController = async (
+export const DelegatedController = async (
   request: express.Request,
   response: express.Response,
   next: express.NextFunction
@@ -26,7 +28,17 @@ export const IssuerController = async (
       throw new Error(`No claimedCredentialId in body`);
     }
 
+    if (!request?.body?.credentialSubjectAddress) {
+      throw new Error(`No credentialSubjectAddress in body`);
+    }
+
+    if (!request?.body?.credentialSubjectAddressDID) {
+      throw new Error(`No credentialSubjectAddress in body`);
+    }
+
     const { claimedCredentialId } = request.body;
+    const { credentialSubjectAddress } = request.body;
+    const { credentialSubjectAddressDID } = request.body;
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -41,7 +53,10 @@ export const IssuerController = async (
 
     const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
-    console.log('Verifying issuer with claimedCredential: ', claimedCredential);
+    console.log(
+      'Verifying delegated credential with claimedCredential: ',
+      claimedCredential
+    );
 
     // Check self-signature
     console.log(
@@ -59,7 +74,14 @@ export const IssuerController = async (
       console.log('claim value: ', claimValue);
 
       // Is this a valid Issuer?, let'see if they have enough KRB balance or something.
-      const valid = true;
+      const valid =
+        claimValue.values?.issueTo?.findIndex(element => {
+          return (
+            element.toLowerCase() === credentialSubjectAddress.toLowerCase()
+          );
+        }) > -1 &&
+        claimValue.ethereumAddress.toLowerCase() ===
+          wallet.address.toLowerCase();
 
       // If valid issuer
       if (valid) {
@@ -75,12 +97,12 @@ export const IssuerController = async (
 
         const claim = {
           id: claimedCredentialId,
-          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: claimedCredential.credentialSubject.id,
-          type: claimedCredential.credentialSubject.type,
-          typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(2),
-          value: claimValue,
+          ethereumAddress: credentialSubjectAddress,
+          did: credentialSubjectAddressDID,
+          type: claimValue.credentialType,
+          typeSchema: claimValue.credentialSchema,
+          tags: ['Community', ...claimValue.tags],
+          value: claimValue.values,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs

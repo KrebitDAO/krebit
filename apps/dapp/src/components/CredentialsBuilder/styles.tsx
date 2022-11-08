@@ -29,6 +29,7 @@ export const Wrapper = styled.div<IProps>`
         margin-top: 58px;
         grid-gap: 0 88px;
         grid-template-areas: 'header header' 'form card' 'form issueTo' 'button issueTo';
+        grid-template-columns: auto 586px;
       }
 
       .credential-header {
@@ -370,11 +371,13 @@ export const QuestionModalText = styled.div`
     margin: 0;
     font-size: ${theme.fonts.base};
     color: ${theme.colors.white}B3;
+    word-wrap: break-word;
 
     & > a {
       font-size: ${theme.fonts.base};
       color: ${theme.colors.white}B3;
       text-decoration: underline;
+      word-wrap: break-word;
     }
   `}
 `;

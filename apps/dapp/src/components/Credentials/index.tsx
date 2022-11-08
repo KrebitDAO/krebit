@@ -44,10 +44,12 @@ export const Credentials = () => {
           </div>
         ) : (
           <>
-            <h1 className="credentials-title">Create your credentials</h1>
+            <h1 className="credentials-title">
+              Issue credentials to other Krebiters
+            </h1>
             <div className="credentials-content">
               {CREDENTIALS_INITIAL_STATE.map((values, index) => (
-                <Link href={`/credentials/${values.id}`} key={index}>
+                <Link href={`/create/${values.type}`} key={index}>
                   <Card
                     primaryColor={values.primaryColor}
                     secondaryColor={values.secondaryColor}
