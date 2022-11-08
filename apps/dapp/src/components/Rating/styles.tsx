@@ -1,8 +1,12 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export const Wrapper = styled.div`
-  ${({ theme }) => css`
+interface IProps {
+  iconColor?: string;
+}
+
+export const Wrapper = styled.div<IProps>`
+  ${({ theme, iconColor }) => css`
     .MuiTypography-root {
       color: ${theme.colors.white};
       font-family: 'HelveticaNowDisplay-Regular';
@@ -22,7 +26,7 @@ export const Wrapper = styled.div`
     }
 
     .MuiRating-iconFilled {
-      color: ${theme.colors.cyan};
+      color: ${theme.colors[iconColor]};
     }
   `}
 `;

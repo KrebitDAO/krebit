@@ -71,7 +71,7 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'DiscordGuildOwner') {
       isStatusResolved =
-        discordGuildOwnerProvider.status === 'credential_fresolved' ||
+        discordGuildOwnerProvider.status === 'credential_resolved' ||
         discordGuildOwnerProvider.status === 'mint_resolved';
     }
 

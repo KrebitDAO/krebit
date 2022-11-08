@@ -3,30 +3,17 @@ import { ReactNode } from 'react';
 import {
   Attendance,
   Token,
-  Badge,
   Delegate,
   School,
   Deal,
   WorkExperience,
   Star
 } from 'components/Icons';
+import { countries } from 'utils';
 
 // types
 import { IItems } from 'components/Select';
 
-import {
-  getCredential,
-  generateUID,
-  getWalletInformation,
-  constants,
-  countries,
-  sortByDate
-} from 'utils';
-
-import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from '@lit-protocol/sdk-browser';
-
-const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
 const { NEXT_PUBLIC_ISSUER_DID } = process.env;
 const { NEXT_PUBLIC_ISSUER_ADDRESS } = process.env;
 const { NEXT_PUBLIC_ISSUER_NODE_URL } = process.env;
@@ -60,14 +47,14 @@ export interface ICredentialsState {
     };
     button?: {
       text: string;
-      onClick: (values: IFormValues) => string | Promise<string>;
+      onClick: (values: IFormValues) => any;
       isDisabled?: boolean;
     };
   };
 }
 
 //TODO: move to upper level
-const getEntities = async () => {
+const getEntities = () => {
   /*try {
     const session = window.localStorage.getItem('did-session');
     const currentSession = JSON.parse(session);
@@ -144,92 +131,6 @@ const getEntities = async () => {
   //}
 };
 
-const handleGetCredential = async (values: any) => {
-  try {
-    console.log(values);
-    const session = window.localStorage.getItem('did-session');
-    const currentSession = JSON.parse(session);
-
-    if (!currentSession) return;
-
-    const currentType = localStorage.getItem('auth-type');
-    const walletInformation = await getWalletInformation(currentType);
-
-    // Step 1-A:  Get credential from Master Issuer based on claim:
-    // Issue self-signed credential to become an Issuer
-
-    const Issuer = new Krebit.core.Krebit({
-      ...walletInformation,
-      litSdk: LitJsSdk,
-      ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-    });
-    await Issuer.connect(currentSession);
-
-    console.log('add: ', walletInformation.address);
-    console.log('did: ', Issuer.did);
-
-    let typeSchemaUrl = await Issuer.getTypeSchema('Issuer');
-    if (!typeSchemaUrl) {
-      const issuerSchema = Krebit.schemas.claims.issuer;
-      typeSchemaUrl = await Issuer.setTypeSchema('Issuer', issuerSchema);
-    }
-
-    const expirationDate = new Date();
-    const expiresYears = 1;
-    expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
-    console.log('expirationDate: ', expirationDate);
-
-    const claim = {
-      id: `issuer-${generateUID(10)}`,
-      did: Issuer.did,
-      ethereumAddress: walletInformation.address,
-      type: 'Issuer',
-      typeSchema: 'krebit://schemas/issuer',
-      tags: ['Community', `${values.credentialType}Issuer`],
-      value: values,
-      expirationDate: new Date(expirationDate).toISOString()
-    };
-    console.log('claim: ', claim);
-
-    const delegatedCredential = await Issuer.issue(claim);
-    console.log('delegatedCredential: ', delegatedCredential);
-
-    const passport = new Krebit.core.Passport({
-      ...walletInformation,
-      ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-    });
-    await passport.connect(currentSession);
-    // Save delegatedCredential
-    if (delegatedCredential) {
-      const delegatedCredentialId = await passport.addIssued(
-        delegatedCredential
-      );
-      console.log('delegatedCredentialId: ', delegatedCredentialId);
-
-      // Step 1-B: Send self-signed credential to the Issuer for verification
-      const issuedCredential = await getCredential({
-        verifyUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
-        claimedCredentialId: delegatedCredentialId
-      });
-
-      console.log('issuedCredential: ', issuedCredential);
-
-      // Step 1-C: Get the verifiable credential, and save it to the passport
-      if (issuedCredential) {
-        const addedCredentialId = await passport.addCredential(
-          issuedCredential
-        );
-        console.log('addedCredentialId: ', addedCredentialId);
-        return addedCredentialId;
-        //return addedCredentialId.replace('ceramic://', '');
-      }
-    }
-  } catch (error) {
-    console.log('error: ', error);
-    return constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL;
-  }
-};
-
 export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   {
     type: 'workExperience',
@@ -264,7 +165,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'select',
           name: 'entity',
           placeholder: 'Entity/Organization',
-          items: await getEntities()
+          items: []
         },
         {
           type: 'datepicker',
@@ -293,20 +194,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'WorkExperience',
-        onClick: async values => {
-          console.log(values);
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          let imageUrl = '';
-          if (values.image) {
-            //upload image
-            imageUrl = 'uploaded url';
-          } else {
-            //imageUrl = formatUrlImage(profile?.picture)
-          }
-
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values: {
               ...values,
               skills: (values.skills as string[]).map(skill => {
@@ -323,8 +214,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'WorkExperience',
             credentialSchema: 'krebit://schemas/workExperience',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }
@@ -362,7 +253,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'select',
           name: 'entity',
           placeholder: 'Entity/Organization',
-          items: await getEntities()
+          items: []
         },
         {
           type: 'datepicker',
@@ -391,20 +282,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'Recommend',
-        onClick: async values => {
-          console.log(values);
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          let imageUrl = '';
-          if (values.image) {
-            //upload image
-            imageUrl = 'uploaded url';
-          } else {
-            //imageUrl = formatUrlImage(profile?.picture)
-          }
-
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values: {
               ...values,
               skills: (values.skills as string[]).map(skill => {
@@ -421,8 +302,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'Recommendation',
             credentialSchema: 'krebit://schemas/recommendation',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }
@@ -433,7 +314,6 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
     description: 'Certify students that completed your class or course',
     primaryColor: 'blueCharcoal',
     secondaryColor: 'pomegranate',
-
     icon: <School />,
     form: {
       fields: [
@@ -460,7 +340,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'select',
           name: 'entity',
           placeholder: 'Entity/Organization',
-          items: await getEntities()
+          items: []
         },
         {
           type: 'datepicker',
@@ -489,20 +369,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'Issue Credential',
-        onClick: async values => {
-          console.log(values);
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          let imageUrl = '';
-          if (values.image) {
-            //upload image
-            imageUrl = 'uploaded url';
-          } else {
-            //imageUrl = formatUrlImage(profile?.picture)
-          }
-
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values: {
               ...values,
               skills: (values.skills as string[]).map(skill => {
@@ -519,8 +389,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'Education',
             credentialSchema: 'krebit://schemas/education',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }
@@ -557,7 +427,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'select',
           name: 'entity',
           placeholder: 'Entity/Organization',
-          items: await getEntities()
+          items: []
         },
         {
           type: 'switch',
@@ -597,19 +467,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'Issue Credential',
-        onClick: async values => {
-          console.log(values);
-          let imageUrl = '';
-          if (values.image) {
-            //upload image
-            imageUrl = 'uploaded url';
-          } else {
-            //imageUrl = formatUrlImage(profile?.picture)
-          }
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
@@ -617,8 +478,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'Attendance',
             credentialSchema: 'krebit://schemas/attendance',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }
@@ -659,12 +520,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'Invite',
-        onClick: async values => {
-          console.log(values);
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values: {
               ...values,
               entity: 'Personal'
@@ -675,8 +534,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'Invite',
             credentialSchema: 'krebit://schemas/recommendation',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }
@@ -726,12 +585,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'Review',
-        onClick: async values => {
-          console.log(values);
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values: {
               ...values,
               skills: (values.skills as string[]).map(skill => {
@@ -748,8 +605,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'Invite',
             credentialSchema: 'krebit://schemas/recommendation',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }
@@ -772,7 +629,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'select',
           name: 'entity',
           placeholder: 'Community',
-          items: await getEntities()
+          items: []
         },
 
         {
@@ -811,12 +668,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       },
       button: {
         text: 'Issue Credential',
-        onClick: async values => {
-          console.log(values);
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          //encrypt issueTo and get credentialSubjectListUrl
-
-          return await handleGetCredential({
+          return {
             values: {
               ...values,
               skills: (values.skills as string[]).map(skill => {
@@ -833,8 +688,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialType: 'Badge',
             credentialSchema: 'krebit://schemas/badge',
             credentialSubjectListUrl: '',
-            imageUrl: ''
-          });
+            imageUrl: values?.image || ''
+          };
         }
       }
     }

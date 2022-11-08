@@ -12,7 +12,7 @@ interface IProps {
   value: number;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   isDisabled?: boolean;
-  isRequired?: boolean;
+  iconColor?: string;
 }
 
 export const Rating = (props: IProps) => {
@@ -22,14 +22,13 @@ export const Rating = (props: IProps) => {
     value,
     onChange,
     isDisabled = false,
-    isRequired = false
+    iconColor = 'cyan'
   } = props;
-
   const [hover, setHover] = useState(-1);
 
   return (
     <StyledEngineProvider injectFirst>
-      <Wrapper>
+      <Wrapper iconColor={iconColor}>
         <FormControlLabel
           control={
             <MaterialRating

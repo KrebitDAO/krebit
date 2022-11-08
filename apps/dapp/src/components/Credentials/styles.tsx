@@ -64,8 +64,8 @@ export const Card = styled.div<ICardProps>`
     padding: 16px 20px;
     background: linear-gradient(
       to top,
-      ${theme.colors[primaryColor]},
-      ${theme.colors[secondaryColor]}
+      ${theme.colors[primaryColor]}CC,
+      ${theme.colors[secondaryColor]}CC
     );
     backdrop-filter: blur(20px);
     cursor: pointer;
@@ -76,6 +76,7 @@ export const Card = styled.div<ICardProps>`
       font-family: 'HelveticaNowDisplay-Bold';
       font-size: ${theme.fonts.lg};
       color: ${theme.colors.white};
+      word-wrap: break-word;
 
       @media (min-width: ${theme.screens.xl}) {
         font-size: ${theme.fonts['2xl']};
@@ -88,6 +89,7 @@ export const Card = styled.div<ICardProps>`
       font-size: ${theme.fonts.sm};
       color: ${theme.colors.white}B3;
       line-height: 1.6;
+      word-wrap: break-word;
     }
 
     .card-button {
@@ -124,6 +126,7 @@ export const Card = styled.div<ICardProps>`
       & > svg {
         width: 80px;
         height: 80px;
+        fill: ${theme.colors.white};
       }
     }
 
