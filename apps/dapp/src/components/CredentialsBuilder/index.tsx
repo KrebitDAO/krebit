@@ -166,7 +166,7 @@ export const CredentialsBuilder = () => {
       const id = await values.form.button.onClick(formValues);
 
       if (!id) {
-        throw new Error('Not id found');
+        throw new Error('Not found');
       }
 
       setCredentialId(id);

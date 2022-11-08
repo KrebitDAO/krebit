@@ -4,7 +4,7 @@ import cors from 'cors';
 import {
   DeworkController,
   DiscordController,
-  QuestappController,
+  DelegatedController,
   TwitterController,
   VeriffController,
   IssuerController,
@@ -35,7 +35,7 @@ router.use(cors(corsOptions)).use(express.json());
 router.get('/metadata/:tokenId', MetadataController);
 
 router
-  .post('/questapp', QuestappController)
+  .post('/delegated', DelegatedController)
   .post('/discord', DiscordController)
   .post('/dework', DeworkController)
   .post('/twitter', TwitterController)

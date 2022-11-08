@@ -1,4 +1,4 @@
-import { QuestappController } from './questapp';
+import { DelegatedController } from './delegated';
 import { DiscordController } from './discord';
 import { DeworkController } from './dework';
 import { TwitterController } from './twitter';
@@ -14,7 +14,7 @@ import { GuildController } from './guild';
 import { StackController } from './stack';
 
 export {
-  QuestappController,
+  DelegatedController,
   DiscordController,
   DeworkController,
   TwitterController,

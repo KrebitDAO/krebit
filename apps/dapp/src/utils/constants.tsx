@@ -254,7 +254,7 @@ const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
 const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 const DEFAULT_ERROR_MESSAGES = {
-  NOT_ID_FOUND: 'Not id found'
+  ID_NOT_FOUND: 'Not found'
 };
 
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {

@@ -220,7 +220,8 @@ const handleGetCredential = async (values: any) => {
           issuedCredential
         );
         console.log('addedCredentialId: ', addedCredentialId);
-        return addedCredentialId.replace('ceramic://', '');
+        return addedCredentialId;
+        //return addedCredentialId.replace('ceramic://', '');
       }
     }
   } catch (error) {
@@ -306,7 +307,16 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values: {
+              ...values,
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: 100
+                };
+              })
+            },
+            tags: values.skills,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
@@ -395,7 +405,16 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values: {
+              ...values,
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: 100
+                };
+              })
+            },
+            tags: values.skills,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
@@ -484,7 +503,16 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values: {
+              ...values,
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: 100
+                };
+              })
+            },
+            tags: values.skills,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
@@ -582,7 +610,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
@@ -637,7 +665,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values: {
+              ...values,
+              entity: 'Personal'
+            },
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
@@ -701,7 +732,16 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values: {
+              ...values,
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: 100
+                };
+              })
+            },
+            tags: values.skills,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
@@ -777,7 +817,16 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           //encrypt issueTo and get credentialSubjectListUrl
 
           return await handleGetCredential({
-            ...values,
+            values: {
+              ...values,
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: 100
+                };
+              })
+            },
+            tags: values.skills,
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
