@@ -110,6 +110,7 @@ export const CredentialsBuilder = () => {
           {}
         );
 
+        setValues(values);
         setFormValues(formValues);
         setStatus('resolved');
       } catch (error) {
