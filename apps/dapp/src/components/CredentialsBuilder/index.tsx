@@ -85,12 +85,15 @@ export const CredentialsBuilder = () => {
           throw new Error('Not authorized');
         }
 
-        const entities = await getEntities();
+        const entityField = values.form.fields.findIndex(
+          field => field.name === 'entity'
+        );
 
-        /*  const organizedValues = values.form?.fields?.map(field => ({
-          ...field,
-          items: entities
-        })); */
+        if (entityField !== -1) {
+          const entities = await getEntities();
+
+          values.form.fields[entityField].items = entities;
+        }
 
         const formValues = values.form?.fields?.reduce(
           (a, v) => ({
@@ -150,22 +153,19 @@ export const CredentialsBuilder = () => {
       if (currentCredentials.length > 0) {
         const decriptedEntities = await Promise.all(
           currentCredentials.map(async credential => {
-            //const stamps = await passport.getStamps({
-            //  claimId: credential.id
-            //});
             let claimValue = null;
             const value = await passport.getClaimValue(credential);
 
             if (value?.encryptedString) {
               claimValue = await issuer.decryptClaimValue(value);
+            } else {
+              claimValue = value;
             }
 
-            if (claimValue) {
-              return {
-                text: `${claimValue.entity} [${credential.credentialSubject.type}]`,
-                value: claimValue.entity
-              };
-            }
+            return {
+              text: `${claimValue.entity} [${credential.credentialSubject.type}]`,
+              value: claimValue.entity
+            };
           })
         ).then(values => values.filter(val => val !== undefined));
 

@@ -53,84 +53,6 @@ export interface ICredentialsState {
   };
 }
 
-//TODO: move to upper level
-const getEntities = () => {
-  /*try {
-    const session = window.localStorage.getItem('did-session');
-    const currentSession = JSON.parse(session);
-
-    if (!currentSession) return;
-
-    const currentType = localStorage.getItem('auth-type');
-    const walletInformation = await getWalletInformation(currentType);
-
-    const passport = new Krebit.core.Passport({
-      ...walletInformation,
-      ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-    });
-    await passport.connect();
-    const Issuer = new Krebit.core.Krebit({
-      ...walletInformation,
-      litSdk: LitJsSdk,
-      ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-    });
-    await Issuer.connect(currentSession);
-
-    const guildAdminCredentials = (
-      await passport.getCredentials(undefined, 'GuildXyzAdmin')
-    )
-      .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
-      .slice(0, 10);
-
-    const discordOwnerCredentials = (
-      await passport.getCredentials(undefined, 'DiscordGuildOwner')
-    )
-      .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
-      .slice(0, 10);
-
-    const gitHubCredentials = (
-      await passport.getCredentials(undefined, 'GithubOrgMember')
-    )
-      .sort((a, b) => sortByDate(a.issuanceDate, b.issuanceDate, 'des'))
-      .slice(0, 10);
-
-    const currentCredentials = [
-      ...guildAdminCredentials,
-      ...discordOwnerCredentials,
-      ...gitHubCredentials
-    ];
-    console.log('admincredentials', currentCredentials);
-    if (currentCredentials.length > 0) {
-      const decriptedEntities = await Promise.all(
-        currentCredentials.map(async credential => {
-          //const stamps = await passport.getStamps({
-          //  claimId: credential.id
-          //});
-          let claimValue = null;
-          const value = await passport.getClaimValue(credential);
-          if (value?.encryptedString) {
-            claimValue = await Issuer.decryptClaimValue(value);
-          }
-
-          return {
-            text: `${claimValue.entity} [${credential.credentialSubject.type}]`,
-            value: claimValue.entity
-          };
-        })
-      );
-
-      let entities = [{ text: 'Personal', value: 'personal' }];
-      if (decriptedEntities.length > 0)
-        entities = entities.concat(decriptedEntities);
-
-      return entities;
-    }
-  } catch (error) {
-    console.log('error: ', error);*/
-  return [{ text: 'Personal', value: 'personal' }];
-  //}
-};
-
 export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   {
     type: 'workExperience',
@@ -164,8 +86,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization',
-          items: []
+          placeholder: 'Entity/Organization'
         },
         {
           type: 'datepicker',
@@ -252,8 +173,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization',
-          items: []
+          placeholder: 'Entity/Organization'
         },
         {
           type: 'datepicker',
@@ -339,8 +259,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization',
-          items: []
+          placeholder: 'Entity/Organization'
         },
         {
           type: 'datepicker',
@@ -426,8 +345,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization',
-          items: []
+          placeholder: 'Entity/Organization'
         },
         {
           type: 'switch',
@@ -628,8 +546,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Community',
-          items: []
+          placeholder: 'Community'
         },
 
         {
