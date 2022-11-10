@@ -406,7 +406,10 @@ export const VerifyCredential = (props: IProps) => {
                             walletInformation.address.toLowerCase()
                           );
                         }
-                      ) > -1
+                      ) > -1 &&
+                      walletInformation.address.toLowerCase() !==
+                        currentCommunity?.credential?.credentialSubject
+                          ?.ethereumAddress
                     ? 'Claim this credential'
                     : 'You are not eligible to claim this credential'
                 }
@@ -429,7 +432,10 @@ export const VerifyCredential = (props: IProps) => {
                             walletInformation.address.toLowerCase()
                           );
                         }
-                      ) > -1
+                      ) > -1 &&
+                      walletInformation.address.toLowerCase() !==
+                        currentCommunity?.credential?.credentialSubject
+                          ?.ethereumAddress
                     ? {
                         text: 'Claim',
                         onClick: () =>
