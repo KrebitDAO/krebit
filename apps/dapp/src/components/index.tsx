@@ -9,6 +9,7 @@ import { Terms } from './Terms';
 import { Credentials } from './Credentials';
 import { CredentialsBuilder } from './CredentialsBuilder';
 import { ClaimCredential } from './ClaimCredential';
+import { Jobs } from './Jobs';
 
 export {
   NavBar,
@@ -21,5 +22,6 @@ export {
   Terms,
   Credentials,
   CredentialsBuilder,
-  ClaimCredential
+  ClaimCredential,
+  Jobs
 };

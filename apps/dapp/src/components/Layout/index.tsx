@@ -44,6 +44,11 @@ const MENU_OPTIONS = [
     icon: <Explore />
   },
   {
+    title: 'Jobs',
+    href: '/jobs',
+    icon: <Explore />
+  },
+  {
     title: 'Create',
     href: '/create',
     icon: <ChromeReaderMode />,
@@ -54,11 +59,6 @@ const MENU_OPTIONS = [
     title: 'Inbox',
     href: '/messages',
     icon: <Send />
-  },
-  {
-    title: 'Notifications',
-    href: '/notifications',
-    icon: <Bell />
   }
 ];
 
