@@ -115,6 +115,63 @@ export const StackController = async (
       } else {
         throw new Error(`Wrong stack overflow: ${stackUser}`);
       }
+    } else if (
+      claimedCredential?.credentialSubject?.type === 'StackOverflowScoreGT10'
+    ) {
+      // Connect to stack overflow and get user ID from token
+      const stackUser = await stack.getStackUser({
+        accessToken: claimValue.proofs.accessToken
+      });
+
+      const stackTags = await stack.getTopTags({
+        accessToken: claimValue.proofs.accessToken
+      });
+
+      const tagMatch = stackTags.find(
+        t => t.tag_name === claimValue.language.toLowerCase()
+      );
+
+      // If stack overflow userID == the VC userID
+      if (
+        stackUser.user_id.toString() === claimValue.id &&
+        tagMatch &&
+        tagMatch.answer_count > 10
+      ) {
+        // Issue Verifiable credential
+        console.log('Valid stack overflow:', stackUser);
+
+        const expirationDate = new Date();
+        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+        console.log('expirationDate: ', expirationDate);
+
+        const claim = {
+          id: claimedCredentialId,
+          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+          did: claimedCredential.credentialSubject.id,
+          type: `${claimValue.language}${claimedCredential.credentialSubject.type}`,
+          typeSchema: claimedCredential.credentialSubject.typeSchema,
+          tags: [...claimedCredential.type.slice(1), claimValue.language],
+          value: claimValue,
+          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+          stake: parseInt(SERVER_STAKE, 10), // In KRB
+          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+          expirationDate: new Date(expirationDate).toISOString()
+        };
+        if (!publicClaim) {
+          claim['encrypt'] = 'hash' as 'hash';
+        }
+        console.log('claim: ', claim);
+
+        const issuedCredential = await Issuer.issue(claim);
+        console.log('issuedCredential: ', issuedCredential);
+
+        if (issuedCredential) {
+          return response.json(issuedCredential);
+        }
+      } else {
+        throw new Error(`Wrong stack overflow: ${stackUser}`);
+      }
     }
   } catch (err) {
     next(err);

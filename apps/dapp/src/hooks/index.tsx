@@ -23,6 +23,7 @@ import { useGuildXyzAdminProvider } from './useGuildXyzAdminProvider';
 import { useGuildXyzRoleProvider } from './useGuildXyzRoleProvider';
 import { useDeworkCompletedProvider } from './useDeworkCompletedProvider';
 import { useStackReputationProvider } from './useStackReputationProvider';
+import { useStackScoreProvider } from './useStackScoreProvider';
 
 export {
   useWindowSize,
@@ -49,5 +50,6 @@ export {
   useGuildXyzAdminProvider,
   useGuildXyzRoleProvider,
   useDeworkCompletedProvider,
-  useStackReputationProvider
+  useStackReputationProvider,
+  useStackScoreProvider
 };

@@ -24,7 +24,8 @@ import {
   Explore,
   Help,
   Menu,
-  Send
+  Send,
+  WorkExperience
 } from 'components/Icons';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
@@ -46,14 +47,15 @@ const MENU_OPTIONS = [
   {
     title: 'Jobs',
     href: '/jobs',
-    icon: <Explore />
+    icon: <WorkExperience />
   },
   {
     title: 'Create',
     href: '/create',
     icon: <ChromeReaderMode />,
     isPrivate: true,
-    badgeText: 'New'
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     title: 'Inbox',
@@ -248,6 +250,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                       {content.badgeText ? (
                         <Badge
                           icon={content.icon}
+                          color={content.badgeColor}
                           iconColor={
                             asPath.includes(content.href) ? 'cyan' : 'gray'
                           }

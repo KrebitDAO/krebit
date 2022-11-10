@@ -158,8 +158,8 @@ const WORK_CREDENTIALS = [
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
-    badgeText: 'New',
-    isDisabled: true
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     credentialType: 'DeworkCompletedTasksGT10',
@@ -329,19 +329,6 @@ const COMMUNITY_CREDENTIALS = [
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
-    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
-  },
-  {
-    credentialType: 'Issuer',
-    entity: 'Issuer',
-    description: 'Krebit Verification Node',
-    icon: <Approval />,
-    imageUrl:
-      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
-      '/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
