@@ -2,8 +2,11 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 interface IProps {
-  image: string;
+  image?: string;
   isFilterOpen?: boolean;
+  replyToImage?: string;
+  hasCommentSelected?: boolean;
+  isReply?: boolean;
 }
 
 export const Wrapper = styled.div<IProps>`
@@ -24,6 +27,7 @@ export const Wrapper = styled.div<IProps>`
       display: none;
 
       @media (min-width: ${theme.screens.xl}) {
+        display: block;
         width: 240px;
         max-height: calc(100vh - 100px);
       }
@@ -117,12 +121,14 @@ export const Wrapper = styled.div<IProps>`
           font-family: 'HelveticaNowDisplay-Medium';
           font-size: ${theme.fonts.xl};
           color: ${theme.colors.white};
+          text-align: center;
         }
 
         .left-box-description {
           margin: 0;
           font-size: ${theme.fonts.base};
           color: ${theme.colors.white}80;
+          text-align: center;
         }
 
         .left-box-list {
@@ -132,7 +138,7 @@ export const Wrapper = styled.div<IProps>`
           flex-direction: column;
           grid-gap: 10px;
 
-          & > :first-child {
+          & > :first-of-type {
             padding-top: 10px;
           }
 
@@ -193,8 +199,16 @@ export const Wrapper = styled.div<IProps>`
       }
 
       .content-loading-card {
-        height: 200px;
-        margin: 10px;
+        height: 50px;
+        width: 50px;
+        margin: 30px auto;
+      }
+
+      .content-loadmore-button {
+        width: 100px;
+        height: 30px;
+        margin: 0 auto;
+        margin-top: 20px;
       }
 
       .content-header {
@@ -230,7 +244,7 @@ export const Wrapper = styled.div<IProps>`
         min-height: 100px;
         border-radius: 5px;
         background-color: ${theme.colors.ebonyClay};
-        padding: 10px;
+        padding: 15px;
         display: flex;
         flex-direction: column;
 
@@ -289,6 +303,7 @@ export const Wrapper = styled.div<IProps>`
       display: none;
 
       @media (min-width: ${theme.screens.xl}) {
+        display: block;
         width: 360px;
         max-height: calc(100vh - 100px);
       }
@@ -338,6 +353,8 @@ export const RightBoxItem = styled.div<IProps>`
       background-position: center;
       background-repeat: no-repeat;
       background-size: contain;
+      background-color: ${theme.colors.ebony};
+      border: 1px solid ${theme.colors.white};
     }
 
     .right-box-item-content {
@@ -349,53 +366,354 @@ export const RightBoxItem = styled.div<IProps>`
         color: ${theme.colors.white};
       }
 
-      .right-box-item-content-box {
-        margin: 0;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: ${theme.fonts.xs};
-        color: ${theme.colors.white};
-        background-color: ${theme.colors.ebony};
+      .right-box-item-content-boxes {
+        display: flex;
+        flex-wrap: wrap;
+        grid-gap: 5px;
+        margin-top: 5px;
+
+        & > span {
+          margin: 0;
+          padding: 3px 10px;
+          border-radius: 20px;
+          font-size: ${theme.fonts.xs};
+          color: ${theme.colors.white};
+          background-color: ${theme.colors.ebony};
+        }
       }
     }
   `}
 `;
 
 export const ContentCard = styled.div<IProps>`
-  ${({ theme, image }) => css`
-    padding: 10px;
+  ${({ theme, image, replyToImage }) => css`
+    padding: 15px;
     background-color: ${theme.colors.ebonyClay};
     border-radius: 10px;
-    display: flex;
-    width: fit-content;
 
-    .content-card-image {
-      width: 40px;
-      height: 40px;
+    .content-card-reply-to {
+      display: flex;
+
+      .content-card-reply-to-icon {
+        border-top: 2px solid ${theme.colors.gray};
+        border-left: 2px solid ${theme.colors.gray};
+        border-radius: 6px 0 0 0;
+        width: 15px;
+        height: 25px;
+        display: flex;
+        align-self: flex-end;
+        margin-left: 19px;
+      }
+
+      .content-card-reply-to-main {
+        display: flex;
+        margin-bottom: 5px;
+        width: 100%;
+        opacity: 0.7;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        .content-card-reply-to-main-image {
+          width: 40px;
+          height: 40px;
+          border-radius: 9999px;
+          margin-right: 7px;
+          background-image: url('${replyToImage}');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          background-color: ${theme.colors.ebony};
+        }
+
+        .content-card-reply-to-main-texts {
+          display: flex;
+          align-items: center;
+
+          .content-card-reply-to-main-texts-title {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            font-family: 'HelveticaNowDisplay-Medium';
+            color: ${theme.colors.white};
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            width: 540px;
+
+            & > span {
+              font-size: ${theme.fonts.base};
+              color: ${theme.colors.white};
+            }
+          }
+        }
+      }
+    }
+
+    .content-card-main {
+      display: flex;
+
+      .content-card-image {
+        width: 45px;
+        height: 40px;
+        border-radius: 9999px;
+        background-image: url('${image}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: ${theme.colors.ebony};
+      }
+
+      .content-card-information {
+        margin-left: 7px;
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        word-wrap: break-word;
+
+        .content-card-information-title {
+          cursor: pointer;
+
+          & > span {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            font-family: 'HelveticaNowDisplay-Medium';
+            color: ${theme.colors.white};
+          }
+
+          .content-card-information-title-boxes {
+            display: flex;
+            flex-wrap: wrap;
+            grid-gap: 5px;
+            margin-top: 5px;
+
+            & > span {
+              margin: 0;
+              padding: 3px 10px;
+              border-radius: 20px;
+              font-size: ${theme.fonts.xs};
+              color: ${theme.colors.white};
+              background-color: ${theme.colors.ebony};
+            }
+          }
+        }
+
+        .content-card-information-description {
+          margin: 10px 0;
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white};
+        }
+
+        .content-card-information-actions {
+          display: flex;
+          justify-content: space-between;
+
+          .content-card-information-action {
+            display: flex;
+            grid-gap: 10px;
+          }
+
+          .content-card-information-action-option {
+            display: flex;
+            align-items: center;
+            grid-gap: 3px;
+            cursor: pointer;
+
+            & > svg {
+              width: 20px;
+              height: 20px;
+              fill: ${theme.colors.white}80;
+
+              & > path {
+                fill: ${theme.colors.white}80;
+              }
+            }
+
+            & > span {
+              margin: 0;
+              font-size: ${theme.fonts.xs};
+              color: ${theme.colors.white}80;
+            }
+          }
+
+          .content-card-information-action-option.active {
+            & > svg {
+              fill: ${theme.colors.cyan};
+
+              & > path {
+                fill: ${theme.colors.cyan};
+              }
+            }
+
+            & > span {
+              color: ${theme.colors.cyan};
+            }
+          }
+        }
+      }
+    }
+  `}
+`;
+
+export const CommentBox = styled.div<IProps>`
+  ${({ theme, hasCommentSelected }) => css`
+    visibility: ${hasCommentSelected ? 'initial' : 'hidden'};
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: ${theme.colors.white}0D;
+    backdrop-filter: saturate(180%) blur(20px);
+    z-index: 20;
+
+    .comment-box {
+      height: 100%;
+      width: 100%;
+      max-width: 670px;
+      position: absolute;
+      right: ${hasCommentSelected ? 0 : '-670px'};
+      top: 0;
+      background-color: ${theme.colors.ebonyClay};
+      transition: 0.5s;
+
+      .comment-box-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+
+        .comment-box-header-title {
+          margin: 0;
+          font-family: 'HelveticaNowDisplay-Medium';
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white};
+        }
+
+        .comment-box-header-icon {
+          width: 20px;
+          height: 20px;
+
+          & > svg {
+            width: 20px;
+            height: 20px;
+            fill: ${theme.colors.white};
+          }
+        }
+      }
+
+      .comment-box-cards {
+        height: calc(100% - 220px);
+        padding: 0 20px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+        & > hr {
+          width: 100%;
+          margin: 20px 0;
+          border: none;
+          border-top: 1px solid ${theme.colors.gray}80;
+        }
+      }
+
+      .comment-box-input-container {
+        border-top: 1px solid ${theme.colors.gray}80;
+        background-color: ${theme.colors.ebonyClay};
+        padding: 20px;
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+
+        .comment-box-input {
+          width: 100%;
+          min-height: 100px;
+          border-radius: 5px;
+          background-color: ${theme.colors.brightGray};
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+
+          .comment-box-input-element {
+            outline: none;
+            border: none;
+            background-color: ${theme.colors.brightGray};
+            width: auto !important;
+            max-height: 150px;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.gray};
+            resize: none;
+
+            @media (min-width: ${theme.screens.xl}) {
+              font-size: ${theme.fonts.base};
+            }
+
+            &::placeholder {
+              color: ${theme.colors.gray}80;
+            }
+          }
+
+          .comment-box-input-button {
+            background: linear-gradient(
+              to right,
+              ${theme.colors.heliotrope},
+              ${theme.colors.cyan}
+            );
+            color: ${theme.colors.haiti};
+            border: none;
+            outline: none;
+            font-family: 'HelveticaNowDisplay-Medium';
+            font-size: ${theme.fonts.sm};
+            border-radius: 5px;
+            width: 70px;
+            height: 26px;
+            cursor: pointer;
+            align-self: flex-end;
+            margin-top: 10px;
+
+            &:disabled {
+              opacity: 0.7;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+  `}
+`;
+
+export const CommentBoxCard = styled.div<IProps>`
+  ${({ theme, image, isReply }) => css`
+    display: flex;
+    margin-bottom: 20px;
+
+    .comment-box-image {
+      width: ${isReply ? '50px' : '55px'};
+      height: ${isReply ? '45px' : '50px'};
       border-radius: 9999px;
-      margin-right: 7px;
       background-image: url('${image}');
       background-position: center;
       background-repeat: no-repeat;
       background-size: contain;
     }
 
-    .content-card-information {
+    .comment-box-information {
       margin-left: 7px;
       display: table;
       table-layout: fixed;
       width: 100%;
       word-wrap: break-word;
 
-      .content-card-information-title {
+      .comment-box-information-title {
         & > span {
           margin: 0;
-          font-size: ${theme.fonts.sm};
+          font-size: ${isReply ? theme.fonts.sm : theme.fonts.base};
           font-family: 'HelveticaNowDisplay-Medium';
           color: ${theme.colors.white};
         }
 
-        .content-card-information-title-boxes {
+        .comment-box-information-title-boxes {
           display: flex;
           flex-wrap: wrap;
           grid-gap: 5px;
@@ -412,22 +730,22 @@ export const ContentCard = styled.div<IProps>`
         }
       }
 
-      .content-card-information-description {
+      .comment-box-information-description {
         margin: 10px 0;
         font-size: ${theme.fonts.base};
         color: ${theme.colors.white};
       }
 
-      .content-card-information-actions {
+      .comment-box-information-actions {
         display: flex;
         justify-content: space-between;
 
-        .content-card-information-action {
+        .comment-box-information-action {
           display: flex;
           grid-gap: 10px;
         }
 
-        .content-card-information-action-option {
+        .comment-box-information-action-option {
           display: flex;
           align-items: center;
           grid-gap: 3px;
