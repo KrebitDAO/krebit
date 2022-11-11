@@ -90,7 +90,6 @@ const CREDENTIAL_TYPES = [
   'GuildXyzRole',
   'VerifiableCredential',
   'DeworkCompletedTasksGT10',
-  'JavaScriptStackOverflowScoreGT10',
   'PythonStackOverflowScoreGT10',
   'JavaScriptStackOverflowScoreGT10',
   'JavaStackOverflowScoreGT10',

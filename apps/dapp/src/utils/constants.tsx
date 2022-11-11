@@ -270,6 +270,30 @@ const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
   ERROR_CREDENTIAL: 'Error saving credential. Please check later'
 };
 
+const DEFAULT_SKILL_LANGUAGES = [
+  { text: 'JavaScript', value: 'JavaScript' },
+  { text: 'Java', value: 'Java' },
+  { text: 'C#', value: 'C#' },
+  { text: 'PHP', value: 'PHP' },
+  { text: 'Android', value: 'Android' },
+  { text: 'HTML', value: 'HTML' },
+  { text: 'C++', value: 'C++' },
+  { text: 'CSS', value: 'CSS' },
+  { text: 'Objective-C', value: 'Objective-C' },
+  { text: 'SQL', value: 'SQL' },
+  { text: 'R', value: 'R' },
+  { text: 'C', value: 'C' },
+  { text: 'Swift', value: 'Swift' },
+  { text: 'Ruby', value: 'Ruby' },
+  { text: 'TypeScript', value: 'TypeScript' },
+  { text: 'Scala', value: 'Scala' },
+  { text: 'Shell', value: 'Shell' },
+  { text: 'Kotlin', value: 'Kotlin' },
+  { text: 'Go', value: 'Go' },
+  { text: 'Rust', value: 'Rust' },
+  { text: 'Solidity', value: 'Solidity' }
+];
+
 export const constants = {
   DEFAULT_DATE,
   DEFAULT_CLAIM_CREDENTIAL_TYPES,
@@ -282,5 +306,6 @@ export const constants = {
   DEFAULT_IMAGE_FILE_TYPES,
   DEFAULT_ERROR_MESSAGES,
   DEFAULT_MESSAGES_FOR_PROVIDERS,
-  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS
+  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS,
+  DEFAULT_SKILL_LANGUAGES
 };

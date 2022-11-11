@@ -158,8 +158,8 @@ const WORK_CREDENTIALS = [
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
-    badgeText: 'New',
-    isDisabled: true
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     credentialType: 'DeworkCompletedTasksGT10',

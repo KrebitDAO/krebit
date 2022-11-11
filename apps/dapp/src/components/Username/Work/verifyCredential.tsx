@@ -1,17 +1,23 @@
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { getIssuers, checkCredentialsURLs } from 'utils';
+import {
+  getIssuers,
+  checkCredentialsURLs,
+  constants as CONSTANTS
+} from 'utils';
 import {
   useGithubFollowersProvider,
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider,
   useSpectCompletedProvider,
   useDeworkCompletedProvider,
-  useStackReputationProvider
+  useStackReputationProvider,
+  useStackScoreProvider
 } from 'hooks';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
+import { constants } from 'buffer';
 
 interface IProps {
   currentWork: ICredential;
@@ -27,6 +33,7 @@ export const VerifyCredential = (props: IProps) => {
   const spectCompletedProvider = useSpectCompletedProvider();
   const deworkCompletedProvider = useDeworkCompletedProvider();
   const stackReputationProvider = useStackReputationProvider();
+  const stackScoreProvider = useStackScoreProvider();
 
   const handleClose = async (credentialType: string) => {
     let isStatusResolved = false;
@@ -820,6 +827,109 @@ export const VerifyCredential = (props: IProps) => {
                 loadingMessage={stackReputationProvider.statusMessage}
                 isError={stackReputationProvider.status === 'mint_rejected'}
                 errorMessage={stackReputationProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'StackOverflowScoreGT10' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  stackScoreProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that your StackOverflow profile has a score more than 10 for a programming language'
+                }
+                form={{
+                  fields:
+                    stackScoreProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'language',
+                            type: 'select',
+                            placeholder: 'Select the language tag',
+                            value: stackScoreProvider.claimValues.language,
+                            items: CONSTANTS.DEFAULT_SKILL_LANGUAGES,
+                            onChange: stackScoreProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: stackScoreProvider.claimValues.private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: stackScoreProvider.claimValues.private,
+                            onChange: stackScoreProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    stackScoreProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              stackScoreProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick: () =>
+                            stackScoreProvider.handleFetchOAuth(currentVerify)
+                        }
+                }}
+                isLoading={stackScoreProvider.status === 'credential_pending'}
+                loadingMessage={stackScoreProvider.statusMessage}
+                isError={stackScoreProvider.status === 'credential_rejected'}
+                errorMessage={stackScoreProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  stackScoreProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    stackScoreProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              stackScoreProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            stackScoreProvider.handleMintCredential(
+                              stackScoreProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={stackScoreProvider.status === 'mint_pending'}
+                loadingMessage={stackScoreProvider.statusMessage}
+                isError={stackScoreProvider.status === 'mint_rejected'}
+                errorMessage={stackScoreProvider.errorMessage}
                 iconType="stamp"
               />
             </>

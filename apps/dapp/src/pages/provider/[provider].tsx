@@ -351,7 +351,22 @@ const DynamicProvider = () => {
       // only continue with the process if a code is returned
       if (accessToken) {
         channel.postMessage({
-          target: 'StackOverflowReputationGT1K',
+          target: 'StackOverflowScoreGT10',
+          data: { accessToken, state: queryState }
+        });
+      }
+    } else if (
+      (queryError || accessToken) &&
+      queryState &&
+      /^stackScore-.*/.test(queryState)
+    ) {
+      // shared message channel between windows (on the same domain)
+      const channel = new BroadcastChannel(currentChannel);
+
+      // only continue with the process if a code is returned
+      if (accessToken) {
+        channel.postMessage({
+          target: 'StackOverflowScoreGT10',
           data: { accessToken, state: queryState }
         });
       }
