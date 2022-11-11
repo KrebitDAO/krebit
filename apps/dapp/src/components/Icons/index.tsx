@@ -49,6 +49,11 @@ import { School } from './School';
 import { WorkExperience } from './WorkExperience';
 import { Star } from './Star';
 import { Vote } from './Vote';
+import { Tag } from './Tag';
+import { Favorite } from './Favorite';
+import { SentimentVerySatisfied } from './SentimentVerySatisfied';
+import { ThumbDown } from './ThumbDown';
+import { Reply } from './Reply';
 
 export {
   Close,
@@ -101,5 +106,10 @@ export {
   School,
   WorkExperience,
   Star,
-  Vote
+  Vote,
+  Tag,
+  Favorite,
+  SentimentVerySatisfied,
+  ThumbDown,
+  Reply
 };
