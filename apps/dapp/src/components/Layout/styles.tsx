@@ -237,6 +237,7 @@ export const NavBarOption = styled.div<INavBarOptionProps>`
         height: 30px;
         fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
 
+        & > path,
         & > g > path {
           fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
         }

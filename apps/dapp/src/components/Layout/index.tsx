@@ -18,7 +18,6 @@ import {
 } from './styles';
 import {
   AccountBalanceWallet,
-  Bell,
   ChromeReaderMode,
   Close,
   Explore,

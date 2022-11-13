@@ -7,6 +7,7 @@ interface IProps {
   replyToImage?: string;
   hasCommentSelected?: boolean;
   isReply?: boolean;
+  type?: string;
 }
 
 export const Wrapper = styled.div<IProps>`
@@ -21,6 +22,12 @@ export const Wrapper = styled.div<IProps>`
       grid-gap: 20px;
       padding: 0;
       margin-top: 65px;
+    }
+
+    .timestamp {
+      margin: 0;
+      color: ${theme.colors.white}80;
+      font-size: ${theme.fonts.xs};
     }
 
     .left-box-loading {
@@ -190,25 +197,77 @@ export const Wrapper = styled.div<IProps>`
       }
     }
 
+    .content-loading-card {
+      height: 50px;
+      width: 50px;
+      margin: 30px auto;
+    }
+
+    .content-loadmore-button {
+      width: 100px;
+      height: 30px;
+      margin: 20px auto;
+    }
+
+    .content-box-input {
+      width: 100%;
+      min-height: 100px;
+      border-radius: 5px;
+      background-color: ${theme.colors.ebonyClay};
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+
+      .content-box-input-element {
+        outline: none;
+        border: none;
+        background-color: ${theme.colors.ebonyClay};
+        width: auto !important;
+        max-height: 150px;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.gray};
+        resize: none;
+
+        @media (min-width: ${theme.screens.xl}) {
+          font-size: ${theme.fonts.base};
+        }
+
+        &::placeholder {
+          color: ${theme.colors.gray}80;
+        }
+      }
+
+      .content-box-input-button {
+        background: linear-gradient(
+          to right,
+          ${theme.colors.heliotrope},
+          ${theme.colors.cyan}
+        );
+        color: ${theme.colors.haiti};
+        border: none;
+        outline: none;
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.sm};
+        border-radius: 5px;
+        width: 70px;
+        height: 26px;
+        cursor: pointer;
+        align-self: flex-end;
+        margin-top: 10px;
+
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+    }
+
     .content {
       overflow-y: auto;
       height: 100vh;
 
       @media (min-width: ${theme.screens.xl}) {
         padding-right: 5px;
-      }
-
-      .content-loading-card {
-        height: 50px;
-        width: 50px;
-        margin: 30px auto;
-      }
-
-      .content-loadmore-button {
-        width: 100px;
-        height: 30px;
-        margin: 0 auto;
-        margin-top: 20px;
       }
 
       .content-header {
@@ -239,63 +298,41 @@ export const Wrapper = styled.div<IProps>`
         }
       }
 
-      .content-box-input {
-        width: 100%;
-        min-height: 100px;
-        border-radius: 5px;
-        background-color: ${theme.colors.ebonyClay};
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-
-        .content-box-input-element {
-          outline: none;
-          border: none;
-          background-color: ${theme.colors.ebonyClay};
-          width: auto !important;
-          max-height: 150px;
-          font-size: ${theme.fonts.sm};
-          color: ${theme.colors.gray};
-
-          @media (min-width: ${theme.screens.xl}) {
-            font-size: ${theme.fonts.base};
-          }
-
-          &::placeholder {
-            color: ${theme.colors.gray}80;
-          }
-        }
-
-        .content-box-input-button {
-          background: linear-gradient(
-            to right,
-            ${theme.colors.heliotrope},
-            ${theme.colors.cyan}
-          );
-          color: ${theme.colors.haiti};
-          border: none;
-          outline: none;
-          font-family: 'HelveticaNowDisplay-Medium';
-          font-size: ${theme.fonts.sm};
-          border-radius: 5px;
-          width: 70px;
-          height: 26px;
-          cursor: pointer;
-          align-self: flex-end;
-          margin-top: 10px;
-
-          &:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-          }
-        }
-      }
-
       .content-box-list {
         display: grid;
         grid-gap: 10px;
         margin-top: 20px;
         margin-bottom: 100px;
+      }
+    }
+
+    .content-chat {
+      height: calc(100vh - 100px);
+      width: 100%;
+      border: 1px solid ${theme.colors.ebonyClay};
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+
+      .content-box-list {
+        display: flex;
+        flex-direction: column-reverse;
+        height: calc(100% - 139px);
+        overflow-y: auto;
+      }
+
+      .content-box-list.content-box-list-bigger {
+        height: calc(100% - 179px);
+      }
+
+      .content-box-chat {
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        padding: 10px;
+        background-color: ${theme.colors.ebony};
+        border-top: 1px solid ${theme.colors.ebonyClay};
       }
     }
 
@@ -337,7 +374,7 @@ export const Wrapper = styled.div<IProps>`
   `}
 `;
 
-export const RightBoxItem = styled.div<IProps>`
+export const RightBoxItem = styled.a<IProps>`
   ${({ theme, image }) => css`
     display: flex;
     align-items: center;
@@ -386,10 +423,13 @@ export const RightBoxItem = styled.div<IProps>`
 `;
 
 export const ContentCard = styled.div<IProps>`
-  ${({ theme, image, replyToImage }) => css`
-    padding: 15px;
-    background-color: ${theme.colors.ebonyClay};
-    border-radius: 10px;
+  ${({ theme, image, replyToImage, type = 'feed' }) => css`
+    padding: ${type === 'chat' ? '10px 0' : '15px'};
+    background-color: ${type === 'chat' ? 'initial' : theme.colors.ebonyClay};
+    border-radius: ${type === 'chat' ? 0 : '10px'};
+    border-top: ${type === 'chat'
+      ? `1px solid ${theme.colors.white}33`
+      : 'initial'};
 
     .content-card-reply-to {
       display: flex;
@@ -417,7 +457,7 @@ export const ContentCard = styled.div<IProps>`
         }
 
         .content-card-reply-to-main-image {
-          width: 40px;
+          width: 45px;
           height: 40px;
           border-radius: 9999px;
           margin-right: 7px;
@@ -426,6 +466,7 @@ export const ContentCard = styled.div<IProps>`
           background-repeat: no-repeat;
           background-size: cover;
           background-color: ${theme.colors.ebony};
+          border: 1px solid ${theme.colors.white};
         }
 
         .content-card-reply-to-main-texts {
@@ -444,7 +485,7 @@ export const ContentCard = styled.div<IProps>`
 
             & > span {
               font-size: ${theme.fonts.base};
-              color: ${theme.colors.white};
+              color: ${theme.colors.white}80;
             }
           }
         }
@@ -463,6 +504,7 @@ export const ContentCard = styled.div<IProps>`
         background-repeat: no-repeat;
         background-size: cover;
         background-color: ${theme.colors.ebony};
+        border: 1px solid ${theme.colors.white};
       }
 
       .content-card-information {
@@ -494,8 +536,59 @@ export const ContentCard = styled.div<IProps>`
               border-radius: 20px;
               font-size: ${theme.fonts.xs};
               color: ${theme.colors.white};
-              background-color: ${theme.colors.ebony};
+              background-color: ${type === 'chat'
+                ? theme.colors.ebonyClay
+                : theme.colors.ebony};
             }
+          }
+        }
+
+        .content-card-information-header {
+          display: flex;
+          justify-content: space-between;
+          position: relative;
+
+          .content-card-information-options {
+            display: flex;
+            align-items: center;
+            grid-gap: 10px;
+            background-color: ${theme.colors.ebonyClay};
+            padding: 0 5px;
+            margin-right: 10px;
+            height: 30px;
+            box-shadow: ${theme.shadows.small};
+            border-radius: 10px;
+            cursor: pointer;
+
+            .content-card-information-option {
+              width: 20px;
+              height: 20px;
+
+              & > svg,
+              & > img {
+                width: 20px;
+                height: 20px;
+                fill: ${theme.colors.white}80;
+
+                & > path {
+                  fill: ${theme.colors.white}80;
+                }
+              }
+            }
+
+            .content-card-information-option.revert {
+              & > svg,
+              & > img {
+                transform: rotate(90deg);
+              }
+            }
+          }
+
+          .content-card-information-options-dropdown {
+            position: absolute;
+            bottom: 46px;
+            right: 56px;
+            z-index: 10;
           }
         }
 
@@ -503,11 +596,17 @@ export const ContentCard = styled.div<IProps>`
           margin: 10px 0;
           font-size: ${theme.fonts.base};
           color: ${theme.colors.white};
+
+          & > a {
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.cyan};
+          }
         }
 
         .content-card-information-actions {
           display: flex;
           justify-content: space-between;
+          position: relative;
 
           .content-card-information-action {
             display: flex;
@@ -520,7 +619,8 @@ export const ContentCard = styled.div<IProps>`
             grid-gap: 3px;
             cursor: pointer;
 
-            & > svg {
+            & > svg,
+            & > img {
               width: 20px;
               height: 20px;
               fill: ${theme.colors.white}80;
@@ -550,6 +650,13 @@ export const ContentCard = styled.div<IProps>`
               color: ${theme.colors.cyan};
             }
           }
+
+          .content-card-information-action-dropdown {
+            position: absolute;
+            top: 16px;
+            right: 50px;
+            z-index: 10;
+          }
         }
       }
     }
@@ -578,6 +685,12 @@ export const CommentBox = styled.div<IProps>`
       top: 0;
       background-color: ${theme.colors.ebonyClay};
       transition: 0.5s;
+
+      .comment-box-loading {
+        height: 50px;
+        width: 50px;
+        margin: 30px auto;
+      }
 
       .comment-box-header {
         display: flex;
@@ -691,11 +804,12 @@ export const CommentBoxCard = styled.div<IProps>`
     .comment-box-image {
       width: ${isReply ? '50px' : '55px'};
       height: ${isReply ? '45px' : '50px'};
+      border: 1px solid ${theme.colors.white};
       border-radius: 9999px;
       background-image: url('${image}');
       background-position: center;
       background-repeat: no-repeat;
-      background-size: contain;
+      background-size: cover;
     }
 
     .comment-box-information {
@@ -706,6 +820,8 @@ export const CommentBoxCard = styled.div<IProps>`
       word-wrap: break-word;
 
       .comment-box-information-title {
+        cursor: pointer;
+
         & > span {
           margin: 0;
           font-size: ${isReply ? theme.fonts.sm : theme.fonts.base};
@@ -763,6 +879,67 @@ export const CommentBoxCard = styled.div<IProps>`
             color: ${theme.colors.white}80;
           }
         }
+
+        .comment-box-information-action-option.active {
+          & > svg {
+            fill: ${theme.colors.cyan};
+          }
+
+          & > span {
+            color: ${theme.colors.cyan};
+          }
+        }
+      }
+    }
+  `}
+`;
+
+export const ContentBoxChatReplyTo = styled.div<IProps>`
+  ${({ theme, replyToImage }) => css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .content-box-chat-reply-to-info {
+      display: flex;
+      align-items: center;
+
+      .content-box-chat-reply-to-text {
+        margin: 0;
+        margin-right: 10px;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white}80;
+      }
+
+      .content-box-chat-reply-to-image {
+        width: 30px;
+        height: 30px;
+        border-radius: 9999px;
+        border: 1px solid ${theme.colors.white};
+        background-image: url('${replyToImage}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin-right: 10px;
+      }
+
+      .content-box-chat-reply-to-title {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+      }
+    }
+
+    .content-box-chat-reply-to-close {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+
+      & > svg {
+        width: 20px;
+        height: 20px;
+        fill: ${theme.colors.white};
       }
     }
   `}
