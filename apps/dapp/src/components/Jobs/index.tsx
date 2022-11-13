@@ -10,6 +10,7 @@ import {
 import Link from 'next/link';
 import { lib as passportLib } from '@krebitdao/reputation-passport/dist/lib';
 import formatDistance from 'date-fns/formatDistance';
+import { debounce } from 'ts-debounce';
 
 import {
   CommentBox,
@@ -38,10 +39,9 @@ import { QuestionModal } from 'components/QuestionModal';
 import { Input } from 'components/Input';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { getDomains, substring } from './utils';
+import { constants, orbisParseMarkdown } from 'utils';
 import { GeneralContext } from 'context';
 import { useWindowSize } from 'hooks';
-import { debounce } from 'ts-debounce';
-import { orbisParseMarkdown } from 'utils';
 
 export interface IJobProps {
   jobId: string;
@@ -65,8 +65,6 @@ interface IReplyToChat {
   creatorDetails?: any;
 }
 
-const GROUP_ID =
-  'kjzl6cwe1jw14ai2gg8e0qmx2j944ppe3s3dgfk003jlb8guuybyg4m77nsrg73';
 const DEFAULT_LIST_PAGINATION = 50;
 const DEFAULT_CURRENT_PAGE = 1;
 
@@ -150,7 +148,7 @@ export const Jobs = (props: IJobProps) => {
 
       const { data, error } = await orbis.getPosts(
         {
-          context: jobId ? jobId : GROUP_ID
+          context: jobId ? jobId : constants.DEFAULT_GROUP_ID
         },
         page - 1
       );
