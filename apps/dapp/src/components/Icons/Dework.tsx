@@ -4,7 +4,7 @@ export const Dework = () => {
       xmlns="http://www.w3.org/2000/svg"
       height="48"
       width="48"
-      viewBox="0 0 456 466"
+      viewBox="0 0 466 466"
     >
       <path
         fillRule="evenodd"

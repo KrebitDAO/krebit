@@ -64,6 +64,14 @@ export const Wrapper = styled.div<IProps>`
         font-size: ${theme.fonts.xs};
       }
 
+      .view-more {
+        margin: 0;
+        color: ${theme.colors.rose};
+        font-size: ${theme.fonts.xs};
+        font-family: 'HelveticaNowDisplay-Medium';
+        cursor: pointer;
+      }
+
       .activity-card-loading {
         width: 100%;
         height: 148px;

@@ -505,6 +505,8 @@ export const Username = () => {
                     currentFilterOption !== 'overview' &&
                     currentFilterOption !== 'Activity'
                   }
+                  ensDomain={profile?.ensDomain}
+                  unsDomain={profile?.unsDomain}
                 />
                 <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}

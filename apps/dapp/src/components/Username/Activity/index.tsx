@@ -12,7 +12,7 @@ import { MoreVert, OpenInNew } from 'components/Icons';
 import { GeneralContext } from 'context';
 import { constants, orbisParseMarkdown } from 'utils';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
-import { substring } from 'components/Groups/utils';
+import { getDomains, substring } from 'components/Groups/utils';
 import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
 
 // types
@@ -27,10 +27,19 @@ interface IProps {
   currentFilterOption: string;
   onFilterOption: (value: string) => void;
   isHidden: boolean;
+  ensDomain: string;
+  unsDomain: string;
 }
 
 export const Activity = (props: IProps) => {
-  const { did, currentFilterOption, onFilterOption, isHidden } = props;
+  const {
+    did,
+    currentFilterOption,
+    onFilterOption,
+    isHidden,
+    ensDomain,
+    unsDomain
+  } = props;
   const [status, setStatus] = useState('idle');
   const [form, setForm] = useState<IGroupForm>({});
   const [posts, setPosts] = useState([]);
@@ -295,14 +304,10 @@ export const Activity = (props: IProps) => {
                           )}
                           <OpenInNew />
                         </span>
-                        {activity?.ensDomain || activity?.unsDomain ? (
+                        {ensDomain || unsDomain ? (
                           <div className="content-card-information-title-boxes">
-                            {activity?.ensDomain && (
-                              <span>{activity?.ensDomain}</span>
-                            )}
-                            {activity?.unsDomain && (
-                              <span>{activity?.unsDomain}</span>
-                            )}
+                            {ensDomain && <span>{ensDomain}</span>}
+                            {unsDomain && <span>{unsDomain}</span>}
                           </div>
                         ) : null}
                       </div>
@@ -310,7 +315,10 @@ export const Activity = (props: IProps) => {
                         {orbisParseMarkdown(activity?.content)}{' '}
                         {activity?.content?.body?.length >
                         DEFAULT_CHARACTER_LIMIT ? (
-                          <span className="view-more" onClick={() => {}}>
+                          <span
+                            className="view-more"
+                            onClick={() => handleShowPost(activity)}
+                          >
                             View more
                           </span>
                         ) : null}
