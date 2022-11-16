@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
@@ -7,6 +7,7 @@ import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
 import { Work } from './Work';
+import { Activity } from './Activity';
 import { EditProfile } from './EditProfile';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
@@ -42,6 +43,14 @@ const FilterMenu = (props: IFilterMenuProps) => {
         onClick={() => onClick('overview')}
       >
         Overview
+      </p>
+      <p
+        className={`content-filter-menu-item ${
+          currentFilter === 'Activity' ? 'content-filter-menu-item-active' : ''
+        }`}
+        onClick={() => onClick('Activity')}
+      >
+        Activity
       </p>
       <p
         className={`content-filter-menu-item ${
@@ -95,7 +104,6 @@ export const Username = () => {
   const windowSize = useWindowSize();
   const isDesktop = windowSize.width >= 1024;
   const isLoading = status === 'idle' || status === 'pending';
-  const parentShareContentRef = useRef(null);
 
   useEffect(() => {
     if (!window) return;
@@ -188,7 +196,12 @@ export const Username = () => {
   const handleFilterOption = (value: string) => {
     if (value === currentFilterOption) return;
 
-    setProfile({ ...profile, skills: [] });
+    const isSectionWithNoSkills = value === 'Activity';
+
+    setProfile({
+      ...profile,
+      skills: isSectionWithNoSkills ? profile.skills : []
+    });
     setCurrentFilterOption(value);
   };
 
@@ -394,10 +407,7 @@ export const Username = () => {
                       </div>
                     </>
                   )}
-                  <div
-                    className="profile-buttons-rounded"
-                    ref={parentShareContentRef}
-                  >
+                  <div className="profile-buttons-rounded">
                     <Button
                       icon={<Share />}
                       onClick={handleIsShareContentOpen}
@@ -407,7 +417,6 @@ export const Username = () => {
                   {isShareContentOpen && (
                     <ShareContentModal
                       customText={`${profile.name}'s profile on @KrebitID`}
-                      parentRef={parentShareContentRef}
                       onClose={handleIsShareContentOpen}
                     />
                   )}
@@ -487,6 +496,15 @@ export const Username = () => {
                   onFilterOption={handleFilterOption}
                   isHidden={currentFilterOption !== 'Personhood'}
                   handleProfile={handleProfile}
+                />
+                <Activity
+                  did={currentDIDFromURL}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={
+                    currentFilterOption !== 'overview' &&
+                    currentFilterOption !== 'Activity'
+                  }
                 />
                 <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}

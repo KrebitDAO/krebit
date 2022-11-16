@@ -14,7 +14,6 @@ import { useGithubOrgMemberProvider } from './useGithubOrgMemberProvider';
 import { useDiscordGuildOwnerProvider } from './useDiscordGuildOwnerProvider';
 import { useDiscordGuildMemberProvider } from './useDiscordGuildMemberProvider';
 import { usePersonaProvider } from './usePersonaProvider';
-import { useOutsideClick } from './useOutsideClick';
 import { useSpectCompletedProvider } from './useSpectCompletedProvider';
 import { useVeriffAgeProvider } from './useVeriffAgeProvider';
 import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
@@ -42,7 +41,6 @@ export {
   useDiscordGuildOwnerProvider,
   useDiscordGuildMemberProvider,
   usePersonaProvider,
-  useOutsideClick,
   useSpectCompletedProvider,
   useVeriffAgeProvider,
   useVeriffGovernmentIdProvider,

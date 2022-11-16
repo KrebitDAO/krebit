@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
+import useOnClickOutside from 'use-onclickoutside';
 
 import { Wrapper } from './styles';
-import { useOutsideClick } from 'hooks';
 
 interface IProps {
-  parentRef: React.MutableRefObject<undefined | HTMLDivElement>;
   items: {
     title: string;
     onClick: () => void;
@@ -13,9 +12,9 @@ interface IProps {
 }
 
 export const InlineDropdown = (props: IProps) => {
-  const { parentRef, items, onClose } = props;
+  const { items, onClose } = props;
   const ref = useRef(null);
-  useOutsideClick({ ref, parentRef, handler: onClose });
+  useOnClickOutside(ref, onClose);
 
   return (
     <Wrapper ref={ref}>

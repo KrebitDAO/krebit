@@ -1,13 +1,15 @@
 import reactStringReplace from 'react-string-replace';
 import Link from 'next/link';
 
+export const DEFAULT_CHARACTER_LIMIT = 200;
+
 const patternMentions = /\B@[a-z0-9_.⍙-]+/gi;
 const patternUrl =
   /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g;
 
 export const orbisParseMarkdown = (
   content: any,
-  characterLimit?: number | undefined
+  characterLimit: number | boolean = DEFAULT_CHARACTER_LIMIT
 ) => {
   if (!content || !content.body) return;
 

@@ -54,6 +54,7 @@ import { Favorite } from './Favorite';
 import { SentimentVerySatisfied } from './SentimentVerySatisfied';
 import { ThumbDown } from './ThumbDown';
 import { Reply } from './Reply';
+import { Comment } from './Comment';
 
 export {
   Close,
@@ -111,5 +112,6 @@ export {
   Favorite,
   SentimentVerySatisfied,
   ThumbDown,
-  Reply
+  Reply,
+  Comment
 };
