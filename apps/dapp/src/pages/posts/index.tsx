@@ -1,26 +1,32 @@
 import { NextPageContext } from 'next';
 import { Orbis } from '@orbisclub/orbis-sdk';
 
-import { Layout, Jobs } from 'components';
+import { Layout, Groups } from 'components';
 import { constants } from 'utils';
 
 // types
-import { IJobProps } from 'components/Jobs';
+import { IGroupProps } from 'components/Groups';
 
 const orbis = new Orbis();
 
-const JobsPage = (props: IJobProps) => {
-  const { jobId, group, members } = props;
+const PostsPage = (props: IGroupProps) => {
+  const { channelId, postId, group, members } = props;
 
   return (
     <Layout>
-      <Jobs jobId={jobId} group={group} members={members} />
+      <Groups
+        channelId={channelId}
+        postId={postId}
+        group={group}
+        members={members}
+      />
     </Layout>
   );
 };
 
 export async function getServerSideProps(context: NextPageContext) {
-  const jobId = context?.query?.job_id;
+  const channelId = context?.query?.channel_id;
+  const postId = context?.query?.post_id;
 
   const { data: group, error: groupError } = await orbis.getGroup(
     constants.DEFAULT_GROUP_ID
@@ -39,12 +45,15 @@ export async function getServerSideProps(context: NextPageContext) {
 
   let currentView = constants.DEFAULT_GROUP_CONTENT_VIEW;
 
-  const view = group?.channels?.find(channel => channel?.stream_id === jobId);
+  const view = group?.channels?.find(
+    channel => channel?.stream_id === channelId
+  );
   currentView = view?.content?.type || constants.DEFAULT_GROUP_CONTENT_VIEW;
 
   return {
     props: {
-      jobId: jobId || '',
+      channelId: channelId || '',
+      postId: postId || '',
       group: {
         ...group,
         currentView
@@ -54,4 +63,4 @@ export async function getServerSideProps(context: NextPageContext) {
   };
 }
 
-export default JobsPage;
+export default PostsPage;

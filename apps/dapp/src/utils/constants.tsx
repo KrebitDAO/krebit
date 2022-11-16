@@ -12,7 +12,7 @@ const DEFAULT_DATE = '01/12/2009';
 const DEFAULT_CLAIM_CREDENTIAL_TYPES = ['Issuer', 'Community'];
 
 const DEFAULT_GROUP_ID =
-  'kjzl6cwe1jw14ai2gg8e0qmx2j944ppe3s3dgfk003jlb8guuybyg4m77nsrg73';
+  'kjzl6cwe1jw145neve8lep779kx1wq4mnjzajvg7p260csrft5s65m6lulgoevu';
 
 const DEFAULT_GROUP_CONTENT_VIEW = 'feed';
 
@@ -228,6 +228,12 @@ const DEFAULT_EMPTY_CARD_COMMUNITY = {
   isIssued: false
 };
 
+const DEFAULT_EMPTY_CARD_ACTIVITY = {
+  image: '/imgs/logos/Krebit.svg',
+  username: 'krebit',
+  description: 'Share your thoughts'
+};
+
 const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
   {
     id: 'twitter',
@@ -309,6 +315,7 @@ export const constants = {
   DEFAULT_EMPTY_CARD_PERSONHOOD,
   DEFAULT_EMPTY_CARD_WORK,
   DEFAULT_EMPTY_CARD_COMMUNITY,
+  DEFAULT_EMPTY_CARD_ACTIVITY,
   DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS,
   DEFAULT_IMAGE_FILE_TYPES,
   DEFAULT_ERROR_MESSAGES,

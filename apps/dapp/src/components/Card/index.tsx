@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { LongCardWrapper, SimpleCardWrapper, SmallCardWrapper } from './styles';
 import { Krebit, MoreVert } from 'components/Icons';
@@ -51,7 +51,6 @@ export const Card = (props: IProps) => {
   const [currentToolTipActive, setCurrentToolTipActive] = useState<
     string | undefined
   >(undefined);
-  const parentDropdownRef = useRef(undefined);
 
   const handleCurrentToolTipActive = (id: string) => {
     setCurrentToolTipActive(id);
@@ -118,7 +117,6 @@ export const Card = (props: IProps) => {
           {dropdown && (
             <div
               className="card-more-vert"
-              ref={parentDropdownRef}
               onClick={() => dropdown?.onClick(id)}
             >
               <MoreVert />
@@ -128,7 +126,6 @@ export const Card = (props: IProps) => {
             <div className="card-more-vert-inline-dropdown">
               <InlineDropdown
                 items={dropdown?.items}
-                parentRef={parentDropdownRef}
                 onClose={dropdown?.onClose}
               />
             </div>
@@ -163,7 +160,6 @@ export const Card = (props: IProps) => {
           {dropdown && (
             <div
               className="card-top-more-vert"
-              ref={parentDropdownRef}
               onClick={() => dropdown?.onClick(id)}
             >
               <MoreVert />
@@ -174,7 +170,6 @@ export const Card = (props: IProps) => {
           <div className="card-more-vert-inline-dropdown">
             <InlineDropdown
               items={dropdown?.items}
-              parentRef={parentDropdownRef}
               onClose={dropdown?.onClose}
             />
           </div>
@@ -252,7 +247,6 @@ export const Card = (props: IProps) => {
           {dropdown && (
             <div
               className="card-more-vert"
-              ref={parentDropdownRef}
               onClick={() => dropdown?.onClick(id)}
             >
               <MoreVert />
@@ -263,7 +257,6 @@ export const Card = (props: IProps) => {
           <div className="card-more-vert-inline-dropdown">
             <InlineDropdown
               items={dropdown?.items}
-              parentRef={parentDropdownRef}
               onClose={dropdown?.onClose}
             />
           </div>

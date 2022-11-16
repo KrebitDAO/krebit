@@ -1,13 +1,13 @@
-import {
+import React, {
   ChangeEvent,
   MouseEvent,
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState
 } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { lib as passportLib } from '@krebitdao/reputation-passport/dist/lib';
 import formatDistance from 'date-fns/formatDistance';
 import { debounce } from 'ts-debounce';
@@ -26,7 +26,7 @@ import {
   Home,
   MoreVert,
   Reply,
-  Send,
+  Comment,
   SentimentVerySatisfied,
   Tag,
   ThumbDown,
@@ -39,48 +39,56 @@ import { QuestionModal } from 'components/QuestionModal';
 import { Input } from 'components/Input';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { getDomains, substring } from './utils';
-import { constants, orbisParseMarkdown } from 'utils';
+import { constants, orbisParseMarkdown, sortByDate } from 'utils';
 import { GeneralContext } from 'context';
 import { useWindowSize } from 'hooks';
+import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
 
-export interface IJobProps {
-  jobId: string;
+export interface IGroupProps {
+  channelId: string;
+  postId?: string;
   group: any;
   members: any;
 }
 
-interface IPostActionOpened {
+export interface IDropdownPostOpened {
+  postId: string;
+  type?: string;
+}
+
+export interface IPostActionOpened {
   id: string;
   type: string;
 }
 
-interface IForm {
+export interface IGroupForm {
   [key: string]: string;
 }
 
-interface IReplyToChat {
+interface IReplyTo {
   streamId: string;
   creator: any;
   replyToDetails: any;
+  type: string;
   creatorDetails?: any;
 }
 
 const DEFAULT_LIST_PAGINATION = 50;
 const DEFAULT_CURRENT_PAGE = 1;
 
-export const Jobs = (props: IJobProps) => {
-  const { jobId, group, members } = props;
+export const Groups = (props: IGroupProps) => {
+  const { channelId, postId, group, members } = props;
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [status, setStatus] = useState('idle');
-  const [form, setForm] = useState<IForm>({});
+  const [form, setForm] = useState<IGroupForm>({});
   const [posts, setPosts] = useState<any[]>([]);
   const [membersUpdated, setMembersUpdated] = useState(members);
-  const [comment, setComment] = useState<any>();
+  const [comment, setComment] = useState<any[]>();
   const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
-  const [dropdownPostOpened, setDropdownPostOpened] = useState<string>();
+  const [dropdownPostOpened, setDropdownPostOpened] =
+    useState<IDropdownPostOpened>();
   const [postActionOpened, setPostActionOpened] = useState<IPostActionOpened>();
-  const [currentReplyToChat, setCurrentReplyToChat] = useState<IReplyToChat>();
-  const parentDropdownRef = useRef();
+  const [currentReplyTo, setCurrentReplyTo] = useState<IReplyTo>();
   const {
     auth,
     walletInformation: { orbis },
@@ -88,6 +96,7 @@ export const Jobs = (props: IJobProps) => {
     profileInformation: { profile }
   } = useContext(GeneralContext);
   const { width } = useWindowSize();
+  const { push } = useRouter();
   const isDesktop = width >= 1024;
   const isPostsLoading = status === 'idle' || status === 'pending_posts';
   const isMorePostsLoading = status === 'pending_more_posts';
@@ -100,6 +109,7 @@ export const Jobs = (props: IJobProps) => {
   }, [isDesktop, isFilterOpen]);
 
   useEffect(() => {
+    if (auth.status !== 'resolved') return;
     if (!members || members?.length === 0) return;
 
     const getDomainsFromMembers = async () => {
@@ -121,11 +131,20 @@ export const Jobs = (props: IJobProps) => {
     };
 
     getDomainsFromMembers();
-  }, [members]);
+  }, [members, auth.status]);
+
+  useEffect(() => {
+    if (!orbis) return;
+    if (!postId) return;
+    if (auth.status !== 'resolved') return;
+    if (!isPostsLoading) return;
+
+    handleCommentSelected(postId);
+  }, [orbis, postId, auth.status, isPostsLoading]);
 
   const delayedPosts = useCallback(
     debounce((page = DEFAULT_CURRENT_PAGE) => getPosts(page), 500),
-    [orbis, passportLib, auth.status, jobId, profile?.did, currentPage]
+    [orbis, passportLib, auth.status, channelId, profile?.did, currentPage]
   );
 
   useEffect(() => {
@@ -136,7 +155,7 @@ export const Jobs = (props: IJobProps) => {
     delayedPosts(currentPage);
 
     return delayedPosts.cancel;
-  }, [orbis, passportLib, auth.status, jobId, profile?.did, currentPage]);
+  }, [orbis, passportLib, auth.status, channelId, profile?.did, currentPage]);
 
   const getPosts = async (page = DEFAULT_CURRENT_PAGE) => {
     try {
@@ -148,7 +167,7 @@ export const Jobs = (props: IJobProps) => {
 
       const { data, error } = await orbis.getPosts(
         {
-          context: jobId ? jobId : constants.DEFAULT_GROUP_ID
+          context: channelId ? channelId : constants.DEFAULT_GROUP_ID
         },
         page - 1
       );
@@ -237,17 +256,20 @@ export const Jobs = (props: IJobProps) => {
 
     let type = 'feed';
 
-    if (jobId) {
-      type = group.channels.find(channel => channel.stream_id === jobId)
+    if (channelId) {
+      type = group.channels.find(channel => channel.stream_id === channelId)
         ?.content?.type;
     }
 
     const postContent = {
       body: form?.comment,
-      type,
-      context: jobId,
-      reply_to: currentReplyToChat?.streamId
-        ? currentReplyToChat.streamId
+      type: currentReplyTo || comment ? 'reply' : type,
+      context: channelId,
+      master: comment ? comment[0]?.stream_id : null,
+      reply_to: currentReplyTo?.streamId
+        ? currentReplyTo.streamId
+        : comment
+        ? comment[0]?.stream_id
         : null
     };
 
@@ -275,19 +297,23 @@ export const Jobs = (props: IJobProps) => {
       reactions: [],
       ensDomain,
       unsDomain,
-      reply_to: currentReplyToChat?.streamId
-        ? currentReplyToChat.streamId
+      master: comment ? comment[0]?.stream_id : null,
+      type: currentReplyTo || comment ? 'reply' : type,
+      reply_to: currentReplyTo?.streamId ? currentReplyTo.streamId : null,
+      reply_to_details: currentReplyTo?.replyToDetails
+        ? currentReplyTo.replyToDetails
         : null,
-      reply_to_details: currentReplyToChat?.replyToDetails
-        ? currentReplyToChat.replyToDetails
-        : null,
-      reply_to_creator_details: currentReplyToChat?.creator
-        ? currentReplyToChat.creator
+      reply_to_creator_details: currentReplyTo?.creator
+        ? currentReplyTo.creator
         : null
     };
 
-    if (currentReplyToChat) {
-      setCurrentReplyToChat(undefined);
+    if (currentReplyTo) {
+      setCurrentReplyTo(undefined);
+    }
+
+    if (comment) {
+      setComment(prevValues => [...prevValues, newPost]);
     }
 
     setPosts([newPost, ...posts]);
@@ -295,13 +321,22 @@ export const Jobs = (props: IJobProps) => {
     setStatus('resolved_post');
   };
 
-  const handleReaction = async (postId: string, type: string) => {
+  const handleReaction = async (
+    postId: string,
+    type: string,
+    isComment = false
+  ) => {
     if (!profile?.did) {
       handleOpenConnectWallet();
       return;
     }
 
     const indexPost = posts.findIndex(post => post.stream_id === postId);
+    let indexComment: number;
+
+    if (isComment) {
+      indexComment = comment.findIndex(values => values.stream_id === postId);
+    }
 
     if (indexPost === -1) {
       console.error('Post not found');
@@ -309,31 +344,57 @@ export const Jobs = (props: IJobProps) => {
     }
 
     const updatedPost = posts[indexPost];
+    let updatedComment: any;
+
+    if (isComment) {
+      updatedComment = comment[indexComment];
+    }
 
     if (type === 'like') {
-      updatedPost.count_likes += 1;
-
       if (!updatedPost.reactions.find(reaction => reaction.type === 'like')) {
+        updatedPost.count_likes += 1;
         updatedPost.reactions.push({ type: 'like' });
-      }
+
+        if (isComment) {
+          updatedComment.count_likes += 1;
+          updatedComment.reactions.push({ type: 'like' });
+        }
+      } else return;
     }
 
     if (type === 'haha') {
-      updatedPost.count_haha += 1;
-
       if (!updatedPost.reactions.find(reaction => reaction.type === 'haha')) {
+        updatedPost.count_haha += 1;
         updatedPost.reactions.push({ type: 'haha' });
-      }
+
+        if (isComment) {
+          updatedComment.count_haha += 1;
+          updatedComment.reactions.push({ type: 'haha' });
+        }
+      } else return;
     }
 
     if (type === 'downvote') {
-      updatedPost.count_downvotes += 1;
-
       if (
         !updatedPost.reactions.find(reaction => reaction.type === 'downvote')
       ) {
+        updatedPost.count_downvotes += 1;
         updatedPost.reactions.push({ type: 'downvote' });
-      }
+
+        if (isComment) {
+          updatedComment.count_downvotes += 1;
+          updatedComment.reactions.push({ type: 'downvote' });
+        }
+      } else return;
+    }
+
+    if (isComment) {
+      setComment(prevValues => {
+        let values = [...prevValues];
+        values[indexComment] = updatedComment;
+
+        return values;
+      });
     }
 
     setPosts(prevValues => {
@@ -351,21 +412,19 @@ export const Jobs = (props: IJobProps) => {
     }
   };
 
-  const handleCommentSelected = async (
-    id: string | undefined,
-    type = 'comment'
-  ) => {
-    if (!profile?.did) {
-      handleOpenConnectWallet();
-      return;
-    }
+  const handleCommentSelected = async (id: string | undefined) => {
+    const getMetadata = async (id: string, did: string) => {
+      let reactions = [];
 
-    const getMetadata = async (postId: string, did: string) => {
-      let { data: reactions } = await orbis.api
-        .from('orbis_reactions')
-        .select('type')
-        .eq('post_id', postId)
-        .eq('creator', profile.did);
+      if (profile?.did) {
+        let { data } = await orbis.api
+          .from('orbis_reactions')
+          .select('type')
+          .eq('post_id', id)
+          .eq('creator', profile.did);
+
+        reactions = data;
+      }
 
       const { ensDomain, unsDomain } = await getDomains(did);
 
@@ -377,7 +436,17 @@ export const Jobs = (props: IJobProps) => {
     };
 
     if (!id) {
-      setStatus('rejected_comment');
+      setComment(undefined);
+      setCurrentReplyTo(undefined);
+
+      if (postId) {
+        if (channelId) {
+          push(`/posts/?channel_id=${channelId}`);
+        } else {
+          push('/posts');
+        }
+      }
+
       return;
     }
 
@@ -386,57 +455,44 @@ export const Jobs = (props: IJobProps) => {
 
       let { data: fetchedPost } = await orbis.getPost(id);
 
-      if (fetchedPost.type === 'feed') {
-        const post = getMetadata(id, fetchedPost?.creator_details?.did).then(
-          metadata => ({
-            ...fetchedPost,
-            ...metadata
-          })
+      const post = getMetadata(id, fetchedPost?.creator_details?.did).then(
+        metadata => ({
+          ...fetchedPost,
+          ...metadata
+        })
+      );
+      const replies = orbis
+        .getPosts({
+          master: id
+        })
+        .then(
+          async ({ data: replies }) =>
+            (await Promise.all(
+              replies?.map(async reply => {
+                let metadata = await getMetadata(
+                  reply?.stream_id,
+                  reply?.creator_details?.did
+                );
+
+                return {
+                  ...reply,
+                  ...metadata
+                };
+              })
+            )) || []
+        )
+        .then(
+          replies =>
+            replies?.sort(reply =>
+              sortByDate(reply?.timestamp, new Date(), 'des')
+            ) || []
         );
-        const replies = orbis
-          .getPosts({
-            master: id
-          })
-          .then(
-            async ({ data: replies }) =>
-              (await Promise.all(
-                replies?.map(async reply => {
-                  let metadata = await getMetadata(
-                    reply?.stream_id,
-                    reply?.creator_details?.did
-                  );
 
-                  return {
-                    ...reply,
-                    ...metadata
-                  };
-                })
-              )) || []
-          )
-          .then(replies => {
-            replies.every((reply, index) => {
-              console.log(reply?.stream_id, replies[index]?.reply_to);
-              return reply;
-            });
-            return replies;
-          });
+      const [currentPost, currentReplies] = await Promise.all([post, replies]);
 
-        const [currentPost, currentReplies] = await Promise.all([
-          post,
-          replies
-        ]);
+      const newComment = [currentPost, ...currentReplies];
 
-        console.log(currentReplies);
-
-        setComment({
-          ...currentPost,
-          replies: currentReplies
-        });
-      }
-
-      if (fetchedPost.type === 'reply') {
-      }
-
+      setComment(newComment);
       setStatus('resolved_comment');
     } catch (error) {
       console.error(error);
@@ -444,13 +500,13 @@ export const Jobs = (props: IJobProps) => {
     }
   };
 
-  const handleReplyToChat = async (props: IReplyToChat) => {
+  const handleReplyTo = async (props: IReplyTo) => {
     if (!profile?.did) {
       handleOpenConnectWallet();
       return;
     }
 
-    setCurrentReplyToChat(props);
+    setCurrentReplyTo(props);
   };
 
   const handlePostActionOpened = (value: IPostActionOpened) => {
@@ -479,6 +535,13 @@ export const Jobs = (props: IJobProps) => {
         const indexPost = posts.findIndex(
           post => post?.stream_id === postActionOpened?.id
         );
+        let indexComment: number;
+
+        if (comment) {
+          indexComment = comment.findIndex(
+            values => values?.stream_id === postActionOpened?.id
+          );
+        }
 
         if (indexPost === -1) return;
 
@@ -491,13 +554,32 @@ export const Jobs = (props: IJobProps) => {
             body: form?.edit_post
           }
         };
-
         setPosts(prevValues => {
           let values = [...prevValues];
           values[indexPost] = updatedPost;
 
           return values;
         });
+
+        let updatedComment: any;
+
+        if (comment) {
+          updatedComment = {
+            ...comment[indexComment],
+            content: {
+              ...comment[indexComment]?.content,
+              body: form?.edit_post
+            }
+          };
+
+          setComment(prevValues => {
+            let values = [...prevValues];
+            values[indexComment] = updatedComment;
+
+            return values;
+          });
+        }
+
         handleCleanForm('edit_post', '');
         handlePostActionOpened(undefined);
         setStatus('resolved_post');
@@ -516,6 +598,11 @@ export const Jobs = (props: IJobProps) => {
           ...prevValues.slice(0, indexPost),
           ...prevValues.slice(indexPost + 1)
         ]);
+
+        if (comment) {
+          setComment(undefined);
+        }
+
         handlePostActionOpened(undefined);
         setStatus('resolved_post');
       }
@@ -529,8 +616,8 @@ export const Jobs = (props: IJobProps) => {
     setCurrentPage(prevValue => prevValue + 1);
   };
 
-  const handleDropdownPostOpened = (postId: string) => {
-    setDropdownPostOpened(postId);
+  const handleDropdownPostOpened = (postId: string, type?: string) => {
+    setDropdownPostOpened({ postId, type });
   };
 
   const handleOpenOrbis = (postId: string) => {
@@ -543,6 +630,10 @@ export const Jobs = (props: IJobProps) => {
     setCurrentPage(DEFAULT_CURRENT_PAGE);
     setForm(undefined);
     setComment(undefined);
+
+    if (isFilterOpen) {
+      handleFilterOpen();
+    }
   };
 
   return (
@@ -592,9 +683,8 @@ export const Jobs = (props: IJobProps) => {
         />
       )}
       <CommentBox
-        hasCommentSelected={
-          status === 'pending_comment' || status === 'resolved_comment'
-        }
+        hasCommentSelected={status === 'pending_comment' || Boolean(comment)}
+        isReplyToOpen={currentReplyTo?.type === 'comment'}
       >
         <div className="comment-box">
           <div className="comment-box-header">
@@ -612,208 +702,213 @@ export const Jobs = (props: IJobProps) => {
             </div>
           ) : (
             <div className="comment-box-cards">
-              <CommentBoxCard
-                image={
-                  comment?.creator_details?.profile?.pfp || DEFAULT_PICTURE
-                }
-              >
-                <div className="comment-box-image"></div>
-                <div className="comment-box-information">
-                  <Link href={`/${comment?.creator_details?.did}`}>
-                    <a className="comment-box-information-title">
-                      <span>
-                        {substring(
-                          comment?.creator_details?.profile?.username
-                        ) ||
-                          substring(comment?.creator_details?.did, 100, true)}
-                      </span>
-                      {comment?.ensDomain || comment?.unsDomain ? (
-                        <div className="comment-box-information-title-boxes">
-                          {comment?.ensDomain && (
-                            <span>{comment?.ensDomain}</span>
+              {comment?.map((values, index) => (
+                <React.Fragment key={index}>
+                  <CommentBoxCard
+                    image={
+                      values?.creator_details?.profile?.pfp || DEFAULT_PICTURE
+                    }
+                    isReply={index !== 0}
+                  >
+                    <div className="comment-box-image"></div>
+                    <div className="comment-box-information">
+                      <Link href={`/${values?.creator_details?.did}`}>
+                        <a className="comment-box-information-title">
+                          <span>
+                            {substring(
+                              values?.creator_details?.profile?.username
+                            ) ||
+                              substring(
+                                values?.creator_details?.did,
+                                100,
+                                true
+                              )}
+                          </span>{' '}
+                          {values?.timestamp ? (
+                            <span className="timestamp">
+                              {formatDistance(
+                                values?.timestamp * 1000,
+                                new Date(),
+                                { addSuffix: true }
+                              )}
+                            </span>
+                          ) : (
+                            <span className="timestamp">Now</span>
                           )}
-                          {comment?.unsDomain && (
-                            <span>{comment?.unsDomain}</span>
-                          )}
+                          {values?.ensDomain || values?.unsDomain ? (
+                            <div className="comment-box-information-title-boxes">
+                              {values?.ensDomain && (
+                                <span>{values?.ensDomain}</span>
+                              )}
+                              {values?.unsDomain && (
+                                <span>{values?.unsDomain}</span>
+                              )}
+                            </div>
+                          ) : null}
+                        </a>
+                      </Link>
+                      <p className="comment-box-information-description">
+                        {orbisParseMarkdown(values?.content, false)}
+                      </p>
+                      <div className="comment-box-information-actions">
+                        <div className="comment-box-information-action">
+                          <div
+                            className="comment-box-information-action-option"
+                            onClick={() =>
+                              handleReplyTo({
+                                streamId: values?.stream_id,
+                                creator: values?.creator_details,
+                                replyToDetails: values?.content,
+                                type: 'comment',
+                                creatorDetails: values?.creator_details
+                              })
+                            }
+                          >
+                            <Reply />
+                            <span>{values?.count_replies || 0}</span>
+                          </div>
+                          <div
+                            className={`comment-box-information-action-option ${
+                              values?.reactions?.some(
+                                reaction => reaction.type === 'like'
+                              )
+                                ? 'active'
+                                : ''
+                            }`}
+                            onClick={() =>
+                              handleReaction(values?.stream_id, 'like', true)
+                            }
+                          >
+                            <Favorite />
+                            <span>{values?.count_likes || 0}</span>
+                          </div>
+                          <div
+                            className={`comment-box-information-action-option ${
+                              values?.reactions?.some(
+                                reaction => reaction.type === 'haha'
+                              )
+                                ? 'active'
+                                : ''
+                            }`}
+                            onClick={() =>
+                              handleReaction(values?.stream_id, 'haha', true)
+                            }
+                          >
+                            <SentimentVerySatisfied />
+                            <span>{values?.count_haha || 0}</span>
+                          </div>
+                          <div
+                            className={`comment-box-information-action-option ${
+                              values?.reactions?.some(
+                                reaction => reaction.type === 'downvote'
+                              )
+                                ? 'active'
+                                : ''
+                            }`}
+                            onClick={() =>
+                              handleReaction(
+                                values?.stream_id,
+                                'downvote',
+                                true
+                              )
+                            }
+                          >
+                            <ThumbDown />
+                            <span>{values?.count_downvotes || 0}</span>
+                          </div>
                         </div>
-                      ) : null}
-                    </a>
-                  </Link>
-                  <p className="comment-box-information-description">
-                    {comment?.content?.body}
-                  </p>
-                  <div className="comment-box-information-actions">
-                    <div className="comment-box-information-action">
-                      <div
-                        className="comment-box-information-action-option"
-                        onClick={() => handleCommentSelected('123', 'reply')}
-                      >
-                        <Reply />
-                        <span>{comment?.count_replies || 0}</span>
-                      </div>
-                      <div
-                        className={`comment-box-information-action-option ${
-                          comment?.reactions?.some(
-                            reaction => reaction.type === 'like'
-                          )
-                            ? 'active'
-                            : ''
-                        }`}
-                        onClick={() =>
-                          handleReaction(comment?.stream_id, 'like')
-                        }
-                      >
-                        <Favorite />
-                        <span>{comment?.count_likes || 0}</span>
-                      </div>
-                      <div
-                        className={`comment-box-information-action-option ${
-                          comment?.reactions?.some(
-                            reaction => reaction.type === 'haha'
-                          )
-                            ? 'active'
-                            : ''
-                        }`}
-                        onClick={() =>
-                          handleReaction(comment?.stream_id, 'haha')
-                        }
-                      >
-                        <SentimentVerySatisfied />
-                        <span>{comment?.count_haha || 0}</span>
-                      </div>
-                      <div
-                        className={`comment-box-information-action-option ${
-                          comment?.reactions?.some(
-                            reaction => reaction.type === 'downvote'
-                          )
-                            ? 'active'
-                            : ''
-                        }`}
-                        onClick={() =>
-                          handleReaction(comment?.stream_id, 'downvote')
-                        }
-                      >
-                        <ThumbDown />
-                        <span>{comment?.count_downvotes || 0}</span>
-                      </div>
-                    </div>
-                    <div className="comment-box-information-action">
-                      <div className="comment-box-information-action-option">
-                        <span>0</span>
-                      </div>
-                      <div className="comment-box-information-action-option">
-                        <span>0</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CommentBoxCard>
-              <hr />
-              {comment?.replies?.map((reply, index) => (
-                <CommentBoxCard
-                  key={index}
-                  image={
-                    reply?.creator_details?.profile?.pfp || DEFAULT_PICTURE
-                  }
-                  isReply={true}
-                >
-                  <div className="comment-box-image"></div>
-                  <div className="comment-box-information">
-                    <Link href={`/${comment?.creator_details?.did}`}>
-                      <a className="comment-box-information-title">
-                        <span>
-                          {substring(
-                            reply?.creator_details?.profile?.username
-                          ) ||
-                            substring(reply?.creator_details?.did, 100, true)}
-                        </span>
-                        {reply?.ensDomain || reply?.unsDomain ? (
-                          <div className="comment-box-information-title-boxes">
-                            {reply?.ensDomain && (
-                              <span>{reply?.ensDomain}</span>
-                            )}
-                            {reply?.unsDomain && (
-                              <span>{reply?.unsDomain}</span>
-                            )}
+                        <div className="comment-box-information-action">
+                          {values?.creator_details?.did === profile?.did && (
+                            <div
+                              className="comment-box-information-action-option"
+                              onClick={() =>
+                                handleDropdownPostOpened(
+                                  values?.stream_id,
+                                  'comment'
+                                )
+                              }
+                            >
+                              <MoreVert />
+                            </div>
+                          )}
+                          <div
+                            className="comment-box-information-action-option"
+                            onClick={() =>
+                              handleOpenOrbis(
+                                values?.type === 'reply'
+                                  ? values?.master
+                                  : values?.stream_id
+                              )
+                            }
+                          >
+                            <img src="/imgs/logos/orbis.png" />
+                          </div>
+                        </div>
+                        {dropdownPostOpened?.postId === values?.stream_id &&
+                        dropdownPostOpened?.type === 'comment' ? (
+                          <div className="comment-box-information-options-dropdown">
+                            <InlineDropdown
+                              items={[
+                                {
+                                  title: 'Edit post',
+                                  onClick: () =>
+                                    handlePostActionOpened({
+                                      id: values?.stream_id,
+                                      type: 'edit'
+                                    })
+                                },
+                                {
+                                  title: 'Delete post',
+                                  onClick: () =>
+                                    handlePostActionOpened({
+                                      id: values?.stream_id,
+                                      type: 'delete'
+                                    })
+                                }
+                              ]}
+                              onClose={() =>
+                                handleDropdownPostOpened(undefined)
+                              }
+                            />
                           </div>
                         ) : null}
-                      </a>
-                    </Link>
-                    <p className="comment-box-information-description">
-                      {reply?.content?.body}
-                    </p>
-                    <div className="comment-box-information-actions">
-                      <div className="comment-box-information-action">
-                        <div
-                          className="comment-box-information-action-option"
-                          onClick={() => handleCommentSelected('123', 'reply')}
-                        >
-                          <Reply />
-                          <span>{reply?.count_replies || 0}</span>
-                        </div>
-                        <div
-                          className={`comment-box-information-action-option ${
-                            reply?.reactions?.some(
-                              reaction => reaction.type === 'like'
-                            )
-                              ? 'active'
-                              : ''
-                          }`}
-                          onClick={() =>
-                            handleReaction(reply?.stream_id, 'like')
-                          }
-                        >
-                          <Favorite />
-                          <span>{reply?.count_likes || 0}</span>
-                        </div>
-                        <div
-                          className={`comment-box-information-action-option ${
-                            reply?.reactions?.some(
-                              reaction => reaction.type === 'haha'
-                            )
-                              ? 'active'
-                              : ''
-                          }`}
-                          onClick={() =>
-                            handleReaction(reply?.stream_id, 'haha')
-                          }
-                        >
-                          <SentimentVerySatisfied />
-                          <span>{reply?.count_haha || 0}</span>
-                        </div>
-                        <div
-                          className={`comment-box-information-action-option ${
-                            reply?.reactions?.some(
-                              reaction => reaction.type === 'downvote'
-                            )
-                              ? 'active'
-                              : ''
-                          }`}
-                          onClick={() =>
-                            handleReaction(reply?.stream_id, 'downvote')
-                          }
-                        >
-                          <ThumbDown />
-                          <span>{reply?.count_downvotes || 0}</span>
-                        </div>
-                      </div>
-                      <div className="comment-box-information-action">
-                        <div className="comment-box-information-action-option">
-                          <Home />
-                          <span>0</span>
-                        </div>
-                        <div className="comment-box-information-action-option">
-                          <Home />
-                          <span>0</span>
-                        </div>
                       </div>
                     </div>
-                  </div>
-                </CommentBoxCard>
+                  </CommentBoxCard>
+                  {index === 0 && <hr />}
+                </React.Fragment>
               ))}
             </div>
           )}
           <div className="comment-box-input-container">
+            {currentReplyTo?.type === 'comment' && (
+              <ContentBoxChatReplyTo
+                replyToImage={
+                  currentReplyTo?.creatorDetails?.profile?.pfp ||
+                  DEFAULT_PICTURE
+                }
+              >
+                <div className="content-box-chat-reply-to-info">
+                  <p className="content-box-chat-reply-to-text">
+                    Replying to:{' '}
+                  </p>
+                  <div className="content-box-chat-reply-to-image"></div>
+                  <p className="content-box-chat-reply-to-title">
+                    {substring(
+                      currentReplyTo?.creatorDetails?.profile?.username,
+                      20
+                    ) ||
+                      substring(currentReplyTo?.creatorDetails?.did, 20, true)}
+                  </p>
+                </div>
+                <div
+                  className="content-box-chat-reply-to-close"
+                  onClick={() => handleReplyTo(undefined)}
+                >
+                  <Close />
+                </div>
+              </ContentBoxChatReplyTo>
+            )}
             <div className="comment-box-input">
               <textarea
                 className="comment-box-input-element"
@@ -859,9 +954,11 @@ export const Jobs = (props: IJobProps) => {
               {group?.content?.description}
             </p>
             <div className="left-box-list">
-              <Link href="/jobs">
+              <Link href="/posts">
                 <a
-                  className={`left-box-list-option ${!jobId ? 'active' : ''}`}
+                  className={`left-box-list-option ${
+                    !channelId ? 'active' : ''
+                  }`}
                   onClick={() => handleCleanPage()}
                 >
                   <div className="left-box-list-option-icon">
@@ -871,15 +968,22 @@ export const Jobs = (props: IJobProps) => {
                 </a>
               </Link>
               {group?.channels?.map((channel, index) => (
-                <Link href={`/jobs/?job_id=${channel?.stream_id}`} key={index}>
+                <Link
+                  href={`/posts/?channel_id=${channel?.stream_id}`}
+                  key={index}
+                >
                   <a
                     className={`left-box-list-option ${
-                      jobId === channel?.stream_id ? 'active' : ''
+                      channelId === channel?.stream_id ? 'active' : ''
                     }`}
                     onClick={() => handleCleanPage()}
                   >
                     <div className="left-box-list-option-icon">
-                      {channel?.content?.type === 'chat' ? <Send /> : <Tag />}
+                      {channel?.content?.type === 'chat' ? (
+                        <Comment />
+                      ) : (
+                        <Tag />
+                      )}
                     </div>
                     <p className="left-box-list-option-text">
                       {channel?.content?.name}
@@ -894,7 +998,7 @@ export const Jobs = (props: IJobProps) => {
           <div className="content-chat">
             <div
               className={`content-box-list ${
-                currentReplyToChat ? 'content-box-list-bigger' : ''
+                currentReplyTo?.type === 'chat' ? 'content-box-list-bigger' : ''
               }`}
             >
               {isPostsLoading ? (
@@ -920,7 +1024,13 @@ export const Jobs = (props: IJobProps) => {
                         <div className="content-card-reply-to-icon"></div>
                         <div
                           className="content-card-reply-to-main"
-                          onClick={() => handleCommentSelected(post.reply_to)}
+                          onClick={() =>
+                            handleCommentSelected(
+                              post?.type === 'reply'
+                                ? post?.master
+                                : post?.stream_id
+                            )
+                          }
                         >
                           <div className="content-card-reply-to-main-image"></div>
                           <div className="content-card-reply-to-main-texts">
@@ -963,7 +1073,7 @@ export const Jobs = (props: IJobProps) => {
                                     100,
                                     true
                                   )}{' '}
-                                {post?.timestamp && (
+                                {post?.timestamp ? (
                                   <span className="timestamp">
                                     {formatDistance(
                                       post?.timestamp * 1000,
@@ -971,6 +1081,8 @@ export const Jobs = (props: IJobProps) => {
                                       { addSuffix: true }
                                     )}
                                   </span>
+                                ) : (
+                                  <span className="timestamp">Now</span>
                                 )}
                               </span>
                               {post?.ensDomain || post?.unsDomain ? (
@@ -989,10 +1101,11 @@ export const Jobs = (props: IJobProps) => {
                             <div
                               className="content-card-information-option"
                               onClick={() =>
-                                handleReplyToChat({
+                                handleReplyTo({
                                   streamId: post?.stream_id,
                                   creator: post?.creator_details,
                                   replyToDetails: post?.content,
+                                  type: 'chat',
                                   creatorDetails: post?.creator_details
                                 })
                               }
@@ -1001,7 +1114,6 @@ export const Jobs = (props: IJobProps) => {
                             </div>
                             {post?.creator_details?.did === profile?.did && (
                               <div
-                                ref={parentDropdownRef}
                                 className="content-card-information-option revert"
                                 onClick={() =>
                                   handleDropdownPostOpened(post?.stream_id)
@@ -1012,12 +1124,19 @@ export const Jobs = (props: IJobProps) => {
                             )}
                             <div
                               className="content-card-information-option"
-                              onClick={() => handleOpenOrbis(post?.stream_id)}
+                              onClick={() =>
+                                handleOpenOrbis(
+                                  post?.type === 'reply'
+                                    ? post?.master
+                                    : post?.stream_id
+                                )
+                              }
                             >
                               <img src="/imgs/logos/orbis.png" />
                             </div>
                           </div>
-                          {dropdownPostOpened === post?.stream_id && (
+                          {dropdownPostOpened?.postId === post?.stream_id &&
+                          !dropdownPostOpened?.type ? (
                             <div className="content-card-information-options-dropdown">
                               <InlineDropdown
                                 items={[
@@ -1038,16 +1157,30 @@ export const Jobs = (props: IJobProps) => {
                                       })
                                   }
                                 ]}
-                                parentRef={parentDropdownRef}
                                 onClose={() =>
                                   handleDropdownPostOpened(undefined)
                                 }
                               />
                             </div>
-                          )}
+                          ) : null}
                         </div>
                         <p className="content-card-information-description">
-                          {orbisParseMarkdown(post?.content)}
+                          {orbisParseMarkdown(post?.content)}{' '}
+                          {post?.content?.body?.length >
+                          DEFAULT_CHARACTER_LIMIT ? (
+                            <span
+                              className="view-more"
+                              onClick={() =>
+                                handleCommentSelected(
+                                  post?.type === 'reply'
+                                    ? post?.master
+                                    : post?.stream_id
+                                )
+                              }
+                            >
+                              View more
+                            </span>
+                          ) : null}
                         </p>
                       </div>
                     </div>
@@ -1073,10 +1206,10 @@ export const Jobs = (props: IJobProps) => {
                 )}
             </div>
             <div className="content-box-chat">
-              {currentReplyToChat && (
+              {currentReplyTo?.type === 'chat' && (
                 <ContentBoxChatReplyTo
                   replyToImage={
-                    currentReplyToChat?.creatorDetails?.profile?.pfp ||
+                    currentReplyTo?.creatorDetails?.profile?.pfp ||
                     DEFAULT_PICTURE
                   }
                 >
@@ -1087,11 +1220,11 @@ export const Jobs = (props: IJobProps) => {
                     <div className="content-box-chat-reply-to-image"></div>
                     <p className="content-box-chat-reply-to-title">
                       {substring(
-                        currentReplyToChat?.creatorDetails?.profile?.username,
+                        currentReplyTo?.creatorDetails?.profile?.username,
                         20
                       ) ||
                         substring(
-                          currentReplyToChat?.creatorDetails?.did,
+                          currentReplyTo?.creatorDetails?.did,
                           20,
                           true
                         )}
@@ -1099,7 +1232,7 @@ export const Jobs = (props: IJobProps) => {
                   </div>
                   <div
                     className="content-box-chat-reply-to-close"
-                    onClick={() => handleReplyToChat(undefined)}
+                    onClick={() => handleReplyTo(undefined)}
                   >
                     <Close />
                   </div>
@@ -1181,7 +1314,13 @@ export const Jobs = (props: IJobProps) => {
                         <div className="content-card-reply-to-icon"></div>
                         <div
                           className="content-card-reply-to-main"
-                          onClick={() => handleCommentSelected(post.reply_to)}
+                          onClick={() =>
+                            handleCommentSelected(
+                              post?.type === 'reply'
+                                ? post?.master
+                                : post?.stream_id
+                            )
+                          }
                         >
                           <div className="content-card-reply-to-main-image"></div>
                           <div className="content-card-reply-to-main-texts">
@@ -1223,7 +1362,7 @@ export const Jobs = (props: IJobProps) => {
                                   100,
                                   true
                                 )}{' '}
-                              {post?.timestamp && (
+                              {post?.timestamp ? (
                                 <span className="timestamp">
                                   {formatDistance(
                                     post?.timestamp * 1000,
@@ -1231,6 +1370,8 @@ export const Jobs = (props: IJobProps) => {
                                     { addSuffix: true }
                                   )}
                                 </span>
+                              ) : (
+                                <span className="timestamp">Now</span>
                               )}
                             </span>
                             {post?.ensDomain || post?.unsDomain ? (
@@ -1246,17 +1387,36 @@ export const Jobs = (props: IJobProps) => {
                           </a>
                         </Link>
                         <p className="content-card-information-description">
-                          {orbisParseMarkdown(post?.content)}
+                          {orbisParseMarkdown(post?.content)}{' '}
+                          {post?.content?.body?.length >
+                          DEFAULT_CHARACTER_LIMIT ? (
+                            <span
+                              className="view-more"
+                              onClick={() =>
+                                handleCommentSelected(
+                                  post?.type === 'reply'
+                                    ? post?.master
+                                    : post?.stream_id
+                                )
+                              }
+                            >
+                              View more
+                            </span>
+                          ) : null}
                         </p>
                         <div className="content-card-information-actions">
                           <div className="content-card-information-action">
                             <div
                               className={`content-card-information-action-option`}
                               onClick={() =>
-                                handleCommentSelected(post?.stream_id)
+                                handleCommentSelected(
+                                  post?.type === 'reply'
+                                    ? post?.master
+                                    : post?.stream_id
+                                )
                               }
                             >
-                              <Send />
+                              <Comment />
                               <span>{post?.count_replies || 0}</span>
                             </div>
                             <div
@@ -1308,7 +1468,6 @@ export const Jobs = (props: IJobProps) => {
                           <div className="content-card-information-action">
                             {post?.creator_details?.did === profile?.did && (
                               <div
-                                ref={parentDropdownRef}
                                 className="content-card-information-action-option"
                                 onClick={() =>
                                   handleDropdownPostOpened(post?.stream_id)
@@ -1319,12 +1478,19 @@ export const Jobs = (props: IJobProps) => {
                             )}
                             <div
                               className="content-card-information-action-option"
-                              onClick={() => handleOpenOrbis(post?.stream_id)}
+                              onClick={() =>
+                                handleOpenOrbis(
+                                  post?.type === 'reply'
+                                    ? post?.master
+                                    : post?.stream_id
+                                )
+                              }
                             >
                               <img src="/imgs/logos/orbis.png" />
                             </div>
                           </div>
-                          {dropdownPostOpened === post?.stream_id && (
+                          {dropdownPostOpened?.postId === post?.stream_id &&
+                          !dropdownPostOpened?.type ? (
                             <div className="content-card-information-action-dropdown">
                               <InlineDropdown
                                 items={[
@@ -1345,13 +1511,12 @@ export const Jobs = (props: IJobProps) => {
                                       })
                                   }
                                 ]}
-                                parentRef={parentDropdownRef}
                                 onClose={() =>
                                   handleDropdownPostOpened(undefined)
                                 }
                               />
                             </div>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                     </div>

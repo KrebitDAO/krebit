@@ -1,10 +1,4 @@
-import {
-  FunctionComponent,
-  ReactNode,
-  useContext,
-  useRef,
-  useState
-} from 'react';
+import { FunctionComponent, ReactNode, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -44,8 +38,8 @@ const MENU_OPTIONS = [
     icon: <Explore />
   },
   {
-    title: 'Jobs',
-    href: '/jobs',
+    title: 'Activity',
+    href: '/posts',
     icon: <WorkExperience />
   },
   {
@@ -74,8 +68,6 @@ export const Layout: FunctionComponent<IProps> = props => {
   const [isMenuContentMobileOpen, setIsMenuContentMobileOpen] = useState(false);
   const [navBarDesktopOptionHovered, setNavBarDesktopOptionHovered] =
     useState<string>();
-  const parentDropdownMobileRef = useRef(null);
-  const parentDropdownDesktopRef = useRef(null);
   const { push, asPath } = useRouter();
   const isLoading = auth.status === 'pending';
 
@@ -133,7 +125,6 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <div
                   className="profile-menu-image"
                   onClick={() => handleFilterOpen('mobile')}
-                  ref={parentDropdownMobileRef}
                 />
                 {isFilterOpenInView === 'mobile' && (
                   <div className="profile-menu-dropdown">
@@ -148,7 +139,6 @@ export const Layout: FunctionComponent<IProps> = props => {
                           onClick: handleLogout
                         }
                       ]}
-                      parentRef={parentDropdownMobileRef}
                       onClose={() => handleFilterOpen(undefined)}
                     />
                   </div>
@@ -295,6 +285,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                         {content.badgeText ? (
                           <Badge
                             icon={content.icon}
+                            color={content.badgeColor}
                             iconColor={
                               asPath.includes(content.href) ? 'cyan' : 'gray'
                             }
@@ -335,7 +326,6 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <div
                   className="option-profile-image"
                   onClick={() => handleFilterOpen('desktop')}
-                  ref={parentDropdownDesktopRef}
                 />
                 {isFilterOpenInView === 'desktop' && (
                   <div className="option-profile-dropdown">
@@ -350,7 +340,6 @@ export const Layout: FunctionComponent<IProps> = props => {
                           onClick: handleLogout
                         }
                       ]}
-                      parentRef={parentDropdownDesktopRef}
                       onClose={() => handleFilterOpen(undefined)}
                     />
                   </div>

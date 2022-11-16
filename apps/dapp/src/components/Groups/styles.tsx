@@ -6,6 +6,7 @@ interface IProps {
   isFilterOpen?: boolean;
   replyToImage?: string;
   hasCommentSelected?: boolean;
+  isReplyToOpen?: boolean;
   isReply?: boolean;
   type?: string;
 }
@@ -28,6 +29,14 @@ export const Wrapper = styled.div<IProps>`
       margin: 0;
       color: ${theme.colors.white}80;
       font-size: ${theme.fonts.xs};
+    }
+
+    .view-more {
+      margin: 0;
+      color: ${theme.colors.rose};
+      font-size: ${theme.fonts.xs};
+      font-family: 'HelveticaNowDisplay-Medium';
+      cursor: pointer;
     }
 
     .left-box-loading {
@@ -302,7 +311,11 @@ export const Wrapper = styled.div<IProps>`
         display: grid;
         grid-gap: 10px;
         margin-top: 20px;
-        margin-bottom: 100px;
+        margin-bottom: 135px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          margin-bottom: 100px;
+        }
       }
     }
 
@@ -457,7 +470,7 @@ export const ContentCard = styled.div<IProps>`
         }
 
         .content-card-reply-to-main-image {
-          width: 45px;
+          width: 40px;
           height: 40px;
           border-radius: 9999px;
           margin-right: 7px;
@@ -467,6 +480,10 @@ export const ContentCard = styled.div<IProps>`
           background-size: cover;
           background-color: ${theme.colors.ebony};
           border: 1px solid ${theme.colors.white};
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 45px;
+          }
         }
 
         .content-card-reply-to-main-texts {
@@ -481,11 +498,19 @@ export const ContentCard = styled.div<IProps>`
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            width: 540px;
+            width: 200px;
+
+            @media (min-width: ${theme.screens.lg}) {
+              width: 540px;
+            }
 
             & > span {
-              font-size: ${theme.fonts.base};
+              font-size: ${theme.fonts.sm};
               color: ${theme.colors.white}80;
+
+              @media (min-width: ${theme.screens.lg}) {
+                font-size: ${theme.fonts.base};
+              }
             }
           }
         }
@@ -496,7 +521,7 @@ export const ContentCard = styled.div<IProps>`
       display: flex;
 
       .content-card-image {
-        width: 45px;
+        width: 40px;
         height: 40px;
         border-radius: 9999px;
         background-image: url('${image}');
@@ -505,6 +530,10 @@ export const ContentCard = styled.div<IProps>`
         background-size: cover;
         background-color: ${theme.colors.ebony};
         border: 1px solid ${theme.colors.white};
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 45px;
+        }
       }
 
       .content-card-information {
@@ -522,6 +551,15 @@ export const ContentCard = styled.div<IProps>`
             font-size: ${theme.fonts.sm};
             font-family: 'HelveticaNowDisplay-Medium';
             color: ${theme.colors.white};
+            display: flex;
+            align-items: center;
+
+            & > svg {
+              width: 15px;
+              height: 15px;
+              fill: ${theme.colors.white}80;
+              margin-left: 5px;
+            }
           }
 
           .content-card-information-title-boxes {
@@ -594,12 +632,20 @@ export const ContentCard = styled.div<IProps>`
 
         .content-card-information-description {
           margin: 10px 0;
-          font-size: ${theme.fonts.base};
+          font-size: ${theme.fonts.sm};
           color: ${theme.colors.white};
 
           & > a {
-            font-size: ${theme.fonts.base};
+            font-size: ${theme.fonts.sm};
             color: ${theme.colors.cyan};
+          }
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts.base};
+
+            & > a {
+              font-size: ${theme.fonts.base};
+            }
           }
         }
 
@@ -664,7 +710,7 @@ export const ContentCard = styled.div<IProps>`
 `;
 
 export const CommentBox = styled.div<IProps>`
-  ${({ theme, hasCommentSelected }) => css`
+  ${({ theme, hasCommentSelected, isReplyToOpen }) => css`
     visibility: ${hasCommentSelected ? 'initial' : 'hidden'};
     position: fixed;
     top: 0;
@@ -717,7 +763,7 @@ export const CommentBox = styled.div<IProps>`
       }
 
       .comment-box-cards {
-        height: calc(100% - 220px);
+        height: ${isReplyToOpen ? 'calc(100% - 250px)' : 'calc(100% - 220px)'};
         padding: 0 20px;
         overflow-y: scroll;
         overflow-x: hidden;
@@ -734,6 +780,7 @@ export const CommentBox = styled.div<IProps>`
         border-top: 1px solid ${theme.colors.gray}80;
         background-color: ${theme.colors.ebonyClay};
         padding: 20px;
+        padding-top: ${isReplyToOpen ? '10px' : '20px'};
         position: absolute;
         right: 0;
         left: 0;
@@ -802,7 +849,7 @@ export const CommentBoxCard = styled.div<IProps>`
     margin-bottom: 20px;
 
     .comment-box-image {
-      width: ${isReply ? '50px' : '55px'};
+      width: ${isReply ? '45px' : '50px'};
       height: ${isReply ? '45px' : '50px'};
       border: 1px solid ${theme.colors.white};
       border-radius: 9999px;
@@ -810,6 +857,11 @@ export const CommentBoxCard = styled.div<IProps>`
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
+
+      @media (min-width: ${theme.screens.lg}) {
+        width: ${isReply ? '50px' : '55px'};
+        height: ${isReply ? '45px' : '50px'};
+      }
     }
 
     .comment-box-information {
@@ -824,9 +876,19 @@ export const CommentBoxCard = styled.div<IProps>`
 
         & > span {
           margin: 0;
-          font-size: ${isReply ? theme.fonts.sm : theme.fonts.base};
+          font-size: ${theme.fonts.sm};
           font-family: 'HelveticaNowDisplay-Medium';
           color: ${theme.colors.white};
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${isReply ? theme.fonts.sm : theme.fonts.base};
+          }
+        }
+
+        .timestamp {
+          margin: 0;
+          color: ${theme.colors.white}80;
+          font-size: ${theme.fonts.xs};
         }
 
         .comment-box-information-title-boxes {
@@ -848,13 +910,27 @@ export const CommentBoxCard = styled.div<IProps>`
 
       .comment-box-information-description {
         margin: 10px 0;
-        font-size: ${theme.fonts.base};
+        font-size: ${theme.fonts.sm};
         color: ${theme.colors.white};
+
+        & > a {
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.cyan};
+        }
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.base};
+
+          & > a {
+            font-size: ${theme.fonts.base};
+          }
+        }
       }
 
       .comment-box-information-actions {
         display: flex;
         justify-content: space-between;
+        position: relative;
 
         .comment-box-information-action {
           display: flex;
@@ -867,7 +943,8 @@ export const CommentBoxCard = styled.div<IProps>`
           grid-gap: 3px;
           cursor: pointer;
 
-          & > svg {
+          & > svg,
+          & > img {
             width: 20px;
             height: 20px;
             fill: ${theme.colors.white}80;
@@ -888,6 +965,13 @@ export const CommentBoxCard = styled.div<IProps>`
           & > span {
             color: ${theme.colors.cyan};
           }
+        }
+
+        .comment-box-information-options-dropdown {
+          position: absolute;
+          bottom: 10px;
+          right: 50px;
+          z-index: 10;
         }
       }
     }
