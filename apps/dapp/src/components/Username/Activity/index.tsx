@@ -275,6 +275,39 @@ export const Activity = (props: IProps) => {
                   }
                   key={index}
                 >
+                  {activity?.reply_to_details && (
+                    <div className="content-card-reply-to">
+                      <div className="content-card-reply-to-icon"></div>
+                      <div
+                        className="content-card-reply-to-main"
+                        onClick={() => handleShowPost(activity)}
+                      >
+                        <div className="content-card-reply-to-main-image"></div>
+                        <div className="content-card-reply-to-main-texts">
+                          <p className="content-card-reply-to-main-texts-title">
+                            {substring(
+                              activity?.reply_to_creator_details?.profile
+                                ?.username,
+                              20
+                            ) ||
+                              substring(
+                                activity?.reply_to_creator_details?.did,
+                                20,
+                                true
+                              )}{' '}
+                            <span>
+                              {activity?.reply_to_details?.body?.length > 70
+                                ? `${substring(
+                                    activity?.reply_to_details?.body,
+                                    70
+                                  )}...`
+                                : activity?.reply_to_details?.body}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="content-card-main">
                     <div className="content-card-image"></div>
                     <div className="content-card-information">

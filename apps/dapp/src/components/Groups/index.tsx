@@ -37,12 +37,12 @@ import { Button } from 'components/Button';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { QuestionModal } from 'components/QuestionModal';
 import { Input } from 'components/Input';
-import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { getDomains, substring } from './utils';
 import { constants, orbisParseMarkdown, sortByDate } from 'utils';
+import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
+import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { GeneralContext } from 'context';
 import { useWindowSize } from 'hooks';
-import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
 
 export interface IGroupProps {
   channelId: string;
@@ -165,9 +165,17 @@ export const Groups = (props: IGroupProps) => {
         setStatus('pending_posts');
       }
 
+      const context =
+        channelId === 'global_feed'
+          ? null
+          : channelId
+          ? channelId
+          : constants.DEFAULT_GROUP_ID;
+
       const { data, error } = await orbis.getPosts(
         {
-          context: channelId ? channelId : constants.DEFAULT_GROUP_ID
+          context,
+          algorithm: channelId === 'global_feed' ? 'recommendations' : null
         },
         page - 1
       );
@@ -256,7 +264,7 @@ export const Groups = (props: IGroupProps) => {
 
     let type = 'feed';
 
-    if (channelId) {
+    if (channelId && channelId !== 'global_feed') {
       type = group.channels.find(channel => channel.stream_id === channelId)
         ?.content?.type;
     }
@@ -954,6 +962,19 @@ export const Groups = (props: IGroupProps) => {
               {group?.content?.description}
             </p>
             <div className="left-box-list">
+              <Link href="/posts/?channel_id=global_feed">
+                <a
+                  className={`left-box-list-option ${
+                    channelId === 'global_feed' ? 'active' : ''
+                  }`}
+                  onClick={() => handleCleanPage()}
+                >
+                  <div className="left-box-list-option-icon">
+                    <Home />
+                  </div>
+                  <p className="left-box-list-option-text">Global Feed</p>
+                </a>
+              </Link>
               <Link href="/posts">
                 <a
                   className={`left-box-list-option ${
