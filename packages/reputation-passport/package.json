@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/KrebitDAO/krebit#readme",
   "peerDependencies": {
-    "@krebitdao/eip712-vc": "1.0.1",
+    "@krebitdao/eip712-vc": "^1.0.2",
     "@lit-protocol/sdk-browser": "^1.1.228",
     "@lit-protocol/sdk-nodejs": "^1.1.228",
     "ethers": "^5.5.1",
