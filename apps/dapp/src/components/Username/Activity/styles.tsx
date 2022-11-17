@@ -60,6 +60,7 @@ export const Wrapper = styled.div<IProps>`
 
       .timestamp {
         margin: 0;
+        margin-left: 5px;
         color: ${theme.colors.white}80;
         font-size: ${theme.fonts.xs};
       }
