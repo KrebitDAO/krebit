@@ -55,6 +55,7 @@ import { SentimentVerySatisfied } from './SentimentVerySatisfied';
 import { ThumbDown } from './ThumbDown';
 import { Reply } from './Reply';
 import { Comment } from './Comment';
+import { ArrowSend } from './ArrowSend';
 
 export {
   Close,
@@ -113,5 +114,6 @@ export {
   SentimentVerySatisfied,
   ThumbDown,
   Reply,
-  Comment
+  Comment,
+  ArrowSend
 };

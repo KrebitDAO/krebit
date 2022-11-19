@@ -223,7 +223,10 @@ export const Layout: FunctionComponent<IProps> = props => {
           </>
         )}
         {children}
-        <NavBarMobile isAuthenticated={auth.isAuthenticated}>
+        <NavBarMobile
+          isAuthenticated={auth.isAuthenticated}
+          id="nav-bar-mobile"
+        >
           {isLoading
             ? new Array(3).fill(0).map((_, index) => (
                 <div className="navbar-mobile-loading" key={index}>

@@ -920,7 +920,7 @@ export const Groups = (props: IGroupProps) => {
             <div className="comment-box-input">
               <textarea
                 className="comment-box-input-element"
-                placeholder="share your job here"
+                placeholder="share your post here"
                 value={form?.comment}
                 disabled={
                   isPostsLoading ||
@@ -941,7 +941,7 @@ export const Groups = (props: IGroupProps) => {
                   status === 'pending_comment'
                 }
               >
-                save
+                post
               </button>
             </div>
           </div>
@@ -1262,7 +1262,7 @@ export const Groups = (props: IGroupProps) => {
               <div className="content-box-input">
                 <textarea
                   className="content-box-input-element"
-                  placeholder="share your job here"
+                  placeholder="share your post here"
                   disabled={
                     isPostsLoading || isMorePostsLoading || isPostActionLoading
                   }
@@ -1277,7 +1277,7 @@ export const Groups = (props: IGroupProps) => {
                     isPostsLoading || isMorePostsLoading || isPostActionLoading
                   }
                 >
-                  save
+                  post
                 </button>
               </div>
             </div>
@@ -1285,7 +1285,7 @@ export const Groups = (props: IGroupProps) => {
         ) : (
           <div className="content">
             <div className="content-header">
-              <p className="content-header-title">Send your job</p>
+              <p className="content-header-title">Send your post</p>
               <div className="content-header-icon" onClick={handleFilterOpen}>
                 <Tune />
               </div>
@@ -1293,7 +1293,7 @@ export const Groups = (props: IGroupProps) => {
             <div className="content-box-input">
               <textarea
                 className="content-box-input-element"
-                placeholder="share your job here"
+                placeholder="share your post here"
                 disabled={
                   isPostsLoading || isMorePostsLoading || isPostActionLoading
                 }
@@ -1309,7 +1309,7 @@ export const Groups = (props: IGroupProps) => {
                   isPostsLoading || isMorePostsLoading || isPostActionLoading
                 }
               >
-                save
+                post
               </button>
             </div>
             <div className="content-box-list">
