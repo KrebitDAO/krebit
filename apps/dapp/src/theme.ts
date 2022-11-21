@@ -24,7 +24,8 @@ export const systemTheme: Theme = {
     ebonyClay: '#2D3442',
     melrose: '#BDB4FE',
     ebony: '#101828',
-    pomegranate: '#F44336'
+    pomegranate: '#F44336',
+    electricViolet: '#8117FE'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

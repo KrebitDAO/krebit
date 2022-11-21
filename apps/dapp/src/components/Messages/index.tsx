@@ -1,25 +1,309 @@
-import { useContext } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import { useRouter } from 'next/router';
+import ErrorWrapper from 'next/error';
+import { debounce } from 'ts-debounce';
 
-import { LoadingWrapper, Wrapper } from './styles';
+import {
+  ConversationAutocompleteBox,
+  LoadingWrapper,
+  MessagesBoxItem,
+  MessagesBoxItemImage,
+  MessagesRightSideBoxMessage,
+  Wrapper
+} from './styles';
 import { Loading } from 'components/Loading';
-import { Button } from 'components/Button';
-import { ConnectWallet } from 'components/ConnectWallet';
+import { Add, ArrowForward, ArrowSend, Close } from 'components/Icons';
+import { QuestionModal } from 'components/QuestionModal';
+import { Autocomplete } from 'components/Autocomplete';
+import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
+import { formatUrlImage } from 'utils';
 import { GeneralContext } from 'context';
+import { useWindowSize } from 'hooks';
+import { theme } from 'theme';
+
+const DEFAULT_LIMIT_PICTURES_LIST = 4;
 
 export const Messages = () => {
-  const { query } = useRouter();
+  const [status, setStatus] = useState('idle');
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [usernames, setUsernames] = useState<any[]>([]);
+  const [currentConversation, setCurrentConversation] = useState<any>();
+  const [usernamesSelected, setUsernamesSelected] = useState<any[]>([]);
+  const [form, setForm] = useState<any>({});
+  const [shouldShowMobileMenu, setShouldShowMobileMenu] = useState(false);
+  const [isAutocompleteOpen, setIsAutoCompleteOpen] = useState(false);
   const {
     auth,
-    walletInformation: { orbis },
-    walletModal: { openConnectWallet, handleOpenConnectWallet }
+    walletInformation: { orbis }
   } = useContext(GeneralContext);
+  const { push, query, reload } = useRouter();
+  const { width } = useWindowSize();
+  const isLoading = status === 'idle' || status === 'pending';
+  const isMessagesLoading = status === 'pending_messages';
+  const isActionMessageLoading = status === 'pending_action_message';
+  const isUsernamesLoading = status === 'pending_usernames';
+  const isDesktop = width >= 1024;
 
-  const TEMPORAL_orbisLink = () => {
-    window.open('https://app.orbis.club/', '_blank');
+  useEffect(() => {
+    if (!orbis) return;
+    if (auth.status !== 'resolved') return;
+
+    const getData = async () => {
+      setStatus('pending');
+
+      try {
+        if (!auth?.isAuthenticated) {
+          throw new Error('Not authorized');
+        }
+
+        const { data, error } = await orbis.getConversations({
+          did: auth.did
+        });
+
+        if (error) {
+          console.error(error);
+          setStatus('rejected');
+          return;
+        }
+
+        setConversations(data || []);
+        setStatus('resolved');
+      } catch (error) {
+        console.error(error);
+        setStatus('rejected');
+      }
+    };
+
+    getData();
+  }, [orbis, auth.status, auth?.isAuthenticated]);
+
+  useEffect(() => {
+    if (!orbis) return;
+    if (auth.status !== 'resolved') return;
+    if (!auth?.isAuthenticated) return;
+    if (!conversations || conversations?.length === 0) return;
+
+    const id = query?.conversation_id
+      ? query?.conversation_id
+      : conversations[0]?.stream_id;
+
+    const getMessages = async () => {
+      setStatus('pending_messages');
+
+      try {
+        const { data: messagesData, error: messagesError } =
+          await orbis.getMessages(id);
+
+        if (messagesError) {
+          console.error(messagesError);
+          setStatus('rejected_messages');
+          return;
+        }
+
+        const messages = await Promise.all(
+          messagesData?.map(async message => {
+            const decryptMessage = await orbis.decryptMessage(message?.content);
+
+            return { ...message, decryptMessage: decryptMessage?.result };
+          })
+        );
+
+        const currentConversation = conversations.find(
+          conversation => conversation?.stream_id === id
+        );
+
+        setMessages(messages || []);
+        setCurrentConversation(currentConversation);
+        setStatus('resolved_messages');
+      } catch (error) {
+        console.error(error);
+        setStatus('rejected_messages');
+      }
+    };
+
+    getMessages();
+  }, [
+    orbis,
+    auth.status,
+    auth?.isAuthenticated,
+    conversations,
+    query?.conversation_id
+  ]);
+
+  const delayedUsernames = useCallback(
+    debounce(() => getUsernames(), 500),
+    [
+      orbis,
+      auth.status,
+      auth?.did,
+      auth?.isAuthenticated,
+      isAutocompleteOpen,
+      form?.conversation_autocomplete,
+      form?.conversation_input_autocomplete
+    ]
+  );
+
+  useEffect(() => {
+    if (!orbis) return;
+    if (auth.status !== 'resolved') return;
+    if (!auth?.isAuthenticated) return;
+    if (!isAutocompleteOpen) return;
+
+    delayedUsernames();
+
+    return delayedUsernames.cancel;
+  }, [
+    orbis,
+    auth.status,
+    auth?.did,
+    auth?.isAuthenticated,
+    isAutocompleteOpen,
+    form?.conversation_autocomplete,
+    form?.conversation_input_autocomplete
+  ]);
+
+  const getUsernames = async () => {
+    try {
+      setStatus('pending_usernames');
+      const value =
+        form?.conversation_autocomplete ||
+        form?.conversation_input_autocomplete;
+
+      const usernames = await orbis.getProfilesByUsername(value);
+
+      if (usernames.error) {
+        console.error(usernames.error);
+        setStatus('rejected_usernames');
+        return;
+      }
+
+      const currentUsernames = usernames?.data.filter(
+        values => values?.did !== auth?.did
+      );
+      setUsernames(currentUsernames || []);
+      setStatus('resolved_usernames');
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected_usernames');
+    }
   };
 
-  if (auth?.status === 'pending') {
+  const handleShouldShowMobileMenu = () => {
+    if (isDesktop) return;
+
+    setShouldShowMobileMenu(prevValue => !prevValue);
+  };
+
+  const handleSelectProfile = (conversationId: string) => {
+    handleShouldShowMobileMenu();
+
+    if (conversationId) {
+      push(`/messages/?conversation_id=${conversationId}`);
+    } else {
+      push('/messages');
+    }
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (isMessagesLoading) return;
+    event.preventDefault();
+
+    const { name, value } = event.target;
+
+    setForm(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+  };
+
+  const handleAutoCompleteChange = (name: string, value: string) => {
+    if (name === 'conversation_autocomplete' && value) {
+      const username = usernames?.find(values => values?.username === value);
+      setUsernamesSelected(prevValues => [...prevValues, username]);
+    }
+
+    setForm(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
+  };
+
+  const handleAutoCompleteRemove = (value: string) => {
+    setUsernamesSelected(
+      prevValues => prevValues.filter(val => val?.username !== value) || []
+    );
+  };
+
+  const handleIsAutoCompleteOpen = () => {
+    setIsAutoCompleteOpen(prevValue => !prevValue);
+  };
+
+  const handleSendMessage = async () => {
+    if (isMessagesLoading) return;
+
+    try {
+      setStatus('pending_action_message');
+
+      const newMessage = {
+        decryptMessage: form?.messageValue || '',
+        creator: auth?.did
+      };
+      setMessages(prevValues => [newMessage, ...prevValues]);
+
+      await orbis.sendMessage({
+        conversation_id: currentConversation?.stream_id,
+        body: form?.messageValue || ''
+      });
+
+      setStatus('resolved_action_message');
+      setForm(prevValues => ({ ...prevValues, messageValue: '' }));
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected_action_message');
+    }
+  };
+
+  const handleCreateConversation = async () => {
+    if (isMessagesLoading) return;
+
+    try {
+      setStatus('pending_action_message');
+
+      const recipients = usernamesSelected.flatMap(values => values?.did);
+
+      const response = await orbis.createConversation({
+        recipients
+      });
+
+      if (response) {
+        setStatus('resolved_action_message');
+        setForm(prevValues => ({
+          ...prevValues,
+          conversation_autocomplete: '',
+          conversation_input_autocomplete: ''
+        }));
+        setUsernames([]);
+        handleIsAutoCompleteOpen();
+        reload();
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected_action_message');
+    }
+  };
+
+  if (status === 'rejected') {
+    return <ErrorWrapper statusCode={404} />;
+  }
+
+  if (isLoading) {
     return (
       <LoadingWrapper>
         <Loading />
@@ -27,31 +311,272 @@ export const Messages = () => {
     );
   }
 
-  if (!auth?.isAuthenticated) {
-    return (
-      <LoadingWrapper>
-        {/* TODO: replace this connect wallet with the one defined in <Layout /> */}
-        <ConnectWallet
-          isOpen={openConnectWallet}
-          onClose={handleOpenConnectWallet}
-        />
-        <div className="button">
-          <Button text="Connect wallet" onClick={handleOpenConnectWallet} />
-        </div>
-      </LoadingWrapper>
-    );
-  }
-
   return (
-    <Wrapper>
-      <div className="messages-header">
-        <h1 className="messages-header-title">
-          The chat is going to be avaible very soon! For now you can try Orbis
-        </h1>
-        <div className="messages-header-button">
-          <Button text="Try orbis" onClick={TEMPORAL_orbisLink} />
+    <>
+      <style global jsx>{`
+        html,
+        body {
+          overflow: ${shouldShowMobileMenu ? 'hidden' : 'initital'};
+        }
+
+        #nav-bar-mobile {
+          display: ${shouldShowMobileMenu ? 'none' : 'grid'};
+        }
+
+        @media (min-width: ${theme.screens.lg}) {
+          #nav-bar-mobile {
+            display: none;
+          }
+        }
+      `}</style>
+      {isAutocompleteOpen && (
+        <QuestionModal
+          title="Create conversation"
+          isLoading={isMessagesLoading || isActionMessageLoading}
+          component={() => (
+            <ConversationAutocompleteBox>
+              <Autocomplete
+                id="conversation-autocomplete"
+                options={
+                  usernames?.length > 0
+                    ? usernames.map(values => values.username)
+                    : []
+                }
+                isLoading={isUsernamesLoading}
+                placeholder="Choose an username"
+                value={form?.conversation_autocomplete}
+                onChange={(event: any, newValue: string) =>
+                  handleAutoCompleteChange(
+                    'conversation_autocomplete',
+                    newValue
+                  )
+                }
+                inputValue={form?.conversation_input_autocomplete}
+                onInputChange={(event: any, newValue: string) =>
+                  handleAutoCompleteChange(
+                    'conversation_input_autocomplete',
+                    newValue
+                  )
+                }
+              />
+              <div className="conversation-autocomplete-boxes">
+                {usernamesSelected?.length > 0
+                  ? usernamesSelected.map((value, index) => (
+                      <div
+                        className="conversation-autocomplete-box"
+                        key={index}
+                      >
+                        <div
+                          className="conversation-autocomplete-box-close"
+                          onClick={() =>
+                            handleAutoCompleteRemove(value?.username)
+                          }
+                        >
+                          <Close />
+                        </div>
+                        <p className="conversation-autocomplete-box-text">
+                          {value?.username}
+                        </p>
+                      </div>
+                    ))
+                  : null}
+              </div>
+            </ConversationAutocompleteBox>
+          )}
+          continueButton={{
+            text: 'Create',
+            onClick:
+              isMessagesLoading || isActionMessageLoading
+                ? undefined
+                : handleCreateConversation
+          }}
+          cancelButton={{
+            text: 'Cancel',
+            onClick:
+              isMessagesLoading || isActionMessageLoading
+                ? undefined
+                : handleIsAutoCompleteOpen
+          }}
+        />
+      )}
+      <Wrapper>
+        <div
+          className={`messages-left-side ${
+            shouldShowMobileMenu ? 'messages-is-hidden' : ''
+          }`}
+        >
+          <div className="messages-left-side-header">
+            <p className="messages-left-side-header-text">Chats</p>
+            <div
+              className="messages-left-side-header-icon"
+              onClick={handleIsAutoCompleteOpen}
+            >
+              <Add />
+            </div>
+          </div>
+          <div className="messages-left-side-box">
+            {conversations.map((conversation, index) => (
+              <MessagesBoxItem
+                length={
+                  conversation?.recipients_details?.length === 2
+                    ? 1
+                    : conversation?.recipients_details?.length >
+                      DEFAULT_LIMIT_PICTURES_LIST
+                    ? DEFAULT_LIMIT_PICTURES_LIST
+                    : conversation?.recipients_details?.filter(
+                        details => details?.did !== auth?.did
+                      )?.length
+                }
+                onClick={() => handleSelectProfile(conversation?.stream_id)}
+                isActive={
+                  currentConversation?.stream_id === conversation?.stream_id
+                }
+                key={index}
+              >
+                <div className="messages-box-item-images">
+                  {conversation?.recipients_details
+                    .filter(details => details?.did !== auth?.did)
+                    .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
+                    .map((details, index) => (
+                      <MessagesBoxItemImage
+                        key={index}
+                        image={
+                          formatUrlImage(details?.profile?.pfp) ||
+                          DEFAULT_PICTURE
+                        }
+                        length={
+                          conversation?.recipients_details?.length === 2
+                            ? 0
+                            : conversation?.recipients_details?.length >
+                              DEFAULT_LIMIT_PICTURES_LIST
+                            ? DEFAULT_LIMIT_PICTURES_LIST
+                            : index
+                        }
+                      />
+                    ))}
+                </div>
+                <p className="messages-box-item-text">
+                  {conversation?.recipients_details
+                    .filter(details => details?.did !== auth?.did)
+                    .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
+                    .map(details => details?.profile?.username || details?.did)
+                    .join(', ')}
+                  {conversation?.recipients_details?.length > 2 && '...'}
+                </p>
+              </MessagesBoxItem>
+            ))}
+          </div>
         </div>
-      </div>
-    </Wrapper>
+        <div
+          className={`messages-right-side ${
+            shouldShowMobileMenu ? '' : 'messages-is-hidden'
+          }`}
+        >
+          <div className="messages-right-side-header">
+            <div
+              className="messages-right-side-header-icon"
+              onClick={() =>
+                handleSelectProfile(currentConversation?.stream_id)
+              }
+            >
+              <ArrowForward />
+            </div>
+            <MessagesBoxItem
+              length={
+                currentConversation?.recipients_details?.length === 2
+                  ? 1
+                  : currentConversation?.recipients_details?.length >
+                    DEFAULT_LIMIT_PICTURES_LIST
+                  ? DEFAULT_LIMIT_PICTURES_LIST
+                  : currentConversation?.recipients_details?.filter(
+                      details => details?.did !== auth?.did
+                    )?.length
+              }
+              hasSpecialSpace={false}
+            >
+              <div className="messages-box-item-images">
+                {currentConversation?.recipients_details
+                  .filter(details => details?.did !== auth?.did)
+                  .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
+                  .map((details, index) => (
+                    <MessagesBoxItemImage
+                      key={index}
+                      image={
+                        formatUrlImage(details?.profile?.pfp) || DEFAULT_PICTURE
+                      }
+                      length={
+                        currentConversation?.recipients_details?.length === 2
+                          ? 0
+                          : currentConversation?.recipients_details?.length >
+                            DEFAULT_LIMIT_PICTURES_LIST
+                          ? DEFAULT_LIMIT_PICTURES_LIST
+                          : index
+                      }
+                    />
+                  ))}
+              </div>
+              {isDesktop && (
+                <p className="messages-box-item-text">
+                  {currentConversation?.recipients_details
+                    .filter(details => details?.did !== auth?.did)
+                    .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
+                    .map(details => details?.profile?.username || details?.did)
+                    .join(', ')}
+                  {currentConversation?.recipients_details?.length > 2 && '...'}
+                </p>
+              )}
+            </MessagesBoxItem>
+          </div>
+          <div className="messages-right-side-chat-box">
+            <div className="messages-right-side-box">
+              {isMessagesLoading ? (
+                <LoadingWrapper>
+                  <Loading />
+                </LoadingWrapper>
+              ) : (
+                messages.map((message, index) => (
+                  <MessagesRightSideBoxMessage
+                    key={index}
+                    image={message?.creator_details?.profile?.pfp}
+                  >
+                    {message?.creator !== auth?.did && (
+                      <div className="messages-right-side-box-item-image"></div>
+                    )}
+                    <p
+                      className={`messages-right-side-box-item ${
+                        message?.creator === auth?.did
+                          ? 'messages-right-side-box-item-me'
+                          : ''
+                      }`}
+                    >
+                      {message?.decryptMessage}
+                    </p>
+                  </MessagesRightSideBoxMessage>
+                ))
+              )}
+            </div>
+            <div className="messages-right-box-chat">
+              <input
+                placeholder="Type your message"
+                value={form?.messageValue || ''}
+                onChange={handleChange}
+                name="messageValue"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+                disabled={isMessagesLoading || isActionMessageLoading}
+              />
+              <button
+                type="button"
+                onClick={handleSendMessage}
+                disabled={isMessagesLoading || isActionMessageLoading}
+              >
+                <ArrowSend />
+              </button>
+            </div>
+          </div>
+        </div>
+      </Wrapper>
+    </>
   );
 };
