@@ -272,7 +272,7 @@ export const Username = () => {
     }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!auth?.isAuthenticated) {
       handleOpenConnectWallet();
       return;
@@ -285,7 +285,38 @@ export const Username = () => {
       return;
     }
 
-    push(`/messages/${query.id}`);
+    const currentConversations = await orbis.getConversations({
+      did: query.id
+    });
+
+    if (currentConversations?.data?.length > 0) {
+      const conversationsWithMe = currentConversations?.data?.filter(
+        conversation => conversation?.recipients.includes(auth?.did)
+      );
+      const conversationWithJustMe = conversationsWithMe?.find(
+        conversation => conversation?.recipients?.length === 2
+      );
+
+      if (conversationWithJustMe) {
+        push(`/messages/?conversation_id=${conversationWithJustMe.stream_id}`);
+      } else {
+        const response = await orbis.createConversation({
+          recipients: [query.id]
+        });
+
+        if (response?.doc) {
+          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        }
+      }
+    } else {
+      const response = await orbis.createConversation({
+        recipients: [query.id]
+      });
+
+      if (response?.doc) {
+        window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+      }
+    }
   };
 
   if (status === 'rejected') {

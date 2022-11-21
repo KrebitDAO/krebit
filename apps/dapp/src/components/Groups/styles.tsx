@@ -13,7 +13,7 @@ interface IProps {
 
 export const Wrapper = styled.div<IProps>`
   ${({ theme, image, isFilterOpen }) => css`
-    max-width: 1306px;
+    max-width: 1238px;
     margin: 0 auto;
     padding: 0 20px;
 
@@ -23,6 +23,10 @@ export const Wrapper = styled.div<IProps>`
       grid-gap: 20px;
       padding: 0;
       margin-top: 65px;
+    }
+
+    @media (min-width: ${theme.screens['2xl']}) {
+      max-width: 1306px;
     }
 
     .timestamp {

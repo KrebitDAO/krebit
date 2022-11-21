@@ -22,25 +22,17 @@ export const Wrapper = styled.div`
     margin: 0 auto;
     padding: 0 20px;
     margin-bottom: 100px;
-    max-width: 1306px;
+    max-width: 1238px;
     --width: calc(25px * ${length} + 9px);
 
     @media (min-width: ${theme.screens.lg}) {
       padding: 0;
-      float: right;
-      margin-right: 80px;
-      margin-top: 65px;
+      margin: 0 auto;
+      margin-top: 50px;
       margin-bottom: 76px;
       display: grid;
-      grid-template-columns: auto 922px;
+      grid-template-columns: 430px auto;
       grid-gap: 24px;
-    }
-
-    @media (min-width: ${theme.screens['2xl']}) {
-      float: initial;
-      margin: 0 auto;
-      margin-top: 65px;
-      margin-bottom: 76px;
     }
 
     .messages-is-hidden {
@@ -96,6 +88,12 @@ export const Wrapper = styled.div`
         display: grid;
         grid-gap: 22px;
         border: 1px solid ${theme.colors.white}80;
+
+        @media (min-width: ${theme.screens.lg}) {
+          max-height: calc(100vh - 121px);
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
       }
     }
 
@@ -222,11 +220,15 @@ export const MessagesBoxItem = styled.div<IProps>`
       margin-left: 10px;
       color: ${isActive ? theme.colors.cyan : theme.colors.white};
       font-size: ${theme.fonts.base};
-      width: calc(100% - var(--width) - ${hasSpecialSpace ? '60px' : '0px'});
+      width: calc(80% - var(--width) - ${hasSpecialSpace ? '60px' : '0px'});
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       text-decoration: ${isActive ? 'underline' : 'initial'};
+
+      @media (min-width: ${theme.screens.lg}) {
+        width: calc(100% - var(--width) - ${hasSpecialSpace ? '60px' : '0px'});
+      }
     }
 
     &:hover {

@@ -1,5 +1,6 @@
 import {
   ChangeEvent,
+  KeyboardEvent,
   useCallback,
   useContext,
   useEffect,
@@ -221,6 +222,13 @@ export const Messages = () => {
       ...prevValues,
       [name]: value
     }));
+  };
+
+  const handleKeyChange = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSendMessage();
+    }
   };
 
   const handleAutoCompleteChange = (name: string, value: string) => {
@@ -560,6 +568,7 @@ export const Messages = () => {
                 placeholder="Type your message"
                 value={form?.messageValue || ''}
                 onChange={handleChange}
+                onKeyDown={handleKeyChange}
                 name="messageValue"
                 autoComplete="off"
                 autoCorrect="off"
