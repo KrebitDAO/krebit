@@ -40,7 +40,8 @@ const MENU_OPTIONS = [
   {
     title: 'Activity',
     href: '/posts',
-    icon: <WorkExperience />
+    icon: <WorkExperience />,
+    badgeText: 'New'
   },
   {
     title: 'Create',
@@ -53,7 +54,10 @@ const MENU_OPTIONS = [
   {
     title: 'Inbox',
     href: '/messages',
-    icon: <Send />
+    icon: <Send />,
+    isPrivate: true,
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   }
 ];
 
@@ -78,11 +82,12 @@ export const Layout: FunctionComponent<IProps> = props => {
     push(`/${profile.did}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (!window) return;
 
-    auth.logout();
-    push(`/`);
+    await auth.logout().then(() => {
+      window.open('/', '_self');
+    });
   };
 
   const handleFilterOpen = (view: string | undefined) => {

@@ -5,6 +5,13 @@ import LitJsSdk from '@lit-protocol/sdk-browser';
 import { Web3Storage } from 'web3.storage';
 import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
+import { Web3Auth } from '@web3auth/modal';
+import { WALLET_ADAPTERS, CHAIN_NAMESPACES } from '@web3auth/base';
+import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+import {
+  config as PassportConfig,
+  isProduction as PassportConfigIsProduction
+} from '@krebitdao/reputation-passport/dist/config';
 
 import { getWalletInformation, normalizeSchema } from 'utils';
 
@@ -36,6 +43,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [issuer, setIssuer] = useState<Issuer>();
   const [publicPassport, setPublicPassport] = useState<Passport>();
   const [orbis, setOrbis] = useState<Orbis>();
+  const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
   const [walletInformation, setWalletInformation] = useState<
     IWalletInformation | undefined
   >();
@@ -55,6 +63,9 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const orbis = new Orbis();
       setOrbis(orbis);
 
+      const { web3auth, provider } = await initWeb3Auth();
+      setWeb3auth(web3auth);
+
       const currentType = localStorage.getItem('auth-type');
 
       if (!currentType) {
@@ -62,7 +73,20 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         return;
       }
 
-      const information = await getWalletInformation(currentType);
+      let information: IWalletInformation;
+
+      if (currentType === 'metamask') {
+        information = await getWalletInformation(currentType);
+      }
+
+      if (currentType === 'web3auth') {
+        information = await getWalletInformation(currentType, provider);
+      }
+
+      if (!information) {
+        throw new Error('Not wallet defined');
+      }
+
       setWalletInformation(information);
 
       const passport = new Krebit.core.Passport({
@@ -80,6 +104,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const isIssuerConnected = await issuer.isConnected();
 
       const isOrbisConnected = await orbis.isConnected();
+
+      console.log(isPassportConnected, isIssuerConnected, isOrbisConnected);
 
       if (isPassportConnected && isIssuerConnected && isOrbisConnected) {
         const currentProfile = await normalizeSchema.profile({
@@ -120,6 +146,52 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     };
   }, []);
 
+  const initWeb3Auth = async () => {
+    try {
+      const web3auth = new Web3Auth({
+        clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
+        chainConfig: {
+          chainNamespace: CHAIN_NAMESPACES.EIP155,
+          chainId: '0x13881',
+          rpcTarget: PassportConfig.state.rpcUrl
+        },
+        uiConfig: {
+          theme: 'dark',
+          loginMethodsOrder: ['facebook', 'google', 'discord', 'twitter'],
+          appLogo: 'https://krebit.id/imgs/logos/Krebit.svg'
+        }
+      });
+      const openloginAdapter = new OpenloginAdapter({
+        adapterSettings: {
+          clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
+          network: PassportConfigIsProduction ? 'mainnet' : 'testnet',
+          uxMode: 'popup',
+          whiteLabel: {
+            name: 'Krebit.id',
+            logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
+            logoDark: 'https://krebit.id/imgs/logos/Krebit.svg',
+            defaultLanguage: 'en',
+            dark: true
+          }
+        }
+      });
+      web3auth.configureAdapter(openloginAdapter);
+
+      await web3auth.initModal({
+        [WALLET_ADAPTERS.OPENLOGIN]: {
+          showOnModal: true
+        }
+      });
+
+      return {
+        web3auth,
+        provider: web3auth.provider
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleOpenConnectWallet = () => {
     if (passport?.did) {
       push(`/${passport.did}`);
@@ -144,8 +216,23 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     setStatus('pending');
 
     try {
-      const information = await getWalletInformation(type);
+      let information: IWalletInformation;
+
+      if (type === 'metamask') {
+        information = await getWalletInformation(type);
+      }
+
+      if (type === 'web3auth') {
+        const web3authProvider = await web3auth.connect();
+        information = await getWalletInformation(type, web3authProvider);
+      }
+
+      if (!information) {
+        throw new Error('Not wallet defined');
+      }
+
       setWalletInformation(information);
+
       localStorage.setItem('auth-type', type);
 
       const orbis = new Orbis();
@@ -212,6 +299,12 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const logout = async () => {
     if (!window) return;
 
+    const currentAuthType = window.localStorage.getItem('auth-type');
+
+    if (currentAuthType === 'web3auth') {
+      await web3auth.logout();
+    }
+
     await orbis.logout();
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
@@ -219,6 +312,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     setProfile(undefined);
     setPassport(undefined);
     setIssuer(undefined);
+    setWeb3auth(undefined);
   };
 
   return (
