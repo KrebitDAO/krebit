@@ -29,6 +29,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
       }
 
       await connect(type);
+      setStatus('resolved');
       onClose();
     } catch (error) {
       console.error(error);
