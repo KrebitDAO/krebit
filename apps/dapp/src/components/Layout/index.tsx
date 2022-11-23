@@ -12,13 +12,13 @@ import {
 } from './styles';
 import {
   AccountBalanceWallet,
-  ChromeReaderMode,
+  Token,
   Close,
   Explore,
   Help,
   Menu,
   Send,
-  WorkExperience
+  Home
 } from 'components/Icons';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
@@ -33,20 +33,20 @@ interface IProps {
 
 const MENU_OPTIONS = [
   {
+    title: 'Activity',
+    href: '/posts',
+    icon: <Home />,
+    badgeText: 'New'
+  },
+  {
     title: 'Explore',
     href: '/explore',
     icon: <Explore />
   },
   {
-    title: 'Activity',
-    href: '/posts',
-    icon: <WorkExperience />,
-    badgeText: 'New'
-  },
-  {
     title: 'Create',
     href: '/create',
-    icon: <ChromeReaderMode />,
+    icon: <Token />,
     isPrivate: true,
     badgeText: 'Beta',
     badgeColor: 'blueRibbon'

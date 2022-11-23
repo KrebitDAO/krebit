@@ -6,8 +6,6 @@ const JOB_BOARDS = JSON.parse(
   Buffer.from(SERVER_JOB_BOARDS, 'base64').toString('utf-8')
 );
 
-console.log('JOB_BOARDS', JOB_BOARDS);
-
 export const getBoardJobs = async (
   size: number,
   postedSince: string
