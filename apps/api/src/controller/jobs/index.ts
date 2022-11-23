@@ -103,14 +103,6 @@ export const JobsController = async (
       const jobDoc = {
         context: channel,
         title: jobData.title,
-
-        /*media: [
-          {
-            url: jobData.imageUrl,
-            gateway: 'https://orbis.mypinata.cloud/ipfs/'
-          }
-        ],*/
-        // 'krebit-job'
         tags: [
           {
             slug: 'krebit-job',
