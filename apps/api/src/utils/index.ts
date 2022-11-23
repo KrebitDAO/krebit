@@ -13,6 +13,7 @@ import { guildXyz } from './guildXyz';
 import { wait } from './wait';
 import { getAge } from './getAge';
 import { stack } from './stack';
+import { jobs } from './jobs';
 
 export {
   connect,
@@ -30,5 +31,6 @@ export {
   guildXyz,
   wait,
   getAge,
-  stack
+  stack,
+  jobs
 };

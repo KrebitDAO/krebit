@@ -15,7 +15,8 @@ import {
   PersonaController,
   MetadataController,
   GuildController,
-  StackController
+  StackController,
+  JobsController
 } from './controller';
 
 const { SERVER_PORT, SERVER_BASE_URL } = process.env;
@@ -33,6 +34,8 @@ app.use(cors(corsOptions));
 router.use(cors(corsOptions)).use(express.json());
 
 router.get('/metadata/:tokenId', MetadataController);
+
+router.get('/jobs', JobsController);
 
 router
   .post('/delegated', DelegatedController)

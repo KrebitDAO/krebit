@@ -76,8 +76,7 @@ const DEFAULT_TWEET_PEOPLE = [
       'So futuristic! 🪐'
     ],
     url: 'https://twitter.com/unstoppableweb/status/1583518766482087937',
-    imageUrl:
-      'https://pbs.twimg.com/media/FfnJTTSVsAEq6mP?format=jpg&name=small'
+    imageUrl: '/imgs/images/FfnJTTSVsAEq6mP.jpeg'
   },
   {
     image:
@@ -90,8 +89,7 @@ const DEFAULT_TWEET_PEOPLE = [
       '💙🤍❤️'
     ],
     url: 'https://twitter.com/EthCC/status/1547687405607534593',
-    imageUrl:
-      'https://pbs.twimg.com/media/FXp9e74UcAEmft_?format=jpg&name=small'
+    imageUrl: '/imgs/images/FXp9e74UcAEmft_.jpeg'
   },
   {
     image:
@@ -104,8 +102,7 @@ const DEFAULT_TWEET_PEOPLE = [
       'https://t.co/7n576EsNZa'
     ],
     url: 'https://twitter.com/3xcalibur69/status/1582150275112259584',
-    imageUrl:
-      'https://pbs.twimg.com/card_img/1584687501054279680/q6udpYvG?format=jpg&name=small'
+    imageUrl: '/imgs/images/OKGZ6iXx.jpeg'
   },
   {
     image:
@@ -118,8 +115,7 @@ const DEFAULT_TWEET_PEOPLE = [
       "Let's dive into 🧵"
     ],
     url: 'https://twitter.com/FirstBatchxyz_/status/1533454955440381958',
-    imageUrl:
-      'https://pbs.twimg.com/media/FUfonzBWYAEcGBy?format=jpg&name=small'
+    imageUrl: '/imgs/images/FUfonzBWYAEcGBy.jpeg'
   },
   {
     image:
@@ -132,8 +128,7 @@ const DEFAULT_TWEET_PEOPLE = [
       ' #smartcontract #interfi'
     ],
     url: 'https://twitter.com/InterFiNetwork/status/1513750349135290370',
-    imageUrl:
-      'https://pbs.twimg.com/card_img/1584976246416490496/HStsBlRK?format=jpg&name=small'
+    imageUrl: '/imgs/images/tTvZadv5.jpeg'
   },
   {
     image:
@@ -146,8 +141,7 @@ const DEFAULT_TWEET_PEOPLE = [
       '#awesome #awesome-list'
     ],
     url: 'https://twitter.com/stargazoor/status/1580563167822086145',
-    imageUrl:
-      'https://pbs.twimg.com/card_img/1584923711907536897/wjKMl3_d?format=jpg&name=small'
+    imageUrl: '/imgs/images/ha74mctK.jpeg'
   },
   {
     image:
@@ -160,12 +154,11 @@ const DEFAULT_TWEET_PEOPLE = [
       "Let me know if I've missed anyone below👇"
     ],
     url: 'https://twitter.com/kermankohli/status/1583356132932083712',
-    imageUrl:
-      'https://pbs.twimg.com/media/Ffk1esTakAA2wwI?format=jpg&name=small'
+    imageUrl: '/imgs/images/Ffk1esTakAA2wwI.jpeg'
   },
   {
     image:
-      'https://pbs.twimg.com/profile_images/1574456733875179521/lQVEEh5a_400x400.png',
+      'https://pbs.twimg.com/profile_images/1587935282720301058/PWvd9E1P_400x400.jpg',
     name: 'CryptaniC｜ｸﾘﾌﾟﾀﾆｼ🛸',
     username: '@cryptani_c',
     description: [

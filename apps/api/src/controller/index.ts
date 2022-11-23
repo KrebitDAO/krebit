@@ -12,6 +12,7 @@ import { PersonaController } from './persona';
 import { MetadataController } from './metadata';
 import { GuildController } from './guild';
 import { StackController } from './stack';
+import { JobsController } from './jobs';
 
 export {
   DelegatedController,
@@ -27,5 +28,6 @@ export {
   PersonaController,
   MetadataController,
   GuildController,
-  StackController
+  StackController,
+  JobsController
 };
