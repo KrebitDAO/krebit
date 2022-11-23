@@ -8,7 +8,6 @@ import {
 import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
-import LitJsSdk from '@lit-protocol/sdk-browser';
 
 import { QuestionModalText, Wrapper } from './styles';
 import { Card } from 'components/Credentials/styles';
@@ -45,6 +44,7 @@ interface ICurrentInputModal {
 }
 
 const BASE_URL = 'https://krebit.id/claim';
+const DEFAULT_FIELDS_QUERY_URL = 2;
 
 export const CredentialsBuilder = () => {
   const [status, setStatus] = useState('idle');
@@ -95,7 +95,25 @@ export const CredentialsBuilder = () => {
           values.form.fields[entityField].items = entities;
         }
 
-        const formValues = values.form?.fields?.reduce(
+        let fields = [];
+
+        const hasMoreThanOneDefaultField =
+          Object.keys(query).length >= DEFAULT_FIELDS_QUERY_URL;
+
+        if (hasMoreThanOneDefaultField) {
+          const queryFields = Object.keys(query);
+
+          fields = values.form?.fields.map(field => ({
+            ...field,
+            defaultValue: queryFields.includes(field.name)
+              ? query[field.name]
+              : ''
+          }));
+        } else {
+          fields = values.form?.fields;
+        }
+
+        const formValues = fields?.reduce(
           (a, v) => ({
             ...a,
             ...(values.form?.issueTo
