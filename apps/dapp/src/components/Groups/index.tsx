@@ -30,7 +30,8 @@ import {
   SentimentVerySatisfied,
   Tag,
   ThumbDown,
-  Tune
+  Tune,
+  Refresh
 } from 'components/Icons';
 import { Loading } from 'components/Loading';
 import { Button } from 'components/Button';
@@ -620,6 +621,10 @@ export const Groups = (props: IGroupProps) => {
     }
   };
 
+  const handleRefresh = async () => {
+    await getPosts(DEFAULT_CURRENT_PAGE);
+  };
+
   const handleCurrentPage = () => {
     setCurrentPage(prevValue => prevValue + 1);
   };
@@ -706,6 +711,10 @@ export const Groups = (props: IGroupProps) => {
         hasCommentSelected={status === 'pending_comment' || Boolean(comment)}
         isReplyToOpen={currentReplyTo?.type === 'comment'}
       >
+        <div
+          className="comment-background"
+          onClick={() => handleCommentSelected(undefined)}
+        />
         <div className="comment-box">
           <div className="comment-box-header">
             <p className="comment-box-header-title"></p>
@@ -767,70 +776,132 @@ export const Groups = (props: IGroupProps) => {
                           ) : null}
                         </a>
                       </Link>
-                      <p className="comment-box-information-description">
-                        {values?.content?.data?.type === 'job' ? (
-                          <div>
-                            <img src={values?.content?.data?.imageUrl} />
-                            <h2>{values?.content?.data?.title}</h2>
-                            <h3>{values?.content?.data?.entity}</h3>
-                            <ul>
-                              {Object.entries({
-                                industries: values?.content?.data?.industries,
-                                size: values?.content?.data?.industries,
-                                roles: values?.content?.data?.roles,
-                                skills: values?.content?.data?.skills
-                              }).map(([key, value]) => (
-                                <li>
-                                  <strong>{key}:</strong> {value}
-                                </li>
-                              ))}
-                            </ul>
-                            <p>{values?.content?.data?.description}</p>
-                          </div>
-                        ) : (
-                          orbisParseMarkdown(values?.content, false)
-                        )}
-                      </p>
-
-                      {values?.content?.data?.type === 'job' && (
-                        <div className="comment-box-information-actions">
-                          <div className="comment-box-information-action">
-                            <div className="comment-box-information-action-option">
-                              <button
-                                className="comment-box-input-button"
+                      {values?.content?.data?.type === 'job' ? (
+                        <div className="comment-box-information-job">
+                          <img
+                            className="comment-box-information-job-image"
+                            src={values?.content?.data?.imageUrl}
+                          />
+                          <p className="comment-box-information-job-title">
+                            {values?.content?.data?.title}
+                          </p>
+                          <p className="comment-box-information-job-subtitle">
+                            {values?.content?.data?.entity}
+                          </p>
+                          {values?.content?.data?.industries && (
+                            <>
+                              <p className="comment-box-information-job-subtitle">
+                                Industries:
+                              </p>
+                              <div className="comment-box-information-job-list">
+                                {values?.content?.data?.industries.map(
+                                  (industry, index) => (
+                                    <div
+                                      className="comment-span-box"
+                                      key={index}
+                                    >
+                                      <p className="comment-span-box-text">
+                                        {industry}
+                                      </p>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </>
+                          )}
+                          {values?.content?.data?.size && (
+                            <>
+                              <p className="comment-box-information-job-subtitle">
+                                Company size:
+                              </p>
+                              <p className="comment-box-information-job-text">
+                                {values?.content?.data?.size}
+                              </p>
+                            </>
+                          )}
+                          {values?.content?.data?.roles && (
+                            <>
+                              <p className="comment-box-information-job-subtitle">
+                                Roles:
+                              </p>
+                              <div className="comment-box-information-job-list">
+                                {values?.content?.data?.roles.map(
+                                  (role, index) => (
+                                    <div
+                                      className="comment-span-box"
+                                      key={index}
+                                    >
+                                      <p className="comment-span-box-text">
+                                        {role}
+                                      </p>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </>
+                          )}
+                          {values?.content?.data?.skills && (
+                            <>
+                              <p className="comment-box-information-job-subtitle">
+                                Skills:
+                              </p>
+                              <div className="comment-box-information-job-list">
+                                {values?.content?.data?.skills.map(
+                                  (skill, index) => (
+                                    <div
+                                      className="comment-span-box"
+                                      key={index}
+                                    >
+                                      <p className="comment-span-box-text">
+                                        {skill}
+                                      </p>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </>
+                          )}
+                          <p className="comment-box-information-job-subtitle">
+                            Description:
+                          </p>
+                          <p className="comment-box-information-job-text">
+                            {values?.content?.data?.description}
+                          </p>
+                          <div className="comment-box-information-job-buttons">
+                            <div className="comment-box-information-job-button">
+                              <Button
+                                text="Apply to this Job"
                                 onClick={() =>
                                   handleApplyJob(
                                     values?.content?.data?.applyUrl
                                   )
                                 }
-                                disabled={
+                                isDisabled={
                                   isPostsLoading ||
                                   isMorePostsLoading ||
                                   isPostActionLoading ||
                                   status === 'pending_comment'
                                 }
-                              >
-                                Apply to this Job
-                              </button>
+                              />
                             </div>
-                            <div className="comment-box-information-action-option">
-                              <button
-                                className="comment-box-input-button"
+                            <div className="comment-box-information-job-button">
+                              <Button
+                                text="Referr a Friend"
                                 onClick={() => handleReferr(values?.stream_id)}
-                                disabled={
+                                isDisabled={
                                   isPostsLoading ||
                                   isMorePostsLoading ||
                                   isPostActionLoading ||
                                   status === 'pending_comment'
                                 }
-                              >
-                                Referr a Friend
-                              </button>
-                              <br />
-                              <br />
+                              />
                             </div>
                           </div>
                         </div>
+                      ) : (
+                        <p className="comment-box-information-description">
+                          {orbisParseMarkdown(values?.content, false)}
+                        </p>
                       )}
                       <div className="comment-box-information-actions">
                         <div className="comment-box-information-action">
@@ -1025,12 +1096,10 @@ export const Groups = (props: IGroupProps) => {
         <div className="left-box-background">
           <div className="left-box">
             <div className="left-box-header">
-              <p className="left-box-text"></p>
               <div className="left-box-header-icon" onClick={handleFilterOpen}>
                 <Close />
               </div>
             </div>
-
             <p className="left-box-title">Krebiters</p>
             <p className="left-box-description">
               Community of professionals earning in crypto/web3 💼💸 🆔💙own
@@ -1387,6 +1456,16 @@ export const Groups = (props: IGroupProps) => {
                 post
               </button>
             </div>
+            <button
+              className="content-box-refresh-button"
+              onClick={handleRefresh}
+              disabled={
+                isPostsLoading || isMorePostsLoading || isPostActionLoading
+              }
+            >
+              <Refresh />
+              <span>Refresh</span>
+            </button>
             <div className="content-box-list">
               {isPostsLoading ? (
                 <div className="content-loading-card">

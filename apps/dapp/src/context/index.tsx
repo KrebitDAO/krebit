@@ -216,9 +216,6 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
     window.localStorage.removeItem('krebit-remember-session');
-    setProfile(undefined);
-    setPassport(undefined);
-    setIssuer(undefined);
   };
 
   return (

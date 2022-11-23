@@ -13,7 +13,7 @@ const channel =
   'kjzl6cwe1jw145l8g0ojf3ku355i6ybovcpbiir8nam0385w8ajalywyd8un11b';
 
 /** Force index a stream. This shouldn't be necessary because our indexer picks up all new streams automatically but at least we are 100% sure. */
-export async function forceIndex(stream_id: string) {
+const forceIndex = async (stream_id: string) => {
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -33,7 +33,7 @@ export async function forceIndex(stream_id: string) {
     console.log('Error indexing new stream: ', e);
     return;
   }
-}
+};
 
 export const JobsController = async (
   request: express.Request,

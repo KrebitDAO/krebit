@@ -56,6 +56,7 @@ import { ThumbDown } from './ThumbDown';
 import { Reply } from './Reply';
 import { Comment } from './Comment';
 import { ArrowSend } from './ArrowSend';
+import { Refresh } from './Refresh';
 
 export {
   Close,
@@ -115,5 +116,6 @@ export {
   ThumbDown,
   Reply,
   Comment,
-  ArrowSend
+  ArrowSend,
+  Refresh
 };

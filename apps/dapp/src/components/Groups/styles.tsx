@@ -100,8 +100,7 @@ export const Wrapper = styled.div<IProps>`
 
         .left-box-header {
           display: flex;
-          align-items: center;
-          justify-content: space-between;
+          justify-content: end;
 
           .left-box-header-icon {
             width: 20px;
@@ -117,24 +116,6 @@ export const Wrapper = styled.div<IProps>`
               display: none;
             }
           }
-        }
-
-        .left-box-text {
-          margin: 0;
-          font-family: 'HelveticaNowDisplay-Medium';
-          font-size: ${theme.fonts.xs};
-          color: ${theme.colors.white}80;
-        }
-
-        .left-box-image {
-          width: 100px;
-          height: 100px;
-          border-radius: 9999px;
-          background-image: url('${image}');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
-          margin: 10px auto;
         }
 
         .left-box-title {
@@ -273,6 +254,42 @@ export const Wrapper = styled.div<IProps>`
           opacity: 0.7;
           cursor: not-allowed;
         }
+      }
+    }
+
+    .content-box-refresh-button {
+      background: linear-gradient(
+        to right,
+        ${theme.colors.heliotrope},
+        ${theme.colors.cyan}
+      );
+      border: none;
+      outline: none;
+      border-radius: 5px;
+      width: 100px;
+      height: 26px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      & > svg {
+        width: 20px;
+        height: 20px;
+        fill: ${theme.colors.haiti};
+        margin-right: 5px;
+      }
+
+      & > span {
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.haiti};
       }
     }
 
@@ -723,9 +740,14 @@ export const CommentBox = styled.div<IProps>`
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: ${theme.colors.white}0D;
-    backdrop-filter: saturate(180%) blur(20px);
     z-index: 20;
+
+    .comment-background {
+      width: 100%;
+      height: 100%;
+      background-color: ${theme.colors.white}0D;
+      backdrop-filter: saturate(180%) blur(20px);
+    }
 
     .comment-box {
       height: 100%;
@@ -869,6 +891,47 @@ export const CommentBoxCard = styled.div<IProps>`
       }
     }
 
+    .comment-span-box {
+      margin-top: 10px;
+      margin-right: 5px;
+      border: 1px solid ${theme.colors.melrose};
+      border-radius: 20px;
+      padding: 4px 14px;
+      height: 33px;
+      width: fit-content;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .comment-span-box-close {
+        margin-right: 5px;
+        width: 15px;
+        height: 15px;
+        background-color: ${theme.colors.melrose};
+        border-radius: 9999px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & > svg {
+          width: 10px;
+          height: 10px;
+          fill: ${theme.colors.ebony};
+        }
+      }
+
+      .comment-span-box-text {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.melrose};
+        max-width: 240px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
     .comment-box-information {
       margin-left: 7px;
       display: table;
@@ -910,6 +973,66 @@ export const CommentBoxCard = styled.div<IProps>`
             font-size: ${theme.fonts.xs};
             color: ${theme.colors.white};
             background-color: ${theme.colors.ebony};
+          }
+        }
+      }
+
+      .comment-box-information-job {
+        .comment-box-information-job-image {
+          width: fit-content;
+          height: 80px;
+        }
+
+        .comment-box-information-job-title {
+          margin: 0;
+          margin-top: 10px;
+          font-family: 'HelveticaNowDisplay-Medium';
+          font-size: ${theme.fonts.xl};
+          color: ${theme.colors.white};
+        }
+
+        .comment-box-information-job-subtitle {
+          margin: 0;
+          margin-top: 10px;
+          font-family: 'HelveticaNowDisplay-Medium';
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white};
+        }
+
+        .comment-box-information-job-text {
+          margin: 0;
+          margin-top: 10px;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white};
+
+          & > a {
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.cyan};
+          }
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts.base};
+
+            & > a {
+              font-size: ${theme.fonts.base};
+            }
+          }
+        }
+
+        .comment-box-information-job-list {
+          display: flex;
+          flex-wrap: wrap;
+          width: 100%;
+        }
+
+        .comment-box-information-job-buttons {
+          display: flex;
+          grid-gap: 10px;
+          margin: 20px 0;
+
+          .comment-box-information-job-button {
+            width: 124px;
+            height: 30px;
           }
         }
       }
