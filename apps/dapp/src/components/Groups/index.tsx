@@ -462,7 +462,7 @@ export const Groups = (props: IGroupProps) => {
       setStatus('pending_comment');
 
       let { data: fetchedPost } = await orbis.getPost(id);
-
+      console.log('fetchedPost', fetchedPost);
       const post = getMetadata(id, fetchedPost?.creator_details?.did).then(
         metadata => ({
           ...fetchedPost,
@@ -634,6 +634,18 @@ export const Groups = (props: IGroupProps) => {
     window.open(`https://app.orbis.club/post/${postId}`, '_blank');
   };
 
+  const handleApplyJob = (applyUrl: string) => {
+    if (!applyUrl) return;
+
+    window.open(applyUrl, '_blank');
+  };
+
+  const handleReferr = (jobId: string) => {
+    if (!jobId) return;
+
+    push(`/create/referral/?jobId=${jobId}`);
+  };
+
   const handleCleanPage = () => {
     setCurrentPage(DEFAULT_CURRENT_PAGE);
     setForm(undefined);
@@ -696,7 +708,7 @@ export const Groups = (props: IGroupProps) => {
       >
         <div className="comment-box">
           <div className="comment-box-header">
-            <p className="comment-box-header-title">Replies</p>
+            <p className="comment-box-header-title"></p>
             <div
               className="comment-box-header-icon"
               onClick={() => handleCommentSelected(undefined)}
@@ -756,8 +768,70 @@ export const Groups = (props: IGroupProps) => {
                         </a>
                       </Link>
                       <p className="comment-box-information-description">
-                        {orbisParseMarkdown(values?.content, false)}
+                        {values?.content?.data?.type === 'job' ? (
+                          <div>
+                            <img src={values?.content?.data?.imageUrl} />
+                            <h2>{values?.content?.data?.title}</h2>
+                            <h3>{values?.content?.data?.entity}</h3>
+                            <ul>
+                              {Object.entries({
+                                industries: values?.content?.data?.industries,
+                                size: values?.content?.data?.industries,
+                                roles: values?.content?.data?.roles,
+                                skills: values?.content?.data?.skills
+                              }).map(([key, value]) => (
+                                <li>
+                                  <strong>{key}:</strong> {value}
+                                </li>
+                              ))}
+                            </ul>
+                            <p>{values?.content?.data?.description}</p>
+                          </div>
+                        ) : (
+                          orbisParseMarkdown(values?.content, false)
+                        )}
                       </p>
+
+                      {values?.content?.data?.type === 'job' && (
+                        <div className="comment-box-information-actions">
+                          <div className="comment-box-information-action">
+                            <div className="comment-box-information-action-option">
+                              <button
+                                className="comment-box-input-button"
+                                onClick={() =>
+                                  handleApplyJob(
+                                    values?.content?.data?.applyUrl
+                                  )
+                                }
+                                disabled={
+                                  isPostsLoading ||
+                                  isMorePostsLoading ||
+                                  isPostActionLoading ||
+                                  status === 'pending_comment'
+                                }
+                              >
+                                Apply to this Job
+                              </button>
+                            </div>
+                            <div className="comment-box-information-action-option">
+                              <button
+                                className="comment-box-input-button"
+                                onClick={() => handleReferr(values?.stream_id)}
+                                disabled={
+                                  isPostsLoading ||
+                                  isMorePostsLoading ||
+                                  isPostActionLoading ||
+                                  status === 'pending_comment'
+                                }
+                              >
+                                Referr a Friend
+                              </button>
+                              <br />
+                              <br />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div className="comment-box-information-actions">
                         <div className="comment-box-information-action">
                           <div
@@ -951,15 +1025,16 @@ export const Groups = (props: IGroupProps) => {
         <div className="left-box-background">
           <div className="left-box">
             <div className="left-box-header">
-              <p className="left-box-text">GROUP DETAILS</p>
+              <p className="left-box-text"></p>
               <div className="left-box-header-icon" onClick={handleFilterOpen}>
                 <Close />
               </div>
             </div>
-            <div className="left-box-image"></div>
-            <p className="left-box-title">{group?.content?.name}</p>
+
+            <p className="left-box-title">Krebiters</p>
             <p className="left-box-description">
-              {group?.content?.description}
+              Community of professionals earning in crypto/web3 💼💸 🆔💙own
+              your #reputation, earn with your #talent, keep your #privacy
             </p>
             <div className="left-box-list">
               <Link href="/posts/?channel_id=global_feed">
@@ -972,7 +1047,7 @@ export const Groups = (props: IGroupProps) => {
                   <div className="left-box-list-option-icon">
                     <Home />
                   </div>
-                  <p className="left-box-list-option-text">Global Feed</p>
+                  <p className="left-box-list-option-text">Home</p>
                 </a>
               </Link>
               <Link href="/posts">
@@ -983,9 +1058,9 @@ export const Groups = (props: IGroupProps) => {
                   onClick={() => handleCleanPage()}
                 >
                   <div className="left-box-list-option-icon">
-                    <Home />
+                    <Tag />
                   </div>
-                  <p className="left-box-list-option-text">Home</p>
+                  <p className="left-box-list-option-text">Krebiters</p>
                 </a>
               </Link>
               {group?.channels?.map((channel, index) => (

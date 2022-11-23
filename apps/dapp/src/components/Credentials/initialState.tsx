@@ -79,11 +79,6 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           placeholder: 'add logo'
         },
         {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
-        {
           type: 'select',
           name: 'entity',
           placeholder: 'Entity/Organization'
@@ -143,7 +138,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   },
   {
     type: 'recommendation',
-    title: 'Recomendation',
+    title: 'Endorsement',
     description:
       'Recommend a colleague that you have worked with or a buyer/seller that you have done business with',
     primaryColor: 'haiti',
@@ -165,11 +160,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'image',
           placeholder: 'add logo'
         },
-        {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
+
         {
           type: 'select',
           name: 'entity',
@@ -251,11 +242,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'image',
           placeholder: 'add logo'
         },
-        {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
+
         {
           type: 'select',
           name: 'entity',
@@ -337,11 +324,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'image',
           placeholder: 'add logo'
         },
-        {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
+
         {
           type: 'select',
           name: 'entity',
@@ -403,8 +386,8 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
     }
   },
   {
-    type: 'invite',
-    title: 'Invite',
+    type: 'referr',
+    title: 'Referral',
     description:
       'Invite a friend or colleague that your trust to the Krebiters community',
     primaryColor: 'rose',
@@ -415,21 +398,17 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'name',
-          placeholder: 'Invitation Title'
+          placeholder: 'Referral Title'
         },
         {
           name: 'description',
           placeholder: 'Write a personalized invitation message here'
         },
-        {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
+
         {
           type: 'text',
           name: 'proof',
-          placeholder: 'Proof url'
+          placeholder: 'Proof/Job url'
         }
       ],
       issueTo: {
@@ -461,7 +440,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   {
     type: 'review',
     title: 'Review',
-    description: 'Rate anyone in the Krebiters community',
+    description: 'Rate anyone or anything',
     primaryColor: 'blueCharcoal',
     secondaryColor: 'cyan',
     icon: <Star />,
@@ -481,11 +460,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'description',
           placeholder: 'Write your review notes here'
         },
-        {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
+
         {
           type: 'text',
           name: 'proof',
@@ -563,11 +538,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'level',
           placeholder: 'Level: 5/10'
         },
-        {
-          type: 'switch',
-          name: 'private',
-          placeholder: 'public/private'
-        },
+
         {
           type: 'text',
           name: 'proof',

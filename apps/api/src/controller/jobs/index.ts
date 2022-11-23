@@ -97,16 +97,20 @@ export const JobsController = async (
         applyUrl: `${job.applyUrl}?&utm_source=krebit.id&lever-source%5B%5D=krebit.id&gh_src=krebit.id&ref=krebit.id&src=krebit.id&source=krebit.id`,
         roles,
         skills,
-        salaryRange: 'N/A',
-        imageUrl: job.companyLogos?.manual?.src
-          ? job.companyLogos?.manual?.src
-          : job.companyLogos?.linkedin?.src
+        salaryRange: 'N/A'
       };
 
       const jobDoc = {
         context: channel,
         title: jobData.title,
-        body: '',
+
+        /*media: [
+          {
+            url: jobData.imageUrl,
+            gateway: 'https://orbis.mypinata.cloud/ipfs/'
+          }
+        ],*/
+        // 'krebit-job'
         tags: [
           {
             slug: 'krebit-job',
@@ -114,7 +118,12 @@ export const JobsController = async (
           },
           ...tags
         ],
-        data: jobData
+        data: {
+          ...jobData,
+          imageUrl: job.companyLogos?.manual?.src
+            ? job.companyLogos?.manual?.src
+            : job.companyLogos?.linkedin?.src
+        }
       };
       console.log('jobDoc:', jobDoc);
 
@@ -128,7 +137,7 @@ export const JobsController = async (
       await Issuer.updateDocument(
         {
           ...jobDoc,
-          body: `Job offer: ${job.title}\nCompany: ${job.companyName}\nDetails: https://krebit.id/posts?post_id=${streamId}`
+          body: `Job offer: ${jobDoc.data.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
         },
         streamId
       );
