@@ -462,7 +462,7 @@ export const Groups = (props: IGroupProps) => {
       setStatus('pending_comment');
 
       let { data: fetchedPost } = await orbis.getPost(id);
-      console.log('fetchedPost', fetchedPost);
+
       const post = getMetadata(id, fetchedPost?.creator_details?.did).then(
         metadata => ({
           ...fetchedPost,

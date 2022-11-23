@@ -137,7 +137,7 @@ export const JobsController = async (
       await Issuer.updateDocument(
         {
           ...jobDoc,
-          body: `Job offer: ${jobDoc.data.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
+          body: `Job offer: ${jobDoc?.data?.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
         },
         streamId
       );
