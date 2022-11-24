@@ -39,6 +39,10 @@ export const DelegatedController = async (
     const { claimedCredentialId } = request.body;
     const { credentialSubjectAddress } = request.body;
     const { credentialSubjectAddressDID } = request.body;
+
+    console.log('credentialSubjectAddress:', credentialSubjectAddress);
+    console.log('credentialSubjectAddressDID:', credentialSubjectAddressDID);
+
     const { wallet, ethProvider } = await connect();
 
     // Log in with wallet to Ceramic DID
@@ -103,8 +107,14 @@ export const DelegatedController = async (
           did: credentialSubjectAddressDID,
           type: claimValue.credentialType,
           typeSchema: claimValue.credentialSchema,
-          tags: ['Community', ...claimValue.tags],
-          value: claimValue.values,
+          tags: claimValue.tags?.length
+            ? ['Community', ...claimValue.tags]
+            : ['Community'],
+          value: {
+            ...claimValue.values,
+            parentCredential: claimedCredentialId,
+            onBehalveOfIssuer: claimedCredential.issuer
+          },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs

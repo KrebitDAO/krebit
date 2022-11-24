@@ -648,7 +648,9 @@ export const Groups = (props: IGroupProps) => {
   const handleReferr = (jobId: string) => {
     if (!jobId) return;
 
-    push(`/create/referral/?jobId=${jobId}`);
+    push(
+      `/create/referr/?name=${'Job Referral'}&proof=https://krebit.id/posts?post_id=${jobId}`
+    );
   };
 
   const handleCleanPage = () => {

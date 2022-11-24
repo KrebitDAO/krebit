@@ -290,9 +290,20 @@ export const Community = (props: IProps) => {
         ?.concat(value.username);
     }
 
-    if (value?.id) {
-      formattedValue = formattedValue?.concat(' / ')?.concat(value.id);
+    if (value?.onBehalveOfIssuer) {
+      formattedValue = formattedValue
+        ?.concat(' / ')
+        ?.concat(
+          value.onBehalveOfIssuer?.id.substring(0, 14) +
+            '...' +
+            value.onBehalveOfIssuer?.id.substring(
+              value.onBehalveOfIssuer?.id.length - 4
+            )
+        );
     }
+
+    if (value?.description)
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.description);
 
     return formattedValue;
   };

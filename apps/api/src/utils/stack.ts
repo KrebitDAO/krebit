@@ -42,8 +42,7 @@ export const getTopTags = async (props: IProps) => {
     else return [];
   } catch (error) {
     console.error(error);
-
-    return null;
+    return [];
   }
 };
 

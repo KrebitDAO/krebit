@@ -427,7 +427,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
-            credentialType: 'Invite',
+            credentialType: 'Referral',
             credentialSchema: 'krebit://schemas/recommendation',
             credentialSubjectListUrl: '',
             imageUrl: values?.image || ''
