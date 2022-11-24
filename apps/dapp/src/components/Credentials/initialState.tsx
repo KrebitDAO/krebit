@@ -404,7 +404,6 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'description',
           placeholder: 'Write a personalized invitation message here'
         },
-
         {
           type: 'text',
           name: 'proof',
