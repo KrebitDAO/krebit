@@ -668,4 +668,28 @@ export class Passport {
       where
     });
   };
+
+  // write to my ceramic
+  createDocument = async (
+    content: any,
+    tags: string[],
+    schema: string,
+    family: string = 'krebit'
+  ) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    console.log('Saving document on Ceramic...');
+
+    try {
+      const stream = await TileDocument.create(this.idx.ceramic, {
+        family,
+        controllers: [this.idx.id],
+        tags,
+        schema
+      });
+      return stream.id.toString();
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
 }

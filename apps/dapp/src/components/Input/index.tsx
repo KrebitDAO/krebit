@@ -44,7 +44,7 @@ export const Input = (props: IProps) => {
         <TextField
           name={name}
           label={placeholder}
-          value={value}
+          value={value || ''}
           type={type}
           onChange={onChange}
           variant="outlined"

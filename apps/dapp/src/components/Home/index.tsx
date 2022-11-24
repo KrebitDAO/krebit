@@ -140,7 +140,7 @@ export const Home = () => {
             </div>
             <div
               className="actions-card"
-              onClick={() => handleRoute('https://discord.gg/UD5YhCU2', true)}
+              onClick={() => handleRoute('https://discord.gg/VHSq4ABsfz', true)}
             >
               <div className="actions-card-content">
                 <Community />
@@ -152,12 +152,7 @@ export const Home = () => {
             </div>
             <div
               className="actions-card"
-              onClick={() =>
-                handleRoute(
-                  'https://d3x2s82dzfa.typeform.com/to/AvZMdnRp',
-                  true
-                )
-              }
+              onClick={() => handleRoute('/create')}
             >
               <div className="actions-card-content">
                 <Token />
@@ -168,15 +163,7 @@ export const Home = () => {
               </p>
             </div>
 
-            <div
-              className="actions-card"
-              onClick={() =>
-                handleRoute(
-                  'https://d3x2s82dzfa.typeform.com/to/B63Gz2v0',
-                  true
-                )
-              }
-            >
+            <div className="actions-card" onClick={() => handleRoute('/posts')}>
               <div className="actions-card-content">
                 <Deal />
               </div>

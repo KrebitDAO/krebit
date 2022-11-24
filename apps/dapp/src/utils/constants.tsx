@@ -7,33 +7,42 @@ import {
   Whatsapp
 } from 'components/Icons';
 
+const DEFAULT_DATE = '01/12/2009';
+
+const DEFAULT_CLAIM_CREDENTIAL_TYPES = ['Issuer', 'Community'];
+
+const DEFAULT_GROUP_ID =
+  'kjzl6cwe1jw145neve8lep779kx1wq4mnjzajvg7p260csrft5s65m6lulgoevu';
+
+const DEFAULT_GROUP_CONTENT_VIEW = 'feed';
+
 const DEFAULT_HOME_BOXES = [
   {
-    box: '$KRB 180',
+    box: '180 Krebits',
     username: 'fuano.eth',
     image: '/imgs/images/rare-buddies-1.png',
     skills: ['Illustrator', 'NFT Creator', 'UI']
   },
   {
-    box: '$KRB 171',
+    box: '171 Krebits',
     username: 'alerios.eth',
     image: '/imgs/images/alerios.jpg',
     skills: ['Developer', 'Product']
   },
   {
-    box: '$KRB 152',
+    box: '152 Krebits',
     username: 'texasfr.eth',
     image: '/imgs/images/texasfr.png',
     skills: ['Talent', 'Software', 'QA']
   },
   {
-    box: '$KRB 150',
+    box: '150 Krebits',
     username: 'andresmontoya.eth',
     image: '/imgs/images/andresmontoya.jpeg',
     skills: ['Javascript', 'UX', 'Frontend']
   },
   {
-    box: '$KRB 143',
+    box: '143 Krebits',
     username: 'piraseligman.eth',
     image: '/imgs/images/piraseligman.png',
     skills: ['Growth', 'Innovation', 'Design']
@@ -67,8 +76,7 @@ const DEFAULT_TWEET_PEOPLE = [
       'So futuristic! 🪐'
     ],
     url: 'https://twitter.com/unstoppableweb/status/1583518766482087937',
-    imageUrl:
-      'https://pbs.twimg.com/media/FfnJTTSVsAEq6mP?format=jpg&name=small'
+    imageUrl: '/imgs/images/FfnJTTSVsAEq6mP.jpeg'
   },
   {
     image:
@@ -81,8 +89,7 @@ const DEFAULT_TWEET_PEOPLE = [
       '💙🤍❤️'
     ],
     url: 'https://twitter.com/EthCC/status/1547687405607534593',
-    imageUrl:
-      'https://pbs.twimg.com/media/FXp9e74UcAEmft_?format=jpg&name=small'
+    imageUrl: '/imgs/images/FXp9e74UcAEmft_.jpeg'
   },
   {
     image:
@@ -95,8 +102,7 @@ const DEFAULT_TWEET_PEOPLE = [
       'https://t.co/7n576EsNZa'
     ],
     url: 'https://twitter.com/3xcalibur69/status/1582150275112259584',
-    imageUrl:
-      'https://pbs.twimg.com/card_img/1584687501054279680/q6udpYvG?format=jpg&name=small'
+    imageUrl: '/imgs/images/OKGZ6iXx.jpeg'
   },
   {
     image:
@@ -109,8 +115,7 @@ const DEFAULT_TWEET_PEOPLE = [
       "Let's dive into 🧵"
     ],
     url: 'https://twitter.com/FirstBatchxyz_/status/1533454955440381958',
-    imageUrl:
-      'https://pbs.twimg.com/media/FUfonzBWYAEcGBy?format=jpg&name=small'
+    imageUrl: '/imgs/images/FUfonzBWYAEcGBy.jpeg'
   },
   {
     image:
@@ -123,8 +128,7 @@ const DEFAULT_TWEET_PEOPLE = [
       ' #smartcontract #interfi'
     ],
     url: 'https://twitter.com/InterFiNetwork/status/1513750349135290370',
-    imageUrl:
-      'https://pbs.twimg.com/card_img/1584976246416490496/HStsBlRK?format=jpg&name=small'
+    imageUrl: '/imgs/images/tTvZadv5.jpeg'
   },
   {
     image:
@@ -137,8 +141,7 @@ const DEFAULT_TWEET_PEOPLE = [
       '#awesome #awesome-list'
     ],
     url: 'https://twitter.com/stargazoor/status/1580563167822086145',
-    imageUrl:
-      'https://pbs.twimg.com/card_img/1584923711907536897/wjKMl3_d?format=jpg&name=small'
+    imageUrl: '/imgs/images/ha74mctK.jpeg'
   },
   {
     image:
@@ -151,12 +154,11 @@ const DEFAULT_TWEET_PEOPLE = [
       "Let me know if I've missed anyone below👇"
     ],
     url: 'https://twitter.com/kermankohli/status/1583356132932083712',
-    imageUrl:
-      'https://pbs.twimg.com/media/Ffk1esTakAA2wwI?format=jpg&name=small'
+    imageUrl: '/imgs/images/Ffk1esTakAA2wwI.jpeg'
   },
   {
     image:
-      'https://pbs.twimg.com/profile_images/1574456733875179521/lQVEEh5a_400x400.png',
+      'https://pbs.twimg.com/profile_images/1587935282720301058/PWvd9E1P_400x400.jpg',
     name: 'CryptaniC｜ｸﾘﾌﾟﾀﾆｼ🛸',
     username: '@cryptani_c',
     description: [
@@ -219,6 +221,12 @@ const DEFAULT_EMPTY_CARD_COMMUNITY = {
   isIssued: false
 };
 
+const DEFAULT_EMPTY_CARD_ACTIVITY = {
+  image: '/imgs/logos/Krebit.svg',
+  username: 'krebit',
+  description: 'Share your thoughts'
+};
+
 const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
   {
     id: 'twitter',
@@ -247,6 +255,12 @@ const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
   }
 ];
 
+const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+const DEFAULT_ERROR_MESSAGES = {
+  ID_NOT_FOUND: 'Not found'
+};
+
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {
   INITIAL: 'Approve signature on your Wallet...',
   ISSUER_CONNECTION: 'Connecting to issuer...',
@@ -260,13 +274,45 @@ const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
   ERROR_CREDENTIAL: 'Error saving credential. Please check later'
 };
 
+const DEFAULT_SKILL_LANGUAGES = [
+  { text: 'JavaScript', value: 'JavaScript' },
+  { text: 'Java', value: 'Java' },
+  { text: 'C#', value: 'C#' },
+  { text: 'PHP', value: 'PHP' },
+  { text: 'Android', value: 'Android' },
+  { text: 'HTML', value: 'HTML' },
+  { text: 'C++', value: 'C++' },
+  { text: 'CSS', value: 'CSS' },
+  { text: 'Objective-C', value: 'Objective-C' },
+  { text: 'SQL', value: 'SQL' },
+  { text: 'R', value: 'R' },
+  { text: 'C', value: 'C' },
+  { text: 'Swift', value: 'Swift' },
+  { text: 'Ruby', value: 'Ruby' },
+  { text: 'TypeScript', value: 'TypeScript' },
+  { text: 'Scala', value: 'Scala' },
+  { text: 'Shell', value: 'Shell' },
+  { text: 'Kotlin', value: 'Kotlin' },
+  { text: 'Go', value: 'Go' },
+  { text: 'Rust', value: 'Rust' },
+  { text: 'Solidity', value: 'Solidity' }
+];
+
 export const constants = {
+  DEFAULT_DATE,
+  DEFAULT_CLAIM_CREDENTIAL_TYPES,
+  DEFAULT_GROUP_ID,
+  DEFAULT_GROUP_CONTENT_VIEW,
   DEFAULT_HOME_BOXES,
   DEFAULT_TWEET_PEOPLE,
   DEFAULT_EMPTY_CARD_PERSONHOOD,
   DEFAULT_EMPTY_CARD_WORK,
   DEFAULT_EMPTY_CARD_COMMUNITY,
+  DEFAULT_EMPTY_CARD_ACTIVITY,
   DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS,
+  DEFAULT_IMAGE_FILE_TYPES,
+  DEFAULT_ERROR_MESSAGES,
   DEFAULT_MESSAGES_FOR_PROVIDERS,
-  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS
+  DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS,
+  DEFAULT_SKILL_LANGUAGES
 };

@@ -9,7 +9,9 @@ import {
   Spect,
   Cake,
   Person,
-  Guild
+  Guild,
+  Dework,
+  Stack
 } from 'components/Icons';
 import { ReactNode } from 'react';
 
@@ -47,6 +49,19 @@ const PERSONHOOD_CREDENTIALS = [
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0'
+  },
+  {
+    credentialType: 'TwitterVerified',
+    entity: 'Twitter Verified (blue checkmark)',
+    description: 'Krebit Verification Node',
+    icon: <Twitter />,
+    verificationUrl:
+      process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     credentialType: 'Github',
@@ -123,6 +138,41 @@ const PERSONHOOD_CREDENTIALS = [
 ];
 
 const WORK_CREDENTIALS = [
+  {
+    credentialType: 'StackOverflowReputationGT1K',
+    entity: 'Stack Overflow Reputation > 1K',
+    description: 'Krebit Verification Node',
+    icon: <Stack />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'New'
+  },
+  {
+    credentialType: 'StackOverflowScoreGT10',
+    entity: 'Stack Overflow Tag Score > 10',
+    description: 'Krebit Verification Node',
+    icon: <Stack />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
+  },
+  {
+    credentialType: 'DeworkCompletedTasksGT10',
+    entity: 'Dework Completed Tasks > 10',
+    description: 'Krebit Verification Node',
+    icon: <Dework />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/dework'),
+    did: process.env.NEXT_PUBLIC_ISSUER_DID,
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    price: '0',
+    badgeText: 'New'
+  },
+
   {
     credentialType: 'SpectCompletedTasksGT10',
     entity: 'Spect Completed Tasks > 10',
@@ -281,7 +331,6 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-
     price: '0'
   },
   {
@@ -295,8 +344,7 @@ const COMMUNITY_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    isDisabled: true
+    price: '0'
   }
 ];
 

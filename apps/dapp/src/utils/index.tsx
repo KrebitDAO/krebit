@@ -16,6 +16,8 @@ import { formatFilename } from './formatFilename';
 import { formatUrlImage } from './formatUrlImage';
 import { countries } from './countries';
 import { guildXyz } from './guildXyz';
+import { getStackUser } from './getStackUser';
+import { orbisParseMarkdown } from './orbisParseMarkdown';
 
 export {
   createEmotionCache,
@@ -35,6 +37,8 @@ export {
   formatFilename,
   formatUrlImage,
   countries,
-  guildXyz
+  guildXyz,
+  getStackUser,
+  orbisParseMarkdown
 };
 export type { IIsuerParams };

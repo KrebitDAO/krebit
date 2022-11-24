@@ -55,7 +55,7 @@ export const Select = (props: IProps) => {
               labelId={`${id}-select-standard-label`}
               id={`${id}-select-standard`}
               name={name}
-              value={value}
+              value={value || ''}
               onChange={onChange}
               label={label}
               disabled={isDisabled}

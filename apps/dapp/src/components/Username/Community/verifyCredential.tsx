@@ -387,9 +387,9 @@ export const VerifyCredential = (props: IProps) => {
           {currentVerify?.credentialType === 'Issuer' && (
             <>
               <BoxStep
-                title="Issuer Details:"
-                description={currentVerify.description}
-                did={currentVerify.did}
+                title={currentCommunity?.credential?.value?.values?.name}
+                description={currentCommunity?.credential?.value?.description}
+                did={currentCommunity?.credential?.credentialSubject?.did}
                 icon={currentVerify.icon}
                 verificationUrl={currentVerify.verificationUrl}
                 price={currentVerify.price}
@@ -397,100 +397,53 @@ export const VerifyCredential = (props: IProps) => {
               <BoxStep
                 title="Step 1"
                 description={
-                  issuerProvider.currentCredential ||
-                  currentCommunity?.credential
+                  issuerProvider.currentCredential
                     ? 'Step completed, you can now check your credential'
-                    : 'Become an Issuer'
+                    : currentCommunity?.credential?.value?.values?.issueTo?.findIndex(
+                        element => {
+                          return (
+                            element.toLowerCase() ===
+                            walletInformation.address.toLowerCase()
+                          );
+                        }
+                      ) > -1 &&
+                      walletInformation.address.toLowerCase() !==
+                        currentCommunity?.credential?.credentialSubject
+                          ?.ethereumAddress
+                    ? 'Claim this credential'
+                    : 'You are not eligible to claim this credential'
                 }
                 form={{
-                  fields:
-                    issuerProvider.currentCredential ||
-                    currentCommunity?.credential
-                      ? undefined
-                      : [
-                          {
-                            name: 'entity',
-                            placeholder: 'Enter the Issuing Entity name',
-                            value: issuerProvider.claimValues.entity,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'description',
-                            placeholder: 'Enter the Issuing Entity description',
-                            value: issuerProvider.claimValues.description,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'credentialType',
-                            placeholder: 'Enter the credential type nme',
-                            value: issuerProvider.claimValues.credentialType,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'credentialSchema',
-                            placeholder:
-                              'Enter the credential type JSON schema',
-                            value: issuerProvider.claimValues.credentialSchema,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'imageUrl',
-                            placeholder: 'Enter the Issuing Entity logo Url',
-                            value: issuerProvider.claimValues.imageUrl,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'verificationUrl',
-                            placeholder: 'Enter the Verification Url',
-                            value: issuerProvider.claimValues.verificationUrl,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'did',
-                            placeholder: 'Enter the issuer DID',
-                            value: issuerProvider.claimValues.did,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            name: 'ethereumAddress',
-                            placeholder: 'Enter the issuer Address',
-                            value: issuerProvider.claimValues.ethereumAddress,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            type: 'number',
-                            name: 'expirationMonths',
-                            placeholder:
-                              'Enter the number of expiration months for credentials',
-                            value: issuerProvider.claimValues.expirationMonths,
-                            onChange: issuerProvider.handleClaimValues
-                          },
-                          {
-                            type: 'number',
-                            name: 'price',
-                            placeholder:
-                              'Enter the native token price for issuing this credential',
-                            value: issuerProvider.claimValues.price,
-                            onChange: issuerProvider.handleClaimValues
-                          }
-                        ],
-                  button:
-                    issuerProvider.currentCredential ||
-                    currentCommunity?.credential
-                      ? {
-                          text: 'Check it',
-                          onClick: () =>
-                            checkCredentialsURLs(
-                              'ceramic',
-                              'credential',
-                              issuerProvider.currentCredential ||
-                                currentCommunity?.credential
-                            )
+                  fields: undefined,
+                  button: issuerProvider.currentCredential
+                    ? {
+                        text: 'Check it',
+                        onClick: () =>
+                          checkCredentialsURLs(
+                            'ceramic',
+                            'credential',
+                            issuerProvider.currentCredential
+                          )
+                      }
+                    : currentCommunity?.credential?.value?.values?.issueTo?.findIndex(
+                        element => {
+                          return (
+                            element.toLowerCase() ===
+                            walletInformation.address.toLowerCase()
+                          );
                         }
-                      : {
-                          text: 'Verify',
-                          onClick: issuerProvider.handleGetCredential
-                        }
+                      ) > -1 &&
+                      walletInformation.address.toLowerCase() !==
+                        currentCommunity?.credential?.credentialSubject
+                          ?.ethereumAddress
+                    ? {
+                        text: 'Claim',
+                        onClick: () =>
+                          issuerProvider.handleClaimCredential(
+                            currentCommunity?.credential
+                          )
+                      }
+                    : undefined
                 }}
                 iconType="credential"
                 isLoading={issuerProvider.status === 'credential_pending'}

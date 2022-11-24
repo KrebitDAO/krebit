@@ -88,7 +88,31 @@ const CREDENTIAL_TYPES = [
   'GuildXyzAdmin',
   'GuildXyzMember',
   'GuildXyzRole',
-  'VerifiableCredential'
+  'VerifiableCredential',
+  'DeworkCompletedTasksGT10',
+  'PythonStackOverflowScoreGT10',
+  'JavaScriptStackOverflowScoreGT10',
+  'JavaStackOverflowScoreGT10',
+  'C#StackOverflowScoreGT10',
+  'PHPStackOverflowScoreGT10',
+  'AndroidStackOverflowScoreGT10',
+  'HTMLStackOverflowScoreGT10',
+  'C++StackOverflowScoreGT10',
+  'CSSStackOverflowScoreGT10',
+  'Objective-CStackOverflowScoreGT10',
+  'SQLStackOverflowScoreGT10',
+  'RStackOverflowScoreGT10',
+  'CStackOverflowScoreGT10',
+  'SwiftStackOverflowScoreGT10',
+  'RubyStackOverflowScoreGT10',
+  'TypeScriptStackOverflowScoreGT10',
+  'ScalaStackOverflowScoreGT10',
+  'ShellStackOverflowScoreGT10',
+  'KotlinStackOverflowScoreGT10',
+  'GoStackOverflowScoreGT10',
+  'RustStackOverflowScoreGT10',
+  'SolidityStackOverflowScoreGT10',
+  'TwitterVerified'
 ];
 
 export const getNFTCredentialTypes = () => {

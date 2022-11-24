@@ -14,13 +14,15 @@ import { useGithubOrgMemberProvider } from './useGithubOrgMemberProvider';
 import { useDiscordGuildOwnerProvider } from './useDiscordGuildOwnerProvider';
 import { useDiscordGuildMemberProvider } from './useDiscordGuildMemberProvider';
 import { usePersonaProvider } from './usePersonaProvider';
-import { useOutsideClick } from './useOutsideClick';
 import { useSpectCompletedProvider } from './useSpectCompletedProvider';
 import { useVeriffAgeProvider } from './useVeriffAgeProvider';
 import { useVeriffGovernmentIdProvider } from './useVeriffGovernmentIdProvider';
 import { useGuildXyzMemberProvider } from './useGuildXyzMemberProvider';
 import { useGuildXyzAdminProvider } from './useGuildXyzAdminProvider';
 import { useGuildXyzRoleProvider } from './useGuildXyzRoleProvider';
+import { useDeworkCompletedProvider } from './useDeworkCompletedProvider';
+import { useStackReputationProvider } from './useStackReputationProvider';
+import { useStackScoreProvider } from './useStackScoreProvider';
 
 export {
   useWindowSize,
@@ -39,11 +41,13 @@ export {
   useDiscordGuildOwnerProvider,
   useDiscordGuildMemberProvider,
   usePersonaProvider,
-  useOutsideClick,
   useSpectCompletedProvider,
   useVeriffAgeProvider,
   useVeriffGovernmentIdProvider,
   useGuildXyzMemberProvider,
   useGuildXyzAdminProvider,
-  useGuildXyzRoleProvider
+  useGuildXyzRoleProvider,
+  useDeworkCompletedProvider,
+  useStackReputationProvider,
+  useStackScoreProvider
 };

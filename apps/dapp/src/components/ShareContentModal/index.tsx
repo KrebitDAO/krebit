@@ -1,19 +1,18 @@
 import { useRef } from 'react';
+import useOnClickOutside from 'use-onclickoutside';
 
 import { Wrapper } from './styles';
-import { useOutsideClick } from 'hooks';
 import { constants } from 'utils';
 
 interface IProps {
-  parentRef: React.MutableRefObject<undefined | HTMLDivElement>;
   customText: string;
   onClose: () => void;
 }
 
 export const ShareContentModal = (props: IProps) => {
-  const { parentRef, customText, onClose } = props;
+  const { customText, onClose } = props;
   const ref = useRef(null);
-  useOutsideClick({ ref, parentRef, handler: onClose });
+  useOnClickOutside(ref, onClose);
 
   const handleSocialNetworkAction = async (id: string) => {
     const currentUrl = window.location.href;

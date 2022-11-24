@@ -1,10 +1,12 @@
+import { ReactElement } from 'react';
+
+import { Wrapper } from './styles';
 import { Button } from 'components/Button';
 import { Close } from 'components/Icons';
 import { Loading } from 'components/Loading';
-import { Wrapper } from './styles';
 
 interface IProps {
-  text: string;
+  title: string;
   continueButton: {
     text: string;
     onClick: () => void;
@@ -13,17 +15,26 @@ interface IProps {
     text: string;
     onClick: () => void;
   };
+  text?: string;
   isLoading?: boolean;
+  component?: () => ReactElement;
 }
 
 export const QuestionModal = (props: IProps) => {
-  const { text, continueButton, cancelButton, isLoading = false } = props;
+  const {
+    title,
+    continueButton,
+    cancelButton,
+    text,
+    isLoading = false,
+    component
+  } = props;
 
   return (
     <Wrapper>
       <div className="question-modal-container">
         <div className="question-modal-header">
-          <p className="question-modal-header-title">Remove Credential?</p>
+          <p className="question-modal-header-title">{title}</p>
           <div
             className="question-modal-header-close"
             onClick={isLoading ? undefined : cancelButton.onClick}
@@ -36,8 +47,10 @@ export const QuestionModal = (props: IProps) => {
             <div className="question-modal-content-loading">
               <Loading />
             </div>
-          ) : (
+          ) : text ? (
             <p className="question-modal-content-text">{text}</p>
+          ) : (
+            component()
           )}
         </div>
         <div className="question-modal-content-buttons">

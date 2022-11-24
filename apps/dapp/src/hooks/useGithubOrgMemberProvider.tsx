@@ -132,13 +132,14 @@ export const useGithubOrgMemberProvider = () => {
 
         //Issue self-signed credential claiming the Github
         const claim = getClaim(walletInformation.address, Issuer.did, e.data);
-        console.log('claim: ', claim);
 
-        const claimedCredential = await Issuer.issue(claim);
         if (claimValues.private) {
           claim['encrypt'] = 'lit' as 'lit';
           claim['shareEncryptedWith'] = currentIssuer.address;
         }
+        console.log('claim: ', claim);
+
+        const claimedCredential = await Issuer.issue(claim);
         console.log('claimedCredential: ', claimedCredential);
 
         const passport = new Krebit.core.Passport({

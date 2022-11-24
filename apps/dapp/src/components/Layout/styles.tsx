@@ -9,6 +9,10 @@ interface IMenuProps {
   profilePicture: string;
 }
 
+interface INavBarProps {
+  isAuthenticated: boolean;
+}
+
 export const Wrapper = styled.div`
   ${({ theme }) => css``}
 `;
@@ -65,6 +69,11 @@ export const MenuMobile = styled.div<IMenuProps>`
           fill: ${theme.colors.white};
         }
       }
+
+      .profile-menu-loading {
+        width: 30px;
+        height: 30px;
+      }
     }
 
     @media (min-width: ${theme.screens.lg}) {
@@ -107,8 +116,8 @@ export const MenuContentMobile = styled.div`
   `}
 `;
 
-export const NavBarMobile = styled.div`
-  ${({ theme }) => css`
+export const NavBarMobile = styled.div<INavBarProps>`
+  ${({ theme, isAuthenticated }) => css`
     width: 95%;
     background-color: ${theme.colors.white}0D;
     backdrop-filter: blur(40px);
@@ -123,8 +132,16 @@ export const NavBarMobile = styled.div`
     padding: 14px 31px;
     display: grid;
     justify-content: center;
-    grid-template-columns: repeat(3, minmax(auto, 76px));
+    grid-template-columns: ${isAuthenticated
+      ? 'repeat(4, minmax(auto, 76px))'
+      : 'repeat(3, minmax(auto, 76px))'};
     grid-gap: 28px;
+
+    .navbar-mobile-loading {
+      width: 40px;
+      height: 30px;
+      margin: 0 auto;
+    }
 
     @media (min-width: ${theme.screens.lg}) {
       display: none;
@@ -154,6 +171,11 @@ export const NavBarDesktop = styled.div<IMenuProps>`
         grid-gap: 46px;
         grid-template-rows: repeat(5, auto);
         justify-items: center;
+
+        .option-loading {
+          width: 30px;
+          height: 30px;
+        }
       }
 
       .option-profile-container {
@@ -187,6 +209,11 @@ export const NavBarDesktop = styled.div<IMenuProps>`
             z-index: 10;
           }
         }
+
+        .option-profile-loading {
+          width: 34px;
+          height: 34px;
+        }
       }
     }
   `}
@@ -210,6 +237,7 @@ export const NavBarOption = styled.div<INavBarOptionProps>`
         height: 30px;
         fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
 
+        & > path,
         & > g > path {
           fill: ${isActive ? theme.colors.cyan : theme.colors.gray};
         }

@@ -40,6 +40,23 @@ import { Help } from './Help';
 import { Code } from './Code';
 import { Community } from './Community';
 import { Deal } from './Deal';
+import { Dework } from './Dework';
+import { Stack } from './Stack';
+import { AddPhotoAlternate } from './AddPhotoAlternate';
+import { Add } from './Add';
+import { Attendance } from './Attendance';
+import { School } from './School';
+import { WorkExperience } from './WorkExperience';
+import { Star } from './Star';
+import { Vote } from './Vote';
+import { Tag } from './Tag';
+import { Favorite } from './Favorite';
+import { SentimentVerySatisfied } from './SentimentVerySatisfied';
+import { ThumbDown } from './ThumbDown';
+import { Reply } from './Reply';
+import { Comment } from './Comment';
+import { ArrowSend } from './ArrowSend';
+import { Refresh } from './Refresh';
 
 export {
   Close,
@@ -83,5 +100,22 @@ export {
   Help,
   Code,
   Community,
-  Deal
+  Deal,
+  Dework,
+  Stack,
+  AddPhotoAlternate,
+  Add,
+  Attendance,
+  School,
+  WorkExperience,
+  Star,
+  Vote,
+  Tag,
+  Favorite,
+  SentimentVerySatisfied,
+  ThumbDown,
+  Reply,
+  Comment,
+  ArrowSend,
+  Refresh
 };

@@ -1,10 +1,4 @@
-import {
-  FunctionComponent,
-  ReactNode,
-  useContext,
-  useRef,
-  useState
-} from 'react';
+import { FunctionComponent, ReactNode, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -18,15 +12,17 @@ import {
 } from './styles';
 import {
   AccountBalanceWallet,
-  Bell,
+  Token,
   Close,
   Explore,
   Help,
   Menu,
-  Send
+  Send,
+  Home
 } from 'components/Icons';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
+import { Loading } from 'components/Loading';
 import { Badge } from 'components/Badge';
 import { GeneralContext } from 'context';
 import { formatUrlImage } from 'utils';
@@ -37,20 +33,31 @@ interface IProps {
 
 const MENU_OPTIONS = [
   {
+    title: 'Activity',
+    href: '/posts',
+    icon: <Home />,
+    badgeText: 'New'
+  },
+  {
     title: 'Explore',
     href: '/explore',
-    icon: <Explore />,
-    badgeText: 'New'
+    icon: <Explore />
+  },
+  {
+    title: 'Create',
+    href: '/create',
+    icon: <Token />,
+    isPrivate: true,
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   },
   {
     title: 'Inbox',
     href: '/messages',
-    icon: <Send />
-  },
-  {
-    title: 'Notifications',
-    href: '/notifications',
-    icon: <Bell />
+    icon: <Send />,
+    isPrivate: true,
+    badgeText: 'Beta',
+    badgeColor: 'blueRibbon'
   }
 ];
 
@@ -65,9 +72,8 @@ export const Layout: FunctionComponent<IProps> = props => {
   const [isMenuContentMobileOpen, setIsMenuContentMobileOpen] = useState(false);
   const [navBarDesktopOptionHovered, setNavBarDesktopOptionHovered] =
     useState<string>();
-  const parentDropdownMobileRef = useRef(null);
-  const parentDropdownDesktopRef = useRef(null);
   const { push, asPath } = useRouter();
+  const isLoading = auth.status === 'pending';
 
   const handlePushProfile = () => {
     if (!auth.isAuthenticated) return;
@@ -76,11 +82,12 @@ export const Layout: FunctionComponent<IProps> = props => {
     push(`/${profile.did}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (!window) return;
 
-    auth.logout();
-    push(`/`);
+    await auth.logout().then(() => {
+      window.open('/', '_self');
+    });
   };
 
   const handleFilterOpen = (view: string | undefined) => {
@@ -96,7 +103,7 @@ export const Layout: FunctionComponent<IProps> = props => {
   };
 
   const handleHelp = () => {
-    window.open('https://discord.gg/UD5YhCU2', '_blank');
+    window.open('https://discord.gg/VHSq4ABsfz', '_blank');
   };
 
   return (
@@ -114,12 +121,15 @@ export const Layout: FunctionComponent<IProps> = props => {
             <div className="profile-menu-icon" onClick={handleHelp}>
               <Help />
             </div>
-            {auth?.isAuthenticated ? (
+            {isLoading ? (
+              <div className="profile-menu-loading">
+                <Loading type="skeleton" />
+              </div>
+            ) : auth?.isAuthenticated ? (
               <>
                 <div
                   className="profile-menu-image"
                   onClick={() => handleFilterOpen('mobile')}
-                  ref={parentDropdownMobileRef}
                 />
                 {isFilterOpenInView === 'mobile' && (
                   <div className="profile-menu-dropdown">
@@ -134,7 +144,6 @@ export const Layout: FunctionComponent<IProps> = props => {
                           onClick: handleLogout
                         }
                       ]}
-                      parentRef={parentDropdownMobileRef}
                       onClose={() => handleFilterOpen(undefined)}
                     />
                   </div>
@@ -170,7 +179,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                   </a>
                 </Link>
                 <Link
-                  href="https://discord.gg/UD5YhCU2"
+                  href="https://discord.gg/VHSq4ABsfz"
                   rel="noopener noreferrer"
                 >
                   <a
@@ -219,67 +228,88 @@ export const Layout: FunctionComponent<IProps> = props => {
           </>
         )}
         {children}
-        <NavBarMobile>
-          {MENU_OPTIONS.map((content, index) => (
-            <Link href={content.href} key={index}>
-              <NavBarOption isActive={asPath.includes(content.href)}>
-                <div className="option-icon">
-                  {content.badgeText ? (
-                    <Badge
-                      icon={content.icon}
-                      iconColor={
-                        asPath.includes(content.href) ? 'cyan' : 'gray'
-                      }
-                      text={content.badgeText}
-                    />
-                  ) : (
-                    content.icon
-                  )}
+        <NavBarMobile
+          isAuthenticated={auth.isAuthenticated}
+          id="nav-bar-mobile"
+        >
+          {isLoading
+            ? new Array(3).fill(0).map((_, index) => (
+                <div className="navbar-mobile-loading" key={index}>
+                  <Loading type="skeleton" />
                 </div>
-              </NavBarOption>
-            </Link>
-          ))}
+              ))
+            : MENU_OPTIONS.filter(option =>
+                auth.isAuthenticated ? option : !option.isPrivate
+              ).map((content, index) => (
+                <Link href={content.href} key={index}>
+                  <NavBarOption isActive={asPath.includes(content.href)}>
+                    <div className="option-icon">
+                      {content.badgeText ? (
+                        <Badge
+                          icon={content.icon}
+                          color={content.badgeColor}
+                          iconColor={
+                            asPath.includes(content.href) ? 'cyan' : 'gray'
+                          }
+                          text={content.badgeText}
+                        />
+                      ) : (
+                        content.icon
+                      )}
+                    </div>
+                  </NavBarOption>
+                </Link>
+              ))}
         </NavBarMobile>
         <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
           <div className="options">
             <div className="option-logo">
               <Link href="/" rel="noopener noreferrer">
-                <a target="">
+                <a>
                   <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
                 </a>
               </Link>
             </div>
-            {MENU_OPTIONS.map((content, index) => (
-              <Link href={content.href} key={index}>
-                <NavBarOption
-                  isActive={asPath.includes(content.href)}
-                  onMouseEnter={() =>
-                    handleNavBarDesktopOptionHovered(content.title)
-                  }
-                  onMouseLeave={() =>
-                    handleNavBarDesktopOptionHovered(undefined)
-                  }
-                >
-                  <div className="option-icon">
-                    {content.badgeText ? (
-                      <Badge
-                        icon={content.icon}
-                        iconColor={
-                          asPath.includes(content.href) ? 'cyan' : 'gray'
-                        }
-                        text={content.badgeText}
-                        onClick={() => {}}
-                      />
-                    ) : (
-                      content.icon
-                    )}
+            {isLoading
+              ? new Array(3).fill(0).map((_, index) => (
+                  <div className="option-loading" key={index}>
+                    <Loading type="skeleton" />
                   </div>
-                  {navBarDesktopOptionHovered === content.title && (
-                    <p className="option-hover">{content.title}</p>
-                  )}
-                </NavBarOption>
-              </Link>
-            ))}
+                ))
+              : MENU_OPTIONS.filter(option =>
+                  auth.isAuthenticated ? option : !option.isPrivate
+                ).map((content, index) => (
+                  <Link href={content.href} key={index}>
+                    <NavBarOption
+                      isActive={asPath.includes(content.href)}
+                      onMouseEnter={() =>
+                        handleNavBarDesktopOptionHovered(content.title)
+                      }
+                      onMouseLeave={() =>
+                        handleNavBarDesktopOptionHovered(undefined)
+                      }
+                    >
+                      <div className="option-icon">
+                        {content.badgeText ? (
+                          <Badge
+                            icon={content.icon}
+                            color={content.badgeColor}
+                            iconColor={
+                              asPath.includes(content.href) ? 'cyan' : 'gray'
+                            }
+                            text={content.badgeText}
+                            onClick={() => {}}
+                          />
+                        ) : (
+                          content.icon
+                        )}
+                      </div>
+                      {navBarDesktopOptionHovered === content.title && (
+                        <p className="option-hover">{content.title}</p>
+                      )}
+                    </NavBarOption>
+                  </Link>
+                ))}
           </div>
           <div className="option-profile-container">
             <NavBarOption
@@ -295,12 +325,15 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <p className="option-hover">help</p>
               )}
             </NavBarOption>
-            {auth?.isAuthenticated ? (
+            {isLoading ? (
+              <div className="option-profile-loading">
+                <Loading type="skeleton" />
+              </div>
+            ) : auth?.isAuthenticated ? (
               <div className="option-profile">
                 <div
                   className="option-profile-image"
                   onClick={() => handleFilterOpen('desktop')}
-                  ref={parentDropdownDesktopRef}
                 />
                 {isFilterOpenInView === 'desktop' && (
                   <div className="option-profile-dropdown">
@@ -315,7 +348,6 @@ export const Layout: FunctionComponent<IProps> = props => {
                           onClick: handleLogout
                         }
                       ]}
-                      parentRef={parentDropdownDesktopRef}
                       onClose={() => handleFilterOpen(undefined)}
                     />
                   </div>

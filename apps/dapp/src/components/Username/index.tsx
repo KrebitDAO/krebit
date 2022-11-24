@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
@@ -7,18 +7,19 @@ import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
 import { Work } from './Work';
+import { Activity } from './Activity';
 import { EditProfile } from './EditProfile';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share } from 'components/Icons';
-import { isValid, normalizeSchema, formatUrlImage } from 'utils';
+import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
 // types
-import { IProfile } from 'utils/normalizeSchema';
+import { ICredential, IProfile } from 'utils/normalizeSchema';
 
 interface IFilterMenuProps {
   currentFilter: string;
@@ -42,6 +43,14 @@ const FilterMenu = (props: IFilterMenuProps) => {
         onClick={() => onClick('overview')}
       >
         Overview
+      </p>
+      <p
+        className={`content-filter-menu-item ${
+          currentFilter === 'Activity' ? 'content-filter-menu-item-active' : ''
+        }`}
+        onClick={() => onClick('Activity')}
+      >
+        Activity
       </p>
       <p
         className={`content-filter-menu-item ${
@@ -80,6 +89,8 @@ export const Username = () => {
   const [profile, setProfile] = useState<IProfile | undefined>();
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
+  const [currentCustomCredential, setCurrentCustomCredential] =
+    useState<ICredential>();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const { query, push } = useRouter();
@@ -93,7 +104,6 @@ export const Username = () => {
   const windowSize = useWindowSize();
   const isDesktop = windowSize.width >= 1024;
   const isLoading = status === 'idle' || status === 'pending';
-  const parentShareContentRef = useRef(null);
 
   useEffect(() => {
     if (!window) return;
@@ -138,6 +148,47 @@ export const Username = () => {
     getProfile();
   }, [publicPassport, auth.status, auth?.did, query.id]);
 
+  useEffect(() => {
+    if (!window) return;
+    if (!issuer) return;
+    if (!query.id) return;
+    if (!query.credential_id) return;
+    if (!auth?.isAuthenticated) return;
+    if (auth.status !== 'resolved') return;
+
+    const validateCredential = async () => {
+      try {
+        const currentCredential = await issuer.getCredential(
+          query.credential_id
+        );
+
+        if (currentCredential) {
+          const isCredentialValid = await issuer.checkCredential(
+            currentCredential
+          );
+          const hasCorrectTypes = currentCredential?.type?.some(
+            (type: string) =>
+              constants.DEFAULT_CLAIM_CREDENTIAL_TYPES.includes(type)
+          );
+
+          if (isCredentialValid && hasCorrectTypes) {
+            handleCurrentCustomCredential(currentCredential);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    validateCredential();
+  }, [
+    issuer,
+    auth?.isAuthenticated,
+    auth.status,
+    query.id,
+    query.credential_id
+  ]);
+
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
   };
@@ -145,7 +196,12 @@ export const Username = () => {
   const handleFilterOption = (value: string) => {
     if (value === currentFilterOption) return;
 
-    setProfile({ ...profile, skills: [] });
+    const isSectionWithNoSkills = value === 'Activity';
+
+    setProfile({
+      ...profile,
+      skills: isSectionWithNoSkills ? profile.skills : []
+    });
     setCurrentFilterOption(value);
   };
 
@@ -153,6 +209,10 @@ export const Username = () => {
     if (!auth?.isAuthenticated) return;
 
     setIsEditProfileOpen(prevState => !prevState);
+  };
+
+  const handleCurrentCustomCredential = (credential: any) => {
+    setCurrentCustomCredential(credential);
   };
 
   const handleIsShareContentOpen = async () => {
@@ -212,7 +272,7 @@ export const Username = () => {
     }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!auth?.isAuthenticated) {
       handleOpenConnectWallet();
       return;
@@ -225,7 +285,38 @@ export const Username = () => {
       return;
     }
 
-    push(`/messages/${query.id}`);
+    const currentConversations = await orbis.getConversations({
+      did: query.id
+    });
+
+    if (currentConversations?.data?.length > 0) {
+      const conversationsWithMe = currentConversations?.data?.filter(
+        conversation => conversation?.recipients.includes(auth?.did)
+      );
+      const conversationWithJustMe = conversationsWithMe?.find(
+        conversation => conversation?.recipients?.length === 2
+      );
+
+      if (conversationWithJustMe) {
+        push(`/messages/?conversation_id=${conversationWithJustMe.stream_id}`);
+      } else {
+        const response = await orbis.createConversation({
+          recipients: [query.id]
+        });
+
+        if (response?.doc) {
+          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        }
+      }
+    } else {
+      const response = await orbis.createConversation({
+        recipients: [query.id]
+      });
+
+      if (response?.doc) {
+        window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+      }
+    }
   };
 
   if (status === 'rejected') {
@@ -266,7 +357,7 @@ export const Username = () => {
                           {profile.name}
                         </span>{' '}
                         <span className="profile-info-token">
-                          $KRB {profile.reputation}
+                          {profile.reputation} Krebits
                         </span>
                       </div>
                       <div className="profile-info-domains">
@@ -347,10 +438,7 @@ export const Username = () => {
                       </div>
                     </>
                   )}
-                  <div
-                    className="profile-buttons-rounded"
-                    ref={parentShareContentRef}
-                  >
+                  <div className="profile-buttons-rounded">
                     <Button
                       icon={<Share />}
                       onClick={handleIsShareContentOpen}
@@ -359,8 +447,7 @@ export const Username = () => {
                   </div>
                   {isShareContentOpen && (
                     <ShareContentModal
-                      customText={`${profile.name}'s profile on @KrebitID`}
-                      parentRef={parentShareContentRef}
+                      customText={`${profile.name}'s Krebited profile on @KrebitID`}
                       onClose={handleIsShareContentOpen}
                     />
                   )}
@@ -441,6 +528,17 @@ export const Username = () => {
                   isHidden={currentFilterOption !== 'Personhood'}
                   handleProfile={handleProfile}
                 />
+                <Activity
+                  did={currentDIDFromURL}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={
+                    currentFilterOption !== 'overview' &&
+                    currentFilterOption !== 'Activity'
+                  }
+                  ensDomain={profile?.ensDomain}
+                  unsDomain={profile?.unsDomain}
+                />
                 <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}
                   passport={passport}
@@ -466,6 +564,8 @@ export const Username = () => {
                     currentFilterOption !== 'Community'
                   }
                   handleProfile={handleProfile}
+                  customCredential={currentCustomCredential}
+                  onCustomCredential={handleCurrentCustomCredential}
                 />
               </div>
             </div>

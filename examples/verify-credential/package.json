@@ -1,0 +1,24 @@
+{
+  "name": "verify-credential",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@krebitdao/eip712-vc": "^1.0.3",
+    "@krebitdao/reputation-passport": "^1.0.6",
+    "@lit-protocol/sdk-browser": "^1.1.234",
+    "ethers": "^5.5.1",
+    "next": "^13.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "siwe": "^1.1.6"
+  }
+}

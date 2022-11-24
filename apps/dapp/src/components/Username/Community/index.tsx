@@ -7,7 +7,7 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
-import { getCredentials } from '../utils';
+import { buildCredential, getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
 
 const DynamicShareWithModal = dynamic(
@@ -31,6 +31,8 @@ interface IProps {
   onFilterOption: (value: string) => void;
   isHidden: boolean;
   handleProfile: Dispatch<SetStateAction<IProfile>>;
+  customCredential?: ICredential;
+  onCustomCredential?: (credential: any) => void;
 }
 
 export const Community = (props: IProps) => {
@@ -42,7 +44,9 @@ export const Community = (props: IProps) => {
     currentFilterOption,
     onFilterOption,
     isHidden,
-    handleProfile
+    handleProfile,
+    customCredential,
+    onCustomCredential
   } = props;
   const [status, setStatus] = useState('idle');
   const [communities, setCommunities] = useState<ICredential[]>([]);
@@ -64,6 +68,44 @@ export const Community = (props: IProps) => {
 
     getInformation();
   }, [publicPassport, currentFilterOption, isHidden]);
+
+  useEffect(() => {
+    if (!window) return;
+    if (!passport) return;
+    if (!isAuthenticated) return;
+    if (isHidden) return;
+    if (!customCredential) return;
+
+    const buildCurrentCredential = async () => {
+      try {
+        const values = await buildCredential({
+          type: 'Community',
+          credential: {
+            ...customCredential,
+            credential: {
+              ...customCredential.credential,
+              value: customCredential.credential?.credentialsubject?.value
+                ? JSON.parse(
+                    customCredential.credential?.credentialsubject?.value
+                  )
+                : {}
+            }
+          },
+          passport,
+          isCustomCredential: true
+        });
+
+        if (values) {
+          setCurrentCommunitySelected(values);
+          setIsVerifyCredentialOpen(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    buildCurrentCredential();
+  }, [passport, isAuthenticated, isHidden, customCredential]);
 
   const getInformation = async () => {
     setStatus('pending');
@@ -114,6 +156,7 @@ export const Community = (props: IProps) => {
       stamps: [],
       isMinted: false
     });
+    onCustomCredential(undefined);
   };
 
   const handleIsShareWithModalOpen = () => {
@@ -125,6 +168,7 @@ export const Community = (props: IProps) => {
       stamps: [],
       isMinted: false
     });
+    onCustomCredential(undefined);
   };
 
   const handleIsRemoveModalOpen = () => {
@@ -246,9 +290,20 @@ export const Community = (props: IProps) => {
         ?.concat(value.username);
     }
 
-    if (value?.id) {
-      formattedValue = formattedValue?.concat(' / ')?.concat(value.id);
+    if (value?.onBehalveOfIssuer) {
+      formattedValue = formattedValue
+        ?.concat(' / ')
+        ?.concat(
+          value.onBehalveOfIssuer?.id.substring(0, 14) +
+            '...' +
+            value.onBehalveOfIssuer?.id.substring(
+              value.onBehalveOfIssuer?.id.length - 4
+            )
+        );
     }
+
+    if (value?.description)
+      formattedValue = formattedValue?.concat(' / ')?.concat(value.description);
 
     return formattedValue;
   };
@@ -289,6 +344,7 @@ export const Community = (props: IProps) => {
       ) : null}
       {isRemoveModalOpen ? (
         <QuestionModal
+          title="Remove Credential?"
           text="This action can't be undone."
           continueButton={{
             text: 'Delete',
