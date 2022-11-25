@@ -38,7 +38,6 @@ export const globalStyles = (
         scroll-behavior: smooth;
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
         background-color: #101828;
       }
 
