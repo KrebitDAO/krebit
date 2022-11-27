@@ -8,6 +8,7 @@ import {
 import Krebit from '@krebitdao/reputation-passport';
 import { useRouter } from 'next/router';
 import { debounce } from 'ts-debounce';
+import Link from 'next/link';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -390,40 +391,46 @@ export const Explorer = () => {
           ) : information?.profiles?.length > 0 ? (
             <div className="explorer-cards">
               {information?.profiles.map((profile, index) => (
-                <Card picture={formatUrlImage(profile.picture)} key={index}>
-                  <div className="explorer-card-picture"></div>
-                  <p className="explorer-card-title">{profile.name}</p>
-                  <p className="explorer-card-description">
-                    {profile.reputation} Krebits
-                  </p>
-                  <div className="explorer-card-followers">
-                    <span className="explorer-card-follow">
-                      {profile.countFollowers >= 100
-                        ? '+99'
-                        : profile.countFollowers}{' '}
-                      <span className="explorer-card-follow-text">
-                        Followers
+                <Link href={`/${profile.did}`} key={index}>
+                  <Card
+                    href={`/${profile.did}`}
+                    picture={formatUrlImage(profile.picture)}
+                    key={index}
+                  >
+                    <div className="explorer-card-picture"></div>
+                    <p className="explorer-card-title">{profile.name}</p>
+                    <p className="explorer-card-description">
+                      {profile.reputation} Krebits
+                    </p>
+                    <div className="explorer-card-followers">
+                      <span className="explorer-card-follow">
+                        {profile.countFollowers >= 100
+                          ? '+99'
+                          : profile.countFollowers}{' '}
+                        <span className="explorer-card-follow-text">
+                          Followers
+                        </span>
                       </span>
-                    </span>
-                    <span className="explorer-card-follow-dot"></span>
-                    <span className="explorer-card-follow">
-                      {profile.countFollowing >= 100
-                        ? '+99'
-                        : profile.countFollowing}{' '}
-                      <span className="explorer-card-follow-text">
-                        Following
+                      <span className="explorer-card-follow-dot"></span>
+                      <span className="explorer-card-follow">
+                        {profile.countFollowing >= 100
+                          ? '+99'
+                          : profile.countFollowing}{' '}
+                        <span className="explorer-card-follow-text">
+                          Following
+                        </span>
                       </span>
-                    </span>
-                  </div>
-                  <div className="explorer-card-button">
-                    <Button
-                      text="View profile"
-                      onClick={() => router.push(`/${profile.did}`)}
-                      styleType="border"
-                      borderBackgroundColor="ebonyClay"
-                    />
-                  </div>
-                </Card>
+                    </div>
+                    <div className="explorer-card-button">
+                      <Button
+                        text="View profile"
+                        styleType="border"
+                        borderBackgroundColor="ebonyClay"
+                        onClick={() => {}}
+                      />
+                    </div>
+                  </Card>
+                </Link>
               ))}
             </div>
           ) : null}

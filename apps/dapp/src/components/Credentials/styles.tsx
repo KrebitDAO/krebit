@@ -49,9 +49,10 @@ export const Wrapper = styled.div<IProps>`
     .credentials-content {
       display: grid;
       grid-gap: 14px;
+      margin-bottom: 100px;
 
       @media (min-width: ${theme.screens.xl}) {
-        grid-template-columns: repeat(3, 384px);
+        grid-template-columns: repeat(3, 1fr);
       }
     }
   `}
