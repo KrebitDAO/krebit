@@ -79,7 +79,7 @@ export const IssuerController = async (
           did: claimedCredential.credentialSubject.id,
           type: claimedCredential.credentialSubject.type,
           typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: [claimValue.credentialType],
+          tags: claimedCredential.type.slice(2),
           value: claimValue,
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB

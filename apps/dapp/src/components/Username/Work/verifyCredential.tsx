@@ -1,15 +1,23 @@
 import { Verify } from 'components/Verify';
 import { BoxStep } from 'components/Verify/boxStep';
-import { getIssuers, checkCredentialsURLs } from 'utils';
+import {
+  getIssuers,
+  checkCredentialsURLs,
+  constants as CONSTANTS
+} from 'utils';
 import {
   useGithubFollowersProvider,
   useGithubRepoProvider,
   useGithubRepoCollaboratorProvider,
-  useSpectCompletedProvider
+  useSpectCompletedProvider,
+  useDeworkCompletedProvider,
+  useStackReputationProvider,
+  useStackScoreProvider
 } from 'hooks';
 
 // types
 import { ICredential } from 'utils/normalizeSchema';
+import { constants } from 'buffer';
 
 interface IProps {
   currentWork: ICredential;
@@ -23,6 +31,9 @@ export const VerifyCredential = (props: IProps) => {
   const githubRepoProvider = useGithubRepoProvider();
   const githubRepoCollaboratorProvider = useGithubRepoCollaboratorProvider();
   const spectCompletedProvider = useSpectCompletedProvider();
+  const deworkCompletedProvider = useDeworkCompletedProvider();
+  const stackReputationProvider = useStackReputationProvider();
+  const stackScoreProvider = useStackScoreProvider();
 
   const handleClose = async (credentialType: string) => {
     let isStatusResolved = false;
@@ -51,6 +62,18 @@ export const VerifyCredential = (props: IProps) => {
         spectCompletedProvider.status === 'mint_resolved';
     }
 
+    if (credentialType === 'DeworkCompletedTasksGT10') {
+      isStatusResolved =
+        deworkCompletedProvider.status === 'credential_resolved' ||
+        deworkCompletedProvider.status === 'mint_resolved';
+    }
+
+    if (credentialType === 'StackOverflowReputationGT1K') {
+      isStatusResolved =
+        stackReputationProvider.status === 'credential_resolved' ||
+        stackReputationProvider.status === 'mint_resolved';
+    }
+
     if (isStatusResolved) {
       await getInformation();
     }
@@ -73,6 +96,14 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'SpectCompletedTasksGT10') {
       spectCompletedProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'DeworkCompletedTasksGT10') {
+      deworkCompletedProvider.handleCleanClaimValues();
+    }
+
+    if (credentialType === 'StackOverflowReputationGT1K') {
+      stackReputationProvider.handleCleanClaimValues();
     }
   };
 
@@ -481,7 +512,7 @@ export const VerifyCredential = (props: IProps) => {
                   spectCompletedProvider.currentCredential ||
                   currentWork?.credential
                     ? 'Step completed, you can now check your credential'
-                    : 'Claim your github repo'
+                    : 'Claim your Spect completed tasks'
                 }
                 form={{
                   fields:
@@ -576,6 +607,329 @@ export const VerifyCredential = (props: IProps) => {
                 loadingMessage={spectCompletedProvider.statusMessage}
                 isError={spectCompletedProvider.status === 'mint_rejected'}
                 errorMessage={spectCompletedProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'DeworkCompletedTasksGT10' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  deworkCompletedProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim your Dework completed tasks'
+                }
+                form={{
+                  fields:
+                    deworkCompletedProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'organization',
+                            placeholder: 'Enter the Dework organization',
+                            value:
+                              deworkCompletedProvider.claimValues.organization,
+                            onChange: deworkCompletedProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: deworkCompletedProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: deworkCompletedProvider.claimValues.private,
+                            onChange: deworkCompletedProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    deworkCompletedProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              deworkCompletedProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick:
+                            !deworkCompletedProvider.claimValues.organization ||
+                            deworkCompletedProvider.claimValues.organization ===
+                              ''
+                              ? undefined
+                              : () =>
+                                  deworkCompletedProvider.handleGetCredential(
+                                    currentVerify
+                                  ),
+                          isDisabled:
+                            !deworkCompletedProvider.claimValues.organization ||
+                            deworkCompletedProvider.claimValues.organization ===
+                              ''
+                        }
+                }}
+                isLoading={
+                  deworkCompletedProvider.status === 'credential_pending'
+                }
+                loadingMessage={deworkCompletedProvider.statusMessage}
+                isError={
+                  deworkCompletedProvider.status === 'credential_rejected'
+                }
+                errorMessage={deworkCompletedProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  deworkCompletedProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    deworkCompletedProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              deworkCompletedProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            deworkCompletedProvider.handleMintCredential(
+                              deworkCompletedProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={deworkCompletedProvider.status === 'mint_pending'}
+                loadingMessage={deworkCompletedProvider.statusMessage}
+                isError={deworkCompletedProvider.status === 'mint_rejected'}
+                errorMessage={deworkCompletedProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'StackOverflowReputationGT1K' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  stackReputationProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that your StackOverflow profile has more than 1K of reputation'
+                }
+                form={{
+                  fields:
+                    stackReputationProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: stackReputationProvider.claimValues
+                              .private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: stackReputationProvider.claimValues.private,
+                            onChange: stackReputationProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    stackReputationProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              stackReputationProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick: () =>
+                            stackReputationProvider.handleFetchOAuth(
+                              currentVerify
+                            )
+                        }
+                }}
+                isLoading={
+                  stackReputationProvider.status === 'credential_pending'
+                }
+                loadingMessage={stackReputationProvider.statusMessage}
+                isError={
+                  stackReputationProvider.status === 'credential_rejected'
+                }
+                errorMessage={stackReputationProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  stackReputationProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    stackReputationProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              stackReputationProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            stackReputationProvider.handleMintCredential(
+                              stackReputationProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={stackReputationProvider.status === 'mint_pending'}
+                loadingMessage={stackReputationProvider.statusMessage}
+                isError={stackReputationProvider.status === 'mint_rejected'}
+                errorMessage={stackReputationProvider.errorMessage}
+                iconType="stamp"
+              />
+            </>
+          )}
+          {currentVerify?.credentialType === 'StackOverflowScoreGT10' && (
+            <>
+              <BoxStep
+                title="Issuer Details:"
+                description={currentVerify.description}
+                did={currentVerify.did}
+                icon={currentVerify.icon}
+                verificationUrl={currentVerify.verificationUrl}
+                price={currentVerify.price}
+              />
+              <BoxStep
+                title="Step 1"
+                description={
+                  stackScoreProvider.currentCredential ||
+                  currentWork?.credential
+                    ? 'Step completed, you can now check your credential'
+                    : 'Claim that your StackOverflow profile has a score more than 10 for a programming language'
+                }
+                form={{
+                  fields:
+                    stackScoreProvider.currentCredential ||
+                    currentWork?.credential
+                      ? undefined
+                      : [
+                          {
+                            name: 'language',
+                            type: 'select',
+                            placeholder: 'Select the language tag',
+                            value: stackScoreProvider.claimValues.language,
+                            items: CONSTANTS.DEFAULT_SKILL_LANGUAGES,
+                            onChange: stackScoreProvider.handleClaimValues
+                          },
+                          {
+                            name: 'private',
+                            type: 'switch',
+                            placeholder: stackScoreProvider.claimValues.private
+                              ? 'private (Stored encrypted off-chain)'
+                              : 'public (WARNING: Is not recommended to publish private data to public networks)',
+                            value: stackScoreProvider.claimValues.private,
+                            onChange: stackScoreProvider.handleClaimValues
+                          }
+                        ],
+                  button:
+                    stackScoreProvider.currentCredential ||
+                    currentWork.credential
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              stackScoreProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                      : {
+                          text: 'Verify',
+                          onClick: () =>
+                            stackScoreProvider.handleFetchOAuth(currentVerify)
+                        }
+                }}
+                isLoading={stackScoreProvider.status === 'credential_pending'}
+                loadingMessage={stackScoreProvider.statusMessage}
+                isError={stackScoreProvider.status === 'credential_rejected'}
+                errorMessage={stackScoreProvider.errorMessage}
+                iconType="credential"
+              />
+              <BoxStep
+                title="Step 2"
+                description={
+                  stackScoreProvider.currentMint || currentWork?.isMinted
+                    ? 'Step completed, you can now check your stamp'
+                    : 'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+                }
+                form={{
+                  button:
+                    stackScoreProvider.currentMint || currentWork?.isMinted
+                      ? {
+                          text: 'Check it',
+                          onClick: () =>
+                            checkCredentialsURLs(
+                              'polygon',
+                              'tx',
+                              stackScoreProvider.currentMint
+                            )
+                        }
+                      : {
+                          text: 'Mint Stamp',
+                          onClick: () =>
+                            stackScoreProvider.handleMintCredential(
+                              stackScoreProvider.currentCredential ||
+                                currentWork?.credential
+                            )
+                        }
+                }}
+                isLoading={stackScoreProvider.status === 'mint_pending'}
+                loadingMessage={stackScoreProvider.statusMessage}
+                isError={stackScoreProvider.status === 'mint_rejected'}
+                errorMessage={stackScoreProvider.errorMessage}
                 iconType="stamp"
               />
             </>

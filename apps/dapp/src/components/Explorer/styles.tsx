@@ -432,13 +432,14 @@ export const FilterMenu = styled.div<IProps>`
   `}
 `;
 
-export const Card = styled.div<ICardProps>`
+export const Card = styled.a<ICardProps>`
   ${({ theme, picture }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
     border-radius: 15px;
     padding: 12px 0;
+    cursor: pointer;
 
     @media (min-width: ${theme.screens.lg}) {
       padding: 32px 0;

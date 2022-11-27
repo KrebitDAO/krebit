@@ -16,6 +16,7 @@ export interface ICredential {
   stamps: any[];
   skills?: string[];
   isMinted: boolean;
+  isCustomCredential?: boolean;
 }
 
 export interface IProfile {
@@ -30,20 +31,22 @@ export interface IProfile {
   isFollowingUser?: boolean;
   ensDomain?: string;
   unsDomain?: string;
+  orbisMetadata?: any;
   personhoods?: ICredential[];
   works?: ICredential[];
   communities?: ICredential[];
   skills?: string[];
 }
 
-const DEFAULT_PICTURE = '/imgs/images/person_outline.svg';
-const DEFAULT_NAME = 'Anonymous';
+export const DEFAULT_PICTURE = '/imgs/images/person_outline.svg';
+export const DEFAULT_NAME = 'Anonymous';
 
 export const profile = async (props: IProps) => {
   let { orbis, passport, did, reputation = 0 } = props;
   let currentProfile: IProfile;
   let ensDomain: string;
   let unsDomain: string;
+  let orbisMetadata: any;
 
   if (passport) {
     did = passport.did;
@@ -53,6 +56,7 @@ export const profile = async (props: IProps) => {
   }
 
   const orbisProfile = await orbis.getProfile(did);
+  orbisMetadata = orbisProfile?.data;
 
   if (orbisProfile?.data?.did) {
     currentProfile = {
@@ -67,7 +71,8 @@ export const profile = async (props: IProps) => {
       countFollowers: orbisProfile?.data?.count_followers || 0,
       countFollowing: orbisProfile?.data?.count_following || 0,
       ensDomain,
-      unsDomain
+      unsDomain,
+      orbisMetadata
     };
   } else {
     currentProfile = {
@@ -81,7 +86,8 @@ export const profile = async (props: IProps) => {
       countFollowers: 0,
       countFollowing: 0,
       ensDomain,
-      unsDomain
+      unsDomain,
+      orbisMetadata
     };
   }
 

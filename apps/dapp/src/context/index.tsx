@@ -39,7 +39,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [walletInformation, setWalletInformation] = useState<
     IWalletInformation | undefined
   >();
-  const { push } = useRouter();
+  const { push, query } = useRouter();
   const storage = new Web3Storage({ token: NEXT_PUBLIC_WEB3_STORAGE });
 
   useEffect(() => {
@@ -123,6 +123,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const handleOpenConnectWallet = () => {
     if (passport?.did) {
       push(`/${passport.did}`);
+      setOpenConnectWallet(false);
       return;
     }
 
@@ -196,7 +197,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           setProfile(currentProfile);
           setStatus('resolved');
 
-          push(`/${passport.did}`);
+          if (query?.credential_id) {
+            push(`/${passport.did}/?credential_id=${query.credential_id}`);
+          } else {
+            push(`/${passport.did}`);
+          }
         }
       }
     } catch (error) {
@@ -211,9 +216,6 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
     window.localStorage.removeItem('krebit-remember-session');
-    setProfile(undefined);
-    setPassport(undefined);
-    setIssuer(undefined);
   };
 
   return (

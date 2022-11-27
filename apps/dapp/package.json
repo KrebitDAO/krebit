@@ -36,15 +36,17 @@
     "@walletconnect/web3-provider": "^1.8.0",
     "broadcast-channel": "^4.14.0",
     "date-fns": "^2.29.3",
-    "ethers": "^5.6.9",
+    "ethers": "^5.5.1",
     "lit-share-modal-v3": "^0.0.92",
     "next": "^12.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-reveal": "^1.2.2",
+    "react-string-replace": "^1.1.0",
     "react-transition-group": "^4.4.5",
     "ts-debounce": "^4.0.0",
     "twitter-api-sdk": "^1.1.0",
+    "use-onclickoutside": "^0.4.1",
     "web3.storage": "^4.4.0"
   }
 }

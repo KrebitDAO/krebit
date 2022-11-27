@@ -311,6 +311,7 @@ export const Personhood = (props: IProps) => {
       ) : null}
       {isRemoveModalOpen ? (
         <QuestionModal
+          title="Remove Credential?"
           text="This action can't be undone."
           continueButton={{
             text: 'Delete',

@@ -1,6 +1,6 @@
 {
   "name": "@krebitdao/eip712-vc",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Krebit SDK for EIP712 Verified Credentials",
   "type": "module",
   "main": "./dist/index.js",
@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/KrebitDAO/krebit#readme",
   "dependencies": {
-    "ethers": "^5.6.9"
+    "ethers": "^5.5.1"
   },
   "devDependencies": {
     "@krebitdao/tsconfig": "*",

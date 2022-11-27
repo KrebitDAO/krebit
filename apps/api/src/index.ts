@@ -4,7 +4,7 @@ import cors from 'cors';
 import {
   DeworkController,
   DiscordController,
-  QuestappController,
+  DelegatedController,
   TwitterController,
   VeriffController,
   IssuerController,
@@ -14,7 +14,9 @@ import {
   GithubController,
   PersonaController,
   MetadataController,
-  GuildController
+  GuildController,
+  StackController,
+  JobsController
 } from './controller';
 
 const { SERVER_PORT, SERVER_BASE_URL } = process.env;
@@ -33,8 +35,10 @@ router.use(cors(corsOptions)).use(express.json());
 
 router.get('/metadata/:tokenId', MetadataController);
 
+router.get('/jobs', JobsController);
+
 router
-  .post('/questapp', QuestappController)
+  .post('/delegated', DelegatedController)
   .post('/discord', DiscordController)
   .post('/dework', DeworkController)
   .post('/twitter', TwitterController)
@@ -45,7 +49,8 @@ router
   .post('/email', EmailController)
   .post('/github', GithubController)
   .post('/persona', PersonaController)
-  .post('/guild', GuildController);
+  .post('/guild', GuildController)
+  .post('/stack', StackController);
 
 app.use('/', router);
 

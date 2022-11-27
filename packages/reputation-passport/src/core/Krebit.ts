@@ -689,4 +689,42 @@ export class Krebit {
 
     return tx.hash;
   };
+
+  // write to my ceramic
+  createDocument = async (
+    content: any,
+    tags: string[],
+    schema: string,
+    family: string = 'krebit'
+  ) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    console.log('Saving document on Ceramic...');
+
+    try {
+      const stream = await TileDocument.create(this.idx.ceramic, content, {
+        family,
+        controllers: [this.idx.id],
+        tags,
+        schema
+      });
+      return stream.id.toString();
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
+  // write to my ceramic
+  updateDocument = async (content: any, streamId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    console.log('Saving document on Ceramic...');
+
+    try {
+      const stream = await TileDocument.load(this.idx.ceramic, streamId);
+      return await stream.update(content);
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
 }

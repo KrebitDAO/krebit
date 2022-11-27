@@ -134,6 +134,7 @@ export const SmallCardWrapper = styled.div<ICardProps>`
     padding: 16px 20px;
     display: grid;
     grid-template-areas: 'information top-icon' 'dates bottom-icon';
+    grid-template-rows: auto 31px;
     grid-gap: 47px 0;
     position: relative;
 
@@ -141,6 +142,10 @@ export const SmallCardWrapper = styled.div<ICardProps>`
     css`
       opacity: 0.7;
     `}
+
+    @media (min-width: ${theme.screens.lg}) {
+      grid-template-rows: auto 44px;
+    }
 
     .card-information {
       .card-information-title {
@@ -198,6 +203,7 @@ export const SmallCardWrapper = styled.div<ICardProps>`
     .card-dates {
       display: flex;
       grid-gap: 14px;
+      align-self: center;
 
       .card-date {
         .card-date-title {

@@ -31,7 +31,7 @@ export const Switch = (props: IProps) => {
         <FormControlLabel
           control={
             <MaterialSwitch
-              checked={value}
+              checked={value || false}
               onChange={isDisabled ? undefined : onChange}
               name={name}
               disabled={isDisabled}
