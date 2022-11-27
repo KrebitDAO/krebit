@@ -79,17 +79,17 @@ export const Home = () => {
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
-              Professionals: Build and claim your Reputation Passport
+              Professionals: Earn with your Talent and grow your Reputation
             </h1>
             <ul>
               <li className="main-description">
-                Get verified once, reuse it a billion times.
+                Proof your skills, import your existing achievements
               </li>
               <li className="main-description">
-                We help you build it, you own it.
+                Safe and fair Escrow payments
               </li>
               <li className="main-description">
-                Say goodbye to job applications and background checks.
+                Earn with referrals inviting your trusted contacts
               </li>
             </ul>
             <div className="main-buttons">
@@ -190,7 +190,7 @@ export const Home = () => {
         <div id="hire" className="decentralized">
           <Fade bottom>
             <h2 className="decentralized-title">
-              Recruiters: Instant Hiring is Here!
+              Find the most Krebited Talent!
             </h2>
           </Fade>
           <Fade bottom>
