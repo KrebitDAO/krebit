@@ -1,9 +1,15 @@
 import { getAddressFromDid } from '@orbisclub/orbis-sdk/utils';
 import { lib as passportLib } from '@krebitdao/reputation-passport/dist/lib';
 
-const substring = (value: string, length = 30, isAddress = false) => {
+const substring = (value: string, length = 20, isAddress = false) => {
   if (isAddress) {
-    return getAddressFromDid(value)?.address?.substring(0, length);
+    const address = getAddressFromDid(value)?.address;
+
+    return (
+      address.substring(0, length) +
+      '...' +
+      address.substring(address.length - 4)
+    );
   }
 
   return value?.substring(0, length);
@@ -12,6 +18,7 @@ const substring = (value: string, length = 30, isAddress = false) => {
 const getDomains = async (did: string) => {
   let ensDomain = null;
   let unsDomain = null;
+  let reputation = null;
 
   if (!did.match('did:pkh:solana')) {
     let address = getAddressFromDid(did)?.address;
@@ -19,12 +26,14 @@ const getDomains = async (did: string) => {
     if (address) {
       ensDomain = await passportLib.ens.lookupAddress(address);
       unsDomain = await passportLib.uns.lookupAddress(address);
+      reputation = await passportLib.graph.erc20BalanceQuery(address);
     }
   }
 
   return {
     ensDomain,
-    unsDomain
+    unsDomain,
+    reputation: reputation?.value || 0
   };
 };
 

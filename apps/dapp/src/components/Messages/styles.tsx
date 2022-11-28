@@ -6,6 +6,7 @@ interface IProps {
   length?: number;
   hasSpecialSpace?: boolean;
   isActive?: boolean;
+  hasConversations?: boolean;
 }
 
 export const LoadingWrapper = styled.div`
@@ -17,8 +18,8 @@ export const LoadingWrapper = styled.div`
   `}
 `;
 
-export const Wrapper = styled.div`
-  ${({ theme }) => css`
+export const Wrapper = styled.div<IProps>`
+  ${({ theme, hasConversations = true }) => css`
     margin: 0 auto;
     padding: 0 20px;
     margin-bottom: 100px;
@@ -28,11 +29,52 @@ export const Wrapper = styled.div`
     @media (min-width: ${theme.screens.lg}) {
       padding: 0;
       margin: 0 auto;
-      margin-top: 50px;
       margin-bottom: 76px;
-      display: grid;
-      grid-template-columns: 430px auto;
-      grid-gap: 24px;
+
+      ${hasConversations &&
+      css`
+        margin-top: 50px;
+        display: grid;
+        grid-template-columns: 430px auto;
+        grid-gap: 24px;
+      `}
+    }
+
+    .not-messages {
+      height: calc(100vh - 56px);
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      grid-gap: 32px;
+
+      .not-messages-image {
+        width: 167px;
+        height: 33px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 259px;
+          height: 52px;
+        }
+      }
+
+      .not-messages-title {
+        margin: 0;
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts['2xl']};
+        }
+      }
+
+      .not-messages-button {
+        width: 142px;
+        height: 50px;
+      }
     }
 
     .messages-is-hidden {

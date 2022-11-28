@@ -58,25 +58,28 @@ export const CredentialsBuilder = () => {
   const {
     auth,
     walletInformation: { passport, issuer, address },
+    walletModal: { handleOpenConnectWallet },
     storage
   } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
   const isFormLoading = status === 'form_pending';
 
   useEffect(() => {
+    if (auth.status !== 'resolved') return;
+
+    if (!auth?.isAuthenticated) {
+      setStatus('rejected_not_authenticated');
+      return;
+    }
+
     if (!passport) return;
     if (!issuer) return;
     if (!query?.type) return;
-    if (auth.status !== 'resolved') return;
 
     setStatus('pending');
 
     const validateFormValues = async () => {
       try {
-        if (!auth?.isAuthenticated) {
-          throw new Error('Not authorized');
-        }
-
         const values = CREDENTIALS_INITIAL_STATE.find(
           values => values.type === query.type
         );
@@ -452,6 +455,18 @@ export const CredentialsBuilder = () => {
           {isLoading ? (
             <div className="credential-loading">
               <Loading />
+            </div>
+          ) : status === 'rejected_not_authenticated' ? (
+            <div className="credential-not-authenticated">
+              <h1 className="credential-not-authenticated-title">
+                You have to be authenticated to continue
+              </h1>
+              <div className="credential-not-authenticated-button">
+                <Button
+                  text="Connect wallet"
+                  onClick={handleOpenConnectWallet}
+                />
+              </div>
             </div>
           ) : (
             <div className="credential-container">
