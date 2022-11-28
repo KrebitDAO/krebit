@@ -110,20 +110,22 @@ export const Groups = (props: IGroupProps) => {
   }, [isDesktop, isFilterOpen]);
 
   useEffect(() => {
+    if (!passportLib) return;
     if (auth.status !== 'resolved') return;
     if (!members || members?.length === 0) return;
 
     const getDomainsFromMembers = async () => {
       const membersUpdated = await Promise.all(
         members.map(async member => {
-          const { ensDomain, unsDomain } = await getDomains(
+          const { ensDomain, unsDomain, reputation } = await getDomains(
             member?.profile_details?.did
           );
 
           return {
             ...member,
             ensDomain,
-            unsDomain
+            unsDomain,
+            reputation
           };
         })
       );
@@ -132,7 +134,38 @@ export const Groups = (props: IGroupProps) => {
     };
 
     getDomainsFromMembers();
-  }, [members, auth.status]);
+  }, [passportLib, members, auth.status]);
+
+  useEffect(() => {
+    if (!orbis) return;
+    if (auth.status !== 'resolved') return;
+    if (!auth?.isAuthenticated) return;
+
+    const joinGroup = async () => {
+      const userDID = auth.did;
+
+      if (!userDID) return;
+
+      const { data: isMember, error: isMemberError } =
+        await orbis.getIsGroupMember(constants.DEFAULT_GROUP_ID, userDID);
+
+      if (isMemberError) {
+        console.error('orbis.getIsGroupMember: ', isMemberError);
+        return;
+      }
+
+      if (!isMember) {
+        const response = await orbis.setGroupMember(
+          constants.DEFAULT_GROUP_ID,
+          true
+        );
+
+        console.log('new member', response, userDID);
+      }
+    };
+
+    joinGroup();
+  }, [orbis, auth.status, auth?.isAuthenticated]);
 
   useEffect(() => {
     if (!orbis) return;
@@ -201,14 +234,8 @@ export const Groups = (props: IGroupProps) => {
             reactions = data;
           }
 
-          const { ensDomain, unsDomain } = await getDomains(
-            post?.creator_details?.did
-          );
-
           return {
             ...post,
-            ensDomain,
-            unsDomain,
             reactions: reactions || []
           };
         })
@@ -289,8 +316,6 @@ export const Groups = (props: IGroupProps) => {
       return;
     }
 
-    const { ensDomain, unsDomain } = await getDomains(profile.did);
-
     let newPost = {
       creator: profile.did,
       creator_details: {
@@ -304,8 +329,6 @@ export const Groups = (props: IGroupProps) => {
       count_haha: 0,
       count_downvotes: 0,
       reactions: [],
-      ensDomain,
-      unsDomain,
       master: comment ? comment[0]?.stream_id : null,
       type: currentReplyTo || comment ? 'reply' : type,
       reply_to: currentReplyTo?.streamId ? currentReplyTo.streamId : null,
@@ -435,12 +458,8 @@ export const Groups = (props: IGroupProps) => {
         reactions = data;
       }
 
-      const { ensDomain, unsDomain } = await getDomains(did);
-
       return {
-        reactions,
-        ensDomain,
-        unsDomain
+        reactions
       };
     };
 
@@ -751,7 +770,7 @@ export const Groups = (props: IGroupProps) => {
                             ) ||
                               substring(
                                 values?.creator_details?.did,
-                                100,
+                                isDesktop ? 20 : 10,
                                 true
                               )}
                           </span>{' '}
@@ -766,16 +785,6 @@ export const Groups = (props: IGroupProps) => {
                           ) : (
                             <span className="timestamp">Now</span>
                           )}
-                          {values?.ensDomain || values?.unsDomain ? (
-                            <div className="comment-box-information-title-boxes">
-                              {values?.ensDomain && (
-                                <span>{values?.ensDomain}</span>
-                              )}
-                              {values?.unsDomain && (
-                                <span>{values?.unsDomain}</span>
-                              )}
-                            </div>
-                          ) : null}
                         </a>
                       </Link>
                       {values?.content?.data?.type === 'job' ? (
@@ -1053,7 +1062,11 @@ export const Groups = (props: IGroupProps) => {
                       currentReplyTo?.creatorDetails?.profile?.username,
                       20
                     ) ||
-                      substring(currentReplyTo?.creatorDetails?.did, 20, true)}
+                      substring(
+                        currentReplyTo?.creatorDetails?.did,
+                        isDesktop ? 20 : 10,
+                        true
+                      )}
                   </p>
                 </div>
                 <div
@@ -1115,9 +1128,11 @@ export const Groups = (props: IGroupProps) => {
                   }`}
                   onClick={() => handleCleanPage()}
                 >
-                  <div className="left-box-list-option-icon">
-                    <Home />
-                  </div>
+                  {isDesktop && (
+                    <div className="left-box-list-option-icon">
+                      <Home />
+                    </div>
+                  )}
                   <p className="left-box-list-option-text">Home</p>
                 </a>
               </Link>
@@ -1209,7 +1224,7 @@ export const Groups = (props: IGroupProps) => {
                               ) ||
                                 substring(
                                   post?.reply_to_creator_details?.did,
-                                  20,
+                                  isDesktop ? 10 : 5,
                                   true
                                 )}{' '}
                               <span>
@@ -1237,7 +1252,7 @@ export const Groups = (props: IGroupProps) => {
                                 ) ||
                                   substring(
                                     post?.creator_details?.did,
-                                    100,
+                                    isDesktop ? 20 : 10,
                                     true
                                   )}{' '}
                                 {post?.timestamp ? (
@@ -1252,16 +1267,6 @@ export const Groups = (props: IGroupProps) => {
                                   <span className="timestamp">Now</span>
                                 )}
                               </span>
-                              {post?.ensDomain || post?.unsDomain ? (
-                                <div className="content-card-information-title-boxes">
-                                  {post?.ensDomain && (
-                                    <span>{post?.ensDomain}</span>
-                                  )}
-                                  {post?.unsDomain && (
-                                    <span>{post?.unsDomain}</span>
-                                  )}
-                                </div>
-                              ) : null}
                             </a>
                           </Link>
                           <div className="content-card-information-options">
@@ -1392,7 +1397,7 @@ export const Groups = (props: IGroupProps) => {
                       ) ||
                         substring(
                           currentReplyTo?.creatorDetails?.did,
-                          20,
+                          isDesktop ? 20 : 10,
                           true
                         )}
                     </p>
@@ -1509,7 +1514,7 @@ export const Groups = (props: IGroupProps) => {
                               ) ||
                                 substring(
                                   post?.reply_to_creator_details?.did,
-                                  20,
+                                  isDesktop ? 10 : 5,
                                   true
                                 )}{' '}
                               <span>
@@ -1536,7 +1541,7 @@ export const Groups = (props: IGroupProps) => {
                               ) ||
                                 substring(
                                   post?.creator_details?.did,
-                                  100,
+                                  isDesktop ? 20 : 10,
                                   true
                                 )}{' '}
                               {post?.timestamp ? (
@@ -1551,16 +1556,6 @@ export const Groups = (props: IGroupProps) => {
                                 <span className="timestamp">Now</span>
                               )}
                             </span>
-                            {post?.ensDomain || post?.unsDomain ? (
-                              <div className="content-card-information-title-boxes">
-                                {post?.ensDomain && (
-                                  <span>{post?.ensDomain}</span>
-                                )}
-                                {post?.unsDomain && (
-                                  <span>{post?.unsDomain}</span>
-                                )}
-                              </div>
-                            ) : null}
                           </a>
                         </Link>
                         <p className="content-card-information-description">
@@ -1733,8 +1728,18 @@ export const Groups = (props: IGroupProps) => {
                   <div className="right-box-item-image"></div>
                   <div className="right-box-item-content">
                     <p className="right-box-item-content-title">
-                      {substring(member?.profile_details?.profile?.username) ||
-                        substring(member?.profile_details?.did, 30, true)}
+                      {substring(
+                        member?.profile_details?.profile?.username,
+                        25
+                      ) ||
+                        substring(
+                          member?.profile_details?.did,
+                          isDesktop ? 20 : 10,
+                          true
+                        )}
+                      {member?.reputation ? (
+                        <span>{member?.reputation} Krebits</span>
+                      ) : null}
                     </p>
                     {member?.ensDomain || member?.unsDomain ? (
                       <div className="right-box-item-content-boxes">

@@ -9,11 +9,12 @@ import { Input } from 'components/Input';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { QuestionModal } from 'components/QuestionModal';
 import { MoreVert, OpenInNew } from 'components/Icons';
-import { GeneralContext } from 'context';
 import { constants, orbisParseMarkdown } from 'utils';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
-import { getDomains, substring } from 'components/Groups/utils';
+import { substring } from 'components/Groups/utils';
 import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
+import { GeneralContext } from 'context';
+import { useWindowSize } from 'hooks';
 
 // types
 import {
@@ -52,6 +53,8 @@ export const Activity = (props: IProps) => {
     walletInformation: { orbis }
   } = useContext(GeneralContext);
   const { push } = useRouter();
+  const { width } = useWindowSize();
+  const isDesktop = width >= 1024;
   const isLoading = status === 'idle' || status === 'pending';
   const isPostActionLoading = status === 'pending_post';
   const isEmpty = !isLoading && posts?.length === 0;
@@ -292,7 +295,7 @@ export const Activity = (props: IProps) => {
                             ) ||
                               substring(
                                 activity?.reply_to_creator_details?.did,
-                                20,
+                                isDesktop ? 20 : 10,
                                 true
                               )}{' '}
                             <span>
@@ -317,11 +320,12 @@ export const Activity = (props: IProps) => {
                       >
                         <span>
                           {substring(
-                            activity?.creator_details?.profile?.username
+                            activity?.creator_details?.profile?.username,
+                            20
                           ) ||
                             substring(
                               activity?.creator_details?.did,
-                              100,
+                              isDesktop ? 20 : 10,
                               true
                             )}{' '}
                           {activity?.timestamp ? (
