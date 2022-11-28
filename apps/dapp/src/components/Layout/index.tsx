@@ -260,6 +260,13 @@ export const Layout: FunctionComponent<IProps> = props => {
                   </NavBarOption>
                 </Link>
               ))}
+          {!isLoading && !auth?.isAuthenticated ? (
+            <NavBarOption isActive={false} onClick={handleHelp}>
+              <div className="option-icon">
+                <Help />
+              </div>
+            </NavBarOption>
+          ) : null}
         </NavBarMobile>
         <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
           <div className="options">
