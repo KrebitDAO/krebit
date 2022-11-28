@@ -150,11 +150,22 @@ export const Verify = (props: IProps) => {
             </div>
           )}
           {viewStatus === 'steps' && (
-            <div className="verify-box-steps">
-              {component({
-                currentVerify,
-                handleCurrentVerify
-              })}
+            <div className="verify-steps-header">
+              <div className="verify-step">
+                <span className="verify-step-indicator active">1</span>
+                <span className="verify-step-text">Primer paso</span>
+              </div>
+              <div className="verify-steps-line"></div>
+
+              <div className="verify-step">
+                <span className="verify-step-indicator">2</span>
+                <span className="verify-step-text">Primer paso</span>
+              </div>
+              <div className="verify-steps-line"></div>
+              <div className="verify-step">
+                <span className="verify-step-indicator">3</span>
+                <span className="verify-step-text">Primer paso</span>
+              </div>
             </div>
           )}
         </div>

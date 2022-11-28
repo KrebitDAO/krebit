@@ -18,16 +18,18 @@ export const Wrapper = styled.div`
 
     .verify-box {
       background-color: ${theme.colors.bunting};
-      border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
       padding: 36px 20px;
+      width: 100%;
+      height: 100%;
       margin: 0 auto;
-      max-height: 98%;
-      width: 98%;
       overflow-y: auto;
 
       @media (min-width: ${theme.screens.lg}) {
+        height: auto;
+        max-height: 98%;
         width: 577px;
+        border-radius: 15px;
         padding: 36px 30px;
       }
 
@@ -135,9 +137,32 @@ export const Wrapper = styled.div`
         }
       }
 
-      .verify-box-steps {
-        display: grid;
-        grid-gap: 20px;
+      .verify-steps-header {
+        display: flex;
+        justify-content: space-between;
+
+        .verify-steps-line {
+          flex: 1;
+          height: 1px;
+          border: 1px solid ${theme.colors.gray};
+        }
+
+        .verify-step {
+          .verify-step-indicator {
+            padding: 5px;
+            border-radius: 9999px;
+            background-color: ${theme.colors.white};
+            margin: 0;
+            color: ${theme.colors.bunting};
+            font-size: ${theme.fonts.sm};
+          }
+
+          .verify-step-text {
+            margin: 0;
+            color: ${theme.colors.white};
+            font-size: ${theme.fonts.sm};
+          }
+        }
       }
     }
   `}
