@@ -101,19 +101,21 @@ const erc20BalancesQuery = async (props: ListProps) => {
     variables: props
   });
 
-  return response.data.erc20Balances;
+  return response.data?.erc20Balances;
 };
 
 const erc20BalanceQuery = async (address: string) => {
   const contract = schemas.krbToken[currentConfig.network].address;
   const id = contract.toLowerCase() + '/' + address.toLowerCase();
 
+  if (!id) return;
+
   const response = await client({
     query: erc20Balance,
     variables: { id }
   });
 
-  return response.data.erc20Balance;
+  return response.data?.erc20Balance;
 };
 
 const exploreAccountsQuery = async (props: ListProps) => {

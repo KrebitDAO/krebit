@@ -22,6 +22,7 @@ import { Loading } from 'components/Loading';
 import { Add, ArrowForward, ArrowSend, Close } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Autocomplete } from 'components/Autocomplete';
+import { Button } from 'components/Button';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { formatUrlImage } from 'utils';
 import { GeneralContext } from 'context';
@@ -316,6 +317,25 @@ export const Messages = () => {
       <LoadingWrapper>
         <Loading />
       </LoadingWrapper>
+    );
+  }
+
+  if (!isLoading && conversations?.length === 0) {
+    return (
+      <Wrapper hasConversations={false}>
+        <div className="not-messages">
+          <img
+            className="not-messages-image"
+            src="/imgs/images/not-conversations.png"
+          />
+          <p className="not-messages-title">
+            You don’t have any connections yet.
+          </p>
+          <div className="not-messages-button">
+            <Button text="Explore profiles" onClick={() => push('/explore')} />
+          </div>
+        </div>
+      </Wrapper>
     );
   }
 

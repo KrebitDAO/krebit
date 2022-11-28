@@ -85,6 +85,8 @@ export class Passport {
 
   getReputation = async () => {
     //from subgraph
+    if (!this.address) return;
+
     const balance = await lib.graph.erc20BalanceQuery(this.address);
 
     return balance ? balance.value : 0;

@@ -20,6 +20,31 @@ export const Wrapper = styled.div<IProps>`
       height: 60px;
     }
 
+    .credential-not-authenticated {
+      height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      grid-gap: 32px;
+
+      .credential-not-authenticated-title {
+        margin: 0;
+        font-family: 'HelveticaNowDisplay-Medium';
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts['2xl']};
+        }
+      }
+
+      .credential-not-authenticated-button {
+        width: 142px;
+        height: 50px;
+      }
+    }
+
     .credential-container {
       display: grid;
       margin-bottom: 120px;

@@ -436,6 +436,12 @@ export const RightBoxItem = styled.a<IProps>`
         font-size: ${theme.fonts.sm};
         font-family: 'HelveticaNowDisplay-Medium';
         color: ${theme.colors.white};
+
+        & > span {
+          margin-left: 2px;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.cyan};
+        }
       }
 
       .right-box-item-content-boxes {
@@ -958,22 +964,6 @@ export const CommentBoxCard = styled.div<IProps>`
           margin-left: 5px;
           color: ${theme.colors.white}80;
           font-size: ${theme.fonts.xs};
-        }
-
-        .comment-box-information-title-boxes {
-          display: flex;
-          flex-wrap: wrap;
-          grid-gap: 5px;
-          margin-top: 5px;
-
-          & > span {
-            margin: 0;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: ${theme.fonts.xs};
-            color: ${theme.colors.white};
-            background-color: ${theme.colors.ebony};
-          }
         }
       }
 
