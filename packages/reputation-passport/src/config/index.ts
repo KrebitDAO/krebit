@@ -9,6 +9,10 @@ export interface IConfigProps {
   biconomyKey?: string;
 }
 
+export const isProduction =
+  process.env.NEXT_PUBLIC_NETWORK === 'polygon' ||
+  process.env.SERVER_NETWORK === 'polygon';
+
 const initialConfigTestnet = {
   network: 'mumbai',
   rpcUrl:
@@ -31,11 +35,9 @@ const initialConfigMainnet = {
   biconomyKey: 'lMY3O7m6h.884dd5c0-9682-421c-817c-f9160c7cfd94'
 };
 
-const initialConfig =
-  process.env.NEXT_PUBLIC_NETWORK === 'polygon' ||
-  process.env.SERVER_NETWORK === 'polygon'
-    ? initialConfigMainnet
-    : initialConfigTestnet;
+const initialConfig = isProduction
+  ? initialConfigMainnet
+  : initialConfigTestnet;
 
 const isNode =
   typeof process !== 'undefined' &&

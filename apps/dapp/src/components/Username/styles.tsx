@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 interface IProps {
   profilePicture: string;
   isCurrentProfile: boolean;
+  type?: string;
 }
 
 interface IBackgrounProps {
@@ -11,7 +12,7 @@ interface IBackgrounProps {
 }
 
 export const Wrapper = styled.div<IProps>`
-  ${({ theme, profilePicture, isCurrentProfile }) => css`
+  ${({ theme, profilePicture, isCurrentProfile, type }) => css`
     @media (min-width: ${theme.screens.xl}) {
       margin-right: 80px;
       float: right;
@@ -41,6 +42,8 @@ export const Wrapper = styled.div<IProps>`
           grid-template-areas: 'photo info buttons';
           grid-template-columns: ${isCurrentProfile
             ? '215px auto 366px'
+            : !isCurrentProfile && type === 'web3auth'
+            ? '215px auto 267px'
             : '215px auto 208px'};
           justify-content: initial;
           align-items: end;
@@ -190,7 +193,8 @@ export const Wrapper = styled.div<IProps>`
           grid-area: buttons;
           display: grid;
           justify-content: center;
-          grid-template-columns: ${isCurrentProfile
+          grid-template-columns: ${(!isCurrentProfile && type === 'web3auth') ||
+          isCurrentProfile
             ? 'repeat(3, auto)'
             : '44px 150px'};
           grid-gap: 8px;
@@ -198,7 +202,9 @@ export const Wrapper = styled.div<IProps>`
           position: relative;
 
           @media (min-width: ${theme.screens.lg}) {
-            grid-template-columns: ${isCurrentProfile
+            grid-template-columns: ${(!isCurrentProfile &&
+              type === 'web3auth') ||
+            isCurrentProfile
               ? 'repeat(3, auto)'
               : '50px 150px'};
           }
@@ -405,6 +411,22 @@ export const Skills = styled.div`
           font-size: ${theme.fonts.sm};
         }
       }
+    }
+  `}
+`;
+
+export const QuestionModalText = styled.div`
+  ${({ theme }) => css`
+    margin: 0;
+    font-size: ${theme.fonts.base};
+    color: ${theme.colors.white}B3;
+    word-wrap: break-word;
+
+    & > a {
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.cyan}B3;
+      text-decoration: underline;
+      word-wrap: break-word;
     }
   `}
 `;

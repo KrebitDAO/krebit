@@ -57,6 +57,7 @@ import { Reply } from './Reply';
 import { Comment } from './Comment';
 import { ArrowSend } from './ArrowSend';
 import { Refresh } from './Refresh';
+import { SystemUpdateAlt } from './SystemUpdateAlt';
 
 export {
   Close,
@@ -117,5 +118,6 @@ export {
   Reply,
   Comment,
   ArrowSend,
-  Refresh
+  Refresh,
+  SystemUpdateAlt
 };
