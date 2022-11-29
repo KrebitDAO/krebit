@@ -52,6 +52,10 @@ export const Wrapper = styled.div<IProps>`
       margin-bottom: 100px;
 
       @media (min-width: ${theme.screens.xl}) {
+        grid-template-columns: repeat(3, 384px);
+      }
+
+      @media (min-width: ${theme.screens['2xl']}) {
         grid-template-columns: repeat(3, 1fr);
       }
     }

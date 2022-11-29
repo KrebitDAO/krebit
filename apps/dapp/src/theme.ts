@@ -1,3 +1,5 @@
+// Find color name: https://chir.ag/projects/name-that-color/
+
 import { Theme } from '@emotion/react';
 import { createTheme } from '@mui/material';
 
@@ -25,7 +27,8 @@ export const systemTheme: Theme = {
     melrose: '#BDB4FE',
     ebony: '#101828',
     pomegranate: '#F44336',
-    electricViolet: '#8117FE'
+    electricViolet: '#8117FE',
+    oliveDrab: '#60B527'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

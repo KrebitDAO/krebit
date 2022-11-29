@@ -306,7 +306,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
     title: 'Event Attendance',
     description: 'Certify your event attendees',
     primaryColor: 'blueCharcoal',
-    secondaryColor: 'scorpion',
+    secondaryColor: 'oliveDrab',
     icon: <Attendance />,
     form: {
       fields: [
