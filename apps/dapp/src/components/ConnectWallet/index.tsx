@@ -88,6 +88,18 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 <WalletButton
                   textColor="white"
                   disabled={!hasAcceptedTerms}
+                  onClick={() => handleConnect('wallet_connect')}
+                >
+                  <img
+                    src="/imgs/logos/wallet-connect.png"
+                    width={30}
+                    height={24}
+                  />{' '}
+                  Wallet connect
+                </WalletButton>
+                <WalletButton
+                  textColor="periwinkle"
+                  disabled={!hasAcceptedTerms}
                   onClick={() => handleConnect('web3auth')}
                 >
                   <img
@@ -95,7 +107,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                     width={30}
                     height={24}
                   />{' '}
-                  web3auth
+                  Email / Social Login
                 </WalletButton>
               </div>
               <div className="wallet-remember-session">

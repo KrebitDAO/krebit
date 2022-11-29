@@ -76,7 +76,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
 
       let information: IWalletInformation;
 
-      if (currentType === 'metamask') {
+      if (currentType === 'metamask' || currentType === 'wallet_connect') {
         information = await getWalletInformation(currentType);
       }
 
@@ -225,7 +225,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     try {
       let information: IWalletInformation;
 
-      if (type === 'metamask') {
+      if (type === 'metamask' || type === 'wallet_connect') {
         information = await getWalletInformation(type);
       }
 

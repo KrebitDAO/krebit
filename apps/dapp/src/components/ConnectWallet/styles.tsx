@@ -64,11 +64,11 @@ export const Wrapper = styled.div<WalletProps>`
 
       .wallet-buttons {
         display: grid;
-        grid-template-rows: repeat(2, 56px);
+        grid-template-rows: repeat(3, 56px);
         grid-gap: 16px;
 
         @media (min-width: ${theme.screens.lg}) {
-          grid-template-rows: repeat(2, 69px);
+          grid-template-rows: repeat(3, 69px);
         }
       }
 
