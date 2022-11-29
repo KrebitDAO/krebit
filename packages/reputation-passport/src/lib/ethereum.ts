@@ -1,5 +1,3 @@
-import { ethers } from 'ethers';
-
 import { utils } from '../utils/index.js';
 import { schemas } from '../schemas/index.js';
 import { config } from '../config/index.js';

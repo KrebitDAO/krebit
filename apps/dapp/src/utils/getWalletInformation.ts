@@ -1,8 +1,11 @@
 import { ethers } from 'ethers';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import { SafeEventEmitterProvider } from '@web3auth/base';
 import Krebit from '@krebitdao/reputation-passport';
 
-export const getWalletInformation = async (type: string) => {
+export const getWalletInformation = async (
+  type: string,
+  web3AuthProvider?: SafeEventEmitterProvider
+) => {
   if (type === 'metamask') {
     if (!(window as any).ethereum) return;
 
@@ -23,23 +26,13 @@ export const getWalletInformation = async (type: string) => {
     };
   }
 
-  if (type === 'wallet_connect') {
-    const walletConnect = new WalletConnectProvider({
-      rpc: {
-        137: process.env.NEXT_PUBLIC_NETWORK_RPC_URL,
-        80001: process.env.NEXT_PUBLIC_NETWORK_RPC_URL
-      }
-    });
-    await walletConnect.enable();
-
-    const provider = new ethers.providers.Web3Provider(walletConnect);
-    await Krebit.lib.ethereum.switchNetwork(walletConnect);
+  if (type === 'web3auth') {
+    const provider = new ethers.providers.Web3Provider(web3AuthProvider);
     const wallet = provider.getSigner();
     const address = await wallet.getAddress();
+    (provider.provider as any).enable = () => [address];
 
     return {
-      network: process.env.NEXT_PUBLIC_NETWORK as 'mumbai' | 'polygon',
-      rpcUrl: process.env.NEXT_PUBLIC_NETWORK_RPC_URL,
       ethProvider: provider.provider,
       address,
       wallet
