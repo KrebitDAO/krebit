@@ -1,21 +1,22 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { auth } from 'twitter-api-sdk';
 import { debounce } from 'ts-debounce';
 
-import { GeneralContext } from 'context';
-import {
-  generateUID,
-  getCredential,
-  openOAuthUrl,
-  IIsuerParams,
-  constants
-} from 'utils';
+import { generateUID, getCredential, openOAuthUrl, constants } from 'utils';
+
+// types
+import { IIssuerParams } from 'utils/getIssuers';
+import { IWalletInformation } from 'context';
 
 interface IClaimValues {
   username: string;
   private: boolean;
+}
+
+interface IProps {
+  walletInformation: IWalletInformation;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
@@ -54,7 +55,8 @@ const initialState = {
   private: true
 };
 
-export const useTwitterProvider = () => {
+export const useTwitterProvider = (props: IProps) => {
+  const { walletInformation } = props;
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
@@ -64,8 +66,7 @@ export const useTwitterProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
-  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
-  const { walletInformation } = useContext(GeneralContext);
+  const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
   const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export const useTwitterProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string, issuer: IIsuerParams) => {
+  const handleFetchOAuth = (address: string, issuer: IIssuerParams) => {
     setCurrentIssuer(issuer);
     const authUrl = authClient.generateAuthURL({
       state: `twitter-${generateUID(10)}`,

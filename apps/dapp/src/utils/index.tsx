@@ -1,5 +1,5 @@
 import { createEmotionCache } from './createEmotionCache';
-import { getIssuers, IIsuerParams } from './getIssuers';
+import { getIssuers } from './getIssuers';
 import { getDeworkUser } from './getDeworkUser';
 import { getDiscordUser } from './getDiscordUser';
 import { getCredential } from './getCredential';
@@ -41,4 +41,3 @@ export {
   getStackUser,
   orbisParseMarkdown
 };
-export type { IIsuerParams };

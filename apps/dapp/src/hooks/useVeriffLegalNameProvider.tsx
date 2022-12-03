@@ -7,16 +7,22 @@ import {
   getCredential,
   openOAuthUrl,
   getVeriffSession,
-  getWalletInformation,
   generateUID,
-  IIsuerParams,
   constants
 } from 'utils';
+
+// types
+import { IWalletInformation } from 'context';
+import { IIssuerParams } from 'utils/getIssuers';
 
 interface IClaimValues {
   firstName: string;
   lastName: string;
   private: boolean;
+}
+
+interface IProps {
+  walletInformation: IWalletInformation;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
@@ -27,7 +33,8 @@ const initialState = {
   private: true
 };
 
-export const useVeriffLegalNameProvider = () => {
+export const useVeriffLegalNameProvider = (props: IProps) => {
+  const { walletInformation } = props;
   const [veriffSession, setVeriffSession] = useState({});
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
@@ -38,7 +45,7 @@ export const useVeriffLegalNameProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
-  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
   const channel = new BroadcastChannel('veriff_oauth_channel');
 
   useEffect(() => {
@@ -60,7 +67,7 @@ export const useVeriffLegalNameProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = async (address: string, issuer: IIsuerParams) => {
+  const handleFetchOAuth = async (address: string, issuer: IIssuerParams) => {
     setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
@@ -114,6 +121,8 @@ export const useVeriffLegalNameProvider = () => {
     target: string;
     data: { state: string };
   }) => {
+    if (!walletInformation) return;
+
     setStatus('credential_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
@@ -126,9 +135,6 @@ export const useVeriffLegalNameProvider = () => {
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
-
-        const currentType = localStorage.getItem('auth-type');
-        const walletInformation = await getWalletInformation(currentType);
 
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
@@ -218,14 +224,13 @@ export const useVeriffLegalNameProvider = () => {
 
   const handleMintCredential = async credential => {
     try {
+      if (!walletInformation) return;
+
       setStatus('mint_pending');
       setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

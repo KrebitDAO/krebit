@@ -9,6 +9,12 @@ interface IGetCredentialsProps {
   limit?: number;
 }
 
+interface IGetCredentialProps {
+  vcId: string;
+  type: string;
+  passport: Passport;
+}
+
 interface IBuildCredentialProps {
   type: string;
   credential: any;
@@ -58,6 +64,41 @@ const getCredentials = async (props: IGetCredentialsProps) => {
   );
 };
 
+const getCredential = async (props: IGetCredentialProps) => {
+  const { vcId, type, passport } = props;
+
+  const currentCredential = await passport.getCredential(vcId);
+
+  const stamps = await passport.getStamps({
+    type: type,
+    claimId: currentCredential.id
+  });
+
+  //const isMinted = await passport.isMinted(credential);
+  const isMinted = false;
+
+  const visualInformation = getIssuers(type).find(issuer =>
+    currentCredential.type.includes(issuer.credentialType)
+  );
+  const claimValue = await passport.getClaimValue(currentCredential);
+
+  const customCredential = {
+    ...currentCredential,
+    visualInformation: {
+      ...visualInformation,
+      isEncryptedByDefault: !!claimValue?.encryptedString
+    },
+    value: claimValue
+  };
+
+  return {
+    credential: customCredential,
+    stamps,
+    isMinted,
+    skills: currentCredential.type
+  };
+};
+
 const buildCredential = async (props: IBuildCredentialProps) => {
   const { type, credential, passport, isCustomCredential = false } = props;
 
@@ -92,4 +133,4 @@ const buildCredential = async (props: IBuildCredentialProps) => {
   };
 };
 
-export { getCredentials, buildCredential };
+export { getCredentials, getCredential, buildCredential };

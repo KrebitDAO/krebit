@@ -1,3 +1,4 @@
+import { ChangeEvent, ReactNode } from 'react';
 import {
   Approval,
   Badge,
@@ -13,31 +14,137 @@ import {
   Dework,
   Stack
 } from 'components/Icons';
-import { ReactNode } from 'react';
 
-interface IIsuerParams {
-  credentialType: string;
-  entity: string;
+// types
+import { ICredential } from './normalizeSchema';
+import { IItems } from 'components/Select';
+import { SelectChangeEvent } from '@mui/material';
+
+interface IStepMetadata {
+  title: string;
   description: string;
   icon: ReactNode;
-  imageUrl: string;
+  imageUrl?: string;
+  verificationUrl?: string;
+  did?: string;
+  address?: string;
+  price?: string;
+}
+
+interface IIssuerParamsStep {
+  title: string;
+  metadata: IStepMetadata;
+  form: (
+    provider: any,
+    credential: ICredential,
+    currentVerify: IIssuerParams
+  ) => {
+    fields?: {
+      name: string;
+      placeholder: string;
+      value: string | number | boolean;
+      onChange: (
+        event: ChangeEvent<HTMLInputElement> | SelectChangeEvent
+      ) => void;
+      type?: string;
+      pattern?: string;
+      isDisabled?: boolean;
+      isRequired?: boolean;
+      items?: IItems[];
+    }[];
+    action?: {
+      text: string;
+      method: () => Promise<any>;
+    };
+  };
+}
+
+interface IIssuerParams {
+  credentialType: string;
+  entity: string;
   verificationUrl: string;
-  did: string;
   address: string;
-  price: string;
+  icon?: ReactNode;
+  badgeText?: string;
+  badgeColor?: string;
+  badgeIconColor?: string;
+  isDisabled?: boolean;
+  steps: IIssuerParamsStep[];
 }
 
 const PERSONHOOD_CREDENTIALS = [
   {
     credentialType: 'Discord',
     entity: 'Discord',
-    description: 'Krebit Verification Node',
     icon: <Discord />,
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
-    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+    steps: [
+      {
+        title: 'Overview',
+        metadata: {
+          title: 'Discord details',
+          description:
+            'Krebit Verification Node. This is the discord used for blah blah blah',
+          icon: <Discord />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify discord',
+        metadata: {
+          title: 'Verify discord',
+          description: 'Claim your Discord profile'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'Twitter',
@@ -363,4 +470,4 @@ const getIssuers = (type: string): any[] => {
 };
 
 export { getIssuers };
-export type { IIsuerParams };
+export type { IIssuerParams, IIssuerParamsStep };
