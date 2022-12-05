@@ -2,11 +2,12 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 interface IProps {
+  viewStatus?: string;
   stepsWidth?: number | string;
 }
 
 export const Wrapper = styled.div<IProps>`
-  ${({ theme, stepsWidth = 577 }) => css`
+  ${({ theme, viewStatus, stepsWidth = 577 }) => css`
     position: fixed;
     top: 0;
     right: 0;
@@ -23,15 +24,16 @@ export const Wrapper = styled.div<IProps>`
     .verify-box {
       background-color: ${theme.colors.bunting};
       box-shadow: ${theme.shadows.smallest};
-      padding: 36px 20px;
+      padding: 20px;
       width: 100%;
       height: 100%;
       margin: 0 auto;
       overflow-y: auto;
 
       @media (min-width: ${theme.screens.lg}) {
-        height: auto;
-        min-height: 577px;
+        height: 100%;
+        max-height: 601px;
+        overflow: ${viewStatus === 'steps' ? 'hidden' : 'auto'};
         width: ${stepsWidth}px;
         border-radius: 15px;
         padding: 36px 30px;
@@ -149,14 +151,23 @@ export const Wrapper = styled.div<IProps>`
         justify-content: space-between;
 
         .verify-steps-line {
-          margin: 0 5px;
-          flex: 1;
-          height: 1px;
-          border: 1px solid ${theme.colors.gray};
+          display: none;
+
+          @media (min-width: ${theme.screens.lg}) {
+            display: block;
+            margin: 0 5px;
+            flex: 1;
+            height: 1px;
+            border: 1px solid ${theme.colors.gray};
+          }
         }
 
         .verify-step {
-          display: flex;
+          display: none;
+
+          @media (min-width: ${theme.screens.lg}) {
+            display: flex;
+          }
 
           .verify-step-indicator {
             display: flex;
@@ -184,156 +195,195 @@ export const Wrapper = styled.div<IProps>`
             font-size: ${theme.fonts.sm};
           }
         }
-      }
 
-      .verify-steps-content {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-      }
-
-      .verify-steps-content-title {
-        margin: 0;
-        margin-bottom: 20px;
-        font-size: ${theme.fonts.base};
-        font-family: 'HelveticaNowDisplay-Medium';
-        color: ${theme.colors.white};
-      }
-
-      .verify-steps-content-description {
-        margin: 0;
-        font-size: ${theme.fonts.sm};
-        color: ${theme.colors.white}B3;
-      }
-
-      .verify-steps-content-dots {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        text-decoration: underline;
-      }
-
-      .verify-steps-content-icon {
-        margin-left: 20px;
-        margin-bottom: 20px;
-
-        & > svg {
-          width: 30px;
-          height: 30px;
-          fill: ${theme.colors.white};
-        }
-      }
-
-      .verify-steps-content-list {
-        margin: 24px 0;
-        padding: 0;
-        padding-inline-start: 20px;
-      }
-
-      .verify-steps-content-credential {
-        .verify-steps-content-dates {
+        .verify-step.active {
           display: flex;
-          grid-gap: 14px;
-          margin-top: 20px;
-
-          .verify-steps-content-date {
-            .verify-steps-content-date-title {
-              margin: 0;
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.white}B3;
-            }
-
-            .verify-steps-content-date-text {
-              margin: 0;
-              font-size: ${theme.fonts.sm};
-              color: ${theme.colors.white};
-              font-family: 'HelveticaNowDisplay-Medium';
-            }
-          }
-        }
-
-        .verify-steps-content-visibility-container {
-          display: flex;
-          align-items: center;
-          grid-gap: 5px;
-
-          .verify-steps-content-visibility {
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-
-            & > svg {
-              width: 25px;
-              height: 25px;
-              fill: ${theme.colors.white};
-            }
-          }
-        }
-
-        .verify-steps-content-external-urls {
-          display: flex;
-          grid-gap: 10px;
-          margin-top: 20px;
-
-          & > img {
-            cursor: pointer;
-          }
         }
       }
 
-      .verify-steps-content-fields {
-        display: grid;
-        grid-gap: 24px;
-        margin-top: 24px;
+      .verify-steps-container {
+        height: 80%;
+        overflow-y: auto;
+        padding-bottom: 60px;
 
         @media (min-width: ${theme.screens.lg}) {
-          margin: 24px 0;
-        }
-      }
-
-      .verify-steps-loading {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .verify-steps-loading-box {
-          width: 60px;
-          height: 60px;
-          margin-bottom: 20px;
+          height: 450px;
         }
 
-        .verify-steps-loading-text {
-          margin: 0 auto;
-          font-size: ${theme.fonts.base};
-          color: ${theme.colors.white}B3;
-          text-align: center;
+        .verify-steps-content {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
         }
-      }
 
-      .verify-steps-error {
-        margin: 0 auto;
-        font-size: ${theme.fonts.base};
-        color: ${theme.colors.pomegranate}B3;
-        text-align: center;
-      }
-
-      .verify-steps-completed {
-        margin-top: 40px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .verify-steps-completed-title {
+        .verify-steps-content-title {
           margin: 0;
           margin-bottom: 20px;
-          font-size: ${theme.fonts['2xl']};
+          font-size: ${theme.fonts.base};
+          font-family: 'HelveticaNowDisplay-Medium';
           color: ${theme.colors.white};
         }
 
-        .verify-steps-completed-button {
-          width: 150px;
-          height: 40px;
+        .verify-steps-content-description {
+          margin: 0;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white}B3;
+        }
+
+        .verify-steps-content-dots {
+          width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          text-decoration: underline;
+        }
+
+        .verify-steps-content-icon {
+          margin-left: 20px;
+          margin-bottom: 20px;
+
+          & > svg {
+            width: 30px;
+            height: 30px;
+            fill: ${theme.colors.white};
+          }
+        }
+
+        .verify-steps-content-list {
+          margin: 24px 0;
+          padding: 0;
+          padding-inline-start: 20px;
+        }
+
+        .verify-steps-content-credential {
+          .verify-steps-content-dates {
+            display: flex;
+            grid-gap: 14px;
+            margin-top: 20px;
+
+            .verify-steps-content-date {
+              .verify-steps-content-date-title {
+                margin: 0;
+                font-size: ${theme.fonts.sm};
+                color: ${theme.colors.white}B3;
+              }
+
+              .verify-steps-content-date-text {
+                margin: 0;
+                font-size: ${theme.fonts.sm};
+                color: ${theme.colors.white};
+                font-family: 'HelveticaNowDisplay-Medium';
+              }
+            }
+          }
+
+          .verify-steps-content-visibility-container {
+            display: flex;
+            align-items: center;
+            grid-gap: 5px;
+
+            .verify-steps-content-visibility {
+              width: 25px;
+              height: 25px;
+              cursor: pointer;
+
+              & > svg {
+                width: 25px;
+                height: 25px;
+                fill: ${theme.colors.white};
+              }
+            }
+          }
+
+          .verify-steps-content-external-urls {
+            display: flex;
+            grid-gap: 10px;
+            margin-top: 20px;
+
+            & > img {
+              cursor: pointer;
+            }
+          }
+
+          .verify-steps-content-skills {
+            display: flex;
+            flex-wrap: wrap;
+            grid-gap: 8px;
+            margin-top: 20px;
+
+            .verify-steps-content-skill {
+              border: 1px solid ${theme.colors.melrose};
+              border-radius: 20px;
+              padding: 4px 14px;
+              height: 100%;
+              width: fit-content;
+
+              .verify-steps-content-skill-text {
+                margin: 0;
+                font-size: ${theme.fonts.xs};
+                color: ${theme.colors.melrose};
+
+                @media (min-width: ${theme.screens.lg}) {
+                  font-size: ${theme.fonts.sm};
+                }
+              }
+            }
+          }
+        }
+
+        .verify-steps-content-fields {
+          display: grid;
+          grid-gap: 24px;
+          margin-top: 24px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            margin: 24px 0;
+          }
+        }
+
+        .verify-steps-loading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .verify-steps-loading-box {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+          }
+
+          .verify-steps-loading-text {
+            margin: 0 auto;
+            font-size: ${theme.fonts.base};
+            color: ${theme.colors.white}B3;
+            text-align: center;
+          }
+        }
+
+        .verify-steps-error {
+          margin: 0 auto;
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.pomegranate}B3;
+          text-align: center;
+        }
+
+        .verify-steps-completed {
+          margin-top: 40px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .verify-steps-completed-title {
+            margin: 0;
+            margin-bottom: 20px;
+            font-size: ${theme.fonts['2xl']};
+            color: ${theme.colors.white};
+          }
+
+          .verify-steps-completed-button {
+            width: 150px;
+            height: 40px;
+          }
         }
       }
 
@@ -344,11 +394,17 @@ export const Wrapper = styled.div<IProps>`
         position: absolute;
         left: 30px;
         right: 30px;
-        bottom: 36px;
+        bottom: 35px;
+        background-color: ${theme.colors.bunting};
 
         .verify-steps-bottom-button {
-          width: 150px;
+          margin-top: 10px;
+          width: 130px;
           height: 40px;
+
+          @media (min-width: ${theme.screens.lg}) {
+            width: 150px;
+          }
         }
       }
     }

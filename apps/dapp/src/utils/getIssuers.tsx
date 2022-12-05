@@ -19,6 +19,7 @@ import {
 import { ICredential } from './normalizeSchema';
 import { IItems } from 'components/Select';
 import { SelectChangeEvent } from '@mui/material';
+import { countries } from './countries';
 
 interface IStepMetadata {
   title: string;
@@ -33,6 +34,7 @@ interface IStepMetadata {
 
 interface IIssuerParamsStep {
   title: string;
+  type: 'overview' | 'verification' | 'credential' | 'mint';
   metadata: IStepMetadata;
   form: (
     provider: any,
@@ -64,6 +66,7 @@ interface IIssuerParams {
   entity: string;
   verificationUrl: string;
   address: string;
+  imageUrl?: string;
   icon?: ReactNode;
   badgeText?: string;
   badgeColor?: string;
@@ -83,6 +86,7 @@ const PERSONHOOD_CREDENTIALS = [
     steps: [
       {
         title: 'Overview',
+        type: 'overview',
         metadata: {
           title: 'Discord details',
           description:
@@ -97,6 +101,7 @@ const PERSONHOOD_CREDENTIALS = [
       },
       {
         title: 'Verify discord',
+        type: 'credential',
         metadata: {
           title: 'Verify discord',
           description: 'Claim your Discord profile'
@@ -125,6 +130,7 @@ const PERSONHOOD_CREDENTIALS = [
       },
       {
         title: 'Mint credential',
+        type: 'mint',
         metadata: {
           title: 'Mint credential',
           description:
@@ -149,49 +155,326 @@ const PERSONHOOD_CREDENTIALS = [
   {
     credentialType: 'Twitter',
     entity: 'Twitter',
-    description: 'Krebit Verification Node',
     icon: <Twitter />,
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Twitter details',
+          description:
+            'Krebit Verification Node. This is the twitter used for blah blah blah',
+          icon: <Twitter />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID,
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify twitter',
+        type: 'credential',
+        metadata: {
+          title: 'Twitter discord',
+          description: 'Claim your Twitter profile'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you twitter handle',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'TwitterVerified',
     entity: 'Twitter Verified (blue checkmark)',
-    description: 'Krebit Verification Node',
     icon: <Twitter />,
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     badgeText: 'Beta',
-    badgeColor: 'blueRibbon'
+    badgeColor: 'blueRibbon',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Twitter details',
+          description:
+            'Krebit Verification Node. This is the twitter used for blah blah blah',
+          icon: <Twitter />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify twitter',
+        type: 'credential',
+        metadata: {
+          title: 'Verify twitter',
+          description: 'Claim your Twitter profile'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you twitter handle',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'Github',
     entity: 'Github',
-    description: 'Krebit Verification Node',
     icon: <Github />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
-    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
-    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Github details',
+          description:
+            'Krebit Verification Node. This is the Github used for blah blah blah',
+          icon: <Github />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          imageUrl:
+            process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+            '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Github',
+        type: 'credential',
+        metadata: {
+          title: 'Verify github',
+          description: 'Claim your Github profile'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you github username',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: Is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'PhoneNumber',
     entity: 'Phone',
-    description: 'Krebit Verification Node',
     icon: <Phone />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/phone'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'PhoneNumber details',
+          description:
+            'Krebit Verification Node. This is the PhoneNumber used for blah blah blah',
+          icon: <Phone />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/phone'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify phone number',
+        type: 'credential',
+        metadata: {
+          title: 'Verify phone number',
+          description: 'Claim your phone number'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'countryCode',
+              type: 'select',
+              placeholder: 'Select the country dialing prefix',
+              value: provider?.claimValues?.countryCode,
+              items: countries.phoneCodes,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              type: 'password',
+              pattern: '[0-9]*',
+              name: 'number',
+              placeholder: 'Enter phone number',
+              value: provider?.claimValues?.number,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: Is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
+          action: {
+            text: 'Send code',
+            method: async () =>
+              await provider.handleStartVerification(currentVerify)
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'Email',

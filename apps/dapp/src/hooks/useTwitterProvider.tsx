@@ -88,11 +88,13 @@ export const useTwitterProvider = (props: IProps) => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string, issuer: IIssuerParams) => {
+  const handleFetchOAuth = (issuer: IIssuerParams) => {
+    if (!walletInformation) return;
+
     setCurrentIssuer(issuer);
     const authUrl = authClient.generateAuthURL({
       state: `twitter-${generateUID(10)}`,
-      code_challenge: address,
+      code_challenge: walletInformation.address,
       code_challenge_method: 'plain'
     });
 

@@ -54,6 +54,7 @@ export const Verify = (props: IProps) => {
     IIssuerParams | undefined
   >();
   const [currentStep, setCurrentStep] = useState(0);
+  const [currentStepsCompleted, setCurrentStepsCompleted] = useState({});
   const [areStepsCompleted, setAreStepsCompleted] = useState(false);
   const provider = getProvider(currentVerify?.credentialType);
   const isInitialStep = currentStep === 0;
@@ -65,7 +66,9 @@ export const Verify = (props: IProps) => {
     provider?.status === 'mint_rejected';
   const allStepsCompleted =
     !areStepsCompleted &&
-    (provider?.currentCredential || credential?.credential) &&
+    (provider?.currentCredential ||
+      provider?.currentVerificationId ||
+      credential?.credential) &&
     (provider?.currentMint || credential?.stamps?.length > 0);
 
   useEffect(() => {
@@ -140,13 +143,38 @@ export const Verify = (props: IProps) => {
 
     if (step > currentVerify.steps.length) return;
 
+    const newCompleted = currentStepsCompleted;
+
+    if (
+      currentVerify?.steps[step]?.type === 'verification' &&
+      (provider?.currentVerificationId || credential?.credential)
+    ) {
+      newCompleted[step] = 'Verification step completed';
+    }
+
+    if (
+      currentVerify?.steps[step]?.type === 'credential' &&
+      (provider?.currentCredential || credential?.credential)
+    ) {
+      newCompleted[step] = 'Credential step completed';
+    }
+
+    if (
+      currentVerify?.steps[step]?.type === 'mint' &&
+      (provider?.currentMint || credential?.stamps?.length > 0)
+    ) {
+      newCompleted[step] = 'Stamp step completed';
+    }
+
+    setCurrentStepsCompleted(newCompleted);
     setCurrentStep(step);
   };
 
   const handleEverythingCompleted = async () => {
-    await updateCredential(provider?.currentCredential?.id);
+    await updateCredential(provider?.currentCredential?.vcId);
     onClean(currentVerify.credentialType);
     setCurrentStep(0);
+    setCurrentStepsCompleted({});
     setAreStepsCompleted(false);
   };
 
@@ -159,6 +187,7 @@ export const Verify = (props: IProps) => {
         }
       `}</style>
       <Wrapper
+        viewStatus={viewStatus}
         stepsWidth={
           currentVerify?.steps?.length
             ? currentVerify?.steps?.length * 230
@@ -232,7 +261,11 @@ export const Verify = (props: IProps) => {
                 <div className="verify-steps-header">
                   {currentVerify.steps.map((step, index) => (
                     <React.Fragment key={index}>
-                      <div className="verify-step">
+                      <div
+                        className={`verify-step ${
+                          currentStep === index ? 'active' : ''
+                        }`}
+                      >
                         <span
                           className={`verify-step-indicator ${
                             currentStep === index || areStepsCompleted
@@ -251,256 +284,278 @@ export const Verify = (props: IProps) => {
                   ))}
                 </div>
               )}
-              <div className="verify-steps-content">
-                <div className="verify-steps-content-titles">
-                  {currentVerify.steps[currentStep || 0]?.metadata.title && (
-                    <p className="verify-steps-content-title">
-                      {currentVerify.steps[currentStep || 0]?.metadata.title}
-                    </p>
+              <div className="verify-steps-container">
+                <div className="verify-steps-content">
+                  <div className="verify-steps-content-titles">
+                    {currentVerify.steps[currentStep || 0]?.metadata.title && (
+                      <p className="verify-steps-content-title">
+                        {currentVerify.steps[currentStep || 0]?.metadata.title}
+                      </p>
+                    )}
+                    {currentVerify.steps[currentStep || 0]?.metadata
+                      .description && (
+                      <p className="verify-steps-content-description">
+                        {
+                          currentVerify.steps[currentStep || 0]?.metadata
+                            .description
+                        }
+                      </p>
+                    )}
+                  </div>
+                  {currentVerify.steps[currentStep || 0]?.metadata.icon && (
+                    <div className="verify-steps-content-icon">
+                      {currentVerify.steps[currentStep || 0]?.metadata.icon}
+                    </div>
                   )}
-                  {currentVerify.steps[currentStep || 0]?.metadata
-                    .description && (
-                    <p className="verify-steps-content-description">
+                </div>
+                {currentVerify.steps[currentStep || 0]?.metadata?.did &&
+                currentVerify.steps[currentStep || 0]?.metadata
+                  ?.verificationUrl &&
+                currentVerify.steps[currentStep || 0]?.metadata?.price ? (
+                  <ul className="verify-steps-content-list">
+                    <li className="verify-steps-content-description">
+                      <a
+                        href={
+                          '/' +
+                          currentVerify.steps[currentStep || 0]?.metadata?.did
+                        }
+                        className="verify-steps-content-description verify-steps-content-dots"
+                      >
+                        {substring(
+                          currentVerify.steps[currentStep || 0]?.metadata?.did,
+                          30,
+                          true
+                        )}
+                      </a>
+                    </li>
+                    <li className="verify-steps-content-description">
                       {
                         currentVerify.steps[currentStep || 0]?.metadata
-                          .description
+                          ?.verificationUrl
                       }
-                    </p>
-                  )}
-                </div>
-                {currentVerify.steps[currentStep || 0]?.metadata.icon && (
-                  <div className="verify-steps-content-icon">
-                    {currentVerify.steps[currentStep || 0]?.metadata.icon}
-                  </div>
-                )}
-              </div>
-              {currentVerify.steps[currentStep || 0]?.metadata?.did &&
-              currentVerify.steps[currentStep || 0]?.metadata
-                ?.verificationUrl &&
-              currentVerify.steps[currentStep || 0]?.metadata?.price ? (
-                <ul className="verify-steps-content-list">
-                  <li className="verify-steps-content-description">
-                    <a
-                      href={
-                        '/' +
-                        currentVerify.steps[currentStep || 0]?.metadata?.did
-                      }
-                      className="verify-steps-content-description verify-steps-content-dots"
-                    >
-                      {substring(
-                        currentVerify.steps[currentStep || 0]?.metadata?.did,
-                        30,
-                        true
+                    </li>
+                    <li className="verify-steps-content-description">
+                      ${currentVerify.steps[currentStep || 0]?.metadata?.price}
+                    </li>
+                  </ul>
+                ) : null}
+                {isInitialStep &&
+                credential?.credential?.issuanceDate &&
+                credential?.credential?.expirationDate &&
+                credential.credential?.value ? (
+                  <div className="verify-steps-content-credential">
+                    <p className="verify-steps-content-title">Credential</p>
+                    <div className="verify-steps-content-visibility-container">
+                      <p className="verify-steps-content-description">
+                        {formatCredentialName(credential.credential?.value)}
+                      </p>
+                      {credential.credential?.visualInformation
+                        ?.isEncryptedByDefault && (
+                        <div
+                          className="verify-steps-content-visibility"
+                          onClick={() =>
+                            formatLitValue(
+                              credential.credential?.value?.encryptedString
+                                ? 'decrypt'
+                                : 'encrypt',
+                              credential.credential
+                            )
+                          }
+                        >
+                          {isAuthenticated &&
+                            (credential.credential?.value?.encryptedString ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            ))}
+                        </div>
                       )}
-                    </a>
-                  </li>
-                  <li className="verify-steps-content-description">
-                    {
-                      currentVerify.steps[currentStep || 0]?.metadata
-                        ?.verificationUrl
-                    }
-                  </li>
-                  <li className="verify-steps-content-description">
-                    ${currentVerify.steps[currentStep || 0]?.metadata?.price}
-                  </li>
-                </ul>
-              ) : null}
-              {isInitialStep &&
-              credential?.credential?.issuanceDate &&
-              credential?.credential?.expirationDate &&
-              credential.credential?.value ? (
-                <div className="verify-steps-content-credential">
-                  <p className="verify-steps-content-title">Credential</p>
-                  <div className="verify-steps-content-visibility-container">
-                    <p className="verify-steps-content-description">
-                      {formatCredentialName(credential.credential?.value)}
-                    </p>
-                    {credential.credential?.visualInformation
-                      ?.isEncryptedByDefault && (
-                      <div
-                        className="verify-steps-content-visibility"
+                    </div>
+                    <div className="verify-steps-content-dates">
+                      <div className="verify-steps-content-date">
+                        <p className="verify-steps-content-date-title">
+                          ISSUED
+                        </p>
+                        <p className="verify-steps-content-date-text">
+                          {new Date(
+                            credential?.credential?.issuanceDate
+                          ).toLocaleDateString('en-US')}
+                        </p>
+                      </div>
+                      <div className="verify-steps-content-date">
+                        <p className="verify-steps-content-date-title">
+                          EXPIRES
+                        </p>
+                        <p className="verify-steps-content-date-text">
+                          {new Date(
+                            credential?.credential?.expirationDate
+                          ).toLocaleDateString('en-US')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="verify-steps-content-external-urls">
+                      <img
+                        src="/imgs/logos/ceramic.png"
+                        width={25}
+                        height={25}
                         onClick={() =>
-                          formatLitValue(
-                            credential.credential?.value?.encryptedString
-                              ? 'decrypt'
-                              : 'encrypt',
-                            credential.credential
+                          checkCredentialsURLs(
+                            'ceramic',
+                            'credential',
+                            credential?.credential
                           )
                         }
-                      >
-                        {isAuthenticated &&
-                          (credential.credential?.value?.encryptedString ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="verify-steps-content-dates">
-                    <div className="verify-steps-content-date">
-                      <p className="verify-steps-content-date-title">ISSUED</p>
-                      <p className="verify-steps-content-date-text">
-                        {new Date(
-                          credential?.credential?.issuanceDate
-                        ).toLocaleDateString('en-US')}
-                      </p>
-                    </div>
-                    <div className="verify-steps-content-date">
-                      <p className="verify-steps-content-date-title">EXPIRES</p>
-                      <p className="verify-steps-content-date-text">
-                        {new Date(
-                          credential?.credential?.expirationDate
-                        ).toLocaleDateString('en-US')}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="verify-steps-content-external-urls">
-                    <img
-                      src="/imgs/logos/ceramic.png"
-                      width={25}
-                      height={25}
-                      onClick={() =>
-                        checkCredentialsURLs(
-                          'ceramic',
-                          'credential',
-                          credential?.credential
-                        )
-                      }
-                    />
-                    {credential?.stamps?.length > 0 && (
-                      <>
-                        <img
-                          src="/imgs/logos/rarible.png"
-                          width={25}
-                          height={25}
-                          onClick={() =>
-                            checkCredentialsURLs(
-                              'rarible',
-                              'nft',
-                              credential?.credential
-                            )
-                          }
-                        />
-                        <img
-                          src="/imgs/logos/opensea.svg"
-                          width={25}
-                          height={25}
-                          onClick={() =>
-                            checkCredentialsURLs(
-                              'opensea',
-                              'nft',
-                              credential?.credential
-                            )
-                          }
-                        />
-                      </>
-                    )}
-                  </div>
-                </div>
-              ) : null}
-              {provider &&
-              credential &&
-              currentVerify.steps[currentStep || 0]?.form ? (
-                <div className="verify-steps-content-fields">
-                  {currentVerify.steps[currentStep || 0]
-                    ?.form(provider, credential, currentVerify)
-                    ?.fields?.map((input, index) => {
-                      if (input.type === 'select') {
-                        return (
-                          <Select
-                            key={index}
-                            id={input.name}
-                            name={input.name}
-                            label={input.placeholder}
-                            value={input.value as string}
-                            onChange={input.onChange}
-                            items={input.items}
-                            isDisabled={
-                              input.isDisabled || isLoading || hasError
+                      />
+                      {credential?.stamps?.length > 0 && (
+                        <>
+                          <img
+                            src="/imgs/logos/rarible.png"
+                            width={25}
+                            height={25}
+                            onClick={() =>
+                              checkCredentialsURLs(
+                                'rarible',
+                                'nft',
+                                credential?.credential
+                              )
                             }
-                            isRequired={input.isRequired}
                           />
-                        );
-                      }
-
-                      if (input.type === 'switch') {
-                        return (
-                          <Switch
-                            key={index}
-                            name={input.name}
-                            label={input.placeholder}
-                            value={input.value as boolean}
-                            isDisabled={
-                              input.isDisabled || isLoading || hasError
+                          <img
+                            src="/imgs/logos/opensea.svg"
+                            width={25}
+                            height={25}
+                            onClick={() =>
+                              checkCredentialsURLs(
+                                'opensea',
+                                'nft',
+                                credential?.credential
+                              )
                             }
-                            isRequired={input.isRequired}
-                            onChange={input.onChange}
                           />
-                        );
-                      }
+                        </>
+                      )}
+                    </div>
+                    <div className="verify-steps-content-skills">
+                      {credential.skills.map((skill, index) => (
+                        <div className="verify-steps-content-skill" key={index}>
+                          <p className="verify-steps-content-skill-text">
+                            {skill}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                {!currentStepsCompleted[currentStep] &&
+                provider &&
+                credential &&
+                currentVerify.steps[currentStep || 0]?.form ? (
+                  <div className="verify-steps-content-fields">
+                    {currentVerify.steps[currentStep || 0]
+                      ?.form(provider, credential, currentVerify)
+                      ?.fields?.map((input, index) => {
+                        if (input.type === 'select') {
+                          return (
+                            <Select
+                              key={index}
+                              id={input.name}
+                              name={input.name}
+                              label={input.placeholder}
+                              value={input.value as string}
+                              onChange={input.onChange}
+                              items={input.items}
+                              isDisabled={
+                                input.isDisabled || isLoading || hasError
+                              }
+                              isRequired={input.isRequired}
+                            />
+                          );
+                        }
 
-                      if (input.type === 'datepicker') {
+                        if (input.type === 'switch') {
+                          return (
+                            <Switch
+                              key={index}
+                              name={input.name}
+                              label={input.placeholder}
+                              value={input.value as boolean}
+                              isDisabled={
+                                input.isDisabled || isLoading || hasError
+                              }
+                              isRequired={input.isRequired}
+                              onChange={input.onChange}
+                            />
+                          );
+                        }
+
+                        if (input.type === 'datepicker') {
+                          return (
+                            <DatePicker
+                              key={index}
+                              name={input.name}
+                              placeholder={input.placeholder}
+                              value={input.value as string | number}
+                              isDisabled={
+                                input.isDisabled || isLoading || hasError
+                              }
+                              isRequired={input.isRequired}
+                              onChange={input.onChange}
+                            />
+                          );
+                        }
+
                         return (
-                          <DatePicker
+                          <Input
                             key={index}
+                            type={(input.type as any) || 'text'}
                             name={input.name}
                             placeholder={input.placeholder}
                             value={input.value as string | number}
+                            onChange={input.onChange}
                             isDisabled={
                               input.isDisabled || isLoading || hasError
                             }
                             isRequired={input.isRequired}
-                            onChange={input.onChange}
+                            pattern={input.pattern}
                           />
                         );
-                      }
-
-                      return (
-                        <Input
-                          key={index}
-                          type={(input.type as any) || 'text'}
-                          name={input.name}
-                          placeholder={input.placeholder}
-                          value={input.value as string | number}
-                          onChange={input.onChange}
-                          isDisabled={input.isDisabled || isLoading || hasError}
-                          isRequired={input.isRequired}
-                          pattern={input.pattern}
+                      })}
+                  </div>
+                ) : null}
+                {isLoading && (
+                  <div className="verify-steps-loading">
+                    <div className="verify-steps-loading-box">
+                      <Loading />
+                    </div>
+                    <p className="verify-steps-loading-text">
+                      {provider?.statusMessage || 'Loading...'}
+                    </p>
+                  </div>
+                )}
+                {hasError && (
+                  <p className="verify-steps-error">
+                    {provider?.errorMessage ||
+                      'Something went wrong, try later'}
+                  </p>
+                )}
+                {areStepsCompleted || currentStepsCompleted[currentStep] ? (
+                  <div className="verify-steps-completed">
+                    <p className="verify-steps-completed-title">
+                      {currentStepsCompleted[currentStep] ||
+                        'All steps completed!'}
+                    </p>
+                    {areStepsCompleted && (
+                      <div className="verify-steps-completed-button">
+                        <Button
+                          text="See details"
+                          onClick={handleEverythingCompleted}
+                          isDisabled={isLoading}
                         />
-                      );
-                    })}
-                </div>
-              ) : null}
-              {isLoading && (
-                <div className="verify-steps-loading">
-                  <div className="verify-steps-loading-box">
-                    <Loading />
+                      </div>
+                    )}
                   </div>
-                  <p className="verify-steps-loading-text">
-                    {provider?.statusMessage || 'Loading...'}
-                  </p>
-                </div>
-              )}
-              {hasError && (
-                <p className="verify-steps-error">
-                  {provider?.errorMessage || 'Something went wrong, try later'}
-                </p>
-              )}
-              {areStepsCompleted && (
-                <div className="verify-steps-completed">
-                  <p className="verify-steps-completed-title">
-                    All steps completed!
-                  </p>
-                  <div className="verify-steps-completed-button">
-                    <Button
-                      text="See details"
-                      onClick={handleEverythingCompleted}
-                      isDisabled={isLoading}
-                    />
-                  </div>
-                </div>
-              )}
+                ) : null}
+              </div>
               <div className="verify-steps-bottom">
                 <div className="verify-steps-bottom-button">
                   {!allStepsCompleted && (
@@ -516,7 +571,9 @@ export const Verify = (props: IProps) => {
                 <div className="verify-steps-bottom-button">
                   <Button
                     text={
-                      allStepsCompleted
+                      currentStepsCompleted[currentStep]
+                        ? 'Next'
+                        : allStepsCompleted
                         ? 'Close'
                         : areStepsCompleted
                         ? 'Complete'
@@ -532,7 +589,9 @@ export const Verify = (props: IProps) => {
                     }
                     isDisabled={isLoading || hasError}
                     onClick={
-                      allStepsCompleted || areStepsCompleted
+                      currentStepsCompleted[currentStep]
+                        ? () => handleCurrentStep(currentStep + 1)
+                        : allStepsCompleted || areStepsCompleted
                         ? () => onClose()
                         : currentVerify?.steps[currentStep || 0]?.form
                         ? () =>

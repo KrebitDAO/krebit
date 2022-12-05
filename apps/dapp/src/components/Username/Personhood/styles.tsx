@@ -76,7 +76,7 @@ export const Wrapper = styled.div<IProps>`
       @media (min-width: ${theme.screens.lg}) {
         ${currentFilterOption === 'Personhood' &&
         css`
-          grid-template-columns: repeat(2, auto);
+          grid-template-columns: repeat(2, 1fr);
         `}
       }
 

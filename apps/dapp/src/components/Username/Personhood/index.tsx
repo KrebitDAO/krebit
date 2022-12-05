@@ -96,7 +96,6 @@ export const Personhood = (props: IProps) => {
   };
 
   const updateSelectedCredential = async (vcId: string) => {
-    // TODO: FIX THIS
     if (!vcId) return;
 
     const personhoodCredential = await getCredential({
@@ -236,7 +235,6 @@ export const Personhood = (props: IProps) => {
         }
       };
 
-      setPersonhoods(updatedPersonhoods);
       setCurrentPersonhoodSelected(prevValues => ({
         ...prevValues,
         credential: {
@@ -244,6 +242,7 @@ export const Personhood = (props: IProps) => {
           value: claimValue
         }
       }));
+      setPersonhoods(updatedPersonhoods);
     }
   };
 
