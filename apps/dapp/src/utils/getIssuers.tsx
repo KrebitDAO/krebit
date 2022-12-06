@@ -57,6 +57,7 @@ interface IIssuerParamsStep {
     action?: {
       text: string;
       method: () => Promise<any>;
+      isDisabled?: boolean;
     };
   };
 }
@@ -428,10 +429,10 @@ const PERSONHOOD_CREDENTIALS = [
         }
       },
       {
-        title: 'Verify phone number',
-        type: 'credential',
+        title: 'Claim phone number',
+        type: 'verification',
         metadata: {
-          title: 'Verify phone number',
+          title: 'Claim phone number',
           description: 'Claim your phone number'
         },
         form: (
@@ -470,7 +471,59 @@ const PERSONHOOD_CREDENTIALS = [
           action: {
             text: 'Send code',
             method: async () =>
-              await provider.handleStartVerification(currentVerify)
+              await provider.handleStartVerification(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.countryCode ||
+              !provider?.claimValues?.number
+          }
+        })
+      },
+      {
+        title: 'Verify phone number',
+        type: 'credential',
+        metadata: {
+          title: 'Verify phone number',
+          description: 'Get phone number credential via Twilio'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              type: 'number',
+              name: 'code',
+              placeholder: 'Enter the SMS code sent to your phone',
+              value: provider?.claimValues?.code,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider?.handleGetCredential()
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
           }
         })
       }
@@ -479,51 +532,392 @@ const PERSONHOOD_CREDENTIALS = [
   {
     credentialType: 'Email',
     entity: 'Email',
-    description: 'Krebit Verification Node',
     icon: <Email />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/email'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Email details',
+          description:
+            'Krebit Verification Node. This is the email used for blah blah blah',
+          icon: <Email />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/email'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Claim email address',
+        type: 'verification',
+        metadata: {
+          title: 'Claim email address',
+          description: 'Claim your email address'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              type: 'email',
+              name: 'email',
+              placeholder: 'username@example.com',
+              value: provider?.claimValues?.email,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
+          action: {
+            text: 'Send code',
+            method: async () =>
+              await provider.handleStartVerification(currentVerify),
+            isDisabled: !provider?.claimValues?.email
+          }
+        })
+      },
+      {
+        title: 'Verify email address',
+        type: 'credential',
+        metadata: {
+          title: 'Verify email address',
+          description: 'Get email credential via Twilio'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              type: 'number',
+              name: 'code',
+              placeholder: 'Enter the verification code sent to your email',
+              value: provider?.claimValues?.code,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleGetCredential()
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'VeriffAgeGT18',
     entity: 'Age > 18 (KYC)',
-    description: 'Krebit Verification Node',
     icon: <Cake />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
     badgeText: 'Beta',
-    badgeColor: 'blueRibbon'
+    badgeColor: 'blueRibbon',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Adulthood details',
+          description:
+            'Krebit Verification Node. This is the Adulthood used for blah blah blah',
+          icon: <Cake />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Adulthood',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Adulthood',
+          description: 'Start verification of your Adulthood with Veriff'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'date',
+              type: 'datepicker',
+              placeholder: 'Date of birth',
+              value: provider?.claimValues?.date,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'VeriffGovernmentId',
     entity: 'Verified Government Id (KYC)',
-    description: 'Krebit Verification Node',
     icon: <Badge />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
     badgeText: 'Beta',
-    badgeColor: 'blueRibbon'
+    badgeColor: 'blueRibbon',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Government Id details',
+          description:
+            'Krebit Verification Node. This is the Government Id used for blah blah blah',
+          icon: <Badge />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Government Id',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Government Id',
+          description: 'Claim your Government Id'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'country',
+              type: 'select',
+              placeholder: 'Select the ID document country',
+              value: provider?.claimValues?.country,
+              items: countries.isoCodes,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'number',
+              placeholder:
+                'ID number with *all* exact characters as it appears on the document',
+              value: provider?.claimValues?.number,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: Is not recommended to publish private data to public networks)',
+              value: provider?.claimValues.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.country || !provider?.claimValues?.number
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'VeriffLegalName',
     entity: 'Legal Name (KYC)',
-    description: 'Krebit Verification Node',
     icon: <Person />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     isDisabled: !process.env.NEXT_PUBLIC_VERIFF_ENABLED,
     badgeText: 'Beta',
-    badgeColor: 'blueRibbon'
+    badgeColor: 'blueRibbon',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Full legal name details',
+          description:
+            'Krebit Verification Node. This is the full legal name used for blah blah blah',
+          icon: <Person />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Full legal name',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Full legal name',
+          description: 'Claim your full legal name'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'firstName',
+              placeholder:
+                'Enter you first name as it appears on the ID document',
+              value: provider?.claimValues?.firstName,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'lastName',
+              placeholder:
+                'Enter you last name as it appears on the ID document',
+              value: provider?.claimValues?.lastName,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.firstName ||
+              !provider?.claimValues?.lastName
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   }
 ];
 

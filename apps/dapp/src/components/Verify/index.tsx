@@ -170,8 +170,15 @@ export const Verify = (props: IProps) => {
     setCurrentStep(step);
   };
 
-  const handleEverythingCompleted = async () => {
-    await updateCredential(provider?.currentCredential?.vcId);
+  const handleEverythingCompleted = async (shouldUpdateCredential = true) => {
+    if (shouldUpdateCredential) {
+      await updateCredential(provider?.currentCredential?.vcId);
+    }
+
+    if (provider) {
+      provider?.handleCleanClaimValues();
+    }
+
     onClean(currentVerify.credentialType);
     setCurrentStep(0);
     setCurrentStepsCompleted({});
@@ -548,7 +555,7 @@ export const Verify = (props: IProps) => {
                       <div className="verify-steps-completed-button">
                         <Button
                           text="See details"
-                          onClick={handleEverythingCompleted}
+                          onClick={() => handleEverythingCompleted()}
                           isDisabled={isLoading}
                         />
                       </div>
@@ -587,9 +594,23 @@ export const Verify = (props: IProps) => {
                           )?.action?.text
                         : 'Next'
                     }
-                    isDisabled={isLoading || hasError}
+                    isDisabled={
+                      isLoading ||
+                      hasError ||
+                      Boolean(
+                        currentVerify?.steps[currentStep || 0]?.form
+                          ? currentVerify?.steps[currentStep || 0]?.form(
+                              provider,
+                              credential,
+                              currentVerify
+                            )?.action?.isDisabled
+                          : false
+                      )
+                    }
                     onClick={
-                      currentStepsCompleted[currentStep]
+                      isLoading || hasError
+                        ? undefined
+                        : currentStepsCompleted[currentStep]
                         ? () => handleCurrentStep(currentStep + 1)
                         : allStepsCompleted || areStepsCompleted
                         ? () => onClose()

@@ -67,7 +67,7 @@ export const useVeriffGovernmentIdProvider = (props: IProps) => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = async (address: string, issuer: IIssuerParams) => {
+  const handleFetchOAuth = async (issuer: IIssuerParams) => {
     setCurrentIssuer(issuer);
     const veriff = await getVeriffSession({
       verification: {
