@@ -119,6 +119,7 @@ export const Verify = (props: IProps) => {
   }, [currentStep, provider, credential, currentVerify]);
 
   const handleViewStatus = (status: IViewStatusProps) => {
+    if (!isAuthenticated) return;
     if (isLoading) return;
 
     if (status === 'init') {
@@ -132,6 +133,7 @@ export const Verify = (props: IProps) => {
   };
 
   const handleCurrentVerify = (value: IIssuerParams) => {
+    if (!isAuthenticated) return;
     if (isLoading) return;
 
     setCurrentVerify(value);
@@ -139,6 +141,8 @@ export const Verify = (props: IProps) => {
   };
 
   const handleCurrentStep = (step = 0) => {
+    if (!isAuthenticated) return;
+
     if (isLoading || hasError) return;
 
     if (step > currentVerify.steps.length) return;
@@ -264,7 +268,7 @@ export const Verify = (props: IProps) => {
           )}
           {viewStatus === 'steps' && (
             <>
-              {!allStepsCompleted && (
+              {!allStepsCompleted && isAuthenticated ? (
                 <div className="verify-steps-header">
                   {currentVerify.steps.map((step, index) => (
                     <React.Fragment key={index}>
@@ -290,7 +294,7 @@ export const Verify = (props: IProps) => {
                     </React.Fragment>
                   ))}
                 </div>
-              )}
+              ) : null}
               <div className="verify-steps-container">
                 <div className="verify-steps-content">
                   <div className="verify-steps-content-titles">
@@ -565,7 +569,7 @@ export const Verify = (props: IProps) => {
               </div>
               <div className="verify-steps-bottom">
                 <div className="verify-steps-bottom-button">
-                  {!allStepsCompleted && (
+                  {!allStepsCompleted && isAuthenticated ? (
                     <Button
                       text="Close"
                       onClick={() => handleViewStatus('init')}
@@ -573,14 +577,14 @@ export const Verify = (props: IProps) => {
                       borderBackgroundColor="bunting"
                       isDisabled={isLoading}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div className="verify-steps-bottom-button">
                   <Button
                     text={
                       currentStepsCompleted[currentStep]
                         ? 'Next'
-                        : allStepsCompleted
+                        : !isAuthenticated || allStepsCompleted
                         ? 'Close'
                         : areStepsCompleted
                         ? 'Complete'
@@ -599,11 +603,13 @@ export const Verify = (props: IProps) => {
                       hasError ||
                       Boolean(
                         currentVerify?.steps[currentStep || 0]?.form
-                          ? currentVerify?.steps[currentStep || 0]?.form(
-                              provider,
-                              credential,
-                              currentVerify
-                            )?.action?.isDisabled
+                          ? currentStepsCompleted[currentStep]
+                            ? false
+                            : currentVerify?.steps[currentStep || 0]?.form(
+                                provider,
+                                credential,
+                                currentVerify
+                              )?.action?.isDisabled
                           : false
                       )
                     }
@@ -612,7 +618,9 @@ export const Verify = (props: IProps) => {
                         ? undefined
                         : currentStepsCompleted[currentStep]
                         ? () => handleCurrentStep(currentStep + 1)
-                        : allStepsCompleted || areStepsCompleted
+                        : !isAuthenticated ||
+                          allStepsCompleted ||
+                          areStepsCompleted
                         ? () => onClose()
                         : currentVerify?.steps[currentStep || 0]?.form
                         ? () =>

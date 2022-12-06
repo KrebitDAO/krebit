@@ -14,12 +14,13 @@ import {
   Dework,
   Stack
 } from 'components/Icons';
+import { countries } from './countries';
+import { constants } from './constants';
 
 // types
 import { ICredential } from './normalizeSchema';
 import { IItems } from 'components/Select';
 import { SelectChangeEvent } from '@mui/material';
-import { countries } from './countries';
 
 interface IStepMetadata {
   title: string;
@@ -925,60 +926,426 @@ const WORK_CREDENTIALS = [
   {
     credentialType: 'StackOverflowReputationGT1K',
     entity: 'Stack Overflow Reputation > 1K',
-    description: 'Krebit Verification Node',
     icon: <Stack />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     price: '0',
-    badgeText: 'New'
+    badgeText: 'New',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Stack Overflow Reputation > 1K details',
+          description:
+            'Krebit Verification Node. This is the Stack Overflow Reputation > 1K used for blah blah blah',
+          icon: <Stack />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Stack Overflow Reputation > 1K',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Stack Overflow Reputation > 1K',
+          description:
+            'Claim that your StackOverflow profile has more than 1K of reputation'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'StackOverflowScoreGT10',
     entity: 'Stack Overflow Tag Score > 10',
-    description: 'Krebit Verification Node',
     icon: <Stack />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     badgeText: 'Beta',
-    badgeColor: 'blueRibbon'
+    badgeColor: 'blueRibbon',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Stack Overflow Tag Score > 10 details',
+          description:
+            'Krebit Verification Node. This is the Stack Overflow Tag Score > 10 used for blah blah blah',
+          icon: <Stack />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Stack Overflow Tag Score > 10',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Stack Overflow Tag Score > 10',
+          description:
+            'Claim that your StackOverflow profile has a score more than 10 for a programming language'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'language',
+              type: 'select',
+              placeholder: 'Select the language tag',
+              value: provider?.claimValues?.language,
+              items: constants.DEFAULT_SKILL_LANGUAGES,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'DeworkCompletedTasksGT10',
     entity: 'Dework Completed Tasks > 10',
-    description: 'Krebit Verification Node',
     icon: <Dework />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/dework'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    badgeText: 'New'
+    badgeText: 'New',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Dework Completed Tasks > 10 details',
+          description:
+            'Krebit Verification Node. This is the Dework Completed Tasks > 10 used for blah blah blah',
+          icon: <Dework />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/dework'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Dework Completed Tasks > 10',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Dework Completed Tasks > 10',
+          description: 'Claim your Dework completed tasks'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'organization',
+              placeholder: 'Enter the Dework organization',
+              value: provider?.claimValues?.organization,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.organization ||
+              provider?.claimValues?.organization === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
-
   {
     credentialType: 'SpectCompletedTasksGT10',
     entity: 'Spect Completed Tasks > 10',
-    description: 'Krebit Verification Node',
     icon: <Spect />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Spect Completed Tasks > 10 details',
+          description:
+            'Krebit Verification Node. This is the Spect Completed Tasks > 10 used for blah blah blah',
+          icon: <Spect />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify spect',
+        type: 'credential',
+        metadata: {
+          title: 'Verify spect',
+          description: 'Claim your Spect completed tasks'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'circle',
+              placeholder: 'Enter the spect circle',
+              value: provider?.claimValues?.circle,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.circle ||
+              provider?.claimValues?.circle === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'GithubFollowersGT10',
     entity: 'Github Followers > 10',
-    description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Github Followers > 10 details',
+          description:
+            'Krebit Verification Node. This is the Github Followers > 10 used for blah blah blah',
+          icon: <Github />,
+          imageUrl:
+            process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+            '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Github Followers > 10',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Github Followers > 10',
+          description:
+            'Claim that your github profile has more than 10 followers'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you github username',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.username ||
+              provider?.claimValues?.username === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'GithubRepoStarsGT10',
@@ -991,20 +1358,192 @@ const WORK_CREDENTIALS = [
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
     did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    price: '0',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Github Repository Stars > 10 details',
+          description:
+            'Krebit Verification Node. This is the Github Repository Stars > 10 used for blah blah blah',
+          icon: <Github />,
+          imageUrl:
+            process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+            '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Github Repository Stars > 10',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Github Repository Stars > 10',
+          description: 'Claim your github repo'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you github username',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'repository',
+              placeholder: 'Enter the github repository',
+              value: provider?.claimValues?.repository,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.username ||
+              provider?.claimValues?.username === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'GithubRepoCollaborator',
     entity: 'Github Repo Collaborator',
-    description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Github Repo Collaborator details',
+          description:
+            'Krebit Verification Node. This is the Github Repo Collaborator used for blah blah blah',
+          icon: <Github />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Github Repo Collaborator',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Github Repo Collaborator',
+          description: 'Claim that you are a github repo collaborator'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you github username',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'owner',
+              placeholder: 'Enter the github repository owner',
+              value: provider?.claimValues?.owner,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'repository',
+              placeholder: 'Enter the github repository',
+              value: provider?.claimValues?.repository,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.username ||
+              provider?.claimValues?.username === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   }
 ];
 
