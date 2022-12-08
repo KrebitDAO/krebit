@@ -2,18 +2,20 @@ import { ChangeEvent, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 
-import {
-  getCredential,
-  generateUID,
-  IIsuerParams,
-  getWalletInformation,
-  constants
-} from 'utils';
+import { getCredential, generateUID, constants } from 'utils';
+
+// types
+import { IIssuerParams } from 'utils/getIssuers';
+import { IWalletInformation } from 'context';
 
 interface IClaimValues {
   email: string;
   code: string;
   private: boolean;
+}
+
+interface IProps {
+  walletInformation: IWalletInformation;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
@@ -24,7 +26,8 @@ const initialState = {
   private: true
 };
 
-export const useEmailProvider = () => {
+export const useEmailProvider = (props: IProps) => {
+  const { walletInformation } = props;
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
@@ -35,12 +38,12 @@ export const useEmailProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
-  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
 
   const getClaim = async (
     address: string,
     did: string,
-    issuer: IIsuerParams
+    issuer: IIssuerParams
   ) => {
     const expirationDate = new Date();
     const expiresYears = 1;
@@ -67,10 +70,13 @@ export const useEmailProvider = () => {
     };
   };
 
-  const handleStartVerification = async (issuer: IIsuerParams) => {
+  const handleStartVerification = async (issuer: IIssuerParams) => {
+    if (!walletInformation) return;
+
     setCurrentIssuer(issuer);
     setStatus('verification_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
+
     try {
       // when receiving vseriff oauth response from a spawned child run fetchVerifiableCredential
       console.log('Saving Stamp', { type: 'Email' });
@@ -79,9 +85,6 @@ export const useEmailProvider = () => {
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
-
-      const currentType = window.localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
@@ -135,6 +138,8 @@ export const useEmailProvider = () => {
   };
 
   const handleGetCredential = async () => {
+    if (!walletInformation) return;
+
     setStatus('credential_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
@@ -143,9 +148,6 @@ export const useEmailProvider = () => {
       const currentSession = JSON.parse(session);
 
       if (!currentSession) return;
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,
@@ -176,6 +178,7 @@ export const useEmailProvider = () => {
         ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
       });
       await passport.connect(currentSession);
+
       // Save claimedCredential
       if (claimedCredential) {
         setStatusMessage(
@@ -225,14 +228,13 @@ export const useEmailProvider = () => {
 
   const handleMintCredential = async credential => {
     try {
+      if (!walletInformation) return;
+
       setStatus('mint_pending');
       setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

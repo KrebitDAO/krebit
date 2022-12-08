@@ -58,6 +58,8 @@ import { Comment } from './Comment';
 import { ArrowSend } from './ArrowSend';
 import { Refresh } from './Refresh';
 import { SystemUpdateAlt } from './SystemUpdateAlt';
+import { Visibility } from './Visibility';
+import { VisibilityOff } from './VisibilityOff';
 
 export {
   Close,
@@ -119,5 +121,7 @@ export {
   Comment,
   ArrowSend,
   Refresh,
-  SystemUpdateAlt
+  SystemUpdateAlt,
+  Visibility,
+  VisibilityOff
 };

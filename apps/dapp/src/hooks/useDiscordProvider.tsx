@@ -1,20 +1,26 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { debounce } from 'ts-debounce';
 
-import { GeneralContext } from 'context';
 import {
   generateUID,
   getCredential,
   getDiscordUser,
   openOAuthUrl,
-  IIsuerParams,
   constants
 } from 'utils';
 
+// types
+import { IIssuerParams } from 'utils/getIssuers';
+import { IWalletInformation } from 'context';
+
 interface IClaimValues {
   private: boolean;
+}
+
+interface IProps {
+  walletInformation: IWalletInformation;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
@@ -23,7 +29,8 @@ const initialState = {
   private: true
 };
 
-export const useDiscordProvider = () => {
+export const useDiscordProvider = (props: IProps) => {
+  const { walletInformation } = props;
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
@@ -33,8 +40,7 @@ export const useDiscordProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
-  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
-  const { walletInformation } = useContext(GeneralContext);
+  const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
   const channel = new BroadcastChannel('discord_oauth_channel');
 
   useEffect(() => {
@@ -56,7 +62,7 @@ export const useDiscordProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (issuer: IIsuerParams) => {
+  const handleFetchOAuth = (issuer: IIssuerParams) => {
     setCurrentIssuer(issuer);
     const state = `discord-${generateUID(10)}`;
 
@@ -202,6 +208,7 @@ export const useDiscordProvider = () => {
         }
       }
     } catch (error) {
+      console.error(error);
       setStatus('credential_rejected');
       setStatusMessage(undefined);
       setErrorMessage(
