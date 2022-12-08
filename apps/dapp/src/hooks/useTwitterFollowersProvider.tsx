@@ -4,18 +4,19 @@ import LitJsSdk from '@lit-protocol/sdk-browser';
 import { auth } from 'twitter-api-sdk';
 import { debounce } from 'ts-debounce';
 
-import {
-  generateUID,
-  getCredential,
-  getWalletInformation,
-  openOAuthUrl,
-  IIsuerParams,
-  constants
-} from 'utils';
+import { generateUID, getCredential, openOAuthUrl, constants } from 'utils';
+
+// types
+import { IIssuerParams } from 'utils/getIssuers';
+import { IWalletInformation } from 'context';
 
 interface IClaimValues {
   username: string;
   private: boolean;
+}
+
+interface IProps {
+  walletInformation: IWalletInformation;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
@@ -51,7 +52,8 @@ export const getTwitterToken = async (
 
 const initialState = { username: '', private: true };
 
-export const useTwitterFollowersProvider = () => {
+export const useTwitterFollowersProvider = (props: IProps) => {
+  const { walletInformation } = props;
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
@@ -61,7 +63,7 @@ export const useTwitterFollowersProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
-  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
   const channel = new BroadcastChannel('twitter_oauth_channel');
 
   useEffect(() => {
@@ -83,11 +85,13 @@ export const useTwitterFollowersProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (address: string, issuer: IIsuerParams) => {
+  const handleFetchOAuth = (issuer: IIssuerParams) => {
+    if (!walletInformation) return;
+
     setCurrentIssuer(issuer);
     const authUrl = authClient.generateAuthURL({
       state: `twitterFollowers-${generateUID(10)}`,
-      code_challenge: address,
+      code_challenge: walletInformation.address,
       code_challenge_method: 'plain'
     });
 
@@ -128,6 +132,8 @@ export const useTwitterFollowersProvider = () => {
     target: string;
     data: { code: string; state: string };
   }) => {
+    if (!walletInformation) return;
+
     setStatus('credential_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
@@ -143,9 +149,6 @@ export const useTwitterFollowersProvider = () => {
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
-
-        const currentType = localStorage.getItem('auth-type');
-        const walletInformation = await getWalletInformation(currentType);
 
         const Issuer = new Krebit.core.Krebit({
           ...walletInformation,
@@ -239,14 +242,13 @@ export const useTwitterFollowersProvider = () => {
 
   const handleMintCredential = async credential => {
     try {
+      if (!walletInformation) return;
+
       setStatus('mint_pending');
       setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

@@ -7,7 +7,7 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
-import { buildCredential, getCredentials } from '../utils';
+import { buildCredential, getCredential, getCredentials } from '../utils';
 import { checkCredentialsURLs, constants } from 'utils';
 
 const DynamicShareWithModal = dynamic(
@@ -59,7 +59,7 @@ export const Community = (props: IProps) => {
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
-  const isCurrentUserAuthenticated = passport?.did;
+  const isCurrentUserAuthenticated = Boolean(passport?.did);
 
   useEffect(() => {
     if (!window) return;
@@ -137,6 +137,18 @@ export const Community = (props: IProps) => {
     }
   };
 
+  const updateSelectedCredential = async (vcId: string) => {
+    if (!vcId) return;
+
+    const communityCredential = await getCredential({
+      vcId,
+      type: 'Community',
+      passport: publicPassport
+    });
+
+    setCurrentCommunitySelected(communityCredential);
+  };
+
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
       setIsDropdownOpen(id);
@@ -182,14 +194,13 @@ export const Community = (props: IProps) => {
     setCurrentCommunitySelected(values);
     setCurrentActionType(type);
 
+    if (type === 'see_details') {
+      setIsVerifyCredentialOpen(true);
+    }
+
     if (type === 'share_with') {
       if (!isAuthenticated) return;
       setIsShareWithModalOpen(true);
-    }
-
-    if (type === 'add_stamp') {
-      if (!isAuthenticated) return;
-      setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'remove_credential' || type === 'remove_stamp') {
@@ -268,6 +279,13 @@ export const Community = (props: IProps) => {
         }
       };
 
+      setCurrentCommunitySelected(prevValues => ({
+        ...prevValues,
+        credential: {
+          ...prevValues.credential,
+          value: claimValue
+        }
+      }));
       setCommunities(updatedCommunities);
     }
   };
@@ -315,22 +333,17 @@ export const Community = (props: IProps) => {
       .replace('GT', '> ');
   };
 
-  const handleCheckCredentialsURLs = (
-    type: string,
-    valuesType: string,
-    values: any
-  ) => {
-    checkCredentialsURLs(type, valuesType, values);
-    handleIsDropdownOpen(undefined);
-  };
-
   return (
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          currentCommunity={currentCommunitySelected}
+          isAuthenticated={isCurrentUserAuthenticated}
+          credential={currentCommunitySelected}
           getInformation={getInformation}
+          updateCredential={updateSelectedCredential}
           onClose={handleIsVerifyCredentialOpen}
+          formatCredentialName={formatCredentialName}
+          formatLitValue={handleClaimValue}
         />
       ) : null}
       {isShareWithModalOpen ? (
@@ -422,41 +435,17 @@ export const Community = (props: IProps) => {
                   onClick: () => handleIsDropdownOpen(`community_${index}`),
                   onClose: () => handleIsDropdownOpen(undefined),
                   items: [
-                    !isAuthenticated
-                      ? {
-                          title: 'Credential details',
-                          onClick: () =>
-                            handleCheckCredentialsURLs(
-                              'ceramic',
-                              'credential',
-                              community.credential
-                            )
-                        }
-                      : undefined,
-                    !isAuthenticated && community.stamps?.length !== 0
-                      ? {
-                          title: 'Stamp details',
-                          onClick: () =>
-                            handleCheckCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              community.stamps[0]
-                            )
-                        }
-                      : undefined,
+                    {
+                      title: 'See details',
+                      onClick: () =>
+                        handleCurrentCommunity('see_details', community)
+                    },
                     isAuthenticated &&
                     community.credential?.visualInformation.isEncryptedByDefault
                       ? {
                           title: 'Share with',
                           onClick: () =>
                             handleCurrentCommunity('share_with', community)
-                        }
-                      : undefined,
-                    isAuthenticated && community.stamps?.length === 0
-                      ? {
-                          title: 'Add stamp',
-                          onClick: () =>
-                            handleCurrentCommunity('add_stamp', community)
                         }
                       : undefined,
                     isCurrentUserAuthenticated &&

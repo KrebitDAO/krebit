@@ -55,7 +55,7 @@ export const Personhood = (props: IProps) => {
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
-  const isCurrentUserAuthenticated = passport?.did;
+  const isCurrentUserAuthenticated = Boolean(passport?.did);
 
   useEffect(() => {
     if (!window) return;
@@ -301,7 +301,7 @@ export const Personhood = (props: IProps) => {
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          isAuthenticated={isAuthenticated}
+          isAuthenticated={isCurrentUserAuthenticated}
           credential={currentPersonhoodSelected}
           getInformation={getInformation}
           updateCredential={updateSelectedCredential}

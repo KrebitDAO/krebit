@@ -1551,110 +1551,726 @@ const COMMUNITY_CREDENTIALS = [
   {
     credentialType: 'GuildXyzMember',
     entity: 'Guild Member',
-    description: 'Krebit Verification Node',
     icon: <Guild />,
     imageUrl:
       'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    badgeText: 'New'
+    badgeText: 'New',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Guild Member details',
+          description:
+            'Krebit Verification Node. This is the Guild Member used for blah blah blah',
+          icon: <Guild />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Guild Member',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Guild Member',
+          description: 'Claim your guild membership'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'guildId',
+              type: 'select',
+              placeholder: 'Select the guild',
+              value: provider?.claimValues?.guildId,
+              items: provider?.guildNames,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () =>
+              await provider.handleGetCredential(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.guildId ||
+              provider?.claimValues?.guildId === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'GuildXyzAdmin',
     entity: 'Admin of Guild',
-    description: 'Krebit Verification Node',
     icon: <Guild />,
     imageUrl:
       'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    badgeText: 'New'
+    badgeText: 'New',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Admin of Guild details',
+          description:
+            'Krebit Verification Node. This is the Admin of Guild used for blah blah blah',
+          icon: <Guild />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Admin of Guild',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Admin of Guild',
+          description: 'Claim your guild admin status'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'guildId',
+              type: 'select',
+              placeholder: 'Select the guild',
+              value: provider?.claimValues?.guildId,
+              items: provider?.guildNames,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () =>
+              await provider.handleGetCredential(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.guildId ||
+              provider?.claimValues?.guildId === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'GuildXyzRole',
     entity: 'Has Role in a Guild',
-    description: 'Krebit Verification Node',
     icon: <Guild />,
     imageUrl:
       'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
-    badgeText: 'New'
+    badgeText: 'New',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Guild role details',
+          description:
+            'Krebit Verification Node. This is the Guild role used for blah blah blah',
+          icon: <Guild />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify guild role',
+        type: 'credential',
+        metadata: {
+          title: 'Verify guild role',
+          description: 'Claim your guild role'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'guildId',
+              type: 'select',
+              placeholder: 'Select the guild',
+              value: provider?.claimValues?.guildId,
+              items: provider?.guildNames,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'roleId',
+              type: 'select',
+              placeholder: 'Select the role',
+              value: provider?.claimValues?.roleId,
+              items: provider?.roleNames,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () =>
+              await provider.handleGetCredential(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.guildId ||
+              provider?.claimValues?.guildId === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'TwitterFollowersGT1K',
     entity: 'Twitter Followers > 1K',
-    description: 'Krebit Verification Node',
     icon: <Twitter />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/twitter-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Twitter Followers > 1K details',
+          description:
+            'Krebit Verification Node. This is the Twitter Followers > 1K used for blah blah blah',
+          icon: <Twitter />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Twitter Followers > 1K',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Twitter Followers > 1K',
+          description:
+            'Claim that your twitter follower count is more than 1,000'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you twitter handle',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.username ||
+              provider?.claimValues?.username === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'TwitterFollowersGT10K',
     entity: 'Twitter Followers > 10K',
-    description: 'Krebit Verification Node',
     icon: <Twitter />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/twitter-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Twitter Followers > 10K details',
+          description:
+            'Krebit Verification Node. This is the Twitter Followers > 10K used for blah blah blah',
+          icon: <Twitter />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify Twitter Followers > 10K',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Twitter Followers > 10K',
+          description: 'Claim that your twitter follower count is more than 10K'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you twitter handle',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.username ||
+              provider?.claimValues?.username === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'DiscordGuildOwner',
     entity: 'Discord Guild Owner',
-    description: 'Krebit Verification Node',
     icon: <Discord />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Discord guild ownership details',
+          description:
+            'Krebit Verification Node. This is the discord guild ownership used for blah blah blah',
+          icon: <Discord />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify discord guild ownership',
+        type: 'credential',
+        metadata: {
+          title: 'Verify discord guild ownership',
+          description: 'Claim your discord guild ownership'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'guildId',
+              placeholder: 'Enter your discord guild Id',
+              value: provider?.claimValues?.guildId,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.guildId ||
+              provider?.claimValues?.guildId === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'DiscordGuildMember',
     entity: 'Discord Guild Member',
-    description: 'Krebit Verification Node',
     icon: <Discord />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/discord-white.png',
     verificationUrl:
       process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Discord guild membership details',
+          description:
+            'Krebit Verification Node. This is the discord guild membership used for blah blah blah',
+          icon: <Discord />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify discord guild membership',
+        type: 'credential',
+        metadata: {
+          title: 'Verify discord guild membership',
+          description: 'Claim your discord guild membership'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'guildId',
+              placeholder: 'Enter the discord guild Id',
+              value: provider?.claimValues?.guildId,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.guildId ||
+              provider?.claimValues?.guildId === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'GithubOrgMember',
     entity: 'Github Organization Member',
-    description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Github organization member details',
+          description:
+            'Krebit Verification Node. This is the github organization member used for blah blah blah',
+          icon: <Github />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify github organization member',
+        type: 'credential',
+        metadata: {
+          title: 'Verify github organization member',
+          description: 'Claim that you are a github organization member'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'username',
+              placeholder: 'Enter you github username',
+              value: provider?.claimValues?.username,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'organization',
+              placeholder: 'Enter the github organization',
+              value: provider?.claimValues?.organization,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              onChange: provider?.handleClaimValues
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () => await provider.handleFetchOAuth(currentVerify),
+            isDisabled:
+              !provider?.claimValues?.username ||
+              provider?.claimValues?.username === ''
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
   },
   {
     credentialType: 'Issuer',
