@@ -8,7 +8,7 @@ import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { buildCredential, getCredential, getCredentials } from '../utils';
-import { checkCredentialsURLs, constants } from 'utils';
+import { constants } from 'utils';
 
 const DynamicShareWithModal = dynamic(
   () => import('../../ShareWithModal').then(c => c.ShareWithModal),
