@@ -20,6 +20,7 @@ import { substring } from 'components/Groups/utils';
 import { ICredential } from 'utils/normalizeSchema';
 import { IIssuerParams } from 'utils/getIssuers';
 import { checkCredentialsURLs } from 'utils';
+import { IWalletInformation } from 'context';
 
 type IViewStatusProps = 'init' | 'steps';
 
@@ -34,6 +35,7 @@ interface IProps {
   formatCredentialName: (value: any) => string;
   formatLitValue: (type: string, credential: any) => Promise<void>;
   updateCredential: (vcId: string) => Promise<void>;
+  walletInformation: IWalletInformation;
 }
 
 export const Verify = (props: IProps) => {
@@ -47,7 +49,8 @@ export const Verify = (props: IProps) => {
     isAuthenticated,
     formatCredentialName,
     formatLitValue,
-    updateCredential
+    updateCredential,
+    walletInformation
   } = props;
   const [viewStatus, setViewStatus] = useState<IViewStatusProps>('init');
   const [currentVerify, setCurrentVerify] = useState<
@@ -70,6 +73,24 @@ export const Verify = (props: IProps) => {
       provider?.currentVerificationId ||
       credential?.credential) &&
     (provider?.currentMint || credential?.stamps?.length > 0);
+  const canClaimBuilderCredentials = Boolean(
+    credential?.credential?.value?.values?.issueTo?.find(element => {
+      return (
+        element?.toLowerCase() === walletInformation?.address?.toLowerCase()
+      );
+    }) &&
+      walletInformation?.address?.toLowerCase() !==
+        credential?.credential?.credentialSubject?.ethereumAddress
+  );
+  const isReadOnly = credential?.isCustomCredential
+    ? !canClaimBuilderCredentials
+    : !isAuthenticated;
+
+  console.log(
+    canClaimBuilderCredentials,
+    credential?.credential?.credentialSubject?.ethereumAddress,
+    walletInformation?.address?.toLowerCase()
+  );
 
   useEffect(() => {
     if (verifyId) {
@@ -119,8 +140,7 @@ export const Verify = (props: IProps) => {
   }, [currentStep, provider, credential, currentVerify]);
 
   const handleViewStatus = (status: IViewStatusProps) => {
-    if (!isAuthenticated) return;
-    if (isLoading) return;
+    if (isReadOnly || isLoading) return;
 
     if (status === 'init') {
       onClean(currentVerify.credentialType);
@@ -133,17 +153,14 @@ export const Verify = (props: IProps) => {
   };
 
   const handleCurrentVerify = (value: IIssuerParams) => {
-    if (!isAuthenticated) return;
-    if (isLoading) return;
+    if (isReadOnly || isLoading) return;
 
     setCurrentVerify(value);
     handleViewStatus('steps');
   };
 
   const handleCurrentStep = (step = 0) => {
-    if (!isAuthenticated) return;
-
-    if (isLoading || hasError) return;
+    if (isReadOnly || isLoading || hasError) return;
 
     if (step > currentVerify.steps.length) return;
 
@@ -160,7 +177,9 @@ export const Verify = (props: IProps) => {
       currentVerify?.steps[step]?.type === 'credential' &&
       (provider?.currentCredential || credential?.credential)
     ) {
-      newCompleted[step] = 'Credential step completed';
+      if (!canClaimBuilderCredentials) {
+        newCompleted[step] = 'Credential step completed';
+      }
     }
 
     if (
@@ -268,7 +287,7 @@ export const Verify = (props: IProps) => {
           )}
           {viewStatus === 'steps' && (
             <>
-              {!allStepsCompleted && isAuthenticated ? (
+              {!allStepsCompleted && !isReadOnly ? (
                 <div className="verify-steps-header">
                   {currentVerify.steps.map((step, index) => (
                     <React.Fragment key={index}>
@@ -373,7 +392,7 @@ export const Verify = (props: IProps) => {
                             )
                           }
                         >
-                          {isAuthenticated &&
+                          {!isReadOnly &&
                             (credential.credential?.value?.encryptedString ? (
                               <Visibility />
                             ) : (
@@ -463,7 +482,12 @@ export const Verify = (props: IProps) => {
                 currentVerify.steps[currentStep || 0]?.form ? (
                   <div className="verify-steps-content-fields">
                     {currentVerify.steps[currentStep || 0]
-                      ?.form(provider, credential, currentVerify)
+                      ?.form(
+                        provider,
+                        credential,
+                        currentVerify,
+                        walletInformation
+                      )
                       ?.fields?.map((input, index) => {
                         if (input.type === 'select') {
                           return (
@@ -569,7 +593,7 @@ export const Verify = (props: IProps) => {
               </div>
               <div className="verify-steps-bottom">
                 <div className="verify-steps-bottom-button">
-                  {!allStepsCompleted && isAuthenticated ? (
+                  {!allStepsCompleted && !isReadOnly ? (
                     <Button
                       text="Close"
                       onClick={() => handleViewStatus('init')}
@@ -584,7 +608,7 @@ export const Verify = (props: IProps) => {
                     text={
                       currentStepsCompleted[currentStep]
                         ? 'Next'
-                        : !isAuthenticated || allStepsCompleted
+                        : isReadOnly || allStepsCompleted
                         ? 'Close'
                         : areStepsCompleted
                         ? 'Complete'
@@ -592,6 +616,7 @@ export const Verify = (props: IProps) => {
                         ? 'Loading...'
                         : currentVerify?.steps[currentStep || 0]?.form
                         ? currentVerify?.steps[currentStep || 0]?.form(
+                            undefined,
                             undefined,
                             undefined,
                             undefined
@@ -608,7 +633,8 @@ export const Verify = (props: IProps) => {
                             : currentVerify?.steps[currentStep || 0]?.form(
                                 provider,
                                 credential,
-                                currentVerify
+                                currentVerify,
+                                walletInformation
                               )?.action?.isDisabled
                           : false
                       )
@@ -618,14 +644,17 @@ export const Verify = (props: IProps) => {
                         ? undefined
                         : currentStepsCompleted[currentStep]
                         ? () => handleCurrentStep(currentStep + 1)
-                        : !isAuthenticated ||
-                          allStepsCompleted ||
-                          areStepsCompleted
+                        : isReadOnly || allStepsCompleted || areStepsCompleted
                         ? () => onClose()
                         : currentVerify?.steps[currentStep || 0]?.form
                         ? () =>
                             currentVerify?.steps[currentStep || 0]
-                              ?.form(provider, credential, currentVerify)
+                              ?.form(
+                                provider,
+                                credential,
+                                currentVerify,
+                                walletInformation
+                              )
                               ?.action.method()
                         : () => handleCurrentStep(currentStep + 1)
                     }

@@ -9,6 +9,7 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { buildCredential, getCredential, getCredentials } from '../utils';
 import { constants } from 'utils';
+import { CREDENTIALS_INITIAL_STATE } from '../../Credentials/initialState';
 
 const DynamicShareWithModal = dynamic(
   () => import('../../ShareWithModal').then(c => c.ShareWithModal),
@@ -60,6 +61,8 @@ export const Community = (props: IProps) => {
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
   const isCurrentUserAuthenticated = Boolean(passport?.did);
+
+  console.log(communities);
 
   useEffect(() => {
     if (!window) return;

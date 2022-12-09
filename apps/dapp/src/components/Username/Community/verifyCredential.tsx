@@ -120,6 +120,7 @@ export const VerifyCredential = (props: IProps) => {
       formatCredentialName={formatCredentialName}
       formatLitValue={formatLitValue}
       updateCredential={updateCredential}
+      walletInformation={walletInformation}
     />
   );
 };

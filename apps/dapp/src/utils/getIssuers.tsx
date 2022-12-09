@@ -21,11 +21,12 @@ import { constants } from './constants';
 import { ICredential } from './normalizeSchema';
 import { IItems } from 'components/Select';
 import { SelectChangeEvent } from '@mui/material';
+import { IWalletInformation } from 'context';
 
 interface IStepMetadata {
   title: string;
   description: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   imageUrl?: string;
   verificationUrl?: string;
   did?: string;
@@ -37,10 +38,11 @@ interface IIssuerParamsStep {
   title: string;
   type: 'overview' | 'verification' | 'credential' | 'mint';
   metadata: IStepMetadata;
-  form: (
+  form?: (
     provider: any,
     credential: ICredential,
-    currentVerify: IIssuerParams
+    currentVerify: IIssuerParams,
+    walletInformation: IWalletInformation
   ) => {
     fields?: {
       name: string;
@@ -77,7 +79,7 @@ interface IIssuerParams {
   steps: IIssuerParamsStep[];
 }
 
-const PERSONHOOD_CREDENTIALS = [
+const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
   {
     credentialType: 'Discord',
     entity: 'Discord',
@@ -922,14 +924,13 @@ const PERSONHOOD_CREDENTIALS = [
   }
 ];
 
-const WORK_CREDENTIALS = [
+const WORK_CREDENTIALS: IIssuerParams[] = [
   {
     credentialType: 'StackOverflowReputationGT1K',
     entity: 'Stack Overflow Reputation > 1K',
     icon: <Stack />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     badgeText: 'New',
     steps: [
       {
@@ -1350,15 +1351,12 @@ const WORK_CREDENTIALS = [
   {
     credentialType: 'GithubRepoStarsGT10',
     entity: 'Github Repository Stars > 10',
-    description: 'Krebit Verification Node',
     icon: <Github />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0',
     steps: [
       {
         title: 'Overview',
@@ -1547,7 +1545,7 @@ const WORK_CREDENTIALS = [
   }
 ];
 
-const COMMUNITY_CREDENTIALS = [
+const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
   {
     credentialType: 'GuildXyzMember',
     entity: 'Guild Member',
@@ -2275,15 +2273,97 @@ const COMMUNITY_CREDENTIALS = [
   {
     credentialType: 'Issuer',
     entity: 'Issuer',
-    description: 'Krebit Verification Node',
     icon: <Approval />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
-    did: process.env.NEXT_PUBLIC_ISSUER_DID,
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    price: '0'
+    isDisabled: true,
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Claim credential details',
+          description: 'Claim this credential',
+          icon: <Approval />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
+          imageUrl:
+            process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+            '/ipfs/QmThGkNo3FcNrF3za1x5eqGpN99Dr9HXY6NkpQvMPArs8j/krebit-logo.png',
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify credential',
+        type: 'credential',
+        metadata: {
+          title: 'Verify credential',
+          description: 'Claim your credential'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams,
+          walletInformation: IWalletInformation
+        ) => ({
+          action: {
+            text: 'Verify',
+            method: async () =>
+              await provider.handleClaimCredential(
+                provider?.currentCredential || credential?.credential
+              ),
+            isDisabled: !Boolean(
+              credential?.credential?.value?.values?.issueTo?.find(element => {
+                return (
+                  element?.toLowerCase() ===
+                  walletInformation?.address?.toLowerCase()
+                );
+              }) &&
+                walletInformation?.address?.toLowerCase() !==
+                  credential?.credential?.credentialSubject?.ethereumAddress
+            )
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams,
+          walletInformation: IWalletInformation
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              ),
+            isDisabled: !Boolean(
+              credential?.credential?.value?.values?.issueTo?.find(element => {
+                return (
+                  element?.toLowerCase() ===
+                  walletInformation?.address?.toLowerCase()
+                );
+              }) &&
+                walletInformation?.address?.toLowerCase() !==
+                  credential?.credential?.credentialSubject?.ethereumAddress
+            )
+          }
+        })
+      }
+    ]
   }
 ];
 
