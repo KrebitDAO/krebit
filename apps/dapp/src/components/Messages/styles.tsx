@@ -319,6 +319,21 @@ export const MessagesRightSideBoxMessage = styled.div<IProps>`
       border-radius: 14px;
       background-color: ${theme.colors.ebony};
       color: ${theme.colors.white};
+      font-size: ${theme.fonts.sm};
+      word-wrap: break-word;
+
+      & > a {
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.cyan};
+      }
+
+      @media (min-width: ${theme.screens.lg}) {
+        font-size: ${theme.fonts.base};
+
+        & > a {
+          font-size: ${theme.fonts.base};
+        }
+      }
     }
 
     .messages-right-side-box-item-me {

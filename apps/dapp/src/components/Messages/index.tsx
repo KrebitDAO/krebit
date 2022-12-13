@@ -24,7 +24,7 @@ import { QuestionModal } from 'components/QuestionModal';
 import { Autocomplete } from 'components/Autocomplete';
 import { Button } from 'components/Button';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
-import { formatUrlImage } from 'utils';
+import { formatUrlImage, orbisParseMarkdown } from 'utils';
 import { GeneralContext } from 'context';
 import { useWindowSize } from 'hooks';
 import { theme } from 'theme';
@@ -577,7 +577,10 @@ export const Messages = () => {
                           : ''
                       }`}
                     >
-                      {message?.decryptMessage}
+                      {orbisParseMarkdown(
+                        { body: message?.decryptMessage },
+                        false
+                      )}
                     </p>
                   </MessagesRightSideBoxMessage>
                 ))
