@@ -483,6 +483,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           return {
             values: {
               ...values,
+              entity: 'Personal',
               skills: (values.skills as string[]).map(skill => {
                 return {
                   skillId: skill,
@@ -494,7 +495,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
-            credentialType: 'Invite',
+            credentialType: 'Review',
             credentialSchema: 'krebit://schemas/recommendation',
             credentialSubjectListUrl: '',
             imageUrl: values?.image || ''

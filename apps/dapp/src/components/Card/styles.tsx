@@ -163,6 +163,7 @@ export const SmallCardWrapper = styled.div<ICardProps>`
         margin: 0;
         font-size: ${theme.fonts.sm};
         color: ${theme.colors.white}B3;
+        word-wrap: break-word;
       }
     }
 
