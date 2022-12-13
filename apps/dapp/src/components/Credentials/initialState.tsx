@@ -483,7 +483,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           return {
             values: {
               ...values,
-              entity: 'Persona',
+              entity: 'Personal',
               skills: (values.skills as string[]).map(skill => {
                 return {
                   skillId: skill,
