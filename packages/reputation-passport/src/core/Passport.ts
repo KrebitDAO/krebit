@@ -651,6 +651,11 @@ export class Passport {
     }
   };
 
+  getSkills = async () => {
+    const credentials = await this.getCredentials();
+    return credentials.flatMap(credential => credential.type);
+  };
+
   // registeredCredentials from subgraph
   getStamps = async (props: StampsProps) => {
     const { first, type, claimId } = props;

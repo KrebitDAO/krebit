@@ -14,6 +14,7 @@ import { wait } from './wait';
 import { getAge } from './getAge';
 import { stack } from './stack';
 import { jobs } from './jobs';
+import { openAI } from './openAI';
 
 export {
   connect,
@@ -32,5 +33,6 @@ export {
   wait,
   getAge,
   stack,
-  jobs
+  jobs,
+  openAI
 };

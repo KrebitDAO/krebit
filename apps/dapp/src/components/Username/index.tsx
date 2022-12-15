@@ -8,7 +8,8 @@ import {
   LoadingWrapper,
   QuestionModalText,
   Skills,
-  Wrapper
+  Wrapper,
+  Summary
 } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
@@ -21,7 +22,13 @@ import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
-import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
+import {
+  isValid,
+  normalizeSchema,
+  formatUrlImage,
+  constants,
+  openAI
+} from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -95,6 +102,7 @@ export const Username = () => {
   const [status, setStatus] = useState('idle');
   const [profile, setProfile] = useState<IProfile | undefined>();
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
+  const [skillSummary, setSkillSummary] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
   const [currentCustomCredential, setCurrentCustomCredential] =
     useState<ICredential>();
@@ -362,6 +370,21 @@ export const Username = () => {
     return <Error statusCode={404} />;
   }
 
+  const handleSummarize = async () => {
+    if (!auth?.isAuthenticated) return;
+    if (!auth?.isAuthenticated) return;
+
+    const summary = await openAI.getSkillSummary(
+      Krebit.utils
+        .mergeArray(profile.skills)
+        .map(
+          (item, index) =>
+            `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
+        )
+    );
+    setSkillSummary(summary);
+  };
+
   return (
     <>
       {isEditProfileOpen && (
@@ -531,6 +554,22 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
+                <Summary>
+                  <div className="summary-header">
+                    <p className="summary-header-text">Summary:</p>
+                    {skillSummary == undefined ? (
+                      <div className="summary-buttons-rounded">
+                        <Button
+                          text="AI"
+                          onClick={handleSummarize}
+                          styleType="border"
+                        />
+                      </div>
+                    ) : (
+                      <p className="summary-text">{skillSummary}</p>
+                    )}
+                  </div>
+                </Summary>
                 <Skills>
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>

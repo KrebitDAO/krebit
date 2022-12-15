@@ -415,6 +415,37 @@ export const Skills = styled.div`
   `}
 `;
 
+export const Summary = styled.div`
+  ${({ theme }) => css`
+    .summary-header {
+      margin-bottom: 10px;
+
+      .summary-buttons-rounded {
+        height: 44px;
+        width: 64px;
+        justify-self: right;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 50px;
+          width: 50px;
+        }
+      }
+
+      .summary-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+      }
+
+      .summary-text {
+        margin: 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+      }
+    }
+  `}
+`;
+
 export const QuestionModalText = styled.div`
   ${({ theme }) => css`
     margin: 0;

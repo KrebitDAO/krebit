@@ -39,7 +39,7 @@ import { InlineDropdown } from 'components/InlineDropdown';
 import { QuestionModal } from 'components/QuestionModal';
 import { Input } from 'components/Input';
 import { getDomains, substring } from './utils';
-import { constants, orbisParseMarkdown, sortByDate } from 'utils';
+import { constants, orbisParseMarkdown, sortByDate, openAI } from 'utils';
 import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { GeneralContext } from 'context';
@@ -90,6 +90,7 @@ export const Groups = (props: IGroupProps) => {
     useState<IDropdownPostOpened>();
   const [postActionOpened, setPostActionOpened] = useState<IPostActionOpened>();
   const [currentReplyTo, setCurrentReplyTo] = useState<IReplyTo>();
+  const [match, setMatch] = useState<string>();
   const {
     auth,
     walletInformation: { orbis },
@@ -672,6 +673,17 @@ export const Groups = (props: IGroupProps) => {
     );
   };
 
+  const handleMatch = async (job: any) => {
+    if (!job) return;
+    const result = await openAI.getMatch(
+      `Job description: is${
+        job.description
+      }, the required skills for the job are ${job.skills.join(', ')}`,
+      profile?.did
+    );
+    setMatch(result);
+  };
+
   const handleCleanPage = () => {
     setCurrentPage(DEFAULT_CURRENT_PAGE);
     setForm(undefined);
@@ -851,6 +863,13 @@ export const Groups = (props: IGroupProps) => {
                               </div>
                             </>
                           )}
+
+                          <p className="comment-box-information-job-subtitle">
+                            Description:
+                          </p>
+                          <p className="comment-box-information-job-text">
+                            {values?.content?.data?.description}
+                          </p>
                           {values?.content?.data?.skills && (
                             <>
                               <p className="comment-box-information-job-subtitle">
@@ -872,12 +891,6 @@ export const Groups = (props: IGroupProps) => {
                               </div>
                             </>
                           )}
-                          <p className="comment-box-information-job-subtitle">
-                            Description:
-                          </p>
-                          <p className="comment-box-information-job-text">
-                            {values?.content?.data?.description}
-                          </p>
                           <div className="comment-box-information-job-buttons">
                             <div className="comment-box-information-job-button">
                               <Button
@@ -907,7 +920,24 @@ export const Groups = (props: IGroupProps) => {
                                 }
                               />
                             </div>
+                            <div className="comment-box-information-job-button">
+                              <Button
+                                text="AI Match %"
+                                onClick={() =>
+                                  handleMatch(values?.content?.data)
+                                }
+                                isDisabled={
+                                  isPostsLoading ||
+                                  isMorePostsLoading ||
+                                  isPostActionLoading ||
+                                  status === 'pending_comment'
+                                }
+                              />
+                            </div>
                           </div>
+                          <p className="comment-box-information-job-text">
+                            <strong>AI Match %:</strong> {match}
+                          </p>
                         </div>
                       ) : (
                         <p className="comment-box-information-description">
