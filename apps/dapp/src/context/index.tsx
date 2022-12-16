@@ -8,6 +8,8 @@ import { Orbis } from '@orbisclub/orbis-sdk';
 import { Web3Auth } from '@web3auth/modal';
 import { WALLET_ADAPTERS, CHAIN_NAMESPACES } from '@web3auth/base';
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+import { TorusWalletAdapter } from '@web3auth/torus-evm-adapter';
+import { TorusWalletConnectorPlugin } from '@web3auth/torus-wallet-connector-plugin';
 import {
   config as PassportConfig,
   isProduction as PassportConfigIsProduction
@@ -15,6 +17,7 @@ import {
 import { schemas as PassportSchema } from '@krebitdao/reputation-passport/dist/schemas';
 
 import { constants, getWalletInformation, normalizeSchema } from 'utils';
+import { theme } from 'theme';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
@@ -164,10 +167,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         },
         uiConfig: {
           theme: 'dark',
-          loginMethodsOrder: ['facebook', 'google', 'discord', 'twitter'],
+          loginMethodsOrder: ['google', 'facebook', 'twitter', 'discord'],
           appLogo: 'https://krebit.id/imgs/logos/Krebit.svg'
         }
       });
+
       const openloginAdapter = new OpenloginAdapter({
         adapterSettings: {
           clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
@@ -182,7 +186,40 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           }
         }
       });
+      const torusWalletAdapter = new TorusWalletAdapter({
+        clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
+        initParams: {
+          whiteLabel: {
+            theme: {
+              isDark: true,
+              colors: { torusBrand1: theme.colors.cyan }
+            },
+            logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
+            logoDark: 'https://krebit.id/imgs/logos/Krebit.svg',
+            defaultLanguage: 'en',
+            topupHide: false,
+            featuredBillboardHide: false,
+            disclaimerHide: true
+          }
+        }
+      });
+
       web3auth.configureAdapter(openloginAdapter);
+      web3auth.configureAdapter(torusWalletAdapter);
+
+      const torusPlugin = new TorusWalletConnectorPlugin({
+        torusWalletOpts: {},
+        walletInitOptions: {
+          whiteLabel: {
+            theme: { isDark: true, colors: { primary: theme.colors.cyan } },
+            logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
+            logoDark: 'https://krebit.id/imgs/logos/Krebit.svg'
+          },
+          useWalletConnect: true,
+          enableLogging: true
+        }
+      });
+      await web3auth.addPlugin(torusPlugin);
 
       await web3auth.initModal({
         [WALLET_ADAPTERS.OPENLOGIN]: {
@@ -192,7 +229,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
 
       return {
         web3auth,
-        provider: web3auth.provider
+        provider: torusPlugin?.proxyProvider || web3auth.provider
       };
     } catch (error) {
       console.error(error);

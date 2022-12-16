@@ -18,7 +18,8 @@ import {
   Help,
   Menu,
   Send,
-  Home
+  Home,
+  Login
 } from 'components/Icons';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
@@ -154,7 +155,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                 className="profile-menu-icon"
                 onClick={handleOpenConnectWallet}
               >
-                <AccountBalanceWallet />
+                <Login />
               </div>
             )}
           </div>
@@ -368,7 +369,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                 onMouseLeave={() => handleNavBarDesktopOptionHovered(undefined)}
               >
                 <div className="option-icon">
-                  <AccountBalanceWallet />
+                  <Login />
                 </div>
                 {navBarDesktopOptionHovered === 'wallet' && (
                   <p className="option-hover">Connect wallet</p>
