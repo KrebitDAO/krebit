@@ -35,7 +35,7 @@ interface IProps {
   tooltip?: {
     message: string;
   };
-  builderCredential: ICredentialsState;
+  builderCredential?: ICredentialsState;
 }
 
 export const Card = (props: IProps) => {
