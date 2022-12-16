@@ -386,7 +386,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
     }
   },
   {
-    type: 'referr',
+    type: 'referral',
     title: 'Referral',
     description:
       'Invite a friend or colleague that your trust to the Krebiters community',

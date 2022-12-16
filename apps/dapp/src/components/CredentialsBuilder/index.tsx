@@ -498,12 +498,16 @@ export const CredentialsBuilder = () => {
                     {(formValues?.description as string) ||
                       'Credential description'}
                   </p>
-                  <div className="card-brand">
-                    {(formValues?.image as string) ? (
-                      <img src={formatUrlImage(formValues?.image as string)} />
-                    ) : (
-                      values.icon
-                    )}
+                  <div className="card-bottom">
+                    <div className="card-brand">
+                      {(formValues?.image as string) ? (
+                        <img
+                          src={formatUrlImage(formValues?.image as string)}
+                        />
+                      ) : (
+                        values.icon
+                      )}
+                    </div>
                   </div>
                 </Card>
               </div>

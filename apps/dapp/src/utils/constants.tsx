@@ -259,7 +259,8 @@ const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 const DEFAULT_ERROR_MESSAGES = {
   ID_NOT_FOUND: 'Not found',
-  NOT_WALLET_DEFINED: 'Not wallet defined'
+  NOT_WALLET_DEFINED: 'Not wallet defined',
+  NOT_VISUAL_INFORMATION: 'Not visual information defined'
 };
 
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {

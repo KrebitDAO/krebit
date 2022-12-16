@@ -16,7 +16,6 @@ export interface ICredential {
   stamps: any[];
   skills?: string[];
   isMinted: boolean;
-  isCustomCredential?: boolean;
 }
 
 export interface IProfile {

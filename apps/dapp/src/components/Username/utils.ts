@@ -1,4 +1,5 @@
-import { getIssuers, sortByDate } from 'utils';
+import { constants, getIssuers, sortByDate } from 'utils';
+import { CREDENTIALS_INITIAL_STATE } from 'components/Credentials/initialState';
 
 // types
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
@@ -19,7 +20,6 @@ interface IBuildCredentialProps {
   type: string;
   credential: any;
   passport: Passport;
-  isCustomCredential?: boolean;
 }
 
 const getCredentials = async (props: IGetCredentialsProps) => {
@@ -40,9 +40,36 @@ const getCredentials = async (props: IGetCredentialsProps) => {
       //const isMinted = await passport.isMinted(credential);
       const isMinted = false;
 
-      const visualInformation = getIssuers(type).find(issuer =>
+      let visualInformation;
+
+      const visualInformationIssuers = getIssuers(type).find(issuer =>
         credential.type.includes(issuer.credentialType)
       );
+
+      if (visualInformationIssuers) {
+        visualInformation = visualInformationIssuers;
+      }
+
+      const visualInformationBuilderCredential = credential.type
+        .map(type =>
+          CREDENTIALS_INITIAL_STATE.find(state =>
+            type.toLowerCase().includes(state.type)
+          )
+        )
+        .filter(value => value !== undefined);
+
+      if (visualInformationBuilderCredential?.length > 0) {
+        visualInformation = {
+          credentialType: 'Issuer'
+        };
+      }
+
+      if (!visualInformation) {
+        throw new Error(
+          constants.DEFAULT_ERROR_MESSAGES.NOT_VISUAL_INFORMATION
+        );
+      }
+
       const claimValue = await passport.getClaimValue(credential);
 
       const customCredential = {
@@ -51,7 +78,12 @@ const getCredentials = async (props: IGetCredentialsProps) => {
           ...visualInformation,
           isEncryptedByDefault: !!claimValue?.encryptedString
         },
-        value: claimValue
+        value:
+          visualInformation?.credentialType === 'Issuer'
+            ? claimValue?.values
+              ? claimValue
+              : { values: claimValue }
+            : claimValue
       };
 
       return {
@@ -100,7 +132,7 @@ const getCredential = async (props: IGetCredentialProps) => {
 };
 
 const buildCredential = async (props: IBuildCredentialProps) => {
-  const { type, credential, passport, isCustomCredential = false } = props;
+  const { type, credential, passport } = props;
 
   const stamps = await passport.getStamps({
     type: type,
@@ -128,8 +160,7 @@ const buildCredential = async (props: IBuildCredentialProps) => {
     credential: customCredential,
     stamps,
     isMinted,
-    skills: credential.type,
-    isCustomCredential
+    skills: credential.type
   };
 };
 

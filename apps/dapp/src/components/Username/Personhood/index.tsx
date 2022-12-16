@@ -118,8 +118,6 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleIsVerifyCredentialOpen = () => {
-    if (!isAuthenticated) return;
-
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentPersonhoodSelected({
       credential: undefined,
@@ -301,7 +299,7 @@ export const Personhood = (props: IProps) => {
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          isAuthenticated={isCurrentUserAuthenticated}
+          isAuthenticated={isAuthenticated}
           credential={currentPersonhoodSelected}
           getInformation={getInformation}
           updateCredential={updateSelectedCredential}
