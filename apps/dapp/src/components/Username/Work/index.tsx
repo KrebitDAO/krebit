@@ -285,7 +285,7 @@ export const Work = (props: IProps) => {
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          isAuthenticated={isCurrentUserAuthenticated}
+          isAuthenticated={isAuthenticated}
           credential={currentWorkSelected}
           getInformation={getInformation}
           updateCredential={updateSelectedCredential}
