@@ -25,6 +25,7 @@ interface IProps {
   onClose: () => void;
   formatCredentialName: (value: any) => string;
   formatLitValue: (type: string, credential: any) => Promise<void>;
+  readOnly?: boolean;
 }
 
 export const VerifyCredential = (props: IProps) => {
@@ -35,7 +36,8 @@ export const VerifyCredential = (props: IProps) => {
     updateCredential,
     onClose,
     formatCredentialName,
-    formatLitValue
+    formatLitValue,
+    readOnly = false
   } = props;
   const { walletInformation } = useContext(GeneralContext);
   const issuerProvider = useIssuerProvider({ walletInformation });
@@ -121,6 +123,7 @@ export const VerifyCredential = (props: IProps) => {
       formatLitValue={formatLitValue}
       updateCredential={updateCredential}
       walletInformation={walletInformation}
+      readOnly={readOnly}
     />
   );
 };

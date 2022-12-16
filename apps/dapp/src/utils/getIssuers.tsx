@@ -2349,17 +2349,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
             method: async () =>
               await provider?.handleMintCredential(
                 provider?.currentCredential || credential?.credential
-              ),
-            isDisabled: !Boolean(
-              credential?.credential?.value?.values?.issueTo?.find(element => {
-                return (
-                  element?.toLowerCase() ===
-                  walletInformation?.address?.toLowerCase()
-                );
-              }) &&
-                walletInformation?.address?.toLowerCase() !==
-                  credential?.credential?.credentialSubject?.ethereumAddress
-            )
+              )
           }
         })
       }

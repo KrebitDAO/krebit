@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -59,10 +60,9 @@ export const Community = (props: IProps) => {
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const { query, push } = useRouter();
   const isLoading = status === 'idle' || status === 'pending';
   const isCurrentUserAuthenticated = Boolean(passport?.did);
-
-  console.log(communities);
 
   useEffect(() => {
     if (!window) return;
@@ -81,7 +81,7 @@ export const Community = (props: IProps) => {
 
     const buildCurrentCredential = async () => {
       try {
-        const values = await buildCredential({
+        let values = await buildCredential({
           type: 'Community',
           credential: {
             ...customCredential,
@@ -94,11 +94,31 @@ export const Community = (props: IProps) => {
                 : {}
             }
           },
-          passport,
-          isCustomCredential: true
+          passport
         });
 
         if (values) {
+          const communityCredentialFromBuilder = values.skills
+            .map(skill =>
+              CREDENTIALS_INITIAL_STATE.find(state =>
+                skill.toLowerCase().includes(state.type)
+              )
+            )
+            .filter(value => value !== undefined);
+
+          if (communityCredentialFromBuilder?.length > 0) {
+            values = {
+              ...values,
+              credential: {
+                ...values.credential,
+                visualInformation: {
+                  ...values.credential?.visualInformation,
+                  builder: communityCredentialFromBuilder[0]
+                }
+              }
+            };
+          }
+
           setCurrentCommunitySelected(values);
           setIsVerifyCredentialOpen(true);
         }
@@ -125,12 +145,37 @@ export const Community = (props: IProps) => {
         limit: currentFilterOption === 'overview' ? 4 : 100
       });
 
-      setCommunities(communityCredentials);
+      const communities = communityCredentials.map(community => {
+        const communityCredentialFromBuilder = community.skills
+          .map(skill =>
+            CREDENTIALS_INITIAL_STATE.find(state =>
+              skill.toLowerCase().includes(state.type)
+            )
+          )
+          .filter(value => value !== undefined);
+
+        if (communityCredentialFromBuilder?.length > 0) {
+          return {
+            ...community,
+            credential: {
+              ...community.credential,
+              visualInformation: {
+                ...community.credential?.visualInformation,
+                builder: communityCredentialFromBuilder[0]
+              }
+            }
+          };
+        }
+
+        return community;
+      });
+
+      setCommunities(communities);
       handleProfile(prevValues => ({
         ...prevValues,
         skills:
           (prevValues.skills || [])?.concat(
-            communityCredentials.flatMap(credential => credential.skills)
+            communities.flatMap(credential => credential.skills)
           ) || []
       }));
       setStatus('resolved');
@@ -163,7 +208,9 @@ export const Community = (props: IProps) => {
   };
 
   const handleIsVerifyCredentialOpen = () => {
-    if (!isAuthenticated) return;
+    if (query?.id && query?.credential_id) {
+      push('/' + query.id);
+    }
 
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentCommunitySelected({
@@ -297,6 +344,7 @@ export const Community = (props: IProps) => {
     if (value?.encryptedString) return '******';
 
     let formattedValue = '';
+
     if (value?.entity)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.entity);
     if (value?.role)
@@ -324,6 +372,10 @@ export const Community = (props: IProps) => {
     if (value?.description)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.description);
 
+    if (value?.values) {
+      formattedValue = value?.values?.description;
+    }
+
     return formattedValue;
   };
 
@@ -340,13 +392,14 @@ export const Community = (props: IProps) => {
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          isAuthenticated={isCurrentUserAuthenticated}
+          isAuthenticated={isAuthenticated}
           credential={currentCommunitySelected}
           getInformation={getInformation}
           updateCredential={updateSelectedCredential}
           onClose={handleIsVerifyCredentialOpen}
           formatCredentialName={formatCredentialName}
           formatLitValue={handleClaimValue}
+          readOnly={!isAuthenticated && currentActionType === 'see_details'}
         />
       ) : null}
       {isShareWithModalOpen ? (
@@ -418,9 +471,13 @@ export const Community = (props: IProps) => {
                 key={index}
                 type="small"
                 id={`community_${index}`}
-                icon={community.credential?.visualInformation?.icon}
+                icon={
+                  community?.credential?.visualInformation?.builder?.icon ||
+                  community.credential?.visualInformation?.icon
+                }
                 title={formatCredentialType(
-                  community.credential?.credentialSubject?.type
+                  community?.credential?.visualInformation?.builder?.title ||
+                    community.credential?.credentialSubject?.type
                 )}
                 description={formatCredentialName(community.credential?.value)}
                 dates={{
@@ -497,6 +554,9 @@ export const Community = (props: IProps) => {
                     community.stamps?.length || 0
                   } stamps`
                 }}
+                builderCredential={
+                  community.credential?.visualInformation?.builder
+                }
               />
             ))
           )}

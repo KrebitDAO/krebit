@@ -8,6 +8,7 @@ interface IProps {
 interface ICardProps {
   primaryColor: string;
   secondaryColor: string;
+  smaller?: boolean;
 }
 
 export const Wrapper = styled.div<IProps>`
@@ -63,8 +64,10 @@ export const Wrapper = styled.div<IProps>`
 `;
 
 export const Card = styled.div<ICardProps>`
-  ${({ theme, primaryColor, secondaryColor }) => css`
+  ${({ theme, primaryColor, secondaryColor, smaller }) => css`
     width: 100%;
+    min-height: 220px;
+    height: 100%;
     border-radius: 12px;
     padding: 16px 20px;
     background: linear-gradient(
@@ -79,12 +82,12 @@ export const Card = styled.div<ICardProps>`
     .card-title {
       margin: 0;
       font-family: 'HelveticaNowDisplay-Bold';
-      font-size: ${theme.fonts.lg};
+      font-size: ${smaller ? theme.fonts.base : theme.fonts.lg};
       color: ${theme.colors.white};
       word-wrap: break-word;
 
       @media (min-width: ${theme.screens.xl}) {
-        font-size: ${theme.fonts['2xl']};
+        font-size: ${smaller ? theme.fonts.xl : theme.fonts['2xl']};
       }
     }
 
@@ -97,56 +100,81 @@ export const Card = styled.div<ICardProps>`
       word-wrap: break-word;
     }
 
-    .card-button {
+    .card-bottom {
+      position: absolute;
+      bottom: 5px;
+      right: 20px;
+      left: 20px;
       display: flex;
       align-items: center;
-      margin-top: 40px;
 
-      .card-button-text {
-        margin: 0;
-        margin-right: 9px;
-        font-size: ${theme.fonts.sm};
-        color: ${theme.colors.white};
+      .card-dates {
+        display: flex;
+        grid-gap: 14px;
+
+        .card-date {
+          .card-date-title {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.white}B3;
+          }
+
+          .card-date-text {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.white};
+            font-family: 'HelveticaNowDisplay-Medium';
+          }
+        }
       }
 
-      .card-button-icon {
-        width: 20px;
-        height: 20px;
+      .card-button {
+        display: flex;
+        align-items: center;
 
-        & > svg {
+        .card-button-text {
+          margin: 0;
+          margin-right: 9px;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white};
+        }
+
+        .card-button-icon {
           width: 20px;
           height: 20px;
+
+          & > svg {
+            width: 20px;
+            height: 20px;
+            fill: ${theme.colors.white};
+          }
+        }
+      }
+
+      .card-icon {
+        margin-left: auto;
+        width: ${smaller ? '60px' : '80px'};
+        height: ${smaller ? '60px' : '80px'};
+
+        & > svg {
+          width: ${smaller ? '60px' : '80px'};
+          height: ${smaller ? '60px' : '80px'};
           fill: ${theme.colors.white};
         }
       }
-    }
 
-    .card-icon {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 80px;
-      height: 80px;
+      .card-brand {
+        width: ${smaller ? '60px' : '80px'};
+        height: ${smaller ? '60px' : '80px'};
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-      & > svg {
-        width: 80px;
-        height: 80px;
-        fill: ${theme.colors.white};
-      }
-    }
-
-    .card-brand {
-      width: 80px;
-      height: 80px;
-      margin-top: 51px;
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      & > img {
-        width: 80px;
-        height: 80px;
+        & > img {
+          width: ${smaller ? '60px' : '80px'};
+          height: ${smaller ? '60px' : '80px'};
+        }
       }
     }
   `}

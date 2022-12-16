@@ -56,13 +56,15 @@ export const Credentials = () => {
                   >
                     <p className="card-title">{values.title}</p>
                     <p className="card-description">{values.description}</p>
-                    <div className="card-button">
-                      <p className="card-button-text">Create</p>
-                      <div className="card-button-icon">
-                        <ArrowForward />
+                    <div className="card-bottom">
+                      <div className="card-button">
+                        <p className="card-button-text">Create</p>
+                        <div className="card-button-icon">
+                          <ArrowForward />
+                        </div>
                       </div>
+                      <div className="card-icon">{values.icon}</div>
                     </div>
-                    <div className="card-icon">{values.icon}</div>
                   </Card>
                 </Link>
               ))}

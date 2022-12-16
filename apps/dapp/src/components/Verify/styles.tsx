@@ -256,6 +256,17 @@ export const Wrapper = styled.div<IProps>`
         }
 
         .verify-steps-content-credential {
+          margin-top: 10px;
+
+          .verify-steps-content-card {
+            min-height: 230px;
+            height: 100%;
+
+            @media (min-width: ${theme.screens.lg}) {
+              width: 500px;
+            }
+          }
+
           .verify-steps-content-dates {
             display: flex;
             grid-gap: 14px;

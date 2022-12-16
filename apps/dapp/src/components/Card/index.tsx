@@ -5,6 +5,9 @@ import { Krebit, MoreVert } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { ToolTip } from 'components/ToolTip';
 
+// types
+import { ICredentialsState } from 'components/Credentials/initialState';
+
 interface IProps {
   type: 'simple' | 'small' | 'medium' | 'large' | 'long';
   id: string;
@@ -32,6 +35,7 @@ interface IProps {
   tooltip?: {
     message: string;
   };
+  builderCredential: ICredentialsState;
 }
 
 export const Card = (props: IProps) => {
@@ -46,7 +50,8 @@ export const Card = (props: IProps) => {
     icon,
     image,
     isIssued = false,
-    tooltip
+    tooltip,
+    builderCredential
   } = props;
   const [currentToolTipActive, setCurrentToolTipActive] = useState<
     string | undefined
@@ -142,7 +147,13 @@ export const Card = (props: IProps) => {
 
   if (type === 'small') {
     return (
-      <SmallCardWrapper id={id} image={image} isEmpty={isEmpty}>
+      <SmallCardWrapper
+        id={id}
+        image={image}
+        isEmpty={isEmpty}
+        builderCredentialColor={builderCredential?.secondaryColor}
+      >
+        {builderCredential && <div className="card-border"></div>}
         <div className="card-information">
           <p className="card-information-title">{title}</p>
           <p className="card-information-company">{description}</p>
