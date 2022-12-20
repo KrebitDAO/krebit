@@ -60,6 +60,7 @@ import { Refresh } from './Refresh';
 import { SystemUpdateAlt } from './SystemUpdateAlt';
 import { Visibility } from './Visibility';
 import { VisibilityOff } from './VisibilityOff';
+import { Login } from './Login';
 
 export {
   Close,
@@ -123,5 +124,6 @@ export {
   Refresh,
   SystemUpdateAlt,
   Visibility,
-  VisibilityOff
+  VisibilityOff,
+  Login
 };

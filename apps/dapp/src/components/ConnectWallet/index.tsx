@@ -28,11 +28,14 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
         handleRememberSession();
       }
 
-      await connect(type);
-      setStatus('resolved');
-      onClose();
+      const data = await connect(type);
+
+      if (data) {
+        setStatus('resolved');
+        onClose();
+      }
     } catch (error) {
-      console.error(error);
+      console.error('connect wallet function error: ', error);
       setStatus('rejected');
     }
   };

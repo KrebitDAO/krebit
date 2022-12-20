@@ -51,6 +51,8 @@ export const getWalletInformation = async (
   }
 
   if (type === 'web3auth') {
+    if (!web3AuthProvider) return;
+
     const provider = new ethers.providers.Web3Provider(web3AuthProvider);
     const wallet = provider.getSigner();
     const address = await wallet.getAddress();
