@@ -66,6 +66,7 @@ export class Krebit {
     | ethers.providers.Provider
     | ethers.providers.ExternalProvider;
   private currentConfig: IConfigProps;
+  private biconomy: Biconomy;
 
   constructor(props?: IProps) {
     const currentConfig = config.update(props);
@@ -85,6 +86,17 @@ export class Krebit {
       schemas.krebitNFT[this.currentConfig.network].address,
       schemas.krebitNFT.abi,
       props.wallet
+    );
+    this.biconomy = new Biconomy(
+      this.ethProvider as ethers.providers.ExternalProvider,
+      {
+        apiKey: this.currentConfig.biconomyKey,
+        contractAddresses: [
+          schemas.krbToken[this.currentConfig.network].address,
+          schemas.krebitNFT[this.currentConfig.network].address
+        ],
+        debug: true
+      }
     );
   }
 
@@ -408,48 +420,42 @@ export class Krebit {
 
     const balance = await this.wallet.getBalance();
     console.log('balance: ', balance);
+
     /* TEMP enabling  gasless for all
     if (balance > ethers.constants.Zero) {
       return await this.stamp(w3cCredential);
     } else {*/
-    // Pass connected wallet provider under walletProvider field
-    let biconomy = new Biconomy(
-      this.ethProvider as ethers.providers.ExternalProvider,
-      {
-        apiKey: this.currentConfig.biconomyKey,
-        debug: true,
-        walletProvider: this.ethProvider,
-        strictMode: false
-      }
+    // Initialize your dapp here like getting user accounts etc
+
+    const provider = this.biconomy.provider;
+
+    const metaContract = new ethers.Contract(
+      schemas.krbToken[this.currentConfig.network].address,
+      schemas.krbToken.abi,
+      this.biconomy.ethersProvider
     );
 
-    return await new Promise(resolve =>
-      biconomy.onEvent(biconomy.READY, async () => {
-        const provider = biconomy.getEthersProvider();
+    await this.biconomy.init();
 
-        // Initialize your dapp here like getting user accounts etc
-        const metaContract = new ethers.Contract(
-          schemas.krbToken[this.currentConfig.network].address,
-          schemas.krbToken.abi,
-          biconomy.getSignerByAddress(this.address)
-        );
+    const eip712credential = getEIP712Credential(w3cCredential);
 
-        const eip712credential = getEIP712Credential(w3cCredential);
-
-        let { data } = await metaContract.populateTransaction.registerVC(
-          eip712credential,
-          w3cCredential.proof.proofValue
-        );
-        let txParams = {
-          data: data,
-          to: schemas.krbToken[this.currentConfig.network].address,
-          from: this.address,
-          signatureType: 'EIP712_SIGN'
-        };
-        const tx = await provider.send('eth_sendTransaction', [txParams]);
-        resolve(tx);
-      })
+    let { data } = await metaContract.populateTransaction.registerVC(
+      eip712credential,
+      w3cCredential.proof.proofValue
     );
+    let txParams = {
+      data: data,
+      to: schemas.krbToken[this.currentConfig.network].address,
+      from: this.address,
+      signatureType: 'EIP712_SIGN'
+    };
+
+    const tx = await provider.request({
+      method: 'eth_sendTransaction',
+      params: [txParams]
+    });
+
+    return tx;
     //}
   };
 
@@ -460,52 +466,45 @@ export class Krebit {
 
     const balance = await this.wallet.getBalance();
     console.log('balance: ', balance);
+
     /* TEMP enabling  gasless for all
     if (balance > ethers.constants.Zero) {
-      return await this.mintNFT(w3cCredential);
-    } else { */
-    // Pass connected wallet provider under walletProvider field
-    let biconomy = new Biconomy(
-      this.ethProvider as ethers.providers.ExternalProvider,
-      {
-        apiKey: this.currentConfig.biconomyKey,
-        debug: true,
-        walletProvider: this.ethProvider,
-        strictMode: false
-      }
+      return await this.stamp(w3cCredential);
+    } else {*/
+    // Initialize your dapp here like getting user accounts etc
+
+    const provider = this.biconomy.provider;
+
+    const metaContract = new ethers.Contract(
+      schemas.krebitNFT[this.currentConfig.network].address,
+      schemas.krebitNFT.abi,
+      this.biconomy.ethersProvider
     );
 
-    return await new Promise(resolve =>
-      biconomy.onEvent(biconomy.READY, async () => {
-        const provider = biconomy.getEthersProvider();
+    await this.biconomy.init();
 
-        // Initialize your dapp here like getting user accounts etc
-        const metaContract = new ethers.Contract(
-          schemas.krebitNFT[this.currentConfig.network].address,
-          schemas.krebitNFT.abi,
-          biconomy.getSignerByAddress(this.address)
-        );
+    const eip712credential = getEIP712Credential(w3cCredential);
 
-        const eip712credential = getEIP712Credential(w3cCredential);
-
-        let { data } =
-          await metaContract.populateTransaction.mintWithCredential(
-            this.address,
-            w3cCredential.credentialSubject.type,
-            eip712credential,
-            w3cCredential.proof.proofValue,
-            0x0
-          );
-        let txParams = {
-          data: data,
-          to: schemas.krebitNFT[this.currentConfig.network].address,
-          from: this.address,
-          signatureType: 'EIP712_SIGN'
-        };
-        const tx = await provider.send('eth_sendTransaction', [txParams]);
-        resolve(tx);
-      })
+    let { data } = await metaContract.populateTransaction.mintWithCredential(
+      this.address,
+      w3cCredential.credentialSubject.type,
+      eip712credential,
+      w3cCredential.proof.proofValue,
+      0x0
     );
+    let txParams = {
+      data: data,
+      to: schemas.krebitNFT[this.currentConfig.network].address,
+      from: this.address,
+      signatureType: 'EIP712_SIGN'
+    };
+
+    const tx = await provider.request({
+      method: 'eth_sendTransaction',
+      params: [txParams]
+    });
+
+    return tx;
     //}
   };
 

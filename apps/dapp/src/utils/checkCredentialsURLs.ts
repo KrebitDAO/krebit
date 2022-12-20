@@ -21,7 +21,10 @@ export const checkCredentialsURLs = (
 
   if (valuesType === 'nft') {
     const tokenIdHex = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(['string'], [values])
+      ethers.utils.defaultAbiCoder.encode(
+        ['string'],
+        [values?.credentialSubject?.type]
+      )
     );
     const tokenId = ethers.BigNumber.from(tokenIdHex);
     value = tokenId.toString();

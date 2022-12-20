@@ -59,6 +59,7 @@ export const Work = (props: IProps) => {
   useEffect(() => {
     if (!window) return;
     if (!publicPassport) return;
+    if (!publicPassport?.idx) return;
     if (isHidden) return;
 
     getInformation();

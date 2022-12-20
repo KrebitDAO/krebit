@@ -149,12 +149,6 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   }, []);
 
   const initWeb3Auth = async () => {
-    if (web3auth)
-      return {
-        web3auth,
-        provider: web3auth.provider
-      };
-
     try {
       const web3auth = new Web3Auth({
         clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
@@ -208,10 +202,15 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       web3auth.configureAdapter(torusWalletAdapter);
 
       const torusPlugin = new TorusWalletConnectorPlugin({
-        torusWalletOpts: {},
+        torusWalletOpts: {
+          buttonPosition: 'bottom-right'
+        },
         walletInitOptions: {
           whiteLabel: {
-            theme: { isDark: true, colors: { primary: theme.colors.cyan } },
+            theme: {
+              isDark: true,
+              colors: { primary: theme.colors.cyan }
+            },
             logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
             logoDark: 'https://krebit.id/imgs/logos/Krebit.svg'
           },
@@ -333,6 +332,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
             push(`/${passport.did}`);
           }
         }
+
+        return information;
       }
     } catch (error) {
       console.error(error);

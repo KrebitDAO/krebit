@@ -11,7 +11,6 @@ import {
   Wrapper
 } from './styles';
 import {
-  AccountBalanceWallet,
   Token,
   Close,
   Explore,
