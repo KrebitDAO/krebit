@@ -88,6 +88,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       }
 
       if (!information) {
+        await logout();
         throw new Error(constants.DEFAULT_ERROR_MESSAGES.NOT_WALLET_DEFINED);
       }
 
@@ -346,11 +347,14 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
 
     const currentAuthType = window.localStorage.getItem('auth-type');
 
-    if (currentAuthType === 'web3auth') {
+    if (currentAuthType === 'web3auth' && web3auth) {
       await web3auth.logout();
     }
 
-    await orbis.logout();
+    if (orbis) {
+      await orbis.logout();
+    }
+
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
     window.localStorage.removeItem('krebit-remember-session');
