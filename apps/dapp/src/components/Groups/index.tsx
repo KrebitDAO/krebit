@@ -675,12 +675,14 @@ export const Groups = (props: IGroupProps) => {
 
   const handleMatch = async (job: any) => {
     if (!job) return;
+
     const result = await openAI.getMatch(
       `Job description: is${
         job.description
       }, the required skills for the job are ${job.skills.join(', ')}`,
       profile?.did
     );
+
     setMatch(result);
   };
 
@@ -863,7 +865,6 @@ export const Groups = (props: IGroupProps) => {
                               </div>
                             </>
                           )}
-
                           <p className="comment-box-information-job-subtitle">
                             Description:
                           </p>

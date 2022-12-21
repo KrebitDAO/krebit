@@ -372,7 +372,6 @@ export const Username = () => {
 
   const handleSummarize = async () => {
     if (!auth?.isAuthenticated) return;
-    if (!auth?.isAuthenticated) return;
 
     const summary = await openAI.getSkillSummary(
       Krebit.utils
@@ -382,6 +381,7 @@ export const Username = () => {
             `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
         )
     );
+
     setSkillSummary(summary);
   };
 

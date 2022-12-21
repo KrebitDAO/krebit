@@ -1,9 +1,9 @@
 import express from 'express';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, openAI } from '../../utils';
+import { openAI } from '../../utils';
 
-const { SERVER_CERAMIC_URL } = process.env;
+const { SERVER_CERAMIC_URL, SERVER_NETWORK } = process.env;
 
 export const OpenAIController = async (
   request: express.Request,
@@ -14,10 +14,10 @@ export const OpenAIController = async (
     if (!request?.body) {
       throw new Error('Body not defined');
     }
-    const skills = request?.body?.skills ? request?.body?.skills : null;
+    const skills = request?.body?.skills;
+    const jobId = request?.body?.jobId;
+    const profileDid = request?.body?.did;
 
-    const jobId = request?.body?.jobId ? request?.body?.jobId : null;
-    const profileDid = request?.body?.did ? request?.body?.did : null;
     if (jobId && profileDid) {
       console.log('Getting match with jobId: ', jobId);
       console.log('Getting match with did: ', profileDid);
@@ -36,7 +36,7 @@ export const OpenAIController = async (
       const job = (await Issuer.getDocument(jobId)) as any;
 */
       const publicPassport = new krebit.core.Passport({
-        network: process.env.SERVER_NETWORK as 'mumbai' | 'polygon',
+        network: SERVER_NETWORK as 'mumbai' | 'polygon',
         ceramicUrl: SERVER_CERAMIC_URL
       });
       await publicPassport.read(profileDid.toLowerCase());
