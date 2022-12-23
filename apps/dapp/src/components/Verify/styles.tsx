@@ -205,6 +205,7 @@ export const Wrapper = styled.div<IProps>`
         height: 80%;
         overflow-y: auto;
         padding-bottom: 60px;
+        margin-top: 10px;
 
         @media (min-width: ${theme.screens.lg}) {
           height: 450px;
@@ -218,7 +219,7 @@ export const Wrapper = styled.div<IProps>`
 
         .verify-steps-content-title {
           margin: 0;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           font-size: ${theme.fonts.base};
           font-family: 'HelveticaNowDisplay-Medium';
           color: ${theme.colors.white};
@@ -238,19 +239,8 @@ export const Wrapper = styled.div<IProps>`
           text-decoration: underline;
         }
 
-        .verify-steps-content-icon {
-          margin-left: 20px;
-          margin-bottom: 20px;
-
-          & > svg {
-            width: 30px;
-            height: 30px;
-            fill: ${theme.colors.white};
-          }
-        }
-
         .verify-steps-content-list {
-          margin: 24px 0;
+          margin: 15px 0;
           padding: 0;
           padding-inline-start: 20px;
         }
@@ -261,30 +251,10 @@ export const Wrapper = styled.div<IProps>`
           .verify-steps-content-card {
             min-height: 230px;
             height: 100%;
+            margin-left: 15px;
 
             @media (min-width: ${theme.screens.lg}) {
               width: 500px;
-            }
-          }
-
-          .verify-steps-content-dates {
-            display: flex;
-            grid-gap: 14px;
-            margin-top: 20px;
-
-            .verify-steps-content-date {
-              .verify-steps-content-date-title {
-                margin: 0;
-                font-size: ${theme.fonts.sm};
-                color: ${theme.colors.white}B3;
-              }
-
-              .verify-steps-content-date-text {
-                margin: 0;
-                font-size: ${theme.fonts.sm};
-                color: ${theme.colors.white};
-                font-family: 'HelveticaNowDisplay-Medium';
-              }
             }
           }
 
@@ -292,6 +262,11 @@ export const Wrapper = styled.div<IProps>`
             display: flex;
             align-items: center;
             grid-gap: 5px;
+            margin-top: 10px;
+
+            & > p {
+              margin: 0;
+            }
 
             .verify-steps-content-visibility {
               width: 25px;
@@ -345,7 +320,7 @@ export const Wrapper = styled.div<IProps>`
         .verify-steps-content-fields {
           display: grid;
           grid-gap: 24px;
-          margin-top: 24px;
+          margin-top: 15px;
 
           @media (min-width: ${theme.screens.lg}) {
             margin: 24px 0;
@@ -405,7 +380,7 @@ export const Wrapper = styled.div<IProps>`
         position: absolute;
         left: 30px;
         right: 30px;
-        bottom: 35px;
+        bottom: 20px;
         background-color: ${theme.colors.bunting};
 
         .verify-steps-bottom-button {

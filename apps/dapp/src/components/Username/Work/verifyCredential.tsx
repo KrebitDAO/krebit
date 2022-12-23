@@ -86,9 +86,9 @@ export const VerifyCredential = (props: IProps) => {
   };
 
   const handleClose = async () => {
-    await getInformation();
-
-    onClose();
+    await getInformation().then(() => {
+      onClose();
+    });
   };
 
   const handleCleanState = (credentialType: string) => {

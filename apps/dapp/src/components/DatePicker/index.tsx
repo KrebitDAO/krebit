@@ -1,5 +1,4 @@
 import { ChangeEvent } from 'react';
-import { format } from 'date-fns';
 
 import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';

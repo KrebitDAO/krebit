@@ -240,18 +240,6 @@ export const useIssuerProvider = (props: IProps) => {
     try {
       if (!walletInformation) return;
 
-      const isValid = Boolean(
-        credential.value?.values?.issueTo?.findIndex(element => {
-          return (
-            element.toLowerCase() === walletInformation.address.toLowerCase()
-          );
-        }) > -1 &&
-          walletInformation.address.toLowerCase() !==
-            credential?.credentialSubject?.ethereumAddress
-      );
-
-      if (!isValid) return;
-
       setStatus('mint_pending');
       setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import addYears from 'date-fns/addYears';
 
 import { Wrapper } from './styles';
-import { Card as CredentialBuilderCard } from 'components/Credentials/styles';
 import {
   ArrowForward,
   Close,
@@ -15,6 +15,7 @@ import { DatePicker } from 'components/DatePicker';
 import { Select } from 'components/Select';
 import { Switch } from 'components/Switch';
 import { Loading } from 'components/Loading';
+import { CredentialCard } from 'components/Credentials/credentialCard';
 import { substring } from 'components/Groups/utils';
 import { checkCredentialsURLs, formatUrlImage } from 'utils';
 
@@ -63,7 +64,6 @@ export const Verify = (props: IProps) => {
   const [currentStepsCompleted, setCurrentStepsCompleted] = useState({});
   const [areStepsCompleted, setAreStepsCompleted] = useState(false);
   const provider = getProvider(currentVerify?.credentialType);
-  const isInitialStep = currentStep === 0;
   const isLoading =
     provider?.status === 'credential_pending' ||
     provider?.status === 'mint_pending';
@@ -309,12 +309,29 @@ export const Verify = (props: IProps) => {
                 </div>
               ) : null}
               <div className="verify-steps-container">
-                {currentStep === 0 &&
-                credential?.credential?.visualInformation?.builder ? (
+                {!allStepsCompleted && !isReadOnly ? (
+                  <>
+                    {currentVerify.steps[currentStep || 0]?.metadata.title && (
+                      <p className="verify-steps-content-title">
+                        {currentVerify.steps[currentStep || 0]?.metadata.title}
+                      </p>
+                    )}
+                    {currentVerify.steps[currentStep || 0]?.metadata
+                      .description && (
+                      <p className="verify-steps-content-description">
+                        {
+                          currentVerify.steps[currentStep || 0]?.metadata
+                            .description
+                        }
+                      </p>
+                    )}
+                  </>
+                ) : null}
+                {currentStep === 0 && (
                   <div className="verify-steps-content-credential">
                     <p className="verify-steps-content-title">Credential</p>
                     <div className="verify-steps-content-card">
-                      <CredentialBuilderCard
+                      <CredentialCard
                         primaryColor={
                           credential?.credential?.visualInformation?.builder
                             ?.primaryColor
@@ -324,282 +341,239 @@ export const Verify = (props: IProps) => {
                             ?.secondaryColor
                         }
                         smaller={true}
-                      >
-                        <p className="card-title">
-                          {credential?.credential?.value?.values?.name ||
-                            credential?.credential?.value?.values?.title ||
-                            ''}
-                        </p>
-                        <p className="card-description">
-                          {credential?.credential?.value?.values?.description ||
-                            ''}
-                        </p>
-                        <div className="card-bottom">
-                          <div className="card-dates">
-                            <div className="card-date">
-                              <p className="card-date-title">ISSUED</p>
-                              <p className="card-date-text">
-                                {new Date(
-                                  credential?.credential?.issuanceDate
-                                ).toLocaleDateString('en-US')}
-                              </p>
-                            </div>
-                            <div className="card-date">
-                              <p className="card-date-title">EXPIRES</p>
-                              <p className="card-date-text">
-                                {new Date(
-                                  credential?.credential?.expirationDate
-                                ).toLocaleDateString('en-US')}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="card-brand">
-                            {credential?.credential?.visualInformation?.builder
-                              ?.imageUrl ? (
-                              <img
-                                src={formatUrlImage(
-                                  credential?.credential?.visualInformation
-                                    ?.builder?.imageUrl
+                        frontChildren={
+                          <>
+                            <p className="card-title">
+                              {credential?.credential?.value?.values?.name ||
+                                credential?.credential?.value?.values?.title ||
+                                currentVerify.steps[currentStep || 0]?.metadata
+                                  ?.title ||
+                                ''}
+                            </p>
+                            {credential.credential?.value ? (
+                              <div
+                                className="verify-steps-content-visibility-container"
+                                data-not-parent-click
+                              >
+                                <p
+                                  className="card-description"
+                                  data-not-parent-click
+                                >
+                                  {formatCredentialName(
+                                    credential.credential?.value
+                                  )}
+                                </p>
+                                {credential.credential?.visualInformation
+                                  ?.isEncryptedByDefault && (
+                                  <div
+                                    className="verify-steps-content-visibility"
+                                    onClick={() =>
+                                      formatLitValue(
+                                        credential.credential?.value
+                                          ?.encryptedString
+                                          ? 'decrypt'
+                                          : 'encrypt',
+                                        credential.credential
+                                      )
+                                    }
+                                    data-not-parent-click
+                                  >
+                                    {isAuthenticated &&
+                                      (credential.credential?.value
+                                        ?.encryptedString ? (
+                                        <Visibility data-not-parent-click />
+                                      ) : (
+                                        <VisibilityOff data-not-parent-click />
+                                      ))}
+                                  </div>
                                 )}
-                              />
+                              </div>
                             ) : (
-                              credential?.credential?.visualInformation?.builder
-                                ?.icon
+                              <p className="card-description">
+                                {credential?.credential?.value?.values
+                                  ?.description || ''}
+                              </p>
                             )}
-                          </div>
-                        </div>
-                      </CredentialBuilderCard>
-                    </div>
-                    <div className="verify-steps-content-external-urls">
-                      <img
-                        src="/imgs/logos/ceramic.png"
-                        width={25}
-                        height={25}
-                        onClick={() =>
-                          checkCredentialsURLs(
-                            'ceramic',
-                            'credential',
-                            credential?.credential
-                          )
+                            <div className="card-bottom">
+                              <div className="card-dates">
+                                <div className="card-date">
+                                  <p className="card-date-title">ISSUED</p>
+                                  <p className="card-date-text">
+                                    {credential?.credential?.issuanceDate
+                                      ? new Date(
+                                          credential?.credential?.issuanceDate
+                                        ).toLocaleDateString('en-US')
+                                      : new Date().toLocaleDateString('en-US')}
+                                  </p>
+                                </div>
+                                <div className="card-date">
+                                  <p className="card-date-title">EXPIRES</p>
+                                  <p className="card-date-text">
+                                    {credential?.credential?.expirationDate
+                                      ? new Date(
+                                          credential?.credential?.expirationDate
+                                        ).toLocaleDateString('en-US')
+                                      : addYears(
+                                          new Date(),
+                                          3
+                                        ).toLocaleDateString('en-US')}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="card-brand">
+                                {credential?.credential?.visualInformation
+                                  ?.builder?.imageUrl ? (
+                                  <img
+                                    src={formatUrlImage(
+                                      credential?.credential?.visualInformation
+                                        ?.builder?.imageUrl
+                                    )}
+                                  />
+                                ) : (
+                                  credential?.credential?.visualInformation
+                                    ?.builder?.icon ||
+                                  currentVerify.steps[currentStep || 0]
+                                    ?.metadata?.icon
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        }
+                        backChildren={
+                          <>
+                            <p className="card-title">
+                              {
+                                currentVerify.steps[currentStep || 0]?.metadata
+                                  .title
+                              }
+                            </p>
+                            <p className="card-description">
+                              {
+                                currentVerify.steps[currentStep || 0]?.metadata
+                                  .description
+                              }
+                            </p>
+                            {currentVerify.steps[currentStep || 0]?.metadata
+                              ?.did &&
+                            currentVerify.steps[currentStep || 0]?.metadata
+                              ?.verificationUrl &&
+                            currentVerify.steps[currentStep || 0]?.metadata
+                              ?.price ? (
+                              <ul className="verify-steps-content-list">
+                                <li className="verify-steps-content-description">
+                                  <a
+                                    href={
+                                      '/' +
+                                      currentVerify.steps[currentStep || 0]
+                                        ?.metadata?.did
+                                    }
+                                    className="verify-steps-content-description verify-steps-content-dots"
+                                    data-not-parent-click
+                                  >
+                                    {substring(
+                                      currentVerify.steps[currentStep || 0]
+                                        ?.metadata?.did,
+                                      30,
+                                      true
+                                    )}
+                                  </a>
+                                </li>
+                                <li className="verify-steps-content-description">
+                                  {
+                                    currentVerify.steps[currentStep || 0]
+                                      ?.metadata?.verificationUrl
+                                  }
+                                </li>
+                                <li className="verify-steps-content-description">
+                                  $
+                                  {
+                                    currentVerify.steps[currentStep || 0]
+                                      ?.metadata?.price
+                                  }
+                                </li>
+                              </ul>
+                            ) : null}
+                            <div className="card-bottom">
+                              <div className="card-brand">
+                                {credential?.credential?.visualInformation
+                                  ?.builder?.imageUrl ? (
+                                  <img
+                                    src={formatUrlImage(
+                                      credential?.credential?.visualInformation
+                                        ?.builder?.imageUrl
+                                    )}
+                                  />
+                                ) : (
+                                  credential?.credential?.visualInformation
+                                    ?.builder?.icon ||
+                                  currentVerify.steps[currentStep || 0]
+                                    ?.metadata?.icon
+                                )}
+                              </div>
+                            </div>
+                          </>
                         }
                       />
-                      {credential?.stamps?.length > 0 && (
-                        <>
-                          <img
-                            src="/imgs/logos/rarible.png"
-                            width={25}
-                            height={25}
-                            onClick={() =>
-                              checkCredentialsURLs(
-                                'rarible',
-                                'nft',
-                                credential?.credential
-                              )
-                            }
-                          />
-                          <img
-                            src="/imgs/logos/opensea.svg"
-                            width={25}
-                            height={25}
-                            onClick={() =>
-                              checkCredentialsURLs(
-                                'opensea',
-                                'nft',
-                                credential?.credential
-                              )
-                            }
-                          />
-                        </>
-                      )}
                     </div>
-                    <div className="verify-steps-content-skills">
-                      {credential.skills.map((skill, index) => (
-                        <div className="verify-steps-content-skill" key={index}>
-                          <p className="verify-steps-content-skill-text">
-                            {skill}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="verify-steps-content">
-                      <div className="verify-steps-content-titles">
-                        {currentVerify.steps[currentStep || 0]?.metadata
-                          .title && (
-                          <p className="verify-steps-content-title">
-                            {
-                              currentVerify.steps[currentStep || 0]?.metadata
-                                .title
-                            }
-                          </p>
-                        )}
-                        {currentVerify.steps[currentStep || 0]?.metadata
-                          .description && (
-                          <p className="verify-steps-content-description">
-                            {
-                              currentVerify.steps[currentStep || 0]?.metadata
-                                .description
-                            }
-                          </p>
-                        )}
-                      </div>
-                      {currentVerify.steps[currentStep || 0]?.metadata.icon && (
-                        <div className="verify-steps-content-icon">
-                          {currentVerify.steps[currentStep || 0]?.metadata.icon}
-                        </div>
-                      )}
-                    </div>
-                    {currentVerify.steps[currentStep || 0]?.metadata?.did &&
-                    currentVerify.steps[currentStep || 0]?.metadata
-                      ?.verificationUrl &&
-                    currentVerify.steps[currentStep || 0]?.metadata?.price ? (
-                      <ul className="verify-steps-content-list">
-                        <li className="verify-steps-content-description">
-                          <a
-                            href={
-                              '/' +
-                              currentVerify.steps[currentStep || 0]?.metadata
-                                ?.did
-                            }
-                            className="verify-steps-content-description verify-steps-content-dots"
-                          >
-                            {substring(
-                              currentVerify.steps[currentStep || 0]?.metadata
-                                ?.did,
-                              30,
-                              true
-                            )}
-                          </a>
-                        </li>
-                        <li className="verify-steps-content-description">
-                          {
-                            currentVerify.steps[currentStep || 0]?.metadata
-                              ?.verificationUrl
+                    {credential?.credential && (
+                      <div className="verify-steps-content-external-urls">
+                        <img
+                          src="/imgs/logos/ceramic.png"
+                          width={25}
+                          height={25}
+                          onClick={() =>
+                            checkCredentialsURLs(
+                              'ceramic',
+                              'credential',
+                              credential?.credential
+                            )
                           }
-                        </li>
-                        <li className="verify-steps-content-description">
-                          $
-                          {
-                            currentVerify.steps[currentStep || 0]?.metadata
-                              ?.price
-                          }
-                        </li>
-                      </ul>
-                    ) : null}
-                    {isInitialStep &&
-                    credential?.credential?.issuanceDate &&
-                    credential?.credential?.expirationDate &&
-                    credential.credential?.value ? (
-                      <div className="verify-steps-content-credential">
-                        <p className="verify-steps-content-title">Credential</p>
-                        <div className="verify-steps-content-visibility-container">
-                          <p className="verify-steps-content-description">
-                            {formatCredentialName(credential.credential?.value)}
-                          </p>
-                          {credential.credential?.visualInformation
-                            ?.isEncryptedByDefault && (
-                            <div
-                              className="verify-steps-content-visibility"
+                        />
+                        {credential?.stamps?.length > 0 && (
+                          <>
+                            <img
+                              src="/imgs/logos/rarible.png"
+                              width={25}
+                              height={25}
                               onClick={() =>
-                                formatLitValue(
-                                  credential.credential?.value?.encryptedString
-                                    ? 'decrypt'
-                                    : 'encrypt',
-                                  credential.credential
+                                checkCredentialsURLs(
+                                  'rarible',
+                                  'nft',
+                                  credential?.credential
                                 )
                               }
-                            >
-                              {isAuthenticated &&
-                                (credential.credential?.value
-                                  ?.encryptedString ? (
-                                  <Visibility />
-                                ) : (
-                                  <VisibilityOff />
-                                ))}
-                            </div>
-                          )}
-                        </div>
-                        <div className="verify-steps-content-dates">
-                          <div className="verify-steps-content-date">
-                            <p className="verify-steps-content-date-title">
-                              ISSUED
-                            </p>
-                            <p className="verify-steps-content-date-text">
-                              {new Date(
-                                credential?.credential?.issuanceDate
-                              ).toLocaleDateString('en-US')}
-                            </p>
-                          </div>
-                          <div className="verify-steps-content-date">
-                            <p className="verify-steps-content-date-title">
-                              EXPIRES
-                            </p>
-                            <p className="verify-steps-content-date-text">
-                              {new Date(
-                                credential?.credential?.expirationDate
-                              ).toLocaleDateString('en-US')}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="verify-steps-content-external-urls">
-                          <img
-                            src="/imgs/logos/ceramic.png"
-                            width={25}
-                            height={25}
-                            onClick={() =>
-                              checkCredentialsURLs(
-                                'ceramic',
-                                'credential',
-                                credential?.credential
-                              )
-                            }
-                          />
-                          {credential?.stamps?.length > 0 && (
-                            <>
-                              <img
-                                src="/imgs/logos/rarible.png"
-                                width={25}
-                                height={25}
-                                onClick={() =>
-                                  checkCredentialsURLs(
-                                    'rarible',
-                                    'nft',
-                                    credential?.credential
-                                  )
-                                }
-                              />
-                              <img
-                                src="/imgs/logos/opensea.svg"
-                                width={25}
-                                height={25}
-                                onClick={() =>
-                                  checkCredentialsURLs(
-                                    'opensea',
-                                    'nft',
-                                    credential?.credential
-                                  )
-                                }
-                              />
-                            </>
-                          )}
-                        </div>
-                        <div className="verify-steps-content-skills">
-                          {credential.skills.map((skill, index) => (
-                            <div
-                              className="verify-steps-content-skill"
-                              key={index}
-                            >
-                              <p className="verify-steps-content-skill-text">
-                                {skill}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
+                            />
+                            <img
+                              src="/imgs/logos/opensea.svg"
+                              width={25}
+                              height={25}
+                              onClick={() =>
+                                checkCredentialsURLs(
+                                  'opensea',
+                                  'nft',
+                                  credential?.credential
+                                )
+                              }
+                            />
+                          </>
+                        )}
                       </div>
-                    ) : null}
-                  </>
+                    )}
+                    {credential?.skills?.length > 0 && (
+                      <div className="verify-steps-content-skills">
+                        {credential.skills.map((skill, index) => (
+                          <div
+                            className="verify-steps-content-skill"
+                            key={index}
+                          >
+                            <p className="verify-steps-content-skill-text">
+                              {skill}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
                 {!currentStepsCompleted[currentStep] &&
                 provider &&
