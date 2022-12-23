@@ -1,14 +1,12 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { animated } from '@react-spring/web';
+
+// types
+import { ICardProps } from './credentialCard';
 
 interface IProps {
   isLoading: boolean;
-}
-
-interface ICardProps {
-  primaryColor: string;
-  secondaryColor: string;
-  smaller?: boolean;
 }
 
 export const Wrapper = styled.div<IProps>`
@@ -63,8 +61,21 @@ export const Wrapper = styled.div<IProps>`
   `}
 `;
 
-export const Card = styled.div<ICardProps>`
-  ${({ theme, primaryColor, secondaryColor, smaller }) => css`
+export const CardContainer = styled.div`
+  ${({ theme }) => css`
+    position: relative;
+  `}
+`;
+
+export const Card = styled(animated.div)<ICardProps>`
+  ${({
+    theme,
+    primaryColor = 'bunting',
+    secondaryColor = 'gray',
+    smaller,
+    frontChildren
+  }) => css`
+    position: ${frontChildren ? 'absolute' : 'initial'};
     width: 100%;
     min-height: 220px;
     height: 100%;
@@ -77,7 +88,7 @@ export const Card = styled.div<ICardProps>`
     );
     backdrop-filter: blur(20px);
     cursor: pointer;
-    position: relative;
+    will-change: transform, opacity;
 
     .card-title {
       margin: 0;
@@ -171,7 +182,8 @@ export const Card = styled.div<ICardProps>`
         align-items: center;
         justify-content: center;
 
-        & > img {
+        & > img,
+        & > svg {
           width: ${smaller ? '60px' : '80px'};
           height: ${smaller ? '60px' : '80px'};
         }

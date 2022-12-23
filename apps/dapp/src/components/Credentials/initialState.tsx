@@ -453,7 +453,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'rating',
           name: 'rating',
-          placeholder: 'Rating: 5/10'
+          placeholder: 'Rating: 2/5'
         },
         {
           name: 'description',
@@ -483,6 +483,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           return {
             values: {
               ...values,
+              rating: values?.rating ? values.rating : '2',
               entity: 'Personal',
               skills: (values.skills as string[]).map(skill => {
                 return {
@@ -536,7 +537,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'rating',
           name: 'level',
-          placeholder: 'Level: 5/10'
+          placeholder: 'Level: 2/5'
         },
 
         {
@@ -562,6 +563,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           return {
             values: {
               ...values,
+              rating: values?.rating ? values.rating : '2',
               skills: (values.skills as string[]).map(skill => {
                 return {
                   skillId: skill,
