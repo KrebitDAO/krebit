@@ -147,7 +147,7 @@ export class Lit {
   };
 
   public encrypt = async (
-    message: String,
+    message: string,
     accessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ) => {

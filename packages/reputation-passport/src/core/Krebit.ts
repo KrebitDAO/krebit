@@ -713,6 +713,20 @@ export class Krebit {
     }
   };
 
+  // read ceramic
+  getDocument = async (streamId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    console.log('Saving document on Ceramic...');
+
+    try {
+      const stream = await TileDocument.load(this.idx.ceramic, streamId);
+      return stream.content;
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
   // write to my ceramic
   updateDocument = async (content: any, streamId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');

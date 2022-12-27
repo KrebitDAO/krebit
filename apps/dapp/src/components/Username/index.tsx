@@ -8,7 +8,8 @@ import {
   LoadingWrapper,
   QuestionModalText,
   Skills,
-  Wrapper
+  Wrapper,
+  Summary
 } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
@@ -19,9 +20,15 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
-import { Share, SystemUpdateAlt } from 'components/Icons';
+import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
-import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
+import {
+  isValid,
+  normalizeSchema,
+  formatUrlImage,
+  constants,
+  openAI
+} from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -203,6 +210,33 @@ export const Username = () => {
     query.id,
     query.credential_id
   ]);
+
+  useEffect(() => {
+    if (!window) return;
+    if (auth.status !== 'resolved') return;
+    if (status !== 'resolved') return;
+
+    const getSummary = async (skills: string[]) => {
+      const summary = await openAI.getSkillSummary(
+        Krebit.utils
+          .mergeArray(skills)
+          .map(
+            (item, index) =>
+              `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
+          )
+      );
+
+      setProfile(prevValues => ({ ...prevValues, summary }));
+    };
+
+    if (profile?.skills && (!profile?.summary || profile?.summary === '')) {
+      const skills = Krebit.utils.mergeArray(profile.skills);
+
+      if (skills.length > 10) {
+        getSummary(skills);
+      }
+    }
+  }, [status, auth, profile]);
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
@@ -531,6 +565,17 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
+                {profile?.summary && (
+                  <Summary>
+                    <div className="summary-header">
+                      <p className="summary-header-text">Summary</p>
+                      <div className="summary-header-icon">
+                        <SmartToy />
+                      </div>
+                    </div>
+                    <p className="summary-text">{profile.summary}</p>
+                  </Summary>
+                )}
                 <Skills>
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>

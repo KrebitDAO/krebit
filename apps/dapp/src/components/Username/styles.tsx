@@ -282,15 +282,6 @@ export const Wrapper = styled.div<IProps>`
       }
 
       .content-left {
-        & > :nth-of-type(2) {
-          margin-top: 32px;
-        }
-
-        @media (min-width: ${theme.screens.lg}) {
-          & > :nth-of-type(2) {
-            margin: 0;
-          }
-        }
       }
 
       .content-right {
@@ -335,6 +326,8 @@ export const Background = styled.div<IBackgrounProps>`
 
 export const Skills = styled.div`
   ${({ theme }) => css`
+    margin-bottom: 10px;
+
     .skills-header {
       margin-bottom: 10px;
 
@@ -411,6 +404,43 @@ export const Skills = styled.div`
           font-size: ${theme.fonts.sm};
         }
       }
+    }
+  `}
+`;
+
+export const Summary = styled.div`
+  ${({ theme }) => css`
+    margin-bottom: 10px;
+
+    .summary-header {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+
+      .summary-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+      }
+
+      .summary-header-icon {
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+
+        & > svg {
+          width: 15px;
+          height: 15px;
+          fill: ${theme.colors.white};
+        }
+      }
+    }
+
+    .summary-text {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.white}B3;
+      line-height: 1.5;
     }
   `}
 `;

@@ -18,6 +18,7 @@ import { countries } from './countries';
 import { guildXyz } from './guildXyz';
 import { getStackUser } from './getStackUser';
 import { orbisParseMarkdown } from './orbisParseMarkdown';
+import { openAI } from './openAI';
 
 export {
   createEmotionCache,
@@ -39,5 +40,6 @@ export {
   countries,
   guildXyz,
   getStackUser,
-  orbisParseMarkdown
+  orbisParseMarkdown,
+  openAI
 };
