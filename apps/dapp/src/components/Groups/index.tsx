@@ -467,6 +467,7 @@ export const Groups = (props: IGroupProps) => {
     if (!id) {
       setComment(undefined);
       setCurrentReplyTo(undefined);
+      setMatch(undefined);
 
       if (postId) {
         if (channelId) {
@@ -892,6 +893,16 @@ export const Groups = (props: IGroupProps) => {
                               </div>
                             </>
                           )}
+                          {match && (
+                            <>
+                              <p className="comment-box-information-job-subtitle">
+                                AI Match:
+                              </p>
+                              <p className="comment-box-information-job-text">
+                                {match}
+                              </p>
+                            </>
+                          )}
                           <div className="comment-box-information-job-buttons">
                             <div className="comment-box-information-job-button">
                               <Button
@@ -936,9 +947,6 @@ export const Groups = (props: IGroupProps) => {
                               />
                             </div>
                           </div>
-                          <p className="comment-box-information-job-text">
-                            <strong>AI Match %:</strong> {match}
-                          </p>
                         </div>
                       ) : (
                         <p className="comment-box-information-description">

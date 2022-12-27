@@ -1,6 +1,6 @@
 import 'isomorphic-fetch';
 
-export const getSkillSummary = async (skills: String[]) => {
+export const getSkillSummary = async (skills: string[]) => {
   try {
     const response = await fetch(process.env.NEXT_PUBLIC_OPENAI_API_URL, {
       method: 'POST',

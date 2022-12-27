@@ -61,6 +61,7 @@ import { SystemUpdateAlt } from './SystemUpdateAlt';
 import { Visibility } from './Visibility';
 import { VisibilityOff } from './VisibilityOff';
 import { Login } from './Login';
+import { SmartToy } from './SmartToy';
 
 export {
   Close,
@@ -125,5 +126,6 @@ export {
   SystemUpdateAlt,
   Visibility,
   VisibilityOff,
-  Login
+  Login,
+  SmartToy
 };

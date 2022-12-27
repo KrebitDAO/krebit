@@ -31,6 +31,7 @@ export interface IProfile {
   ensDomain?: string;
   unsDomain?: string;
   orbisMetadata?: any;
+  summary?: string;
   personhoods?: ICredential[];
   works?: ICredential[];
   communities?: ICredential[];

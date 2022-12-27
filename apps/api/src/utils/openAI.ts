@@ -5,7 +5,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export const getSkillSummary = async (skills: String[]) => {
+export const getSkillSummary = async (skills: string[]) => {
   try {
     const response = await openai
       .createCompletion({
@@ -48,7 +48,7 @@ export const getJobSummary = async (job: string) => {
   }
 };
 
-export const getMatch = async (job: string, skills: String[]) => {
+export const getMatch = async (job: string, skills: string[]) => {
   try {
     const response = await openai
       .createCompletion({

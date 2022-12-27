@@ -20,7 +20,7 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
-import { Share, SystemUpdateAlt } from 'components/Icons';
+import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import {
   isValid,
@@ -102,7 +102,6 @@ export const Username = () => {
   const [status, setStatus] = useState('idle');
   const [profile, setProfile] = useState<IProfile | undefined>();
   const [currentDIDFromURL, setCurrentDIDFromURL] = useState<string>();
-  const [skillSummary, setSkillSummary] = useState<string>();
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
   const [currentCustomCredential, setCurrentCustomCredential] =
     useState<ICredential>();
@@ -211,6 +210,33 @@ export const Username = () => {
     query.id,
     query.credential_id
   ]);
+
+  useEffect(() => {
+    if (!window) return;
+    if (auth.status !== 'resolved') return;
+    if (status !== 'resolved') return;
+
+    const getSummary = async (skills: string[]) => {
+      const summary = await openAI.getSkillSummary(
+        Krebit.utils
+          .mergeArray(skills)
+          .map(
+            (item, index) =>
+              `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
+          )
+      );
+
+      setProfile(prevValues => ({ ...prevValues, summary }));
+    };
+
+    if (profile?.skills && (!profile?.summary || profile?.summary === '')) {
+      const skills = Krebit.utils.mergeArray(profile.skills);
+
+      if (skills.length > 10) {
+        getSummary(skills);
+      }
+    }
+  }, [status, auth, profile]);
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
@@ -369,21 +395,6 @@ export const Username = () => {
   if (status === 'rejected') {
     return <Error statusCode={404} />;
   }
-
-  const handleSummarize = async () => {
-    if (!auth?.isAuthenticated) return;
-
-    const summary = await openAI.getSkillSummary(
-      Krebit.utils
-        .mergeArray(profile.skills)
-        .map(
-          (item, index) =>
-            `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
-        )
-    );
-
-    setSkillSummary(summary);
-  };
 
   return (
     <>
@@ -554,22 +565,17 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
-                <Summary>
-                  <div className="summary-header">
-                    <p className="summary-header-text">Summary:</p>
-                    {skillSummary == undefined ? (
-                      <div className="summary-buttons-rounded">
-                        <Button
-                          text="AI"
-                          onClick={handleSummarize}
-                          styleType="border"
-                        />
+                {profile?.summary && (
+                  <Summary>
+                    <div className="summary-header">
+                      <p className="summary-header-text">Summary</p>
+                      <div className="summary-header-icon">
+                        <SmartToy />
                       </div>
-                    ) : (
-                      <p className="summary-text">{skillSummary}</p>
-                    )}
-                  </div>
-                </Summary>
+                    </div>
+                    <p className="summary-text">{profile.summary}</p>
+                  </Summary>
+                )}
                 <Skills>
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>
