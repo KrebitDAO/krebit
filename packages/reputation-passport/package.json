@@ -38,9 +38,9 @@
   },
   "dependencies": {
     "@biconomy/mexa": "^3.0.5",
-    "@ceramicnetwork/blockchain-utils-linking": "^2.0.8",
-    "@ceramicnetwork/http-client": "^2.3.1",
-    "@ceramicnetwork/stream-tile": "^2.4.0",
+    "@ceramicnetwork/blockchain-utils-linking": "^2.8.0-hotfix.0",
+    "@ceramicnetwork/http-client": "^2.13.0-hotfix.0",
+    "@ceramicnetwork/stream-tile": "^2.12.0-hotfix.0",
     "@didtools/pkh-ethereum": "^0.0.2",
     "@glazed/datamodel": "^0.3.1",
     "@glazed/did-datastore": "^0.3.2",

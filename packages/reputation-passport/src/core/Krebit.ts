@@ -17,6 +17,9 @@ import { utils, ClaimProps } from '../utils/index.js';
 import { schemas } from '../schemas/index.js';
 import { config, IConfigProps } from '../config/index.js';
 
+// types
+import type { CeramicApi } from '@ceramicnetwork/common';
+
 interface IProps extends IConfigProps {
   wallet: ethers.Signer;
   ethProvider: ethers.providers.Provider | ethers.providers.ExternalProvider;
@@ -55,7 +58,7 @@ const getEIP712CredentialFromStamp = (stamp: any) =>
   } as EIP712VerifiableCredential);
 
 export class Krebit {
-  public ceramic: CeramicClient;
+  public ceramic: CeramicApi;
   public idx: DIDDataStore;
   public address: string;
   public did: string;
@@ -72,7 +75,9 @@ export class Krebit {
     const currentConfig = config.update(props);
     this.currentConfig = currentConfig;
 
-    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
+    const ceramicClient = new CeramicClient(
+      this.currentConfig.ceramicUrl
+    ) as unknown as CeramicApi;
     this.address = props.address.toLocaleLowerCase();
     this.ethProvider = props.ethProvider;
     this.ceramic = ceramicClient;

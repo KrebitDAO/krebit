@@ -1144,6 +1144,40 @@
     near-api-js "^0.44.2"
     uint8arrays "^3.0.0"
 
+"@ceramicnetwork/blockchain-utils-linking@^2.8.0-hotfix.0":
+  version "2.8.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/blockchain-utils-linking/-/blockchain-utils-linking-2.8.0-hotfix.0.tgz#72d6af585cdf889881b88170c014c6b7c4216e64"
+  integrity sha512-L4HZB4qMdWrepfHMOjA1/CthuIfKtERZSf0Mo+k0KFhGvR2h0rUvRozAjU6x4K/PEBG8DXYe8n72k7CPt+tbqw==
+  dependencies:
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    "@didtools/cacao" "^1.0.0"
+    "@stablelib/random" "^1.0.1"
+    "@stablelib/sha256" "^1.0.1"
+    caip "~1.1.0"
+    near-api-js "^0.44.2"
+    uint8arrays "^3.0.0"
+
+"@ceramicnetwork/common@^2.16.0-hotfix.0":
+  version "2.16.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/common/-/common-2.16.0-hotfix.0.tgz#fa1499d011a6689dc4cd56cf270f782308e5ec55"
+  integrity sha512-grxDg9fbdcc/0rY3tV9EvEjCBr2Vlkm8OxAGyC8an6dok2Ss3wwD1VaQEJDObh+9EhCPQfJBjA+h6WNWPcu55Q==
+  dependencies:
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    "@didtools/cacao" "^1.0.0"
+    "@didtools/pkh-ethereum" "^0.0.1"
+    "@didtools/pkh-solana" "^0.0.1"
+    "@stablelib/random" "^1.0.1"
+    caip "~1.1.0"
+    cross-fetch "^3.1.4"
+    flat "^5.0.2"
+    it-first "^1.0.7"
+    jet-logger "1.2.2"
+    lodash.clonedeep "^4.5.0"
+    logfmt "^1.3.2"
+    multiformats "^9.5.8"
+    rxjs "^7.5.2"
+    uint8arrays "^3.0.0"
+
 "@ceramicnetwork/common@^2.6.0":
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/common/-/common-2.6.0.tgz#926e055cb3f768f7ef2d4c5b9db5cd096cb7d7a4"
@@ -1184,6 +1218,20 @@
     rxjs "^7.5.2"
     uint8arrays "^3.0.0"
 
+"@ceramicnetwork/http-client@^2.13.0-hotfix.0":
+  version "2.13.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-2.13.0-hotfix.0.tgz#4ab3c1b3d0992f374fe157fafba0ac8732342bd9"
+  integrity sha512-aEZ/KBP1/dBO+PQcQcTjHYQDg9P8lE/rDpVl8OZyRyM+lXkvviKt9sOxQKS7RIcLGkKY7L/oxiVrufp9gcLDtg==
+  dependencies:
+    "@ceramicnetwork/common" "^2.16.0-hotfix.0"
+    "@ceramicnetwork/stream-caip10-link" "^2.11.0-hotfix.0"
+    "@ceramicnetwork/stream-model" "^0.14.0-hotfix.0"
+    "@ceramicnetwork/stream-model-instance" "^0.12.0-hotfix.0"
+    "@ceramicnetwork/stream-tile" "^2.12.0-hotfix.0"
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    query-string "^7.1.0"
+    rxjs "^7.5.2"
+
 "@ceramicnetwork/http-client@^2.3.1":
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-2.3.4.tgz#8610db5da11fab28f659289b6f54b654c8dbffb0"
@@ -1198,6 +1246,17 @@
     query-string "^7.1.0"
     rxjs "^7.5.2"
 
+"@ceramicnetwork/stream-caip10-link@^2.11.0-hotfix.0":
+  version "2.11.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-caip10-link/-/stream-caip10-link-2.11.0-hotfix.0.tgz#b1a2820f7b9e4cc2845ad37f2921e96fa5d1455d"
+  integrity sha512-LnKfOQsZTfGq/JBiia0Ku5Q+y5waxJz7cprulW6qfw+843d1se2EnUl7okqek+Odhvt/0Xc0YoHsnjIqknI2wQ==
+  dependencies:
+    "@ceramicnetwork/common" "^2.16.0-hotfix.0"
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    caip "~1.1.0"
+    did-resolver "^3.1.5"
+    lodash.clonedeep "^4.5.0"
+
 "@ceramicnetwork/stream-caip10-link@^2.2.3":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-caip10-link/-/stream-caip10-link-2.2.3.tgz#1bfaba15310e55b4bc15feea5090be743f9ea515"
@@ -1209,6 +1268,18 @@
     did-resolver "^3.1.5"
     lodash.clonedeep "^4.5.0"
 
+"@ceramicnetwork/stream-model-instance@^0.12.0-hotfix.0":
+  version "0.12.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-model-instance/-/stream-model-instance-0.12.0-hotfix.0.tgz#65336de73a511501fb2be2971a2d927f07730c3c"
+  integrity sha512-pTRVKcgvBsBm/XrKIxHU4PnQhneRsAgDefFYeL3piiahJ3Dd2EVLZOHyII7BdFypqbxXJO6lwJi7b0IClsSoPA==
+  dependencies:
+    "@ceramicnetwork/common" "^2.16.0-hotfix.0"
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    "@ipld/dag-cbor" "^7.0.0"
+    "@stablelib/random" "^1.0.1"
+    fast-json-patch "^3.1.0"
+    uint8arrays "^3.0.0"
+
 "@ceramicnetwork/stream-model-instance@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-model-instance/-/stream-model-instance-0.4.1.tgz#b8a608167aac2c2175449929fbaed86afe58677b"
@@ -1219,6 +1290,21 @@
     "@ipld/dag-cbor" "^7.0.0"
     "@stablelib/random" "^1.0.1"
     fast-json-patch "^3.1.0"
+    uint8arrays "^3.0.0"
+
+"@ceramicnetwork/stream-model@^0.14.0-hotfix.0":
+  version "0.14.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-model/-/stream-model-0.14.0-hotfix.0.tgz#beeeb34e1ad87c1dc2165ed6b083411b8bba840e"
+  integrity sha512-KpKZOGPhqm3HnmXpRJBIRihdQH0JbyLSWshFLyqxev9Oiixzz61E1mdOMs65h3KJPpJWo+lMInRk58yp//6MnQ==
+  dependencies:
+    "@ceramicnetwork/common" "^2.16.0-hotfix.0"
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    "@ipld/dag-cbor" "^7.0.0"
+    "@stablelib/random" "^1.0.1"
+    fast-json-patch "^3.1.0"
+    json-schema-typed "^8.0.1"
+    multiformats "^9.5.8"
+    multihashes "^4.0.3"
     uint8arrays "^3.0.0"
 
 "@ceramicnetwork/stream-model@^0.5.0":
@@ -1234,6 +1320,20 @@
     json-schema-typed "^8.0.1"
     multiformats "^9.5.8"
     multihashes "^4.0.3"
+    uint8arrays "^3.0.0"
+
+"@ceramicnetwork/stream-tile@^2.12.0-hotfix.0":
+  version "2.12.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-tile/-/stream-tile-2.12.0-hotfix.0.tgz#29aa596d211f6f514974723493ac28884a54d64d"
+  integrity sha512-z3uzJY3IzdjrcQu0cJ7ZFthhrQnQrGv1bCjBd1e8PLY9R20FoBI3RryDeoiC1h+5VUZrl6U8Nkmt5URFkEA/EQ==
+  dependencies:
+    "@ceramicnetwork/common" "^2.16.0-hotfix.0"
+    "@ceramicnetwork/streamid" "^2.9.0-hotfix.0"
+    "@ipld/dag-cbor" "^7.0.0"
+    "@stablelib/random" "^1.0.1"
+    dids "^3.4.0"
+    fast-json-patch "^3.1.0"
+    lodash.clonedeep "^4.5.0"
     uint8arrays "^3.0.0"
 
 "@ceramicnetwork/stream-tile@^2.2.2", "@ceramicnetwork/stream-tile@^2.4.0", "@ceramicnetwork/stream-tile@^2.4.3":
@@ -1277,6 +1377,17 @@
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/streamid/-/streamid-2.3.5.tgz#0f63586835e5b34d8f1c4bb7dac87e8910553c0b"
   integrity sha512-HsAtPoDMRVQWDoNEXvHojlNbI41wmH8MQqaC3NfnEAX6hN9PvHzOBYUxBqZs4Y3jRDqPgTQn1Lb4NG39R5+lAw==
+  dependencies:
+    "@ipld/dag-cbor" "^7.0.0"
+    multiformats "^9.5.8"
+    typescript-memoize "^1.1.0"
+    uint8arrays "^3.0.0"
+    varint "^6.0.0"
+
+"@ceramicnetwork/streamid@^2.9.0-hotfix.0":
+  version "2.9.0-hotfix.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/streamid/-/streamid-2.9.0-hotfix.0.tgz#6d78eb7949727871993f8bdf76c919d42d425d09"
+  integrity sha512-M5gcSf9l0Qf7Mmv2KmmS0TobTwRtU5bJo4dPoj7oMnnUUrw3Ph/1J05aP+kBT5uA51ZubMrqusMSiqZBqCntkw==
   dependencies:
     "@ipld/dag-cbor" "^7.0.0"
     multiformats "^9.5.8"
@@ -5909,6 +6020,21 @@ dids@^3.2.0, dids@^3.3.0:
   dependencies:
     "@stablelib/random" "^1.0.1"
     ceramic-cacao "^1.3.1"
+    dag-jose-utils "^2.0.0"
+    did-jwt "^6.0.0"
+    did-resolver "^3.1.5"
+    multiformats "^9.4.10"
+    rpc-utils "^0.6.1"
+    uint8arrays "^3.0.0"
+
+dids@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/dids/-/dids-3.4.0.tgz#ac37c914c8d862bb7619515a5deb11ef19c988a3"
+  integrity sha512-hXHkOTL9E5R4rbQwDVOktiiEq57Y6yWOEYjev1ojOpMr2Rkx9g8bw0v6BQIsbPB94aaYxUCtaejNl2FrublfiA==
+  dependencies:
+    "@didtools/cacao" "^1.0.0"
+    "@didtools/pkh-ethereum" "^0.0.1"
+    "@stablelib/random" "^1.0.1"
     dag-jose-utils "^2.0.0"
     did-jwt "^6.0.0"
     did-resolver "^3.1.5"

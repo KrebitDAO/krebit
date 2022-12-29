@@ -1,5 +1,4 @@
 import { ethers } from 'ethers';
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DataModel } from '@glazed/datamodel';
 import { DIDDataStore } from '@glazed/did-datastore';
 import localStore from 'store2';
@@ -10,15 +9,18 @@ import { EthereumNodeAuth, getAccountId } from '@didtools/pkh-ethereum';
 
 import { schemas } from '../schemas/index.js';
 
+// types
+import type { CeramicApi } from '@ceramicnetwork/common';
+
 const DID_ERROR = 'DID session not authenticated';
 const DOMAIN = 'krebit.id';
 
 export interface PublicIDXProps {
-  client: CeramicClient;
+  client: CeramicApi;
 }
 
 export interface AuthProviderProps {
-  client: CeramicClient;
+  client: CeramicApi;
   address?: string;
   ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
   session?: DIDSession | undefined;

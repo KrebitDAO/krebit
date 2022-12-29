@@ -10,6 +10,9 @@ import { lib } from '../lib/index.js';
 import { utils } from '../utils/index.js';
 import { config, IConfigProps } from '../config/index.js';
 
+// types
+import type { CeramicApi } from '@ceramicnetwork/common';
+
 interface IProps extends IConfigProps {
   ethProvider?: ethers.providers.Provider | ethers.providers.ExternalProvider;
   address?: string;
@@ -22,7 +25,7 @@ interface StampsProps {
 }
 
 export class Passport {
-  public ceramic: CeramicClient;
+  public ceramic: CeramicApi;
   public idx: DIDDataStore;
   public did: string;
   public ens: string;
@@ -36,7 +39,9 @@ export class Passport {
   constructor(props?: IProps) {
     const currentConfig = config.update(props);
     this.currentConfig = currentConfig;
-    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
+    const ceramicClient = new CeramicClient(
+      this.currentConfig.ceramicUrl
+    ) as unknown as CeramicApi;
     this.ceramic = ceramicClient;
     this.address = props?.address?.toLocaleLowerCase();
     this.ethProvider = props?.ethProvider;
@@ -127,7 +132,9 @@ export class Passport {
       throw new Error('Invalid did or address');
     }
 
-    const ceramicClient = new CeramicClient(this.currentConfig.ceramicUrl);
+    const ceramicClient = new CeramicClient(
+      this.currentConfig.ceramicUrl
+    ) as unknown as CeramicApi;
     this.idx = lib.ceramic.publicIDX({
       client: ceramicClient
     });
