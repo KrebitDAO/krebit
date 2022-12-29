@@ -191,11 +191,10 @@ export const Wrapper = styled.div<IProps>`
           background-color: ${theme.colors.ebonyClay};
           border-radius: 14px;
           display: flex;
-          align-items: center;
           padding: 5px;
 
-          & > input {
-            width: calc(100% - 50px);
+          .messages-right-box-chat-input {
+            width: 100%;
             height: 100%;
             border: none;
             outline: none;
@@ -213,29 +212,53 @@ export const Wrapper = styled.div<IProps>`
             }
           }
 
-          & > button {
-            width: 50px;
-            height: 48px;
-            border-radius: 9999px;
-            border: none;
-            outline: none;
-            background: linear-gradient(
-              to right,
-              ${theme.colors.heliotrope},
-              ${theme.colors.cyan}
-            );
+          .message-right-box-chat-options {
             display: flex;
-            justify-content: center;
+            grid-gap: 10px;
             align-items: center;
 
-            & > svg {
-              width: 18px;
-              height: 18px;
-              fill: ${theme.colors.blueCharcoal};
+            .message-right-box-chat-icon {
+              width: 25px;
+              height: 25px;
+              cursor: pointer;
+
+              & > svg {
+                width: 25px;
+                height: 25px;
+                fill: ${theme.colors.white};
+              }
             }
 
-            &:disabled {
-              opacity: 0.5;
+            .message-right-box-chat-icon.message-right-box-chat-icon-disabled {
+              & > svg {
+                fill: ${theme.colors.white}80;
+              }
+            }
+
+            & > button {
+              width: 50px;
+              height: 48px;
+              border-radius: 9999px;
+              border: none;
+              outline: none;
+              background: linear-gradient(
+                to right,
+                ${theme.colors.heliotrope},
+                ${theme.colors.cyan}
+              );
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              & > svg {
+                width: 18px;
+                height: 18px;
+                fill: ${theme.colors.blueCharcoal};
+              }
+
+              &:disabled {
+                opacity: 0.5;
+              }
             }
           }
         }
