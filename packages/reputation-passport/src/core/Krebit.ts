@@ -318,6 +318,36 @@ export class Krebit {
     }
   };
 
+  encryptClaimValue = async (value: any, ethereumAddress: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    if (typeof value === 'object') {
+      try {
+        const lit = new lib.Lit();
+        let unifiedAccessControlConditions =
+          lit.getOwnsAddressCondition(ethereumAddress);
+        let encryptedContent = await lit.encrypt(
+          JSON.stringify(value),
+          unifiedAccessControlConditions,
+          this.wallet
+        );
+        if (!encryptedContent) {
+          throw new Error('Problem creating encryptedContent');
+        }
+        const stream = await TileDocument.create(
+          this.idx.ceramic,
+          unifiedAccessControlConditions
+        );
+        return {
+          ...encryptedContent,
+          unifiedAccessControlConditions: stream.id.toUrl()
+        };
+      } catch (err) {
+        console.error(`Could not encrypt: ${err.message}`);
+      }
+    }
+  };
+
   decryptClaimValue = async (encryptedClaimValue: EncryptedProps) => {
     if (!this.isConnected()) throw new Error('Not connected');
     if (
@@ -344,7 +374,6 @@ export class Krebit {
       } catch (err) {
         console.error(`Could not decrypt: ${err.message}`);
       }
-    } else {
     }
   };
 
@@ -504,6 +533,7 @@ export class Krebit {
       params: [txParams]
     });
 
+    if (tx.startsWith('Error')) throw new Error(tx);
     return tx;
     //}
   };

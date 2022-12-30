@@ -4,6 +4,7 @@ import { Wrapper, WalletButton } from './styles';
 import { Close } from 'components/Icons';
 import { Loading } from 'components/Loading';
 import { Checkbox } from 'components/Checkbox';
+import { Login } from 'components/Icons';
 import { GeneralContext } from 'context';
 
 interface IProps {
@@ -105,12 +106,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                   disabled={!hasAcceptedTerms}
                   onClick={() => handleConnect('web3auth')}
                 >
-                  <img
-                    src="/imgs/logos/wallet-connect.png"
-                    width={30}
-                    height={24}
-                  />{' '}
-                  Email / Social Login
+                  <Login /> Email / Social Login
                 </WalletButton>
               </div>
               <div className="wallet-remember-session">

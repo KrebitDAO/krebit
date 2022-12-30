@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 
@@ -9,6 +9,7 @@ import { IIssuerParams } from 'utils/getIssuers';
 import { IWalletInformation } from 'context';
 
 interface IClaimValues {
+  email: string;
   entity: string;
   description: string;
   credentialType: string;
@@ -26,8 +27,10 @@ interface IProps {
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
+const { NEXT_PUBLIC_ISSUER_NODE_URL } = process.env;
 
 const initialState = {
+  email: '',
   entity: '',
   description: '',
   credentialType: '',
@@ -52,6 +55,20 @@ export const useIssuerProvider = (props: IProps) => {
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
+
+  useEffect(() => {
+    if (!window) return;
+
+    const web3auth = window
+      ? window?.localStorage.getItem('openlogin_store')
+      : null;
+    const web3authSession = web3auth ? JSON.parse(web3auth) : null;
+
+    setClaimValues({
+      ...claimValues,
+      email: web3authSession?.email ? web3authSession?.email : ''
+    });
+  }, []);
 
   const getClaim = async (
     address: string,
@@ -168,17 +185,14 @@ export const useIssuerProvider = (props: IProps) => {
     if (!walletInformation) return;
 
     const isValid = Boolean(
-      delegatedCredential.value?.values?.issueTo?.findIndex(element => {
-        return (
-          element.toLowerCase() === walletInformation.address.toLowerCase()
-        );
-      }) > -1 &&
-        walletInformation.address.toLowerCase() !==
-          delegatedCredential?.credentialSubject?.ethereumAddress
+      walletInformation.address.toLowerCase() !==
+        delegatedCredential?.credentialSubject?.ethereumAddress
     );
 
     if (!isValid) return;
-
+    delete delegatedCredential.credential;
+    delete delegatedCredential.value;
+    delete delegatedCredential.visualInformation;
     console.log('delegatedCredential', delegatedCredential);
     setStatus('credential_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
@@ -202,10 +216,11 @@ export const useIssuerProvider = (props: IProps) => {
 
         // Step 1-B: Send self-signed credential to the Issuer for verification
         const issuedCredential = await getCredential({
-          verifyUrl: delegatedCredential.value?.verificationUrl,
-          claimedCredentialId: delegatedCredential.id,
+          verifyUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
+          claimedCredential: delegatedCredential,
           credentialSubjectAddress: walletInformation.address,
-          credentialSubjectAddressDID: passport.did
+          credentialSubjectAddressDID: passport.did,
+          credentialSubjectEmail: claimValues.email
         });
 
         console.log('issuedCredential: ', issuedCredential);
@@ -228,6 +243,64 @@ export const useIssuerProvider = (props: IProps) => {
         }
       }
     } catch (error) {
+      setStatus('credential_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
+    }
+  };
+
+  const handleAddCredential = async receivedCredential => {
+    if (!walletInformation) return;
+
+    const isValid = Boolean(
+      walletInformation.address.toLowerCase() ==
+        receivedCredential?.credentialSubject?.ethereumAddress
+    );
+
+    if (!isValid) return;
+
+    delete receivedCredential.credential;
+    delete receivedCredential.value;
+    delete receivedCredential.visualInformation;
+    console.log('receivedCredential', receivedCredential);
+    setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
+
+    try {
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      if (!currentSession) return;
+
+      const passport = new Krebit.core.Passport({
+        ...walletInformation,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await passport.connect(currentSession);
+      // Save claimedCredential
+      if (receivedCredential) {
+        setStatusMessage(
+          constants.DEFAULT_MESSAGES_FOR_PROVIDERS.SAVING_CLAIMED_CREDENTIAL
+        );
+
+        setStatusMessage(
+          constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+        );
+        const addedCredentialId = await passport.addCredential(
+          receivedCredential
+        );
+        console.log('addedCredentialId: ', addedCredentialId);
+
+        setCurrentCredential({
+          ...receivedCredential,
+          vcId: addedCredentialId
+        });
+        setStatus('credential_resolved');
+      }
+    } catch (error) {
+      console.log('Error handleAddCredential: ', error);
       setStatus('credential_rejected');
       setStatusMessage(undefined);
       setErrorMessage(
@@ -263,11 +336,10 @@ export const useIssuerProvider = (props: IProps) => {
       setStatusMessage(undefined);
       setErrorMessage(undefined);
     } catch (error) {
+      console.log('Error handleMintCredential: ', error);
       setStatus('mint_rejected');
       setStatusMessage(undefined);
-      setErrorMessage(
-        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
-      );
+      setErrorMessage(constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_MINT);
     }
   };
 
@@ -293,6 +365,7 @@ export const useIssuerProvider = (props: IProps) => {
     handleClaimValues,
     handleMintCredential,
     handleCleanClaimValues,
+    handleAddCredential,
     claimValues,
     status,
     statusMessage,

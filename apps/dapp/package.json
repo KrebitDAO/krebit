@@ -29,6 +29,7 @@
     "@guildxyz/sdk": "^1.1.1",
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
+    "@krebitdao/deals": "*",
     "@lit-protocol/sdk-browser": "^1.1.228",
     "@mui/material": "^5.10.6",
     "@mui/x-date-pickers": "^5.0.5",

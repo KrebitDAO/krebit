@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 
@@ -39,6 +39,20 @@ export const useEmailProvider = (props: IProps) => {
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
+
+  useEffect(() => {
+    if (!window) return;
+
+    const web3auth = window
+      ? window?.localStorage.getItem('openlogin_store')
+      : null;
+    const web3authSession = web3auth ? JSON.parse(web3auth) : null;
+
+    setClaimValues({
+      ...claimValues,
+      email: web3authSession?.email ? web3authSession?.email : ''
+    });
+  }, []);
 
   const getClaim = async (
     address: string,

@@ -64,6 +64,10 @@ export const VerifyCredential = (props: IProps) => {
       return issuerProvider;
     }
 
+    if (credentialType === 'Review') {
+      return issuerProvider;
+    }
+
     if (credentialType === 'GithubOrgMember') {
       return githubOrgMemberProvider;
     }

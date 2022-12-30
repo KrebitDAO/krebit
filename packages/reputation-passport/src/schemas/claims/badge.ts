@@ -4,8 +4,6 @@ export const badge = {
   properties: {
     entity: { type: 'string' },
     username: { type: 'string' },
-    parentCredential: { type: 'string' },
-    onBehalveOfIssuer: { type: 'string' },
     name: { type: 'string' },
     startDate: { type: 'string' },
     role: { type: 'string' },
