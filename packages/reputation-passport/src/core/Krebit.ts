@@ -447,45 +447,39 @@ export class Krebit {
   stampCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const balance = await this.wallet.getBalance();
-    console.log('balance: ', balance);
+    try {
+      const provider = this.biconomy.provider;
 
-    /* TEMP enabling  gasless for all
-    if (balance > ethers.constants.Zero) {
-      return await this.stamp(w3cCredential);
-    } else {*/
-    // Initialize your dapp here like getting user accounts etc
+      const metaContract = new ethers.Contract(
+        schemas.krbToken[this.currentConfig.network].address,
+        schemas.krbToken.abi,
+        this.biconomy.ethersProvider
+      );
 
-    const provider = this.biconomy.provider;
+      await this.biconomy.init();
 
-    const metaContract = new ethers.Contract(
-      schemas.krbToken[this.currentConfig.network].address,
-      schemas.krbToken.abi,
-      this.biconomy.ethersProvider
-    );
+      const eip712credential = getEIP712Credential(w3cCredential);
 
-    await this.biconomy.init();
+      let { data } = await metaContract.populateTransaction.registerVC(
+        eip712credential,
+        w3cCredential.proof.proofValue
+      );
+      let txParams = {
+        data: data,
+        to: schemas.krbToken[this.currentConfig.network].address,
+        from: this.address,
+        signatureType: 'EIP712_SIGN'
+      };
 
-    const eip712credential = getEIP712Credential(w3cCredential);
+      const tx = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [txParams]
+      });
 
-    let { data } = await metaContract.populateTransaction.registerVC(
-      eip712credential,
-      w3cCredential.proof.proofValue
-    );
-    let txParams = {
-      data: data,
-      to: schemas.krbToken[this.currentConfig.network].address,
-      from: this.address,
-      signatureType: 'EIP712_SIGN'
-    };
-
-    const tx = await provider.request({
-      method: 'eth_sendTransaction',
-      params: [txParams]
-    });
-
-    return tx;
-    //}
+      return tx;
+    } catch (err) {
+      throw new Error(err);
+    }
   };
 
   // Mint
@@ -493,49 +487,46 @@ export class Krebit {
   mintCredentialNFT = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const balance = await this.wallet.getBalance();
-    console.log('balance: ', balance);
+    try {
+      const provider = this.biconomy.provider;
 
-    /* TEMP enabling  gasless for all
-    if (balance > ethers.constants.Zero) {
-      return await this.stamp(w3cCredential);
-    } else {*/
-    // Initialize your dapp here like getting user accounts etc
+      const metaContract = new ethers.Contract(
+        schemas.krebitNFT[this.currentConfig.network].address,
+        schemas.krebitNFT.abi,
+        this.biconomy.ethersProvider
+      );
 
-    const provider = this.biconomy.provider;
+      await this.biconomy.init();
 
-    const metaContract = new ethers.Contract(
-      schemas.krebitNFT[this.currentConfig.network].address,
-      schemas.krebitNFT.abi,
-      this.biconomy.ethersProvider
-    );
+      const eip712credential = getEIP712Credential(w3cCredential);
 
-    await this.biconomy.init();
+      let { data } = await metaContract.populateTransaction.mintWithCredential(
+        this.address,
+        w3cCredential.credentialSubject.type,
+        eip712credential,
+        w3cCredential.proof.proofValue,
+        0x0
+      );
+      let txParams = {
+        data: data,
+        to: schemas.krebitNFT[this.currentConfig.network].address,
+        from: this.address,
+        signatureType: 'EIP712_SIGN'
+      };
 
-    const eip712credential = getEIP712Credential(w3cCredential);
-
-    let { data } = await metaContract.populateTransaction.mintWithCredential(
-      this.address,
-      w3cCredential.credentialSubject.type,
-      eip712credential,
-      w3cCredential.proof.proofValue,
-      0x0
-    );
-    let txParams = {
-      data: data,
-      to: schemas.krebitNFT[this.currentConfig.network].address,
-      from: this.address,
-      signatureType: 'EIP712_SIGN'
-    };
-
-    const tx = await provider.request({
-      method: 'eth_sendTransaction',
-      params: [txParams]
-    });
-
-    if (tx.startsWith('Error')) throw new Error(tx);
-    return tx;
-    //}
+      const tx = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [txParams]
+      });
+      if (typeof tx === 'object') {
+        if (tx.reason) throw new Error(tx.reason);
+        if (tx.error) throw new Error(tx.error);
+        if (tx.transactionId) return tx.transactionId;
+        if (tx.hash) return tx.hash;
+      }
+    } catch (err) {
+      throw new Error(err.message);
+    }
   };
 
   // Stamp

@@ -336,10 +336,14 @@ export const useIssuerProvider = (props: IProps) => {
       setStatusMessage(undefined);
       setErrorMessage(undefined);
     } catch (error) {
-      console.log('Error handleMintCredential: ', error);
+      console.error('Error handleMintCredential: ', error);
       setStatus('mint_rejected');
       setStatusMessage(undefined);
-      setErrorMessage(constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_MINT);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_MINT.concat(
+          ' Error:' + error.message
+        )
+      );
     }
   };
 
