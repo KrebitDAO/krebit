@@ -26,6 +26,7 @@ import { Loading } from 'components/Loading';
 import { Badge } from 'components/Badge';
 import { GeneralContext } from 'context';
 import { formatUrlImage } from 'utils';
+import LayoutLanguagePage from '../../static_language_pages/layout.json';
 
 interface IProps {
   children: ReactNode;
@@ -33,18 +34,15 @@ interface IProps {
 
 const MENU_OPTIONS = [
   {
-    title: 'Activity',
     href: '/posts',
     icon: <Home />,
     badgeText: 'New'
   },
   {
-    title: 'Explore',
     href: '/explore',
     icon: <Explore />
   },
   {
-    title: 'Create',
     href: '/create',
     icon: <Token />,
     isPrivate: true,
@@ -52,7 +50,6 @@ const MENU_OPTIONS = [
     badgeColor: 'blueRibbon'
   },
   {
-    title: 'Inbox',
     href: '/messages',
     icon: <Send />,
     isPrivate: true,
@@ -72,7 +69,7 @@ export const Layout: FunctionComponent<IProps> = props => {
   const [isMenuContentMobileOpen, setIsMenuContentMobileOpen] = useState(false);
   const [navBarDesktopOptionHovered, setNavBarDesktopOptionHovered] =
     useState<string>();
-  const { push, asPath } = useRouter();
+  const { push, asPath, locale } = useRouter();
   const isLoading = auth.status === 'pending';
 
   const handlePushProfile = () => {
@@ -136,11 +133,17 @@ export const Layout: FunctionComponent<IProps> = props => {
                     <InlineDropdown
                       items={[
                         {
-                          title: 'My profile',
+                          title:
+                            LayoutLanguagePage[locale]['menu'][
+                              'inline-dropdown-items'
+                            ][0],
                           onClick: handlePushProfile
                         },
                         {
-                          title: 'Log out',
+                          title:
+                            LayoutLanguagePage[locale]['menu'][
+                              'inline-dropdown-items'
+                            ][1],
                           onClick: handleLogout
                         }
                       ]}
@@ -175,7 +178,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Home
+                    {
+                      LayoutLanguagePage[locale]['menu-content-mobile'][
+                        'items'
+                      ][0]
+                    }
                   </a>
                 </Link>
                 <Link
@@ -187,7 +194,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Discord
+                    {
+                      LayoutLanguagePage[locale]['menu-content-mobile'][
+                        'items'
+                      ][1]
+                    }
                   </a>
                 </Link>
                 <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
@@ -196,7 +207,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Docs
+                    {
+                      LayoutLanguagePage[locale]['menu-content-mobile'][
+                        'items'
+                      ][2]
+                    }
                   </a>
                 </Link>
                 <Link
@@ -208,7 +223,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Recruiters
+                    {
+                      LayoutLanguagePage[locale]['menu-content-mobile'][
+                        'items'
+                      ][3]
+                    }
                   </a>
                 </Link>
                 <Link
@@ -220,7 +239,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Credential Issuers
+                    {
+                      LayoutLanguagePage[locale]['menu-content-mobile'][
+                        'items'
+                      ][4]
+                    }
                   </a>
                 </Link>
               </div>
@@ -290,7 +313,11 @@ export const Layout: FunctionComponent<IProps> = props => {
                     <NavBarOption
                       isActive={asPath.includes(content.href)}
                       onMouseEnter={() =>
-                        handleNavBarDesktopOptionHovered(content.title)
+                        handleNavBarDesktopOptionHovered(
+                          LayoutLanguagePage[locale]['nav-bar']['menu-options'][
+                            index
+                          ]
+                        )
                       }
                       onMouseLeave={() =>
                         handleNavBarDesktopOptionHovered(undefined)
@@ -311,8 +338,17 @@ export const Layout: FunctionComponent<IProps> = props => {
                           content.icon
                         )}
                       </div>
-                      {navBarDesktopOptionHovered === content.title && (
-                        <p className="option-hover">{content.title}</p>
+                      {navBarDesktopOptionHovered ===
+                        LayoutLanguagePage[locale]['nav-bar']['menu-options'][
+                          index
+                        ] && (
+                        <p className="option-hover">
+                          {
+                            LayoutLanguagePage[locale]['nav-bar'][
+                              'menu-options'
+                            ][index]
+                          }
+                        </p>
                       )}
                     </NavBarOption>
                   </Link>
@@ -329,7 +365,9 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <Help />
               </div>
               {navBarDesktopOptionHovered === 'help' && (
-                <p className="option-hover">help</p>
+                <p className="option-hover">
+                  {LayoutLanguagePage[locale]['nav-bar']['menu-options'][4]}
+                </p>
               )}
             </NavBarOption>
             {isLoading ? (
@@ -347,11 +385,17 @@ export const Layout: FunctionComponent<IProps> = props => {
                     <InlineDropdown
                       items={[
                         {
-                          title: 'My profile',
+                          title:
+                            LayoutLanguagePage[locale]['menu'][
+                              'inline-dropdown-items'
+                            ][0],
                           onClick: handlePushProfile
                         },
                         {
-                          title: 'Log out',
+                          title:
+                            LayoutLanguagePage[locale]['menu'][
+                              'inline-dropdown-items'
+                            ][1],
                           onClick: handleLogout
                         }
                       ]}
@@ -371,7 +415,9 @@ export const Layout: FunctionComponent<IProps> = props => {
                   <Login />
                 </div>
                 {navBarDesktopOptionHovered === 'wallet' && (
-                  <p className="option-hover">Connect wallet</p>
+                  <p className="option-hover">
+                    {LayoutLanguagePage[locale]['nav-bar']['menu-options'][5]}
+                  </p>
                 )}
               </NavBarOption>
             )}

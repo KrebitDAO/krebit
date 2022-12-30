@@ -1,0 +1,30 @@
+{
+  "en": {
+    "hero": {
+      "title": "Professionals: Earn with your Talent and grow your Reputation",
+      "descriptions": [
+        "Proof your skills, import your existing achievements",
+        "Safe and fair Escrow payments",
+        "Earn with referrals inviting your trusted contacts"
+      ],
+      "buttons": {
+        "main-button": "Try it now",
+        "main-line-button": "Web3 Native"
+      }
+    }
+  },
+  "es": {
+    "hero": {
+      "title": "Profesionales: Gana con tu Talento y haz crecer tu Reputación",
+      "descriptions": [
+        "Prueba tus habilidades, importa tus logros existentes",
+        "Pagos de depósito en garantía seguros y justos",
+        "Gana con referidos invitando a tus contactos de confianza"
+      ],
+      "buttons": {
+        "main-button": "Prueba ahora",
+        "main-line-button": "Web3 Nativo"
+      }
+    }
+  }
+}

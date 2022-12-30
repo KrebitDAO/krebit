@@ -29,6 +29,7 @@ import { NavBar } from 'components/NavBar';
 import { constants } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
+import IndexLanguagePage from '../../static_language_pages/index.json';
 
 export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
@@ -79,26 +80,37 @@ export const Home = () => {
         <div className="main">
           <div className="main-content">
             <h1 className="main-title">
-              Professionals: Earn with your Talent and grow your Reputation
+              {IndexLanguagePage[router.locale].hero.title}
             </h1>
             <ul>
               <li className="main-description">
-                Proof your skills, import your existing achievements
+                {IndexLanguagePage[router.locale].hero.descriptions[0]}
               </li>
               <li className="main-description">
-                Safe and fair Escrow payments
+                {IndexLanguagePage[router.locale].hero.descriptions[1]}
               </li>
               <li className="main-description">
-                Earn with referrals inviting your trusted contacts
+                {IndexLanguagePage[router.locale].hero.descriptions[2]}
               </li>
             </ul>
             <div className="main-buttons">
               <div className="main-button">
-                <Button text="Try it now" onClick={handleOpenConnectWallet} />
+                <Button
+                  text={
+                    IndexLanguagePage[router.locale].hero.buttons['main-button']
+                  }
+                  onClick={handleOpenConnectWallet}
+                />
               </div>
               <div className="main-line-button">
                 <Link href="#web3">
-                  <a className="main-line-button-text">Web3 Native</a>
+                  <a className="main-line-button-text">
+                    {
+                      IndexLanguagePage[router.locale].hero.buttons[
+                        'main-line-button'
+                      ]
+                    }
+                  </a>
                 </Link>
               </div>
             </div>
