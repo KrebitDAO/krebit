@@ -14,7 +14,7 @@ export const krebitEscrow = {
     contractName: 'Krebit Escrow',
     token: 'polygon',
     name: 'Polygon Testnet',
-    address: '0x35a9BB9678073C9694F4C00EC21e67f3c4339d92',
+    address: '0x75F6D7c2E586D58b6F2e0A04EF80E6727082BE5c',
     block: 28447492,
     network: 'mumbai',
     blockUrl: 'https://mumbai.polygonscan.com/',

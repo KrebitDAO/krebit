@@ -44,6 +44,7 @@ interface IIssuerParamsStep {
     | 'mint'
     | 'add'
     | 'deal'
+    | 'check'
     | 'payment';
   metadata: IStepMetadata;
   form?: (
@@ -2403,6 +2404,27 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
                 walletInformation?.address?.toLowerCase() ==
                   credential?.credential?.credentialSubject?.ethereumAddress
             )
+          }
+        })
+      },
+      {
+        title: 'Check Status',
+        type: 'check',
+        metadata: {
+          title: 'Check Status',
+          description: 'Check escrow status'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Check Status',
+            method: async () =>
+              await provider?.handleStatus(
+                provider?.currentCredential || credential?.credential
+              )
           }
         })
       },

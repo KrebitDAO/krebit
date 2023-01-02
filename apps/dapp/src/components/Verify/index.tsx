@@ -189,6 +189,27 @@ export const Verify = (props: IProps) => {
     }
 
     if (
+      currentVerify?.steps[step]?.type === 'deal' &&
+      (provider?.currentCredential || credential?.credential)
+    ) {
+      //TODO
+      /*if (escrowCreated) {
+        newCompleted[step] = 'Deal created';
+      }*/
+      newCompleted[step] = 'Deal created';
+    }
+
+    if (
+      currentVerify?.steps[step]?.type === 'check' &&
+      (provider?.currentCredential || credential?.credential)
+    ) {
+      //TODO:
+      /*if (escrowDelivered) {
+        newCompleted[step] = 'Deal was delivered by seller';
+      }*/
+    }
+
+    if (
       currentVerify?.steps[step]?.type === 'mint' &&
       (provider?.currentMint || credential?.stamps?.length > 0)
     ) {

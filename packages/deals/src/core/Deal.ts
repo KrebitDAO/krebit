@@ -55,7 +55,7 @@ export class Deal {
   }
 
   // Buyer createEscrow
-  createDealFromStamp = async (
+  createDealWithStamp = async (
     referralStamp: any,
     dealCredential: W3CCredential
   ) => {
@@ -154,9 +154,31 @@ export class Deal {
   };
 
   //on-chain
-  releaseDeal = async (referralStamp: any, dealCredential: W3CCredential) => {
+  releaseDealWithStamp = async (
+    referralStamp: any,
+    dealCredential: W3CCredential
+  ) => {
     const referralEip712credential =
       getEIP712CredentialFromStamp(referralStamp);
+    const dealEip712credential = getEIP712Credential(dealCredential);
+
+    const tx = await this.escrowContract.release(
+      referralEip712credential,
+      dealEip712credential,
+      {
+        value: ethers.constants.Zero.toString(),
+        from: this.address
+      }
+    );
+    console.log('buyerCancel Tx: ', tx);
+    return tx.hash;
+  };
+
+  releaseDeal = async (
+    referralCredential: W3CCredential,
+    dealCredential: W3CCredential
+  ) => {
+    const referralEip712credential = getEIP712Credential(referralCredential);
     const dealEip712credential = getEIP712Credential(dealCredential);
 
     const tx = await this.escrowContract.release(
