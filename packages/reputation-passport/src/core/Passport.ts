@@ -298,10 +298,8 @@ export class Passport {
 
         if (content && content.issued) {
           const current = content.issued ? content.issued : [];
-          console.log('current:', current);
           if (!current.includes(vcId)) {
             current.push(vcId);
-            console.log('current push:', current);
             result = await this.idx.merge('issuedCredentials', {
               issued: current
             });

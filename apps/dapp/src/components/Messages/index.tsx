@@ -24,7 +24,8 @@ import {
   ArrowForward,
   ArrowSend,
   Close,
-  VideoCall
+  VideoCall,
+  Deal
 } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Autocomplete } from 'components/Autocomplete';
@@ -283,6 +284,20 @@ export const Messages = () => {
     } catch (error) {
       console.error(error);
       setStatus('rejected_action_message');
+    }
+  };
+
+  const handleCreateDeal = () => {
+    const recipients = currentConversation.recipients_details
+      .filter(details => details?.did !== auth?.did)
+      .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
+      .map(details => details?.metadata?.address || details?.did)
+      .join(',');
+
+    if (recipients.length > 0) {
+      push(`/create/deal/?issueTo=${recipients}`);
+    } else {
+      push('/create/deal');
     }
   };
 
@@ -667,6 +682,13 @@ export const Messages = () => {
                   disabled={isMessagesLoading || isActionMessageLoading}
                 >
                   <ArrowSend />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCreateDeal}
+                  disabled={isMessagesLoading || isActionMessageLoading}
+                >
+                  <Deal />
                 </button>
               </div>
             </div>

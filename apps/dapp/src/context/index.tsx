@@ -189,8 +189,9 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
               isDark: true,
               colors: { torusBrand1: theme.colors.cyan }
             },
-            logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
-            logoDark: 'https://krebit.id/imgs/logos/Krebit.svg',
+
+            logoLight: 'https://krebit.id/imgs/images/wallet.svg',
+            logoDark: 'https://krebit.id/imgs/images/wallet.svg',
             defaultLanguage: 'en',
             topupHide: false,
             featuredBillboardHide: false,
@@ -212,11 +213,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
               isDark: true,
               colors: { primary: theme.colors.cyan }
             },
-            logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
-            logoDark: 'https://krebit.id/imgs/logos/Krebit.svg'
+            logoLight: 'https://krebit.id/imgs/images/wallet.svg',
+            logoDark: 'https://krebit.id/imgs/images/wallet.svg'
           },
           useWalletConnect: true,
-          enableLogging: true
+          enableLogging: false
         }
       });
       await web3auth.addPlugin(torusPlugin);

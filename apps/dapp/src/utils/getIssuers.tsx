@@ -12,7 +12,8 @@ import {
   Person,
   Guild,
   Dework,
-  Stack
+  Stack,
+  Star
 } from 'components/Icons';
 import { countries } from './countries';
 import { constants } from './constants';
@@ -36,7 +37,15 @@ interface IStepMetadata {
 
 interface IIssuerParamsStep {
   title: string;
-  type: 'overview' | 'verification' | 'credential' | 'mint';
+  type:
+    | 'overview'
+    | 'verification'
+    | 'credential'
+    | 'mint'
+    | 'add'
+    | 'deal'
+    | 'check'
+    | 'payment';
   metadata: IStepMetadata;
   form?: (
     provider: any,
@@ -92,9 +101,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Discord details',
+          title: 'Discord',
           description:
-            'Krebit Verification Node. This is the discord used for blah blah blah',
+            'The Krebit Verification Node issues this discord Credential',
           icon: <Discord />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
@@ -168,9 +177,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Twitter details',
+          title: 'Twitter',
           description:
-            'Krebit Verification Node. This is the twitter used for blah blah blah',
+            'The Krebit Verification Node issues this twitter Credential',
           icon: <Twitter />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
@@ -252,9 +261,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Twitter details',
+          title: 'Twitter Verified (blue checkmark)',
           description:
-            'Krebit Verification Node. This is the twitter used for blah blah blah',
+            'The Krebit Verification Node issues this twitter Credential',
           icon: <Twitter />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
@@ -336,9 +345,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Github details',
+          title: 'Github',
           description:
-            'Krebit Verification Node. This is the Github used for blah blah blah',
+            'The Krebit Verification Node issues this Github Credential',
           icon: <Github />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
@@ -420,9 +429,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'PhoneNumber details',
+          title: 'Phone Number',
           description:
-            'Krebit Verification Node. This is the PhoneNumber used for blah blah blah',
+            'The Krebit Verification Node issues this Phone Number Credential',
           icon: <Phone />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/phone'),
@@ -543,9 +552,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Email details',
+          title: 'Email',
           description:
-            'Krebit Verification Node. This is the email used for blah blah blah',
+            'The Krebit Verification Node issues this email Credential',
           icon: <Email />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/email'),
@@ -658,9 +667,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Adulthood details',
+          title: 'Adulthood',
           description:
-            'Krebit Verification Node. This is the Adulthood used for blah blah blah',
+            'The Krebit Verification Node issues this Adulthood Credential',
           icon: <Cake />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
@@ -744,9 +753,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Government Id details',
+          title: 'Government Id',
           description:
-            'Krebit Verification Node. This is the Government Id used for blah blah blah',
+            'The Krebit Verification Node issues this Government Id Credential',
           icon: <Badge />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
@@ -840,9 +849,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Full legal name details',
+          title: 'Full legal name',
           description:
-            'Krebit Verification Node. This is the full legal name used for blah blah blah',
+            'The Krebit Verification Node issues this full legal name Credential',
           icon: <Person />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/veriff'),
@@ -937,9 +946,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Stack Overflow Reputation > 1K details',
+          title: 'Stack Overflow Reputation > 1K',
           description:
-            'Krebit Verification Node. This is the Stack Overflow Reputation > 1K used for blah blah blah',
+            'The Krebit Verification Node issues this Stack Overflow Reputation > 1K Credential',
           icon: <Stack />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
@@ -1015,9 +1024,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Stack Overflow Tag Score > 10 details',
+          title: 'Stack Overflow Tag Score > 10',
           description:
-            'Krebit Verification Node. This is the Stack Overflow Tag Score > 10 used for blah blah blah',
+            'The Krebit Verification Node issues this Stack Overflow Tag Score > 10 Credential',
           icon: <Stack />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
@@ -1100,9 +1109,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Dework Completed Tasks > 10 details',
+          title: 'Dework Completed Tasks > 10',
           description:
-            'Krebit Verification Node. This is the Dework Completed Tasks > 10 used for blah blah blah',
+            'The Krebit Verification Node issues this Dework Completed Tasks > 10 Credential',
           icon: <Dework />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/dework'),
@@ -1184,9 +1193,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Spect Completed Tasks > 10 details',
+          title: 'Spect Completed Tasks > 10',
           description:
-            'Krebit Verification Node. This is the Spect Completed Tasks > 10 used for blah blah blah',
+            'The Krebit Verification Node issues this Spect Completed Tasks > 10 Credential',
           icon: <Spect />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/spect'),
@@ -1271,9 +1280,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Github Followers > 10 details',
+          title: 'Github Followers > 10',
           description:
-            'Krebit Verification Node. This is the Github Followers > 10 used for blah blah blah',
+            'The Krebit Verification Node issues this Github Followers > 10 Credential',
           icon: <Github />,
           imageUrl:
             process.env.NEXT_PUBLIC_IPFS_GATEWAY +
@@ -1362,9 +1371,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Github Repository Stars > 10 details',
+          title: 'Github Repository Stars > 10',
           description:
-            'Krebit Verification Node. This is the Github Repository Stars > 10 used for blah blah blah',
+            'The Krebit Verification Node issues this Github Repository Stars > 10 Credential',
           icon: <Github />,
           imageUrl:
             process.env.NEXT_PUBLIC_IPFS_GATEWAY +
@@ -1458,9 +1467,9 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Github Repo Collaborator details',
+          title: 'Github Repo Collaborator',
           description:
-            'Krebit Verification Node. This is the Github Repo Collaborator used for blah blah blah',
+            'The Krebit Verification Node issues this Github Repo Collaborator Credential',
           icon: <Github />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
@@ -1560,9 +1569,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Guild Member details',
+          title: 'Guild Member',
           description:
-            'Krebit Verification Node. This is the Guild Member used for blah blah blah',
+            'The Krebit Verification Node issues this Guild Member Credential',
           icon: <Guild />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
@@ -1650,9 +1659,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Admin of Guild details',
+          title: 'Admin of Guild',
           description:
-            'Krebit Verification Node. This is the Admin of Guild used for blah blah blah',
+            'The Krebit Verification Node issues this Admin of Guild Credential',
           icon: <Guild />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
@@ -1740,9 +1749,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Guild role details',
+          title: 'Guild role',
           description:
-            'Krebit Verification Node. This is the Guild role used for blah blah blah',
+            'The Krebit Verification Node issues this Guild role Credential',
           icon: <Guild />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
@@ -1839,9 +1848,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Twitter Followers > 1K details',
+          title: 'Twitter Followers > 1K',
           description:
-            'Krebit Verification Node. This is the Twitter Followers > 1K used for blah blah blah',
+            'The Krebit Verification Node issues this Twitter Followers > 1K Credential',
           icon: <Twitter />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
@@ -1928,9 +1937,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Twitter Followers > 10K details',
+          title: 'Twitter Followers > 10K',
           description:
-            'Krebit Verification Node. This is the Twitter Followers > 10K used for blah blah blah',
+            'The Krebit Verification Node issues this Twitter Followers > 10K Credential',
           icon: <Twitter />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/twitter'),
@@ -2016,9 +2025,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Discord guild ownership details',
+          title: 'Discord guild ownership',
           description:
-            'Krebit Verification Node. This is the discord guild ownership used for blah blah blah',
+            'The Krebit Verification Node issues this discord guild ownership Credential',
           icon: <Discord />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
@@ -2104,9 +2113,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Discord guild membership details',
+          title: 'Discord guild membership',
           description:
-            'Krebit Verification Node. This is the discord guild membership used for blah blah blah',
+            'The Krebit Verification Node issues this discord guild membership Credential',
           icon: <Discord />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/discord'),
@@ -2191,9 +2200,9 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Github organization member details',
+          title: 'Github organization member',
           description:
-            'Krebit Verification Node. This is the github organization member used for blah blah blah',
+            'The Krebit Verification Node issues this github organization member Credential',
           icon: <Github />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/github'),
@@ -2271,8 +2280,180 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
     ]
   },
   {
+    credentialType: 'Review',
+    entity: 'Review',
+    icon: <Star />,
+    imageUrl:
+      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+      '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/none'),
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Review by other member',
+          description: 'Review Credential issued by other member',
+          icon: <Star />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/none'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Add credential to my passport',
+        type: 'add',
+        metadata: {
+          title: 'Add Review to my passport',
+          description: 'Add this review to my passport'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams,
+          walletInformation: IWalletInformation
+        ) => ({
+          action: {
+            text: 'Add',
+            method: async () =>
+              await provider.handleAddCredential(
+                provider?.currentCredential || credential?.credential
+              ),
+            isDisabled: !Boolean(
+              walletInformation?.address?.toLowerCase() !==
+                credential?.credential?.issuer?.ethereumAddress &&
+                walletInformation?.address?.toLowerCase() ==
+                  credential?.credential?.credentialSubject?.ethereumAddress
+            )
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
+  },
+  {
+    credentialType: 'Deal',
+    entity: 'Deal',
+    icon: <Star />,
+    imageUrl:
+      process.env.NEXT_PUBLIC_IPFS_GATEWAY +
+      '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/none'),
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Deal proposed by Seller',
+          description: 'Deal terms proposed by seller',
+          icon: <Star />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/none'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Accept deal and start payment',
+        type: 'deal',
+        metadata: {
+          title: 'Start Payment',
+          description: 'Start escrow payment'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams,
+          walletInformation: IWalletInformation
+        ) => ({
+          action: {
+            text: 'Start Payment',
+            method: async () =>
+              await provider.handleDeal(
+                provider?.currentCredential || credential?.credential
+              ),
+            isDisabled: !Boolean(
+              walletInformation?.address?.toLowerCase() !==
+                credential?.credential?.issuer?.ethereumAddress &&
+                walletInformation?.address?.toLowerCase() ==
+                  credential?.credential?.credentialSubject?.ethereumAddress
+            )
+          }
+        })
+      },
+      {
+        title: 'Check Status',
+        type: 'check',
+        metadata: {
+          title: 'Check Status',
+          description: 'Check escrow status'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Check Status',
+            method: async () =>
+              await provider?.handleStatus(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      },
+      {
+        title: 'Release Payment',
+        type: 'payment',
+        metadata: {
+          title: 'Release payment',
+          description: 'Release escrow payment to seller'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Release Payment',
+            method: async () =>
+              await provider?.handlePayment(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
+  },
+  {
     credentialType: 'Issuer',
-    entity: 'Issuer',
+    entity: 'Community Issued',
     icon: <Approval />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
@@ -2285,8 +2466,8 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Claim credential details',
-          description: 'Claim this credential',
+          title: 'Credential',
+          description: 'Credential issued to you',
           icon: <Approval />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
@@ -2299,11 +2480,12 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         }
       },
       {
-        title: 'Verify credential',
+        title: 'Claim credential',
         type: 'credential',
         metadata: {
-          title: 'Verify credential',
-          description: 'Claim your credential'
+          title: 'Claim credential',
+          description:
+            'Claim credential and add to your passport. Only add your email if the credential was issued to your email addrress.'
         },
         form: (
           provider: any,
@@ -2311,19 +2493,34 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
           currentVerify: IIssuerParams,
           walletInformation: IWalletInformation
         ) => ({
+          fields: [
+            {
+              type: 'email',
+              name: 'email',
+              placeholder: 'username@example.com',
+              value: provider?.claimValues?.email,
+              onChange: provider?.handleClaimValues
+            },
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
           action: {
-            text: 'Verify',
+            text: 'Claim',
             method: async () =>
               await provider.handleClaimCredential(
                 provider?.currentCredential || credential?.credential
               ),
             isDisabled: !Boolean(
-              credential?.credential?.value?.values?.issueTo?.find(element => {
-                return (
-                  element?.toLowerCase() ===
-                  walletInformation?.address?.toLowerCase()
-                );
-              }) &&
+              walletInformation?.address?.toLowerCase() !==
+                credential?.credential?.issuer?.ethereumAddress &&
                 walletInformation?.address?.toLowerCase() !==
                   credential?.credential?.credentialSubject?.ethereumAddress
             )

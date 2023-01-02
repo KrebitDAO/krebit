@@ -78,7 +78,10 @@ export const Verify = (props: IProps) => {
     (provider?.currentMint || credential?.stamps?.length > 0);
   const canClaimBuilderCredentials =
     walletInformation?.address?.toLowerCase() !==
-    credential?.credential?.credentialSubject?.ethereumAddress;
+    credential?.credential?.credentialSubject?.ethereumAddress.toLowerCase();
+  const canAddMemberCredentials =
+    walletInformation?.address?.toLowerCase() ==
+    credential?.credential?.credentialSubject?.ethereumAddress.toLowerCase();
   const isReadOnly = readOnly
     ? true
     : credential?.credential?.visualInformation?.credentialType === 'Issuer' &&
@@ -177,6 +180,36 @@ export const Verify = (props: IProps) => {
     }
 
     if (
+      currentVerify?.steps[step]?.type === 'add' &&
+      (provider?.currentCredential || credential?.credential)
+    ) {
+      if (!canAddMemberCredentials) {
+        newCompleted[step] = 'Credential step completed';
+      }
+    }
+
+    if (
+      currentVerify?.steps[step]?.type === 'deal' &&
+      (provider?.currentCredential || credential?.credential)
+    ) {
+      //TODO
+      /*if (escrowCreated) {
+        newCompleted[step] = 'Deal created';
+      }*/
+      newCompleted[step] = 'Deal created';
+    }
+
+    if (
+      currentVerify?.steps[step]?.type === 'check' &&
+      (provider?.currentCredential || credential?.credential)
+    ) {
+      //TODO:
+      /*if (escrowDelivered) {
+        newCompleted[step] = 'Deal was delivered by seller';
+      }*/
+    }
+
+    if (
       currentVerify?.steps[step]?.type === 'mint' &&
       (provider?.currentMint || credential?.stamps?.length > 0)
     ) {
@@ -231,7 +264,7 @@ export const Verify = (props: IProps) => {
               ) : null}
               <p className="verify-box-header-content-title">
                 {viewStatus === 'steps'
-                  ? `Verify ${currentVerify.entity}`
+                  ? `Credential Type: ${currentVerify.entity}`
                   : 'Verify your credentials'}
               </p>
             </div>
@@ -311,11 +344,6 @@ export const Verify = (props: IProps) => {
               <div className="verify-steps-container">
                 {!allStepsCompleted && !isReadOnly ? (
                   <>
-                    {currentVerify.steps[currentStep || 0]?.metadata.title && (
-                      <p className="verify-steps-content-title">
-                        {currentVerify.steps[currentStep || 0]?.metadata.title}
-                      </p>
-                    )}
                     {currentVerify.steps[currentStep || 0]?.metadata
                       .description && (
                       <p className="verify-steps-content-description">
@@ -329,7 +357,9 @@ export const Verify = (props: IProps) => {
                 ) : null}
                 {currentStep === 0 && (
                   <div className="verify-steps-content-credential">
-                    <p className="verify-steps-content-title">Credential</p>
+                    <p className="verify-steps-content-title">
+                      Credential (tap to flip):
+                    </p>
                     <div className="verify-steps-content-card">
                       <CredentialCard
                         primaryColor={
@@ -461,31 +491,37 @@ export const Verify = (props: IProps) => {
                               ?.price ? (
                               <ul className="verify-steps-content-list">
                                 <li className="verify-steps-content-description">
+                                  Issuer:
                                   <a
                                     href={
-                                      '/' +
-                                      currentVerify.steps[currentStep || 0]
-                                        ?.metadata?.did
+                                      '/' + credential.credential?.issuer?.id
+                                        ? credential.credential?.issuer?.id
+                                        : currentVerify.steps[currentStep || 0]
+                                            ?.metadata?.did
                                     }
+                                    target="_blank"
                                     className="verify-steps-content-description verify-steps-content-dots"
                                     data-not-parent-click
                                   >
                                     {substring(
-                                      currentVerify.steps[currentStep || 0]
-                                        ?.metadata?.did,
+                                      credential.credential?.issuer?.id
+                                        ? credential.credential?.issuer?.id
+                                        : currentVerify.steps[currentStep || 0]
+                                            ?.metadata?.did,
                                       30,
                                       true
                                     )}
                                   </a>
                                 </li>
                                 <li className="verify-steps-content-description">
+                                  Verification Url:
                                   {
                                     currentVerify.steps[currentStep || 0]
                                       ?.metadata?.verificationUrl
                                   }
                                 </li>
                                 <li className="verify-steps-content-description">
-                                  $
+                                  Price: $
                                   {
                                     currentVerify.steps[currentStep || 0]
                                       ?.metadata?.price

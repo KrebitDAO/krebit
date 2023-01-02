@@ -273,7 +273,8 @@ const DEFAULT_MESSAGES_FOR_PROVIDERS = {
 };
 
 const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
-  ERROR_CREDENTIAL: 'Error saving credential. Please check later'
+  ERROR_CREDENTIAL: 'Error saving credential. Please check later',
+  ERROR_MINT: 'Error minting stamp NFT. Please check later'
 };
 
 const DEFAULT_SKILL_LANGUAGES = [

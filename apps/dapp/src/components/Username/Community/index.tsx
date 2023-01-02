@@ -23,6 +23,7 @@ const DynamicShareWithModal = dynamic(
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 import { IProfile, ICredential } from 'utils/normalizeSchema';
+import { ValueOf } from 'next/dist/shared/lib/constants';
 
 interface IProps {
   isAuthenticated: boolean;
@@ -341,11 +342,16 @@ export const Community = (props: IProps) => {
     }
   };
 
-  const formatCredentialName = (value: any) => {
+  const formatCredentialName = (name: any) => {
+    const value = name?.values ? name?.values : name;
     if (value?.encryptedString) return '******';
 
     let formattedValue = '';
 
+    if (value?.rating)
+      formattedValue = formattedValue
+        ?.concat(' / rating: ')
+        ?.concat(value.rating);
     if (value?.entity)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.entity);
     if (value?.role)
@@ -372,10 +378,6 @@ export const Community = (props: IProps) => {
 
     if (value?.description)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.description);
-
-    if (value?.values) {
-      formattedValue = value?.values?.description;
-    }
 
     return formattedValue;
   };
