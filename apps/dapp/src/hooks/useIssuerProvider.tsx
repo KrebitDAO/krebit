@@ -8,6 +8,7 @@ import { getCredential, generateUID, constants } from 'utils';
 // types
 import { IIssuerParams } from 'utils/getIssuers';
 import { IWalletInformation } from 'context';
+import { W3CCredential } from '@krebitdao/eip712-vc';
 
 interface IClaimValues {
   email: string;
@@ -399,7 +400,7 @@ export const useIssuerProvider = (props: IProps) => {
 
         const deals = new Deals.core.Deal({ ...walletInformation });
         const dealTx = await deals.createDeal(
-          referralCredential,
+          referralCredential as W3CCredential,
           dealCredential
         );
         console.log('dealTx: ', dealTx);
@@ -494,7 +495,7 @@ export const useIssuerProvider = (props: IProps) => {
 
       const deals = new Deals.core.Deal({ ...walletInformation });
       const paymentTx = await deals.releaseDeal(
-        referralCredential,
+        referralCredential as W3CCredential,
         dealCredential
       );
       console.log('paymentTx: ', paymentTx);
