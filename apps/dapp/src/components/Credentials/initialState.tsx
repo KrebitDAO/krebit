@@ -219,6 +219,11 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           placeholder: 'Vendor url'
         },
         {
+          type: 'text',
+          name: 'referralId',
+          placeholder: 'Referral Id'
+        },
+        {
           type: 'boxes',
           name: 'skills',
           placeholder: 'Skills'

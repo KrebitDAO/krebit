@@ -55,7 +55,10 @@ export class Deal {
   }
 
   // Buyer createEscrow
-  createDeal = async (referralStamp: any, dealCredential: W3CCredential) => {
+  createDealFromStamp = async (
+    referralStamp: any,
+    dealCredential: W3CCredential
+  ) => {
     const referralEip712credential =
       getEIP712CredentialFromStamp(referralStamp);
     const dealEip712credential = getEIP712Credential(dealCredential);
@@ -65,7 +68,29 @@ export class Deal {
       dealCredential.proof.proofValue,
       {
         from: this.address,
-        value: dealCredential.credentialSubject.price.toString()
+        value: dealCredential.credentialSubject.price.toString(),
+        gasLimit: 5000000
+      }
+    );
+    console.log('createEscrow Tx: ', tx);
+    return tx.hash;
+  };
+
+  // Buyer createEscrow
+  createDeal = async (
+    referralCredential: W3CCredential,
+    dealCredential: W3CCredential
+  ) => {
+    const referralEip712credential = getEIP712Credential(referralCredential);
+    const dealEip712credential = getEIP712Credential(dealCredential);
+    const tx = await this.escrowContract.createEscrow(
+      referralEip712credential,
+      dealEip712credential,
+      dealCredential.proof.proofValue,
+      {
+        from: this.address,
+        value: dealCredential.credentialSubject.price.toString(),
+        gasLimit: 5000000
       }
     );
     console.log('createEscrow Tx: ', tx);

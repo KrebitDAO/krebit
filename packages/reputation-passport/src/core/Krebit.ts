@@ -476,6 +476,8 @@ export class Krebit {
         params: [txParams]
       });
 
+      if (tx.transactionId) return tx.transactionId;
+      if (tx.hash) return tx.hash;
       return tx;
     } catch (err) {
       throw new Error(err);
@@ -518,14 +520,12 @@ export class Krebit {
         method: 'eth_sendTransaction',
         params: [txParams]
       });
-      if (typeof tx === 'object') {
-        if (tx.reason) throw new Error(tx.reason);
-        if (tx.error) throw new Error(tx.error);
-        if (tx.transactionId) return tx.transactionId;
-        if (tx.hash) return tx.hash;
-      }
+
+      if (tx.transactionId) return tx.transactionId;
+      if (tx.hash) return tx.hash;
+      return tx;
     } catch (err) {
-      throw new Error(err.message);
+      throw new Error(err);
     }
   };
 
@@ -738,7 +738,7 @@ export class Krebit {
   getDocument = async (streamId: string) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    console.log('Saving document on Ceramic...');
+    console.log('Getting document from Ceramic...');
 
     try {
       const stream = await TileDocument.load(this.idx.ceramic, streamId);

@@ -1,5 +1,6 @@
 import { ChangeEvent, useState, useEffect } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
+import Deals from '@krebitdao/deals';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 
 import { getCredential, generateUID, constants } from 'utils';
@@ -347,6 +348,78 @@ export const useIssuerProvider = (props: IProps) => {
     }
   };
 
+  const handleDeal = async dealCredential => {
+    if (!walletInformation) return;
+
+    const isValid = Boolean(
+      walletInformation.address.toLowerCase() ==
+        dealCredential?.credentialSubject?.ethereumAddress
+    );
+
+    if (!isValid) return;
+
+    delete dealCredential.credential;
+    delete dealCredential.value;
+    delete dealCredential.visualInformation;
+    console.log('dealCredential', dealCredential);
+    setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
+
+    try {
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+
+      if (!currentSession) return;
+      const Issuer = new Krebit.core.Krebit({
+        ...walletInformation,
+        litSdk: LitJsSdk,
+        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
+      });
+      await Issuer.connect(currentSession);
+
+      // Save claimedCredential
+      if (dealCredential) {
+        setStatusMessage(
+          constants.DEFAULT_MESSAGES_FOR_PROVIDERS.SAVING_CLAIMED_CREDENTIAL
+        );
+
+        setStatusMessage(
+          constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+        );
+
+        //TODO get Referral
+        const referralValue = JSON.parse(
+          dealCredential.credentialSubject?.value
+        );
+        console.log('referralValue: ', referralValue);
+        const referralCredential = await Issuer.getDocument(
+          referralValue.referralId
+        );
+        console.log('referralCredential: ', referralCredential);
+
+        const deals = new Deals.core.Deal({ ...walletInformation });
+        const dealTx = await deals.createDeal(
+          referralCredential,
+          dealCredential
+        );
+        console.log('dealTx: ', dealTx);
+
+        setCurrentCredential({
+          ...dealCredential,
+          vcId: dealTx
+        });
+        setStatus('credential_resolved');
+      }
+    } catch (error) {
+      console.log('Error handleAddCredential: ', error);
+      setStatus('credential_rejected');
+      setStatusMessage(undefined);
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_CREDENTIAL
+      );
+    }
+  };
+
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
@@ -370,6 +443,7 @@ export const useIssuerProvider = (props: IProps) => {
     handleMintCredential,
     handleCleanClaimValues,
     handleAddCredential,
+    handleDeal,
     claimValues,
     status,
     statusMessage,

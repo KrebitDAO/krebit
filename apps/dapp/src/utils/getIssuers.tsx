@@ -37,7 +37,14 @@ interface IStepMetadata {
 
 interface IIssuerParamsStep {
   title: string;
-  type: 'overview' | 'verification' | 'credential' | 'mint' | 'add';
+  type:
+    | 'overview'
+    | 'verification'
+    | 'credential'
+    | 'mint'
+    | 'add'
+    | 'deal'
+    | 'payment';
   metadata: IStepMetadata;
   form?: (
     provider: any,
@@ -2373,7 +2380,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
       },
       {
         title: 'Accept deal and start payment',
-        type: 'add',
+        type: 'deal',
         metadata: {
           title: 'Start Payment',
           description: 'Start escrow payment'
@@ -2387,7 +2394,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
           action: {
             text: 'Start Payment',
             method: async () =>
-              await provider.handleAddCredential(
+              await provider.handleDeal(
                 provider?.currentCredential || credential?.credential
               ),
             isDisabled: !Boolean(
@@ -2401,7 +2408,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
       },
       {
         title: 'Release Payment',
-        type: 'mint',
+        type: 'payment',
         metadata: {
           title: 'Release payment',
           description: 'Release escrow payment to seller'
@@ -2414,7 +2421,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
           action: {
             text: 'Release Payment',
             method: async () =>
-              await provider?.handleMintCredential(
+              await provider?.handlePayment(
                 provider?.currentCredential || credential?.credential
               )
           }

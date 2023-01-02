@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import {
   ChangeEvent,
   MouseEvent,
@@ -19,6 +20,8 @@ import { Select } from 'components/Select';
 import { DatePicker } from 'components/DatePicker';
 import { Switch } from 'components/Switch';
 import { Rating } from 'components/Rating';
+import { QuestionModal } from 'components/QuestionModal';
+import { Button } from 'components/Button';
 import {
   CREDENTIALS_INITIAL_STATE,
   ICredentialsState,
@@ -36,9 +39,6 @@ import {
 
 // types
 import { SelectChangeEvent } from '@mui/material';
-import { QuestionModal } from 'components/QuestionModal';
-import { Button } from 'components/Button';
-import { ethers } from 'ethers';
 
 interface ICurrentInputModal {
   [name: string]: string | string[] | number[];
@@ -300,10 +300,23 @@ export const CredentialsBuilder = () => {
       console.log('add: ', address);
       console.log('did: ', issuer.did);
 
-      const expirationDate = new Date();
+      const expirationDate = currentValues?.values?.deliveryTime
+        ? currentValues?.values?.deliveryTime
+        : new Date();
       const expiresYears = 1;
       expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
       console.log('expirationDate: ', expirationDate);
+
+      console.log('deliveryTime: ', currentValues?.values?.deliveryTime);
+      console.log(
+        'deliveryTime type: ',
+        typeof currentValues?.values?.deliveryTime
+      );
+      if (currentValues?.values?.deliveryTime) {
+        currentValues.values.deliveryTime = new Date(
+          currentValues?.values?.deliveryTime
+        ).toISOString();
+      }
 
       if (
         currentValues?.values?.issueTo?.length == 1 &&
@@ -321,6 +334,9 @@ export const CredentialsBuilder = () => {
               : ['Community'],
           value: currentValues.values,
           expirationDate: new Date(expirationDate).toISOString(),
+          price: currentValues?.values?.price
+            ? ethers.utils.parseEther(currentValues?.values?.price).toString()
+            : 0,
           trust: currentValues?.values?.rating
             ? parseInt(currentValues?.values?.rating as string) * 20
             : 100
