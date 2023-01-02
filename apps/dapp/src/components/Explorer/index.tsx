@@ -44,8 +44,8 @@ const initialFilterValues = {
 };
 
 const DEFAULT_SLICE_SKILLS = 5;
-// TODO: This big number should be replaced with '9' to follow a right pagination
-const DEFAULT_LIST_PAGINATION = 900;
+// TODO: This is not a real pagination, we need to find a way to optimize this better
+const DEFAULT_LIST_PAGINATION = 50;
 
 export const Explorer = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
