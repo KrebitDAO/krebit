@@ -264,7 +264,7 @@ const DEFAULT_ERROR_MESSAGES = {
 };
 
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {
-  INITIAL: 'Approve signature on your Wallet...',
+  INITIAL: 'Approving signature on your Wallet...',
   ISSUER_CONNECTION: 'Connecting to issuer...',
   SAVING_CLAIMED_CREDENTIAL: 'Saving claimed credential...',
   ISSUING_CREDENTIAL: 'Issuing credential...',
