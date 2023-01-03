@@ -8,13 +8,19 @@ import {
   getCredential,
   getDiscordUser,
   openOAuthUrl,
-  IIsuerParams,
-  getWalletInformation,
   constants
 } from 'utils';
 
+// types
+import { IIssuerParams } from 'utils/getIssuers';
+import { IWalletInformation } from 'context';
+
 interface IClaimValues {
   private: boolean;
+}
+
+interface IProps {
+  walletInformation: IWalletInformation;
 }
 
 const { NEXT_PUBLIC_CERAMIC_URL } = process.env;
@@ -23,7 +29,8 @@ const initialState = {
   private: true
 };
 
-export const useDiscordProvider = () => {
+export const useDiscordProvider = (props: IProps) => {
+  const { walletInformation } = props;
   const [claimValues, setClaimValues] = useState<IClaimValues>(initialState);
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
@@ -33,7 +40,7 @@ export const useDiscordProvider = () => {
   >();
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
-  const [currentIssuer, setCurrentIssuer] = useState<IIsuerParams>();
+  const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
   const channel = new BroadcastChannel('discord_oauth_channel');
 
   useEffect(() => {
@@ -55,7 +62,7 @@ export const useDiscordProvider = () => {
     };
   }, [channel]);
 
-  const handleFetchOAuth = (issuer: IIsuerParams) => {
+  const handleFetchOAuth = (issuer: IIssuerParams) => {
     setCurrentIssuer(issuer);
     const state = `discord-${generateUID(10)}`;
 
@@ -103,6 +110,8 @@ export const useDiscordProvider = () => {
     target: string;
     data: { accessToken: string; tokenType: string; state: string };
   }) => {
+    if (!walletInformation) return;
+
     setStatus('credential_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
@@ -115,9 +124,6 @@ export const useDiscordProvider = () => {
         const currentSession = JSON.parse(session);
 
         if (!currentSession) return;
-
-        const currentType = localStorage.getItem('auth-type');
-        const walletInformation = await getWalletInformation(currentType);
 
         // Step 1-A:  Get credential from Issuer based on claim:
 
@@ -202,6 +208,7 @@ export const useDiscordProvider = () => {
         }
       }
     } catch (error) {
+      console.error(error);
       setStatus('credential_rejected');
       setStatusMessage(undefined);
       setErrorMessage(
@@ -212,14 +219,13 @@ export const useDiscordProvider = () => {
 
   const handleMintCredential = async credential => {
     try {
+      if (!walletInformation) return;
+
       setStatus('mint_pending');
       setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);
-
-      const currentType = localStorage.getItem('auth-type');
-      const walletInformation = await getWalletInformation(currentType);
 
       const Issuer = new Krebit.core.Krebit({
         ...walletInformation,

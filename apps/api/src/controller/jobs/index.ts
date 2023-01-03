@@ -1,16 +1,27 @@
 import express from 'express';
-import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
+import puppeteer from 'puppeteer-core';
 
-import { connect, jobs } from '../../utils';
+import { connect, jobs, openAI } from '../../utils';
 
-const { SERVER_NFT_METADATA_IPFS, SERVER_CERAMIC_URL } = process.env;
-
+const SERVER_CERAMIC_URL = 'https://node1.orbis.club';
 const postSchemaCommit =
   'k1dpgaqe3i64kjuyet4w0zyaqwamf9wrp1jim19y27veqkppo34yghivt2pag4wxp0fv2yl4hedynpfuynp2wvd8s7ctabea6lx732xrr8b0cgqauwlh0vwg6';
-
 const channel =
   'kjzl6cwe1jw145l8g0ojf3ku355i6ybovcpbiir8nam0385w8ajalywyd8un11b';
+
+const getPageSummary = async (pageUrl: string) => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(pageUrl);
+  const pageContent = await page.$eval(
+    '*',
+    (el: HTMLInputElement) => el.innerText
+  );
+  await page.close();
+  await browser.close();
+  return await openAI.getJobSummary(pageContent);
+};
 
 /** Force index a stream. This shouldn't be necessary because our indexer picks up all new streams automatically but at least we are 100% sure. */
 const forceIndex = async (stream_id: string) => {
@@ -21,9 +32,9 @@ const forceIndex = async (stream_id: string) => {
       'Access-Control-Allow-Origin': '*'
     }
   };
-  let _result;
+
   try {
-    _result = await fetch(
+    await fetch(
       'https://api.orbis.club/index-stream/mainnet/' + stream_id,
       requestOptions
     );
@@ -63,8 +74,7 @@ export const JobsController = async (
       wallet,
       ethProvider,
       address: wallet.address,
-      //ceramicUrl: SERVER_CERAMIC_URL
-      ceramicUrl: 'https://node1.orbis.club'
+      ceramicUrl: SERVER_CERAMIC_URL
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
@@ -85,14 +95,16 @@ export const JobsController = async (
       const industries = job.markets?.map(m => m.label);
       const size = job.stages?.filter(s => s.label?.includes('employees'))[0]
         ?.label;
-      //console.log('skills', skills);
+
       const jobData = {
         type: 'job',
         entity: job.companyName,
         industries,
-        size,
+        size: size ? size : 'N/A',
         title: job.title,
-        description: job.description ? job.description : job.title,
+        description: job.description
+          ? job.description
+          : await getPageSummary(job.applyUrl),
         publishedDate: job.timeStamp,
         applyUrl: `${job.applyUrl}?&utm_source=krebit.id&lever-source%5B%5D=krebit.id&gh_src=krebit.id&ref=krebit.id&src=krebit.id&source=krebit.id`,
         roles,
@@ -103,6 +115,7 @@ export const JobsController = async (
       const jobDoc = {
         context: channel,
         title: jobData.title,
+        body: '',
         tags: [
           {
             slug: 'krebit-job',
@@ -129,7 +142,7 @@ export const JobsController = async (
       await Issuer.updateDocument(
         {
           ...jobDoc,
-          body: `Job offer: ${jobDoc?.data?.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
+          body: `Job offer: ${jobDoc?.data?.title}\nCompany: ${job.companyName} #hiring\nApply: https://krebit.id/posts?post_id=${streamId}`
         },
         streamId
       );

@@ -5,11 +5,15 @@ const withTM = require('next-transpile-modules')([
 
 module.exports = withTM({
   reactStrictMode: true,
-  webpack: config => {
-    // this will override the experiments
+  webpack(config) {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false
+    };
     config.experiments = { ...config.experiments, ...{ topLevelAwait: true } };
-    // this will just update topLevelAwait property of config.experiments
-    // config.experiments.topLevelAwait = true
+
     return config;
   }
 });

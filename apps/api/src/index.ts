@@ -16,7 +16,8 @@ import {
   MetadataController,
   GuildController,
   StackController,
-  JobsController
+  JobsController,
+  OpenAIController
 } from './controller';
 
 const { SERVER_PORT, SERVER_BASE_URL } = process.env;
@@ -50,7 +51,8 @@ router
   .post('/github', GithubController)
   .post('/persona', PersonaController)
   .post('/guild', GuildController)
-  .post('/stack', StackController);
+  .post('/stack', StackController)
+  .post('/openai', OpenAIController);
 
 app.use('/', router);
 

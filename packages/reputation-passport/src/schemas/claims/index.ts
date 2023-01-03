@@ -11,6 +11,7 @@ import { phoneNumber } from './phoneNumber.js';
 import { workExperience } from './workExperience.js';
 import { recommendation } from './recommendation.js';
 import { attendance } from './attendance.js';
+import { offer } from './offer.js';
 
 export const claims = {
   badge,
@@ -25,5 +26,6 @@ export const claims = {
   phoneNumber,
   workExperience,
   recommendation,
-  attendance
+  attendance,
+  offer
 };

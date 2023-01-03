@@ -112,7 +112,14 @@ const CREDENTIAL_TYPES = [
   'GoStackOverflowScoreGT10',
   'RustStackOverflowScoreGT10',
   'SolidityStackOverflowScoreGT10',
-  'TwitterVerified'
+  'TwitterVerified',
+  'Referral',
+  'Deal',
+  'Badge',
+  'Review',
+  'WorkExperience',
+  'Education',
+  'Attendance'
 ];
 
 export const getNFTCredentialTypes = () => {

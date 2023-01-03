@@ -66,6 +66,7 @@ export class Krebit {
     | ethers.providers.Provider
     | ethers.providers.ExternalProvider;
   private currentConfig: IConfigProps;
+  private biconomy: Biconomy;
 
   constructor(props?: IProps) {
     const currentConfig = config.update(props);
@@ -85,6 +86,17 @@ export class Krebit {
       schemas.krebitNFT[this.currentConfig.network].address,
       schemas.krebitNFT.abi,
       props.wallet
+    );
+    this.biconomy = new Biconomy(
+      this.ethProvider as ethers.providers.ExternalProvider,
+      {
+        apiKey: this.currentConfig.biconomyKey,
+        contractAddresses: [
+          schemas.krbToken[this.currentConfig.network].address,
+          schemas.krebitNFT[this.currentConfig.network].address
+        ],
+        debug: true
+      }
     );
   }
 
@@ -306,6 +318,36 @@ export class Krebit {
     }
   };
 
+  encryptClaimValue = async (value: any, ethereumAddress: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    if (typeof value === 'object') {
+      try {
+        const lit = new lib.Lit();
+        let unifiedAccessControlConditions =
+          lit.getOwnsAddressCondition(ethereumAddress);
+        let encryptedContent = await lit.encrypt(
+          JSON.stringify(value),
+          unifiedAccessControlConditions,
+          this.wallet
+        );
+        if (!encryptedContent) {
+          throw new Error('Problem creating encryptedContent');
+        }
+        const stream = await TileDocument.create(
+          this.idx.ceramic,
+          unifiedAccessControlConditions
+        );
+        return {
+          ...encryptedContent,
+          unifiedAccessControlConditions: stream.id.toUrl()
+        };
+      } catch (err) {
+        console.error(`Could not encrypt: ${err.message}`);
+      }
+    }
+  };
+
   decryptClaimValue = async (encryptedClaimValue: EncryptedProps) => {
     if (!this.isConnected()) throw new Error('Not connected');
     if (
@@ -332,7 +374,6 @@ export class Krebit {
       } catch (err) {
         console.error(`Could not decrypt: ${err.message}`);
       }
-    } else {
     }
   };
 
@@ -406,51 +447,41 @@ export class Krebit {
   stampCredential = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const balance = await this.wallet.getBalance();
-    console.log('balance: ', balance);
-    /* TEMP enabling  gasless for all
-    if (balance > ethers.constants.Zero) {
-      return await this.stamp(w3cCredential);
-    } else {*/
-    // Pass connected wallet provider under walletProvider field
-    let biconomy = new Biconomy(
-      this.ethProvider as ethers.providers.ExternalProvider,
-      {
-        apiKey: this.currentConfig.biconomyKey,
-        debug: true,
-        walletProvider: this.ethProvider,
-        strictMode: false
-      }
-    );
+    try {
+      const provider = this.biconomy.provider;
 
-    return await new Promise(resolve =>
-      biconomy.onEvent(biconomy.READY, async () => {
-        const provider = biconomy.getEthersProvider();
+      const metaContract = new ethers.Contract(
+        schemas.krbToken[this.currentConfig.network].address,
+        schemas.krbToken.abi,
+        this.biconomy.ethersProvider
+      );
 
-        // Initialize your dapp here like getting user accounts etc
-        const metaContract = new ethers.Contract(
-          schemas.krbToken[this.currentConfig.network].address,
-          schemas.krbToken.abi,
-          biconomy.getSignerByAddress(this.address)
-        );
+      await this.biconomy.init();
 
-        const eip712credential = getEIP712Credential(w3cCredential);
+      const eip712credential = getEIP712Credential(w3cCredential);
 
-        let { data } = await metaContract.populateTransaction.registerVC(
-          eip712credential,
-          w3cCredential.proof.proofValue
-        );
-        let txParams = {
-          data: data,
-          to: schemas.krbToken[this.currentConfig.network].address,
-          from: this.address,
-          signatureType: 'EIP712_SIGN'
-        };
-        const tx = await provider.send('eth_sendTransaction', [txParams]);
-        resolve(tx);
-      })
-    );
-    //}
+      let { data } = await metaContract.populateTransaction.registerVC(
+        eip712credential,
+        w3cCredential.proof.proofValue
+      );
+      let txParams = {
+        data: data,
+        to: schemas.krbToken[this.currentConfig.network].address,
+        from: this.address,
+        signatureType: 'EIP712_SIGN'
+      };
+
+      const tx = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [txParams]
+      });
+
+      if (tx.transactionId) return tx.transactionId;
+      if (tx.hash) return tx.hash;
+      return tx;
+    } catch (err) {
+      throw new Error(err);
+    }
   };
 
   // Mint
@@ -458,55 +489,44 @@ export class Krebit {
   mintCredentialNFT = async (w3cCredential: W3CCredential) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
-    const balance = await this.wallet.getBalance();
-    console.log('balance: ', balance);
-    /* TEMP enabling  gasless for all
-    if (balance > ethers.constants.Zero) {
-      return await this.mintNFT(w3cCredential);
-    } else { */
-    // Pass connected wallet provider under walletProvider field
-    let biconomy = new Biconomy(
-      this.ethProvider as ethers.providers.ExternalProvider,
-      {
-        apiKey: this.currentConfig.biconomyKey,
-        debug: true,
-        walletProvider: this.ethProvider,
-        strictMode: false
-      }
-    );
+    try {
+      const provider = this.biconomy.provider;
 
-    return await new Promise(resolve =>
-      biconomy.onEvent(biconomy.READY, async () => {
-        const provider = biconomy.getEthersProvider();
+      const metaContract = new ethers.Contract(
+        schemas.krebitNFT[this.currentConfig.network].address,
+        schemas.krebitNFT.abi,
+        this.biconomy.ethersProvider
+      );
 
-        // Initialize your dapp here like getting user accounts etc
-        const metaContract = new ethers.Contract(
-          schemas.krebitNFT[this.currentConfig.network].address,
-          schemas.krebitNFT.abi,
-          biconomy.getSignerByAddress(this.address)
-        );
+      await this.biconomy.init();
 
-        const eip712credential = getEIP712Credential(w3cCredential);
+      const eip712credential = getEIP712Credential(w3cCredential);
 
-        let { data } =
-          await metaContract.populateTransaction.mintWithCredential(
-            this.address,
-            w3cCredential.credentialSubject.type,
-            eip712credential,
-            w3cCredential.proof.proofValue,
-            0x0
-          );
-        let txParams = {
-          data: data,
-          to: schemas.krebitNFT[this.currentConfig.network].address,
-          from: this.address,
-          signatureType: 'EIP712_SIGN'
-        };
-        const tx = await provider.send('eth_sendTransaction', [txParams]);
-        resolve(tx);
-      })
-    );
-    //}
+      let { data } = await metaContract.populateTransaction.mintWithCredential(
+        this.address,
+        w3cCredential.credentialSubject.type,
+        eip712credential,
+        w3cCredential.proof.proofValue,
+        0x0
+      );
+      let txParams = {
+        data: data,
+        to: schemas.krebitNFT[this.currentConfig.network].address,
+        from: this.address,
+        signatureType: 'EIP712_SIGN'
+      };
+
+      const tx = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [txParams]
+      });
+
+      if (tx.transactionId) return tx.transactionId;
+      if (tx.hash) return tx.hash;
+      return tx;
+    } catch (err) {
+      throw new Error(err);
+    }
   };
 
   // Stamp
@@ -709,6 +729,20 @@ export class Krebit {
         schema
       });
       return stream.id.toString();
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
+  // read ceramic
+  getDocument = async (streamId: string) => {
+    if (!this.isConnected()) throw new Error('Not connected');
+
+    console.log('Getting document from Ceramic...');
+
+    try {
+      const stream = await TileDocument.load(this.idx.ceramic, streamId);
+      return stream.content;
     } catch (err) {
       throw new Error(err);
     }

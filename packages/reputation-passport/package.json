@@ -1,6 +1,6 @@
 {
   "name": "@krebitdao/reputation-passport",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "Krebit SDK for Verified Credentials",
   "type": "module",
   "main": "./dist/index.js",
@@ -37,7 +37,7 @@
     "siwe": "^1.1.6"
   },
   "dependencies": {
-    "@biconomy/mexa": "2.0.35",
+    "@biconomy/mexa": "^3.0.5",
     "@ceramicnetwork/blockchain-utils-linking": "^2.0.8",
     "@ceramicnetwork/http-client": "^2.3.1",
     "@ceramicnetwork/stream-tile": "^2.4.0",

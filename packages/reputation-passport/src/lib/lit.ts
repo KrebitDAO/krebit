@@ -21,7 +21,7 @@ const signAuthMessage = async (props: ISignAuthMessageProps) => {
   const now = new Date().toISOString();
   const statement = AUTH_SIGNATURE_BODY.replace('{{timestamp}}', now);
   const message = {
-    domain: config.publicUrl,
+    domain: config.publicUrl.replace('https://', '').replace('http://', ''),
     address: await wallet.getAddress(),
     statement,
     uri: config.publicUrl,
@@ -147,7 +147,7 @@ export class Lit {
   };
 
   public encrypt = async (
-    message: String,
+    message: string,
     accessControlConditions: Array<Object>,
     wallet: ethers.Signer
   ) => {

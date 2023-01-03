@@ -55,9 +55,214 @@ export interface ICredentialsState {
 
 export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   {
+    type: 'referral',
+    title: 'Referr a friend',
+    description:
+      'Invite a friend to the Krebiters community and earn when they sell',
+    primaryColor: 'haiti',
+    secondaryColor: 'rose',
+    icon: <Delegate />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'name',
+          placeholder: 'Referral Title',
+          defaultValue: 'Referral'
+        },
+        {
+          name: 'description',
+          placeholder: 'Write a personalized invitation message here'
+        }
+      ],
+      issueTo: {
+        name: 'issueTo',
+        placeholder: 'Issue to'
+      },
+      button: {
+        text: 'Invite',
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
+
+          return {
+            values: {
+              ...values,
+              entity: 'Personal'
+            },
+            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
+            did: NEXT_PUBLIC_ISSUER_DID,
+            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
+            credentialType: 'Referral',
+            credentialSchema: 'krebit://schemas/recommendation'
+          };
+        }
+      }
+    }
+  },
+  {
+    type: 'review',
+    title: 'Review',
+    description: 'Rate anyone or anything',
+    primaryColor: 'blueCharcoal',
+    secondaryColor: 'cyan',
+    icon: <Star />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'name',
+          placeholder: 'Review Title',
+          defaultValue: 'Review'
+        },
+        {
+          type: 'rating',
+          name: 'rating',
+          placeholder: 'Rating: 2/5'
+        },
+        {
+          name: 'description',
+          placeholder: 'Write your review here'
+        },
+
+        {
+          type: 'text',
+          name: 'proof',
+          placeholder: 'Proof url'
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills'
+        }
+      ],
+      issueTo: {
+        name: 'issueTo',
+        placeholder: 'Issue to'
+      },
+      button: {
+        text: 'Review',
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
+
+          return {
+            values: {
+              ...values,
+              rating: values?.rating ? values.rating : '2',
+              entity: 'Personal',
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: values?.rating
+                    ? parseInt(values?.rating as string) * 20
+                    : 100
+                };
+              })
+            },
+            tags: values.skills,
+            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
+            did: NEXT_PUBLIC_ISSUER_DID,
+            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
+            credentialType: 'Review',
+            credentialSchema: 'krebit://schemas/recommendation'
+          };
+        }
+      }
+    }
+  },
+  /*{
+    type: 'deal',
+    title: 'Deal',
+    description: 'Offer or quotation for a service or product',
+    primaryColor: 'blueCharcoal',
+    secondaryColor: 'pomegranate',
+    icon: <Deal />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'name',
+          placeholder: 'Offer Title'
+        },
+        {
+          type: 'select',
+          name: 'deliverableType',
+          placeholder: 'Deliverable Type',
+          items: [
+            { text: 'File', value: 'file' },
+            { text: 'Video Call', value: 'meeting' },
+            { text: 'Product', value: 'product' }
+          ]
+        },
+        {
+          name: 'description',
+          placeholder: 'Deliverable description & requirements'
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'datepicker',
+          name: 'deliveryTime',
+          placeholder: 'Delivery Time',
+          defaultValue: '01/12/2021'
+        },
+        {
+          type: 'number',
+          name: 'price',
+          placeholder: 'Price'
+        },
+        {
+          type: 'text',
+          name: 'proof',
+          placeholder: 'Vendor url'
+        },
+        {
+          type: 'text',
+          name: 'referralId',
+          placeholder: 'Referral Id'
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills'
+        }
+      ],
+      issueTo: {
+        name: 'issueTo',
+        placeholder: 'Issue to'
+      },
+      button: {
+        text: 'Offer',
+        onClick: values => {
+          // TODO: encrypt issueTo and get credentialSubjectListUrl
+          return {
+            values: {
+              ...values,
+              title: values.name,
+              skills: (values.skills as string[]).map(skill => {
+                return {
+                  skillId: skill,
+                  score: 100
+                };
+              })
+            },
+            tags: values.skills,
+            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
+            did: NEXT_PUBLIC_ISSUER_DID,
+            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
+            credentialType: 'Deal',
+            credentialSchema: 'krebit://schemas/offer'
+          };
+        }
+      }
+    }
+  },*/
+  {
     type: 'workExperience',
-    title: 'Work Experience',
-    description: 'Certify someone that has worked for you',
+    title: 'Work Experience (Pro)',
+    description: 'Certify someone that has worked with/for you',
     primaryColor: 'haiti',
     secondaryColor: 'blueRibbon',
     icon: <WorkExperience />,
@@ -116,6 +321,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           return {
             values: {
               ...values,
+              title: values.name,
               skills: (values.skills as string[]).map(skill => {
                 return {
                   skillId: skill,
@@ -128,92 +334,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
             credentialType: 'WorkExperience',
-            credentialSchema: 'krebit://schemas/workExperience',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
-          };
-        }
-      }
-    }
-  },
-  {
-    type: 'recommendation',
-    title: 'Endorsement',
-    description:
-      'Recommend a colleague that you have worked with or a buyer/seller that you have done business with',
-    primaryColor: 'haiti',
-    secondaryColor: 'tango',
-    icon: <Deal />,
-    form: {
-      fields: [
-        {
-          type: 'text',
-          name: 'name',
-          placeholder: 'Title'
-        },
-        {
-          name: 'description',
-          placeholder: 'Write your recommendation here'
-        },
-        {
-          type: 'upload',
-          name: 'image',
-          placeholder: 'add logo'
-        },
-
-        {
-          type: 'select',
-          name: 'entity',
-          placeholder: 'Entity/Organization'
-        },
-        {
-          type: 'datepicker',
-          name: 'startDate',
-          placeholder: 'Start date'
-        },
-        {
-          type: 'datepicker',
-          name: 'endDate',
-          placeholder: 'End date'
-        },
-        {
-          type: 'text',
-          name: 'proof',
-          placeholder: 'Proof url'
-        },
-        {
-          type: 'boxes',
-          name: 'skills',
-          placeholder: 'Skills'
-        }
-      ],
-      issueTo: {
-        name: 'issueTo',
-        placeholder: 'Issue to'
-      },
-      button: {
-        text: 'Recommend',
-        onClick: values => {
-          // TODO: encrypt issueTo and get credentialSubjectListUrl
-
-          return {
-            values: {
-              ...values,
-              skills: (values.skills as string[]).map(skill => {
-                return {
-                  skillId: skill,
-                  score: 100
-                };
-              })
-            },
-            tags: values.skills,
-            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
-            did: NEXT_PUBLIC_ISSUER_DID,
-            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
-            credentialType: 'Recommendation',
-            credentialSchema: 'krebit://schemas/recommendation',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
+            credentialSchema: 'krebit://schemas/workExperience'
           };
         }
       }
@@ -221,10 +342,11 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   },
   {
     type: 'education',
-    title: 'Education',
+    title: 'Education (Pro)',
     description: 'Certify students that completed your class or course',
-    primaryColor: 'blueCharcoal',
-    secondaryColor: 'pomegranate',
+
+    primaryColor: 'haiti',
+    secondaryColor: 'tango',
     icon: <School />,
     form: {
       fields: [
@@ -293,9 +415,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
             credentialType: 'Education',
-            credentialSchema: 'krebit://schemas/education',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
+            credentialSchema: 'krebit://schemas/education'
           };
         }
       }
@@ -303,10 +423,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   },
   {
     type: 'attendance',
-    title: 'Event Attendance',
+    title: 'Event Attendance (Pro)',
     description: 'Certify your event attendees',
     primaryColor: 'blueCharcoal',
-    secondaryColor: 'scorpion',
+    secondaryColor: 'oliveDrab',
     icon: <Attendance />,
     form: {
       fields: [
@@ -377,137 +497,17 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
             credentialType: 'Attendance',
-            credentialSchema: 'krebit://schemas/attendance',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
+            credentialSchema: 'krebit://schemas/attendance'
           };
         }
       }
     }
   },
-  {
-    type: 'referr',
-    title: 'Referral',
-    description:
-      'Invite a friend or colleague that your trust to the Krebiters community',
-    primaryColor: 'rose',
-    secondaryColor: 'haiti',
-    icon: <Delegate />,
-    form: {
-      fields: [
-        {
-          type: 'text',
-          name: 'name',
-          placeholder: 'Referral Title'
-        },
-        {
-          name: 'description',
-          placeholder: 'Write a personalized invitation message here'
-        },
-        {
-          type: 'text',
-          name: 'proof',
-          placeholder: 'Proof/Job url'
-        }
-      ],
-      issueTo: {
-        name: 'issueTo',
-        placeholder: 'Issue to'
-      },
-      button: {
-        text: 'Invite',
-        onClick: values => {
-          // TODO: encrypt issueTo and get credentialSubjectListUrl
 
-          return {
-            values: {
-              ...values,
-              entity: 'Personal'
-            },
-            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
-            did: NEXT_PUBLIC_ISSUER_DID,
-            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
-            credentialType: 'Referral',
-            credentialSchema: 'krebit://schemas/recommendation',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
-          };
-        }
-      }
-    }
-  },
-  {
-    type: 'review',
-    title: 'Review',
-    description: 'Rate anyone or anything',
-    primaryColor: 'blueCharcoal',
-    secondaryColor: 'cyan',
-    icon: <Star />,
-    form: {
-      fields: [
-        {
-          type: 'text',
-          name: 'name',
-          placeholder: 'Review Title'
-        },
-        {
-          type: 'rating',
-          name: 'rating',
-          placeholder: 'Rating: 5/10'
-        },
-        {
-          name: 'description',
-          placeholder: 'Write your review notes here'
-        },
-
-        {
-          type: 'text',
-          name: 'proof',
-          placeholder: 'Proof url'
-        },
-        {
-          type: 'boxes',
-          name: 'skills',
-          placeholder: 'Skills'
-        }
-      ],
-      issueTo: {
-        name: 'issueTo',
-        placeholder: 'Issue to'
-      },
-      button: {
-        text: 'Review',
-        onClick: values => {
-          // TODO: encrypt issueTo and get credentialSubjectListUrl
-
-          return {
-            values: {
-              ...values,
-              entity: 'Personal',
-              skills: (values.skills as string[]).map(skill => {
-                return {
-                  skillId: skill,
-                  score: 100
-                };
-              })
-            },
-            tags: values.skills,
-            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
-            did: NEXT_PUBLIC_ISSUER_DID,
-            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
-            credentialType: 'Review',
-            credentialSchema: 'krebit://schemas/recommendation',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
-          };
-        }
-      }
-    }
-  },
   {
     type: 'badge',
-    title: 'Badge',
-    description: 'Issue an achievement Badge to a member of your community',
+    title: 'Badge (Pro)',
+    description: 'Issue an achievement Badge to members of your community',
     primaryColor: 'gray',
     secondaryColor: 'haiti',
     icon: <Token />,
@@ -536,7 +536,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'rating',
           name: 'level',
-          placeholder: 'Level: 5/10'
+          placeholder: 'Level: 2/5'
         },
 
         {
@@ -562,10 +562,13 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           return {
             values: {
               ...values,
+              level: values?.level ? values.level : '2',
               skills: (values.skills as string[]).map(skill => {
                 return {
                   skillId: skill,
-                  score: 100
+                  score: values?.level
+                    ? parseInt(values?.level as string) * 20
+                    : 100
                 };
               })
             },
@@ -574,9 +577,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             did: NEXT_PUBLIC_ISSUER_DID,
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
             credentialType: 'Badge',
-            credentialSchema: 'krebit://schemas/badge',
-            credentialSubjectListUrl: '',
-            imageUrl: values?.image || ''
+            credentialSchema: 'krebit://schemas/badge'
           };
         }
       }

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 interface ICardProps {
   isEmpty?: Boolean;
   image?: string;
+  builderCredentialColor?: string;
 }
 
 export const SimpleCardWrapper = styled.div<ICardProps>`
@@ -126,7 +127,7 @@ export const SimpleCardWrapper = styled.div<ICardProps>`
 `;
 
 export const SmallCardWrapper = styled.div<ICardProps>`
-  ${({ theme, image, isEmpty }) => css`
+  ${({ theme, image, isEmpty, builderCredentialColor }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
     border: 1px solid ${theme.colors.scorpion}80;
@@ -141,6 +142,18 @@ export const SmallCardWrapper = styled.div<ICardProps>`
     ${isEmpty &&
     css`
       opacity: 0.7;
+    `}
+
+    ${builderCredentialColor &&
+    css`
+      .card-border {
+        height: 100%;
+        width: 5px;
+        background-color: ${theme.colors[builderCredentialColor]}CC;
+        position: absolute;
+        left: 0;
+        border-radius: 15px 0 0 15px;
+      }
     `}
 
     @media (min-width: ${theme.screens.lg}) {
@@ -164,6 +177,11 @@ export const SmallCardWrapper = styled.div<ICardProps>`
         font-size: ${theme.fonts.sm};
         color: ${theme.colors.white}B3;
         word-wrap: break-word;
+        max-width: 200px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          max-width: 250px;
+        }
       }
     }
 

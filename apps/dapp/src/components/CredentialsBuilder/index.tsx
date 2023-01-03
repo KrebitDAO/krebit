@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import {
   ChangeEvent,
   MouseEvent,
@@ -19,6 +20,8 @@ import { Select } from 'components/Select';
 import { DatePicker } from 'components/DatePicker';
 import { Switch } from 'components/Switch';
 import { Rating } from 'components/Rating';
+import { QuestionModal } from 'components/QuestionModal';
+import { Button } from 'components/Button';
 import {
   CREDENTIALS_INITIAL_STATE,
   ICredentialsState,
@@ -36,8 +39,6 @@ import {
 
 // types
 import { SelectChangeEvent } from '@mui/material';
-import { QuestionModal } from 'components/QuestionModal';
-import { Button } from 'components/Button';
 
 interface ICurrentInputModal {
   [name: string]: string | string[] | number[];
@@ -107,10 +108,10 @@ export const CredentialsBuilder = () => {
           const queryFields = Object.keys(query);
 
           fields = values.form?.fields.map(field => ({
-            ...field,
             defaultValue: queryFields.includes(field.name)
               ? query[field.name]
-              : ''
+              : '',
+            ...field
           }));
         } else {
           fields = values.form?.fields;
@@ -120,7 +121,11 @@ export const CredentialsBuilder = () => {
           (a, v) => ({
             ...a,
             ...(values.form?.issueTo
-              ? { [values.form.issueTo.name]: [] as string[] }
+              ? {
+                  [values.form.issueTo.name]: query['issueTo']
+                    ? (query['issueTo'] as string).split(',')
+                    : ([] as string[])
+                }
               : undefined),
             [v.name]:
               v.type === 'datepicker'
@@ -287,66 +292,103 @@ export const CredentialsBuilder = () => {
 
     const currentValues = values.form.button.onClick({
       ...formValues,
-      image: imageUrl
+      imageUrl: imageUrl
     });
 
     try {
-      // Step 1-A:  Get credential from Master Issuer based on claim:
-      // Issue self-signed credential to become an Issuer
+      // Issue credential
       console.log('add: ', address);
       console.log('did: ', issuer.did);
 
-      let typeSchemaUrl = await issuer.getTypeSchema('Issuer');
-
-      if (!typeSchemaUrl) {
-        const issuerSchema = Krebit.schemas.claims.issuer;
-        typeSchemaUrl = await issuer.setTypeSchema('Issuer', issuerSchema);
-      }
-
-      const expirationDate = new Date();
+      const expirationDate = currentValues?.values?.deliveryTime
+        ? currentValues?.values?.deliveryTime
+        : new Date();
       const expiresYears = 1;
       expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
       console.log('expirationDate: ', expirationDate);
 
-      const claim = {
-        id: `issuer-${generateUID(10)}`,
-        did: issuer.did,
-        ethereumAddress: address,
-        type: 'Issuer',
-        typeSchema: 'krebit://schemas/issuer',
-        tags: ['Community', `${currentValues.credentialType}Issuer`],
-        value: currentValues,
-        expirationDate: new Date(expirationDate).toISOString()
-      };
-      console.log('claim: ', claim);
+      console.log('deliveryTime: ', currentValues?.values?.deliveryTime);
+      console.log(
+        'deliveryTime type: ',
+        typeof currentValues?.values?.deliveryTime
+      );
+      if (currentValues?.values?.deliveryTime) {
+        currentValues.values.deliveryTime = new Date(
+          currentValues?.values?.deliveryTime
+        ).toISOString();
+      }
 
-      const delegatedCredential = await issuer.issue(claim);
-      console.log('delegatedCredential: ', delegatedCredential);
+      if (
+        currentValues?.values?.issueTo?.length == 1 &&
+        currentValues?.values?.issueTo[0].startsWith('0x')
+      ) {
+        const claim = {
+          id: `${currentValues.credentialType}-${generateUID(10)}`,
+          did: `did:pkh:eip155:1:${currentValues?.values?.issueTo[0]?.toLowerCase()}`,
+          ethereumAddress: currentValues?.values?.issueTo[0]?.toLowerCase(),
+          type: currentValues.credentialType,
+          typeSchema: currentValues.credentialSchema,
+          tags:
+            currentValues?.tags?.length > 0
+              ? ['Community'].concat(currentValues.tags)
+              : ['Community'],
+          value: currentValues.values,
+          expirationDate: new Date(expirationDate).toISOString(),
+          price: currentValues?.values?.price
+            ? ethers.utils.parseEther(currentValues?.values?.price).toString()
+            : 0,
+          trust: currentValues?.values?.rating
+            ? parseInt(currentValues?.values?.rating as string) * 20
+            : 100
+        };
+        console.log('Issue directly to wallet: ', claim);
+        const issuedCredential = await issuer.issue(claim);
 
-      // Save delegatedCredential
-      if (delegatedCredential) {
-        const delegatedCredentialId = await passport.addIssued(
-          delegatedCredential
-        );
-        console.log('delegatedCredentialId: ', delegatedCredentialId);
-
-        // Step 1-B: Send self-signed credential to the Issuer for verification
-        const issuedCredential = await getCredential({
-          verifyUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/issuer'),
-          claimedCredentialId: delegatedCredentialId
-        });
-
-        console.log('issuedCredential: ', issuedCredential);
-
-        // Step 1-C: Get the verifiable credential, and save it to the passport
         if (issuedCredential) {
-          const addedCredentialId = await passport.addCredential(
-            issuedCredential
-          );
+          const addedCredentialId = await passport.addIssued(issuedCredential);
 
           console.log('addedCredentialId: ', addedCredentialId);
 
           setCredentialId(addedCredentialId);
+          setStatus('form_resolved');
+        }
+      } else {
+        const encryptedList = await issuer.encryptClaimValue(
+          currentValues?.values?.issueTo,
+          currentValues.ethereumAddress
+        );
+        delete currentValues?.values?.issueTo;
+        const claim = {
+          id: `issuer-${generateUID(10)}`,
+          did: currentValues.did,
+          ethereumAddress: currentValues.ethereumAddress,
+          type: 'Issuer',
+          typeSchema: 'krebit://schemas/issuer',
+          tags: ['Community', `${currentValues.credentialType}Issuer`],
+          value: {
+            ...currentValues,
+            credentialSubjectList: encryptedList
+          },
+          expirationDate: new Date(expirationDate).toISOString(),
+          trust: currentValues?.values?.rating
+            ? parseInt(currentValues?.values?.rating as string) * 20
+            : currentValues?.values?.level
+            ? parseInt(currentValues?.values?.level as string) * 20
+            : 100
+        };
+        console.log('Issue via delegate: ', claim);
+
+        const delegatedCredential = await issuer.issue(claim);
+        console.log('delegatedCredential: ', delegatedCredential);
+
+        // Save delegatedCredential
+        if (delegatedCredential) {
+          const delegatedCredentialId = await passport.addIssued(
+            delegatedCredential
+          );
+          console.log('delegatedCredentialId: ', delegatedCredentialId);
+
+          setCredentialId(delegatedCredentialId);
           setStatus('form_resolved');
         }
       }
@@ -498,12 +540,16 @@ export const CredentialsBuilder = () => {
                     {(formValues?.description as string) ||
                       'Credential description'}
                   </p>
-                  <div className="card-brand">
-                    {(formValues?.image as string) ? (
-                      <img src={formatUrlImage(formValues?.image as string)} />
-                    ) : (
-                      values.icon
-                    )}
+                  <div className="card-bottom">
+                    <div className="card-brand">
+                      {(formValues?.image as string) ? (
+                        <img
+                          src={formatUrlImage(formValues?.image as string)}
+                        />
+                      ) : (
+                        values.icon
+                      )}
+                    </div>
                   </div>
                 </Card>
               </div>

@@ -57,6 +57,12 @@ import { Reply } from './Reply';
 import { Comment } from './Comment';
 import { ArrowSend } from './ArrowSend';
 import { Refresh } from './Refresh';
+import { SystemUpdateAlt } from './SystemUpdateAlt';
+import { Visibility } from './Visibility';
+import { VisibilityOff } from './VisibilityOff';
+import { Login } from './Login';
+import { SmartToy } from './SmartToy';
+import { VideoCall } from './VideoCall';
 
 export {
   Close,
@@ -117,5 +123,11 @@ export {
   Reply,
   Comment,
   ArrowSend,
-  Refresh
+  Refresh,
+  SystemUpdateAlt,
+  Visibility,
+  VisibilityOff,
+  Login,
+  SmartToy,
+  VideoCall
 };

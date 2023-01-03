@@ -1,13 +1,12 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { animated } from '@react-spring/web';
+
+// types
+import { ICardProps } from './credentialCard';
 
 interface IProps {
   isLoading: boolean;
-}
-
-interface ICardProps {
-  primaryColor: string;
-  secondaryColor: string;
 }
 
 export const Wrapper = styled.div<IProps>`
@@ -52,15 +51,34 @@ export const Wrapper = styled.div<IProps>`
       margin-bottom: 100px;
 
       @media (min-width: ${theme.screens.xl}) {
+        grid-template-columns: repeat(3, 384px);
+      }
+
+      @media (min-width: ${theme.screens['2xl']}) {
         grid-template-columns: repeat(3, 1fr);
       }
     }
   `}
 `;
 
-export const Card = styled.div<ICardProps>`
-  ${({ theme, primaryColor, secondaryColor }) => css`
+export const CardContainer = styled.div`
+  ${({ theme }) => css`
+    position: relative;
+  `}
+`;
+
+export const Card = styled(animated.div)<ICardProps>`
+  ${({
+    theme,
+    primaryColor = 'bunting',
+    secondaryColor = 'gray',
+    smaller,
+    frontChildren
+  }) => css`
+    position: ${frontChildren ? 'absolute' : 'initial'};
     width: 100%;
+    min-height: 220px;
+    height: 100%;
     border-radius: 12px;
     padding: 16px 20px;
     background: linear-gradient(
@@ -70,17 +88,17 @@ export const Card = styled.div<ICardProps>`
     );
     backdrop-filter: blur(20px);
     cursor: pointer;
-    position: relative;
+    will-change: transform, opacity;
 
     .card-title {
       margin: 0;
       font-family: 'HelveticaNowDisplay-Bold';
-      font-size: ${theme.fonts.lg};
+      font-size: ${smaller ? theme.fonts.base : theme.fonts.lg};
       color: ${theme.colors.white};
       word-wrap: break-word;
 
       @media (min-width: ${theme.screens.xl}) {
-        font-size: ${theme.fonts['2xl']};
+        font-size: ${smaller ? theme.fonts.xl : theme.fonts['2xl']};
       }
     }
 
@@ -93,56 +111,82 @@ export const Card = styled.div<ICardProps>`
       word-wrap: break-word;
     }
 
-    .card-button {
+    .card-bottom {
+      position: absolute;
+      bottom: 5px;
+      right: 20px;
+      left: 20px;
       display: flex;
       align-items: center;
-      margin-top: 40px;
 
-      .card-button-text {
-        margin: 0;
-        margin-right: 9px;
-        font-size: ${theme.fonts.sm};
-        color: ${theme.colors.white};
+      .card-dates {
+        display: flex;
+        grid-gap: 14px;
+
+        .card-date {
+          .card-date-title {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.white}B3;
+          }
+
+          .card-date-text {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.white};
+            font-family: 'HelveticaNowDisplay-Medium';
+          }
+        }
       }
 
-      .card-button-icon {
-        width: 20px;
-        height: 20px;
+      .card-button {
+        display: flex;
+        align-items: center;
 
-        & > svg {
+        .card-button-text {
+          margin: 0;
+          margin-right: 9px;
+          font-size: ${theme.fonts.sm};
+          color: ${theme.colors.white};
+        }
+
+        .card-button-icon {
           width: 20px;
           height: 20px;
+
+          & > svg {
+            width: 20px;
+            height: 20px;
+            fill: ${theme.colors.white};
+          }
+        }
+      }
+
+      .card-icon {
+        margin-left: auto;
+        width: ${smaller ? '60px' : '80px'};
+        height: ${smaller ? '60px' : '80px'};
+
+        & > svg {
+          width: ${smaller ? '60px' : '80px'};
+          height: ${smaller ? '60px' : '80px'};
           fill: ${theme.colors.white};
         }
       }
-    }
 
-    .card-icon {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 80px;
-      height: 80px;
+      .card-brand {
+        width: ${smaller ? '60px' : '80px'};
+        height: ${smaller ? '60px' : '80px'};
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-      & > svg {
-        width: 80px;
-        height: 80px;
-        fill: ${theme.colors.white};
-      }
-    }
-
-    .card-brand {
-      width: 80px;
-      height: 80px;
-      margin-top: 51px;
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      & > img {
-        width: 80px;
-        height: 80px;
+        & > img,
+        & > svg {
+          width: ${smaller ? '60px' : '80px'};
+          height: ${smaller ? '60px' : '80px'};
+        }
       }
     }
   `}

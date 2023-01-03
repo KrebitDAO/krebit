@@ -7,8 +7,8 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
-import { getCredentials } from '../utils';
-import { checkCredentialsURLs, constants } from 'utils';
+import { getCredential, getCredentials } from '../utils';
+import { constants } from 'utils';
 
 const DynamicShareWithModal = dynamic(
   () => import('../../ShareWithModal').then(c => c.ShareWithModal),
@@ -55,11 +55,12 @@ export const Personhood = (props: IProps) => {
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const isLoading = status === 'idle' || status === 'pending';
-  const isCurrentUserAuthenticated = passport?.did;
+  const isCurrentUserAuthenticated = Boolean(passport?.did);
 
   useEffect(() => {
     if (!window) return;
     if (!publicPassport) return;
+    if (!publicPassport?.idx) return;
     if (isHidden) return;
 
     getInformation();
@@ -95,6 +96,18 @@ export const Personhood = (props: IProps) => {
     }
   };
 
+  const updateSelectedCredential = async (vcId: string) => {
+    if (!vcId) return;
+
+    const personhoodCredential = await getCredential({
+      vcId,
+      type: 'Personhood',
+      passport: publicPassport
+    });
+
+    setCurrentPersonhoodSelected(personhoodCredential);
+  };
+
   const handleIsDropdownOpen = (id: string) => {
     if (isDropdownOpen === undefined || isDropdownOpen !== id) {
       setIsDropdownOpen(id);
@@ -106,8 +119,6 @@ export const Personhood = (props: IProps) => {
   };
 
   const handleIsVerifyCredentialOpen = () => {
-    if (!isAuthenticated) return;
-
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentPersonhoodSelected({
       credential: undefined,
@@ -138,19 +149,13 @@ export const Personhood = (props: IProps) => {
     setCurrentPersonhoodSelected(values);
     setCurrentActionType(type);
 
+    if (type === 'see_details') {
+      setIsVerifyCredentialOpen(true);
+    }
+
     if (type === 'share_with') {
       if (!isAuthenticated) return;
       setIsShareWithModalOpen(true);
-    }
-
-    if (type === 'add_stamp') {
-      if (!isAuthenticated) return;
-      setIsVerifyCredentialOpen(true);
-    }
-
-    if (type === 'mint_nft') {
-      if (!isAuthenticated) return;
-      setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'remove_credential' || type === 'remove_stamp') {
@@ -229,6 +234,13 @@ export const Personhood = (props: IProps) => {
         }
       };
 
+      setCurrentPersonhoodSelected(prevValues => ({
+        ...prevValues,
+        credential: {
+          ...prevValues.credential,
+          value: claimValue
+        }
+      }));
       setPersonhoods(updatedPersonhoods);
     }
   };
@@ -284,22 +296,17 @@ export const Personhood = (props: IProps) => {
       .replace('GT', '> ');
   };
 
-  const handleCheckCredentialsURLs = (
-    type: string,
-    valuesType: string,
-    values: any
-  ) => {
-    checkCredentialsURLs(type, valuesType, values);
-    handleIsDropdownOpen(undefined);
-  };
-
   return (
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          currentPersonhood={currentPersonhoodSelected}
+          isAuthenticated={isAuthenticated}
+          credential={currentPersonhoodSelected}
           getInformation={getInformation}
+          updateCredential={updateSelectedCredential}
           onClose={handleIsVerifyCredentialOpen}
+          formatCredentialName={formatCredentialName}
+          formatLitValue={handleClaimValue}
         />
       ) : null}
       {isShareWithModalOpen ? (
@@ -392,25 +399,10 @@ export const Personhood = (props: IProps) => {
                   onClose: () => handleIsDropdownOpen(undefined),
                   items: [
                     {
-                      title: 'Credential details',
+                      title: 'See details',
                       onClick: () =>
-                        handleCheckCredentialsURLs(
-                          'ceramic',
-                          'credential',
-                          personhood.credential
-                        )
+                        handleCurrentPersonhood('see_details', personhood)
                     },
-                    personhood.stamps?.length !== 0
-                      ? {
-                          title: 'Stamp details',
-                          onClick: () =>
-                            handleCheckCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              personhood.stamps[0]
-                            )
-                        }
-                      : undefined,
                     isAuthenticated &&
                     personhood.credential?.visualInformation
                       .isEncryptedByDefault
@@ -418,13 +410,6 @@ export const Personhood = (props: IProps) => {
                           title: 'Share with',
                           onClick: () =>
                             handleCurrentPersonhood('share_with', personhood)
-                        }
-                      : undefined,
-                    isAuthenticated && personhood.stamps?.length === 0
-                      ? {
-                          title: 'Add stamp',
-                          onClick: () =>
-                            handleCurrentPersonhood('add_stamp', personhood)
                         }
                       : undefined,
                     isCurrentUserAuthenticated &&

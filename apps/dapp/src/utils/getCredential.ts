@@ -6,6 +6,7 @@ interface Props {
   claimedCredentialId?: string;
   credentialSubjectAddress?: string;
   credentialSubjectAddressDID?: string;
+  credentialSubjectEmail?: string;
 }
 
 export const getCredential = async (props: Props) => {
@@ -14,7 +15,8 @@ export const getCredential = async (props: Props) => {
     claimedCredential,
     claimedCredentialId,
     credentialSubjectAddress,
-    credentialSubjectAddressDID
+    credentialSubjectAddressDID,
+    credentialSubjectEmail
   } = props;
 
   try {
@@ -31,6 +33,9 @@ export const getCredential = async (props: Props) => {
           : null,
         credentialSubjectAddressDID: credentialSubjectAddressDID
           ? credentialSubjectAddressDID
+          : null,
+        credentialSubjectEmail: credentialSubjectEmail
+          ? credentialSubjectEmail
           : null
       })
     }).then(result => result.json());

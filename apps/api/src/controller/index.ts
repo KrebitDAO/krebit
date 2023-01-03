@@ -13,6 +13,7 @@ import { MetadataController } from './metadata';
 import { GuildController } from './guild';
 import { StackController } from './stack';
 import { JobsController } from './jobs';
+import { OpenAIController } from './openai';
 
 export {
   DelegatedController,
@@ -29,5 +30,6 @@ export {
   MetadataController,
   GuildController,
   StackController,
-  JobsController
+  JobsController,
+  OpenAIController
 };
