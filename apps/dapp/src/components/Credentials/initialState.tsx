@@ -57,8 +57,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   {
     type: 'referral',
     title: 'Referr a friend',
-    description:
-      'Invite a friend to the Krebiters community and earn when they sell',
+    description: 'Invite a friend to the Krebiters community',
     primaryColor: 'haiti',
     secondaryColor: 'rose',
     icon: <Delegate />,
@@ -82,8 +81,6 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       button: {
         text: 'Invite',
         onClick: values => {
-          // TODO: encrypt issueTo and get credentialSubjectListUrl
-
           return {
             values: {
               ...values,

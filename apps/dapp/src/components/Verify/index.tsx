@@ -494,10 +494,11 @@ export const Verify = (props: IProps) => {
                                   Issuer:
                                   <a
                                     href={
-                                      '/' + credential.credential?.issuer?.id
+                                      '/' +
+                                      (credential.credential?.issuer?.id
                                         ? credential.credential?.issuer?.id
                                         : currentVerify.steps[currentStep || 0]
-                                            ?.metadata?.did
+                                            ?.metadata?.did)
                                     }
                                     target="_blank"
                                     className="verify-steps-content-description verify-steps-content-dots"
@@ -522,10 +523,12 @@ export const Verify = (props: IProps) => {
                                 </li>
                                 <li className="verify-steps-content-description">
                                   Price: $
-                                  {
-                                    currentVerify.steps[currentStep || 0]
-                                      ?.metadata?.price
-                                  }
+                                  {credential.credential?.credentialSubject
+                                    ?.price
+                                    ? credential.credential?.credentialSubject
+                                        ?.price
+                                    : currentVerify.steps[currentStep || 0]
+                                        ?.metadata?.price}
                                 </li>
                               </ul>
                             ) : null}
