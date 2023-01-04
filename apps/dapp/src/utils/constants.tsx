@@ -258,11 +258,13 @@ const DEFAULT_SHARE_CONTENT_SOCIAL_NETWORKS = [
 const DEFAULT_IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
 const DEFAULT_ERROR_MESSAGES = {
-  ID_NOT_FOUND: 'Not found'
+  ID_NOT_FOUND: 'Not found',
+  NOT_WALLET_DEFINED: 'Not wallet defined',
+  NOT_VISUAL_INFORMATION: 'Not visual information defined'
 };
 
 const DEFAULT_MESSAGES_FOR_PROVIDERS = {
-  INITIAL: 'Approve signature on your Wallet...',
+  INITIAL: 'Approving signature on your Wallet...',
   ISSUER_CONNECTION: 'Connecting to issuer...',
   SAVING_CLAIMED_CREDENTIAL: 'Saving claimed credential...',
   ISSUING_CREDENTIAL: 'Issuing credential...',
@@ -271,7 +273,8 @@ const DEFAULT_MESSAGES_FOR_PROVIDERS = {
 };
 
 const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
-  ERROR_CREDENTIAL: 'Error saving credential. Please check later'
+  ERROR_CREDENTIAL: 'Error saving credential. Please check later',
+  ERROR_MINT: 'Error minting stamp NFT. Please check later'
 };
 
 const DEFAULT_SKILL_LANGUAGES = [

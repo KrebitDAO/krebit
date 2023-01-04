@@ -3,7 +3,14 @@ import { useRouter } from 'next/router';
 import Error from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
 
-import { Background, LoadingWrapper, Skills, Wrapper } from './styles';
+import {
+  Background,
+  LoadingWrapper,
+  QuestionModalText,
+  Skills,
+  Wrapper,
+  Summary
+} from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
 import { Work } from './Work';
@@ -13,8 +20,15 @@ import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
-import { Share } from 'components/Icons';
-import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
+import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
+import { QuestionModal } from 'components/QuestionModal';
+import {
+  isValid,
+  normalizeSchema,
+  formatUrlImage,
+  constants,
+  openAI
+} from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
@@ -93,11 +107,19 @@ export const Username = () => {
     useState<ICredential>();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
+  const [isExportWalletOpen, setIsExportWalletOpen] = useState(false);
   const { query, push } = useRouter();
   const {
     auth,
     storage,
-    walletInformation: { publicPassport, passport, issuer, orbis },
+    walletInformation: {
+      type,
+      ethProvider,
+      publicPassport,
+      passport,
+      issuer,
+      orbis
+    },
     walletModal: { handleOpenConnectWallet },
     profileInformation: { handleSetProfile }
   } = useContext(GeneralContext);
@@ -188,6 +210,33 @@ export const Username = () => {
     query.id,
     query.credential_id
   ]);
+
+  useEffect(() => {
+    if (!window) return;
+    if (auth.status !== 'resolved') return;
+    if (status !== 'resolved') return;
+
+    const getSummary = async (skills: string[]) => {
+      const summary = await openAI.getSkillSummary(
+        Krebit.utils
+          .mergeArray(skills)
+          .map(
+            (item, index) =>
+              `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
+          )
+      );
+
+      setProfile(prevValues => ({ ...prevValues, summary }));
+    };
+
+    if (profile?.skills && (!profile?.summary || profile?.summary === '')) {
+      const skills = Krebit.utils.mergeArray(profile.skills);
+
+      if (skills.length > 10) {
+        getSummary(skills);
+      }
+    }
+  }, [status, auth, profile]);
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
@@ -319,6 +368,30 @@ export const Username = () => {
     }
   };
 
+  const handleIsExportWalletOpen = () => {
+    setIsExportWalletOpen(prevValue => !prevValue);
+  };
+
+  const handleExportWeb3AuthPrivateKey = async () => {
+    if (!window) return;
+    if (type !== 'web3auth') return;
+    if (currentDIDFromURL !== auth?.did) return;
+
+    const privateKey = await ethProvider.request({
+      method: 'eth_private_key'
+    });
+
+    const fakeLink = document.createElement('a');
+
+    const file = new Blob([privateKey], { type: 'text/plain' });
+
+    fakeLink.href = URL.createObjectURL(file);
+    fakeLink.download = 'privateKey.txt';
+    fakeLink.click();
+
+    URL.revokeObjectURL(fakeLink.href);
+  };
+
   if (status === 'rejected') {
     return <Error statusCode={404} />;
   }
@@ -335,6 +408,32 @@ export const Username = () => {
           storage={storage}
         />
       )}
+      {isExportWalletOpen && (
+        <QuestionModal
+          title="Export wallet"
+          component={() => (
+            <QuestionModalText>
+              We're going to export your private key, this is escential for your
+              personal web3 wallet, with this{' '}
+              <a
+                href="https://metamask.zendesk.com/hc/en-us/articles/360015489331-How-to-import-an-account"
+                target="_blank"
+              >
+                guide
+              </a>{' '}
+              you can import it in metamask and start using it!
+            </QuestionModalText>
+          )}
+          continueButton={{
+            text: 'Export',
+            onClick: handleExportWeb3AuthPrivateKey
+          }}
+          cancelButton={{
+            text: 'Cancel',
+            onClick: handleIsExportWalletOpen
+          }}
+        />
+      )}
       <Layout>
         {isLoading ? (
           <LoadingWrapper>
@@ -344,6 +443,7 @@ export const Username = () => {
           <Wrapper
             profilePicture={formatUrlImage(profile?.picture)}
             isCurrentProfile={currentDIDFromURL !== auth?.did}
+            type={type}
           >
             <div className="profile-container">
               <Background image={formatUrlImage(profile?.background)} />
@@ -445,6 +545,15 @@ export const Username = () => {
                       styleType="border-rounded"
                     />
                   </div>
+                  {currentDIDFromURL === auth?.did && type === 'web3auth' ? (
+                    <div className="profile-buttons-rounded">
+                      <Button
+                        icon={<SystemUpdateAlt />}
+                        onClick={handleIsExportWalletOpen}
+                        styleType="border-rounded"
+                      />
+                    </div>
+                  ) : null}
                   {isShareContentOpen && (
                     <ShareContentModal
                       customText={`${profile.name}'s Krebited profile on @KrebitID`}
@@ -456,6 +565,17 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
+                {profile?.summary && (
+                  <Summary>
+                    <div className="summary-header">
+                      <p className="summary-header-text">Summary</p>
+                      <div className="summary-header-icon">
+                        <SmartToy />
+                      </div>
+                    </div>
+                    <p className="summary-text">{profile.summary}</p>
+                  </Summary>
+                )}
                 <Skills>
                   <div className="skills-header">
                     <p className="skills-header-text">Skills</p>

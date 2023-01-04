@@ -16,7 +16,6 @@ export interface ICredential {
   stamps: any[];
   skills?: string[];
   isMinted: boolean;
-  isCustomCredential?: boolean;
 }
 
 export interface IProfile {
@@ -32,6 +31,7 @@ export interface IProfile {
   ensDomain?: string;
   unsDomain?: string;
   orbisMetadata?: any;
+  summary?: string;
   personhoods?: ICredential[];
   works?: ICredential[];
   communities?: ICredential[];
@@ -65,7 +65,8 @@ export const profile = async (props: IProps) => {
       picture: orbisProfile?.data?.details?.profile?.pfp || DEFAULT_PICTURE,
       name:
         orbisProfile?.data?.details?.profile?.username ||
-        orbisProfile?.data?.details?.metadata?.ensName,
+        orbisProfile?.data?.details?.metadata?.ensName ||
+        passport?.address,
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,
       countFollowers: orbisProfile?.data?.count_followers || 0,

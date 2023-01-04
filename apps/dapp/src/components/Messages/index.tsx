@@ -19,7 +19,14 @@ import {
   Wrapper
 } from './styles';
 import { Loading } from 'components/Loading';
-import { Add, ArrowForward, ArrowSend, Close } from 'components/Icons';
+import {
+  Add,
+  ArrowForward,
+  ArrowSend,
+  Close,
+  VideoCall,
+  Deal
+} from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Autocomplete } from 'components/Autocomplete';
 import { Button } from 'components/Button';
@@ -30,6 +37,7 @@ import { useWindowSize } from 'hooks';
 import { theme } from 'theme';
 
 const DEFAULT_LIMIT_PICTURES_LIST = 4;
+const DEFAULT_CALL_SERVICE = 'https://iframe.huddle01.com/';
 
 export const Messages = () => {
   const [status, setStatus] = useState('idle');
@@ -279,6 +287,20 @@ export const Messages = () => {
     }
   };
 
+  const handleCreateDeal = () => {
+    const recipients = currentConversation.recipients_details
+      .filter(details => details?.did !== auth?.did)
+      .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
+      .map(details => details?.metadata?.address || details?.did)
+      .join(',');
+
+    if (recipients.length > 0) {
+      push(`/create/deal/?issueTo=${recipients}`);
+    } else {
+      push('/create/deal');
+    }
+  };
+
   const handleCreateConversation = async () => {
     if (isMessagesLoading) return;
 
@@ -302,6 +324,40 @@ export const Messages = () => {
         handleIsAutoCompleteOpen();
         reload();
       }
+    } catch (error) {
+      console.error(error);
+      setStatus('rejected_action_message');
+    }
+  };
+
+  const handleCreateVideoCall = async () => {
+    if (isMessagesLoading) return;
+
+    try {
+      setStatus('pending_action_message');
+
+      const ownerProfile = currentConversation?.recipients_details?.filter(
+        values => values?.did === auth?.did
+      )[0]?.profile;
+
+      if (!ownerProfile) return;
+
+      const newMessage = {
+        decryptMessage: `${
+          ownerProfile?.username
+        } has made a call. You can join here: ${
+          DEFAULT_CALL_SERVICE + currentConversation?.stream_id
+        }`,
+        creator: auth?.did
+      };
+      setMessages(prevValues => [newMessage, ...prevValues]);
+
+      await orbis.sendMessage({
+        conversation_id: currentConversation?.stream_id,
+        body: newMessage.decryptMessage || ''
+      });
+
+      setStatus('resolved_action_message');
     } catch (error) {
       console.error(error);
       setStatus('rejected_action_message');
@@ -588,6 +644,7 @@ export const Messages = () => {
             </div>
             <div className="messages-right-box-chat">
               <input
+                className="messages-right-box-chat-input"
                 placeholder="Type your message"
                 value={form?.messageValue || ''}
                 onChange={handleChange}
@@ -598,13 +655,42 @@ export const Messages = () => {
                 spellCheck="false"
                 disabled={isMessagesLoading || isActionMessageLoading}
               />
-              <button
-                type="button"
-                onClick={handleSendMessage}
-                disabled={isMessagesLoading || isActionMessageLoading}
-              >
-                <ArrowSend />
-              </button>
+              <div className="message-right-box-chat-options">
+                {!form?.messageValue && (
+                  <div
+                    className={`message-right-box-chat-icon ${
+                      isMessagesLoading || isActionMessageLoading
+                        ? 'message-right-box-chat-icon-disabled'
+                        : ''
+                    }`}
+                    onClick={
+                      isMessagesLoading || isActionMessageLoading
+                        ? undefined
+                        : handleCreateVideoCall
+                    }
+                  >
+                    <VideoCall />
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={
+                    isMessagesLoading || isActionMessageLoading
+                      ? undefined
+                      : handleSendMessage
+                  }
+                  disabled={isMessagesLoading || isActionMessageLoading}
+                >
+                  <ArrowSend />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCreateDeal}
+                  disabled={isMessagesLoading || isActionMessageLoading}
+                >
+                  <Deal />
+                </button>
+              </div>
             </div>
           </div>
         </div>

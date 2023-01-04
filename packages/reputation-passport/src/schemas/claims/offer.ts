@@ -27,6 +27,6 @@ export const offer = {
     usTaxPayer: { type: 'boolean' },
     proofs: { type: 'object' }
   },
-  required: ['offerType', 'title', 'price', 'usTaxPayer'],
+  required: ['title', 'price'],
   additionalProperties: true
 };

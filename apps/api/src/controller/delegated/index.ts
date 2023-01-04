@@ -24,8 +24,8 @@ export const DelegatedController = async (
       throw new Error('Body not defined');
     }
 
-    if (!request?.body?.claimedCredentialId) {
-      throw new Error(`No claimedCredentialId in body`);
+    if (!request?.body?.claimedCredential) {
+      throw new Error(`No claimedCredential in body`);
     }
 
     if (!request?.body?.credentialSubjectAddress) {
@@ -36,12 +36,14 @@ export const DelegatedController = async (
       throw new Error(`No credentialSubjectAddress in body`);
     }
 
-    const { claimedCredentialId } = request.body;
+    const { claimedCredential } = request.body;
     const { credentialSubjectAddress } = request.body;
     const { credentialSubjectAddressDID } = request.body;
+    const { credentialSubjectEmail } = request.body;
 
     console.log('credentialSubjectAddress:', credentialSubjectAddress);
     console.log('credentialSubjectAddressDID:', credentialSubjectAddressDID);
+    console.log('credentialSubjectEmail:', credentialSubjectEmail);
 
     const { wallet, ethProvider } = await connect();
 
@@ -50,12 +52,11 @@ export const DelegatedController = async (
       wallet,
       ethProvider,
       address: wallet.address,
-      ceramicUrl: SERVER_CERAMIC_URL
+      ceramicUrl: SERVER_CERAMIC_URL,
+      litSdk: LitJsSdk
     });
     const did = await Issuer.connect();
     console.log('DID:', did);
-
-    const claimedCredential = await Issuer.getCredential(claimedCredentialId);
 
     console.log(
       'Verifying delegated credential with claimedCredential: ',
@@ -77,11 +78,17 @@ export const DelegatedController = async (
       const claimValue = JSON.parse(claimedCredential.credentialSubject.value);
       console.log('claim value: ', claimValue);
 
+      const issueTo = await Issuer.decryptClaimValue(
+        claimValue.credentialSubjectList
+      );
+      console.log('issueTo: ', issueTo);
+
       // Is this a valid Issuer?, let'see if they have enough KRB balance or something.
       const valid =
-        claimValue.values?.issueTo?.findIndex(element => {
+        issueTo.findIndex(element => {
           return (
-            element.toLowerCase() === credentialSubjectAddress.toLowerCase()
+            element.toLowerCase() === credentialSubjectAddress.toLowerCase() ||
+            element.toLowerCase() === credentialSubjectEmail.toLowerCase()
           );
         }) > -1 &&
         claimValue.ethereumAddress.toLowerCase() ===
@@ -96,13 +103,8 @@ export const DelegatedController = async (
           claimedCredential.credentialSubject.ethereumAddress
         );
 
-        const expirationDate = new Date();
-        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
-        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
-        console.log('expirationDate: ', expirationDate);
-
         const claim = {
-          id: claimedCredentialId,
+          id: claimedCredential.id,
           ethereumAddress: credentialSubjectAddress,
           did: credentialSubjectAddressDID,
           type: claimValue.credentialType,
@@ -112,13 +114,13 @@ export const DelegatedController = async (
             : ['Community'],
           value: {
             ...claimValue.values,
-            parentCredential: claimedCredentialId,
+            parentCredential: claimedCredential.id,
             onBehalveOfIssuer: claimedCredential.issuer
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
           stake: parseInt(SERVER_STAKE, 10), // In KRB
           price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+          expirationDate: claimedCredential.expirationDate
         };
         console.log('claim: ', claim);
 

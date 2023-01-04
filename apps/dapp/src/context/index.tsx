@@ -5,8 +5,19 @@ import LitJsSdk from '@lit-protocol/sdk-browser';
 import { Web3Storage } from 'web3.storage';
 import Krebit from '@krebitdao/reputation-passport';
 import { Orbis } from '@orbisclub/orbis-sdk';
+import { Web3Auth } from '@web3auth/modal';
+import { WALLET_ADAPTERS, CHAIN_NAMESPACES } from '@web3auth/base';
+import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+import { TorusWalletAdapter } from '@web3auth/torus-evm-adapter';
+import { TorusWalletConnectorPlugin } from '@web3auth/torus-wallet-connector-plugin';
+import {
+  config as PassportConfig,
+  isProduction as PassportConfigIsProduction
+} from '@krebitdao/reputation-passport/dist/config';
+import { schemas as PassportSchema } from '@krebitdao/reputation-passport/dist/schemas';
 
-import { getWalletInformation, normalizeSchema } from 'utils';
+import { constants, getWalletInformation, normalizeSchema } from 'utils';
+import { theme } from 'theme';
 
 // types
 import { IProfile } from 'utils/normalizeSchema';
@@ -36,6 +47,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [issuer, setIssuer] = useState<Issuer>();
   const [publicPassport, setPublicPassport] = useState<Passport>();
   const [orbis, setOrbis] = useState<Orbis>();
+  const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
   const [walletInformation, setWalletInformation] = useState<
     IWalletInformation | undefined
   >();
@@ -55,6 +67,9 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const orbis = new Orbis();
       setOrbis(orbis);
 
+      const { web3auth, provider } = await initWeb3Auth();
+      setWeb3auth(web3auth);
+
       const currentType = localStorage.getItem('auth-type');
 
       if (!currentType) {
@@ -62,7 +77,21 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         return;
       }
 
-      const information = await getWalletInformation(currentType);
+      let information: IWalletInformation;
+
+      if (currentType === 'metamask' || currentType === 'wallet_connect') {
+        information = await getWalletInformation(currentType);
+      }
+
+      if (currentType === 'web3auth') {
+        information = await getWalletInformation(currentType, provider);
+      }
+
+      if (!information) {
+        await logout();
+        throw new Error(constants.DEFAULT_ERROR_MESSAGES.NOT_WALLET_DEFINED);
+      }
+
       setWalletInformation(information);
 
       const passport = new Krebit.core.Passport({
@@ -120,6 +149,94 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     };
   }, []);
 
+  const initWeb3Auth = async () => {
+    try {
+      const web3auth = new Web3Auth({
+        clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
+        chainConfig: {
+          chainNamespace: CHAIN_NAMESPACES.EIP155,
+          chainId: ethers.utils.hexValue(
+            PassportSchema.krbToken[PassportConfig.state.network].domain.chainId
+          ),
+          rpcTarget: PassportConfig.state.rpcUrl
+        },
+        uiConfig: {
+          theme: 'dark',
+          loginMethodsOrder: ['google', 'facebook', 'twitter', 'discord'],
+          appLogo: 'https://krebit.id/imgs/logos/Krebit.svg'
+        }
+      });
+
+      const openloginAdapter = new OpenloginAdapter({
+        adapterSettings: {
+          clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
+          network: PassportConfigIsProduction ? 'mainnet' : 'testnet',
+          uxMode: 'popup',
+          whiteLabel: {
+            name: 'Krebit.id',
+            logoLight: 'https://krebit.id/imgs/logos/Krebit.svg',
+            logoDark: 'https://krebit.id/imgs/logos/Krebit.svg',
+            defaultLanguage: 'en',
+            dark: true
+          }
+        }
+      });
+      const torusWalletAdapter = new TorusWalletAdapter({
+        clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
+        initParams: {
+          whiteLabel: {
+            theme: {
+              isDark: true,
+              colors: { torusBrand1: theme.colors.cyan }
+            },
+
+            logoLight: 'https://krebit.id/imgs/images/wallet.svg',
+            logoDark: 'https://krebit.id/imgs/images/wallet.svg',
+            defaultLanguage: 'en',
+            topupHide: false,
+            featuredBillboardHide: false,
+            disclaimerHide: true
+          }
+        }
+      });
+
+      web3auth.configureAdapter(openloginAdapter);
+      web3auth.configureAdapter(torusWalletAdapter);
+
+      const torusPlugin = new TorusWalletConnectorPlugin({
+        torusWalletOpts: {
+          buttonPosition: 'bottom-right'
+        },
+        walletInitOptions: {
+          whiteLabel: {
+            theme: {
+              isDark: true,
+              colors: { primary: theme.colors.cyan }
+            },
+            logoLight: 'https://krebit.id/imgs/images/wallet.svg',
+            logoDark: 'https://krebit.id/imgs/images/wallet.svg'
+          },
+          useWalletConnect: true,
+          enableLogging: false
+        }
+      });
+      await web3auth.addPlugin(torusPlugin);
+
+      await web3auth.initModal({
+        [WALLET_ADAPTERS.OPENLOGIN]: {
+          showOnModal: true
+        }
+      });
+
+      return {
+        web3auth,
+        provider: torusPlugin?.proxyProvider || web3auth.provider
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleOpenConnectWallet = () => {
     if (passport?.did) {
       push(`/${passport.did}`);
@@ -144,7 +261,21 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
     setStatus('pending');
 
     try {
-      const information = await getWalletInformation(type);
+      let information: IWalletInformation;
+
+      if (type === 'metamask' || type === 'wallet_connect') {
+        information = await getWalletInformation(type);
+      }
+
+      if (type === 'web3auth') {
+        const web3authProvider = await web3auth.connect();
+        information = await getWalletInformation(type, web3authProvider);
+      }
+
+      if (!information) {
+        throw new Error(constants.DEFAULT_ERROR_MESSAGES.NOT_WALLET_DEFINED);
+      }
+
       setWalletInformation(information);
       localStorage.setItem('auth-type', type);
 
@@ -183,7 +314,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         setPassport(passport);
         setIssuer(issuer);
 
-        const orbisConnection = orbis.connect_v2({
+        const orbisConnection = await orbis.connect_v2({
           provider: information.ethProvider,
           lit: true
         });
@@ -203,8 +334,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
             push(`/${passport.did}`);
           }
         }
+
+        return information;
       }
     } catch (error) {
+      console.error(error);
       setStatus('rejected');
     }
   };
@@ -212,7 +346,16 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const logout = async () => {
     if (!window) return;
 
-    await orbis.logout();
+    const currentAuthType = window.localStorage.getItem('auth-type');
+
+    if (currentAuthType === 'web3auth' && web3auth) {
+      await web3auth.logout();
+    }
+
+    if (orbis) {
+      await orbis.logout();
+    }
+
     window.localStorage.removeItem('auth-type');
     window.localStorage.removeItem('did-session');
     window.localStorage.removeItem('krebit-remember-session');

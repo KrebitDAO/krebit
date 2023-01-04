@@ -1,4 +1,4 @@
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import { schemas } from '@krebitdao/reputation-passport/dist/schemas';
 
 export const checkCredentialsURLs = (
@@ -21,7 +21,10 @@ export const checkCredentialsURLs = (
 
   if (valuesType === 'nft') {
     const tokenIdHex = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(['string'], [values])
+      ethers.utils.defaultAbiCoder.encode(
+        ['string'],
+        [values?.credentialSubject?.type]
+      )
     );
     const tokenId = ethers.BigNumber.from(tokenIdHex);
     value = tokenId.toString();
@@ -41,11 +44,25 @@ export const checkCredentialsURLs = (
   }
 
   if (type === 'rarible') {
-    let contract = schemas.krebitNFT[process.env.NEXT_PUBLIC_NETWORK]?.address;
+    let contract =
+      schemas.krebitNFT[
+        process.env.NEXT_PUBLIC_NETWORK
+      ]?.address?.toLowerCase();
     currentUrl =
       process.env.NEXT_PUBLIC_NETWORK === 'polygon'
         ? `https://rarible.com/token/polygon/${contract}:${value}`
         : `https://testnet.rarible.com/token/polygon/${contract}:${value}`;
+  }
+
+  if (type === 'opensea') {
+    let contract =
+      schemas.krebitNFT[
+        process.env.NEXT_PUBLIC_NETWORK
+      ]?.address?.toLowerCase();
+    currentUrl =
+      process.env.NEXT_PUBLIC_NETWORK === 'polygon'
+        ? `https://opensea.io/assets/matic/${contract}/${value}`
+        : `https://testnets.opensea.io/assets/mumbai/${contract}/${value}`;
   }
 
   window.open(currentUrl, '_blank');

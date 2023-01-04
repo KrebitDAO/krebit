@@ -298,10 +298,8 @@ export class Passport {
 
         if (content && content.issued) {
           const current = content.issued ? content.issued : [];
-          console.log('current:', current);
           if (!current.includes(vcId)) {
             current.push(vcId);
-            console.log('current push:', current);
             result = await this.idx.merge('issuedCredentials', {
               issued: current
             });
@@ -649,6 +647,11 @@ export class Passport {
     } catch (err) {
       throw new Error(err);
     }
+  };
+
+  getSkills = async () => {
+    const credentials = await this.getCredentials();
+    return credentials.flatMap(credential => credential.type);
   };
 
   // registeredCredentials from subgraph

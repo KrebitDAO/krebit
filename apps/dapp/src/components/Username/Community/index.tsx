@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 import { Wrapper } from './styles';
 import { VerifyCredential } from './verifyCredential';
@@ -7,8 +8,9 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
-import { buildCredential, getCredentials } from '../utils';
-import { checkCredentialsURLs, constants } from 'utils';
+import { buildCredential, getCredential, getCredentials } from '../utils';
+import { constants } from 'utils';
+import { CREDENTIALS_INITIAL_STATE } from '../../Credentials/initialState';
 
 const DynamicShareWithModal = dynamic(
   () => import('../../ShareWithModal').then(c => c.ShareWithModal),
@@ -21,6 +23,7 @@ const DynamicShareWithModal = dynamic(
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 import { IProfile, ICredential } from 'utils/normalizeSchema';
+import { ValueOf } from 'next/dist/shared/lib/constants';
 
 interface IProps {
   isAuthenticated: boolean;
@@ -58,12 +61,14 @@ export const Community = (props: IProps) => {
   const [isVerifyCredentialOpen, setIsVerifyCredentialOpen] = useState(false);
   const [isShareWithModalOpen, setIsShareWithModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const { query, push } = useRouter();
   const isLoading = status === 'idle' || status === 'pending';
-  const isCurrentUserAuthenticated = passport?.did;
+  const isCurrentUserAuthenticated = Boolean(passport?.did);
 
   useEffect(() => {
     if (!window) return;
     if (!publicPassport) return;
+    if (!publicPassport?.idx) return;
     if (isHidden) return;
 
     getInformation();
@@ -78,7 +83,7 @@ export const Community = (props: IProps) => {
 
     const buildCurrentCredential = async () => {
       try {
-        const values = await buildCredential({
+        let values = await buildCredential({
           type: 'Community',
           credential: {
             ...customCredential,
@@ -91,11 +96,31 @@ export const Community = (props: IProps) => {
                 : {}
             }
           },
-          passport,
-          isCustomCredential: true
+          passport
         });
 
         if (values) {
+          const communityCredentialFromBuilder = values.skills
+            .map(skill =>
+              CREDENTIALS_INITIAL_STATE.find(state =>
+                skill.toLowerCase().includes(state.type)
+              )
+            )
+            .filter(value => value !== undefined);
+
+          if (communityCredentialFromBuilder?.length > 0) {
+            values = {
+              ...values,
+              credential: {
+                ...values.credential,
+                visualInformation: {
+                  ...values.credential?.visualInformation,
+                  builder: communityCredentialFromBuilder[0]
+                }
+              }
+            };
+          }
+
           setCurrentCommunitySelected(values);
           setIsVerifyCredentialOpen(true);
         }
@@ -122,12 +147,37 @@ export const Community = (props: IProps) => {
         limit: currentFilterOption === 'overview' ? 4 : 100
       });
 
-      setCommunities(communityCredentials);
+      const communities = communityCredentials.map(community => {
+        const communityCredentialFromBuilder = community.skills
+          .map(skill =>
+            CREDENTIALS_INITIAL_STATE.find(state =>
+              skill.toLowerCase().includes(state.type)
+            )
+          )
+          .filter(value => value !== undefined);
+
+        if (communityCredentialFromBuilder?.length > 0) {
+          return {
+            ...community,
+            credential: {
+              ...community.credential,
+              visualInformation: {
+                ...community.credential?.visualInformation,
+                builder: communityCredentialFromBuilder[0]
+              }
+            }
+          };
+        }
+
+        return community;
+      });
+
+      setCommunities(communities);
       handleProfile(prevValues => ({
         ...prevValues,
         skills:
           (prevValues.skills || [])?.concat(
-            communityCredentials.flatMap(credential => credential.skills)
+            communities.flatMap(credential => credential.skills)
           ) || []
       }));
       setStatus('resolved');
@@ -135,6 +185,18 @@ export const Community = (props: IProps) => {
       console.error(error);
       setStatus('rejected');
     }
+  };
+
+  const updateSelectedCredential = async (vcId: string) => {
+    if (!vcId) return;
+
+    const communityCredential = await getCredential({
+      vcId,
+      type: 'Community',
+      passport: publicPassport
+    });
+
+    setCurrentCommunitySelected(communityCredential);
   };
 
   const handleIsDropdownOpen = (id: string) => {
@@ -148,7 +210,9 @@ export const Community = (props: IProps) => {
   };
 
   const handleIsVerifyCredentialOpen = () => {
-    if (!isAuthenticated) return;
+    if (query?.id && query?.credential_id) {
+      push('/' + query.id);
+    }
 
     setIsVerifyCredentialOpen(prevState => !prevState);
     setCurrentCommunitySelected({
@@ -182,14 +246,13 @@ export const Community = (props: IProps) => {
     setCurrentCommunitySelected(values);
     setCurrentActionType(type);
 
+    if (type === 'see_details') {
+      setIsVerifyCredentialOpen(true);
+    }
+
     if (type === 'share_with') {
       if (!isAuthenticated) return;
       setIsShareWithModalOpen(true);
-    }
-
-    if (type === 'add_stamp') {
-      if (!isAuthenticated) return;
-      setIsVerifyCredentialOpen(true);
     }
 
     if (type === 'remove_credential' || type === 'remove_stamp') {
@@ -268,14 +331,27 @@ export const Community = (props: IProps) => {
         }
       };
 
+      setCurrentCommunitySelected(prevValues => ({
+        ...prevValues,
+        credential: {
+          ...prevValues.credential,
+          value: claimValue
+        }
+      }));
       setCommunities(updatedCommunities);
     }
   };
 
-  const formatCredentialName = (value: any) => {
+  const formatCredentialName = (name: any) => {
+    const value = name?.values ? name?.values : name;
     if (value?.encryptedString) return '******';
 
     let formattedValue = '';
+
+    if (value?.rating)
+      formattedValue = formattedValue
+        ?.concat(' / rating: ')
+        ?.concat(value.rating);
     if (value?.entity)
       formattedValue = formattedValue?.concat(' / ')?.concat(value.entity);
     if (value?.role)
@@ -315,22 +391,18 @@ export const Community = (props: IProps) => {
       .replace('GT', '> ');
   };
 
-  const handleCheckCredentialsURLs = (
-    type: string,
-    valuesType: string,
-    values: any
-  ) => {
-    checkCredentialsURLs(type, valuesType, values);
-    handleIsDropdownOpen(undefined);
-  };
-
   return (
     <>
       {isVerifyCredentialOpen ? (
         <VerifyCredential
-          currentCommunity={currentCommunitySelected}
+          isAuthenticated={isAuthenticated}
+          credential={currentCommunitySelected}
           getInformation={getInformation}
+          updateCredential={updateSelectedCredential}
           onClose={handleIsVerifyCredentialOpen}
+          formatCredentialName={formatCredentialName}
+          formatLitValue={handleClaimValue}
+          readOnly={!isAuthenticated && currentActionType === 'see_details'}
         />
       ) : null}
       {isShareWithModalOpen ? (
@@ -402,9 +474,13 @@ export const Community = (props: IProps) => {
                 key={index}
                 type="small"
                 id={`community_${index}`}
-                icon={community.credential?.visualInformation?.icon}
+                icon={
+                  community?.credential?.visualInformation?.builder?.icon ||
+                  community.credential?.visualInformation?.icon
+                }
                 title={formatCredentialType(
-                  community.credential?.credentialSubject?.type
+                  community?.credential?.visualInformation?.builder?.title ||
+                    community.credential?.credentialSubject?.type
                 )}
                 description={formatCredentialName(community.credential?.value)}
                 dates={{
@@ -422,41 +498,17 @@ export const Community = (props: IProps) => {
                   onClick: () => handleIsDropdownOpen(`community_${index}`),
                   onClose: () => handleIsDropdownOpen(undefined),
                   items: [
-                    !isAuthenticated
-                      ? {
-                          title: 'Credential details',
-                          onClick: () =>
-                            handleCheckCredentialsURLs(
-                              'ceramic',
-                              'credential',
-                              community.credential
-                            )
-                        }
-                      : undefined,
-                    !isAuthenticated && community.stamps?.length !== 0
-                      ? {
-                          title: 'Stamp details',
-                          onClick: () =>
-                            handleCheckCredentialsURLs(
-                              'polygon',
-                              'tx',
-                              community.stamps[0]
-                            )
-                        }
-                      : undefined,
+                    {
+                      title: 'See details',
+                      onClick: () =>
+                        handleCurrentCommunity('see_details', community)
+                    },
                     isAuthenticated &&
                     community.credential?.visualInformation.isEncryptedByDefault
                       ? {
                           title: 'Share with',
                           onClick: () =>
                             handleCurrentCommunity('share_with', community)
-                        }
-                      : undefined,
-                    isAuthenticated && community.stamps?.length === 0
-                      ? {
-                          title: 'Add stamp',
-                          onClick: () =>
-                            handleCurrentCommunity('add_stamp', community)
                         }
                       : undefined,
                     isCurrentUserAuthenticated &&
@@ -505,6 +557,9 @@ export const Community = (props: IProps) => {
                     community.stamps?.length || 0
                   } stamps`
                 }}
+                builderCredential={
+                  community.credential?.visualInformation?.builder
+                }
               />
             ))
           )}

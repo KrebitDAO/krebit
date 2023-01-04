@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 interface IProps {
   profilePicture: string;
   isCurrentProfile: boolean;
+  type?: string;
 }
 
 interface IBackgrounProps {
@@ -11,7 +12,7 @@ interface IBackgrounProps {
 }
 
 export const Wrapper = styled.div<IProps>`
-  ${({ theme, profilePicture, isCurrentProfile }) => css`
+  ${({ theme, profilePicture, isCurrentProfile, type }) => css`
     @media (min-width: ${theme.screens.xl}) {
       margin-right: 80px;
       float: right;
@@ -41,6 +42,8 @@ export const Wrapper = styled.div<IProps>`
           grid-template-areas: 'photo info buttons';
           grid-template-columns: ${isCurrentProfile
             ? '215px auto 366px'
+            : !isCurrentProfile && type === 'web3auth'
+            ? '215px auto 267px'
             : '215px auto 208px'};
           justify-content: initial;
           align-items: end;
@@ -190,7 +193,8 @@ export const Wrapper = styled.div<IProps>`
           grid-area: buttons;
           display: grid;
           justify-content: center;
-          grid-template-columns: ${isCurrentProfile
+          grid-template-columns: ${(!isCurrentProfile && type === 'web3auth') ||
+          isCurrentProfile
             ? 'repeat(3, auto)'
             : '44px 150px'};
           grid-gap: 8px;
@@ -198,7 +202,9 @@ export const Wrapper = styled.div<IProps>`
           position: relative;
 
           @media (min-width: ${theme.screens.lg}) {
-            grid-template-columns: ${isCurrentProfile
+            grid-template-columns: ${(!isCurrentProfile &&
+              type === 'web3auth') ||
+            isCurrentProfile
               ? 'repeat(3, auto)'
               : '50px 150px'};
           }
@@ -276,15 +282,6 @@ export const Wrapper = styled.div<IProps>`
       }
 
       .content-left {
-        & > :nth-of-type(2) {
-          margin-top: 32px;
-        }
-
-        @media (min-width: ${theme.screens.lg}) {
-          & > :nth-of-type(2) {
-            margin: 0;
-          }
-        }
       }
 
       .content-right {
@@ -329,6 +326,8 @@ export const Background = styled.div<IBackgrounProps>`
 
 export const Skills = styled.div`
   ${({ theme }) => css`
+    margin-bottom: 10px;
+
     .skills-header {
       margin-bottom: 10px;
 
@@ -405,6 +404,59 @@ export const Skills = styled.div`
           font-size: ${theme.fonts.sm};
         }
       }
+    }
+  `}
+`;
+
+export const Summary = styled.div`
+  ${({ theme }) => css`
+    margin-bottom: 10px;
+
+    .summary-header {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+
+      .summary-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+      }
+
+      .summary-header-icon {
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+
+        & > svg {
+          width: 15px;
+          height: 15px;
+          fill: ${theme.colors.white};
+        }
+      }
+    }
+
+    .summary-text {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.white}B3;
+      line-height: 1.5;
+    }
+  `}
+`;
+
+export const QuestionModalText = styled.div`
+  ${({ theme }) => css`
+    margin: 0;
+    font-size: ${theme.fonts.base};
+    color: ${theme.colors.white}B3;
+    word-wrap: break-word;
+
+    & > a {
+      font-size: ${theme.fonts.base};
+      color: ${theme.colors.cyan}B3;
+      text-decoration: underline;
+      word-wrap: break-word;
     }
   `}
 `;

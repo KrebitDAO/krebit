@@ -15,11 +15,13 @@ interface IProps {
   iconColor?: string;
 }
 
+const DEFAULT_VALUE = 2;
+
 export const Rating = (props: IProps) => {
   const {
     name,
     label,
-    value,
+    value = DEFAULT_VALUE,
     onChange,
     isDisabled = false,
     iconColor = 'cyan'
@@ -32,18 +34,21 @@ export const Rating = (props: IProps) => {
         <FormControlLabel
           control={
             <MaterialRating
-              value={value || 2.5}
-              onChange={isDisabled ? undefined : onChange}
+              value={value || DEFAULT_VALUE}
+              defaultValue={DEFAULT_VALUE}
               name={name}
               disabled={isDisabled}
               precision={0.5}
+              onChange={isDisabled ? undefined : onChange}
               onChangeActive={(event, newHover) => {
+                if (isDisabled) return;
+
                 setHover(newHover);
               }}
             />
           }
           disabled={isDisabled}
-          label={hover !== -1 ? `Rating: ${hover * 2}/10` : label}
+          label={`Rating: ${hover === -1 ? value || DEFAULT_VALUE : hover}/5`}
         />
       </Wrapper>
     </StyledEngineProvider>
