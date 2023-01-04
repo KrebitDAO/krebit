@@ -170,7 +170,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       const openloginAdapter = new OpenloginAdapter({
         adapterSettings: {
           clientId: process.env.NEXT_PUBLIC_WEB3_AUTH,
-          network: PassportConfigIsProduction ? 'mainnet' : 'testnet',
+          network: PassportConfigIsProduction ? 'cyan' : 'testnet',
           uxMode: 'popup',
           whiteLabel: {
             name: 'Krebit.id',
