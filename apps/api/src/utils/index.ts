@@ -15,6 +15,8 @@ import { getAge } from './getAge';
 import { stack } from './stack';
 import { jobs } from './jobs';
 import { openAI } from './openAI';
+import { hashmail } from './hashmail';
+import { cred } from './cred';
 
 export {
   connect,
@@ -34,5 +36,7 @@ export {
   getAge,
   stack,
   jobs,
-  openAI
+  openAI,
+  hashmail,
+  cred
 };
