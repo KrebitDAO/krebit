@@ -166,7 +166,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       }
     }
   },
-  /*{
+  {
     type: 'deal',
     title: 'Deal',
     description: 'Offer or quotation for a service or product',
@@ -255,7 +255,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         }
       }
     }
-  },*/
+  },
   {
     type: 'workExperience',
     title: 'Work Experience (Pro)',

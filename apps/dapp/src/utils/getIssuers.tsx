@@ -13,7 +13,9 @@ import {
   Guild,
   Dework,
   Stack,
-  Star
+  Star,
+  Deal,
+  AccountBalanceWallet
 } from 'components/Icons';
 import { countries } from './countries';
 import { constants } from './constants';
@@ -935,12 +937,90 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
 
 const WORK_CREDENTIALS: IIssuerParams[] = [
   {
+    credentialType: 'CredScoreGT500',
+    entity: 'Cred Protocol Score > 500',
+    icon: <AccountBalanceWallet />,
+    verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/cred'),
+    address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
+    badgeText: 'New',
+    steps: [
+      {
+        title: 'Overview',
+        type: 'overview',
+        metadata: {
+          title: 'Cred Protocol Score > 500',
+          description:
+            'The Krebit Verification Node issues this Cred Score > 500',
+          icon: <AccountBalanceWallet />,
+          verificationUrl:
+            process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/cred'),
+          did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
+          address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS || '',
+          price: '0'
+        }
+      },
+      {
+        title: 'Verify score',
+        type: 'credential',
+        metadata: {
+          title: 'Verify Cred Score',
+          description: 'Claim your Cred Score > 500'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          fields: [
+            {
+              name: 'private',
+              type: 'switch',
+              placeholder: provider?.claimValues?.private
+                ? 'private (Stored encrypted off-chain)'
+                : 'public (WARNING: It is not recommended to publish private data to public networks)',
+              value: provider?.claimValues?.private,
+              isDisabled: true,
+              onChange: undefined
+            }
+          ],
+          action: {
+            text: 'Verify',
+            method: async () =>
+              await provider.handleGetCredential(currentVerify)
+          }
+        })
+      },
+      {
+        title: 'Mint credential',
+        type: 'mint',
+        metadata: {
+          title: 'Mint credential',
+          description:
+            'Mint the credential stamp and NFT ( NOTE: we cover gas for you :)  )'
+        },
+        form: (
+          provider: any,
+          credential: ICredential,
+          currentVerify: IIssuerParams
+        ) => ({
+          action: {
+            text: 'Mint',
+            method: async () =>
+              await provider?.handleMintCredential(
+                provider?.currentCredential || credential?.credential
+              )
+          }
+        })
+      }
+    ]
+  },
+  {
     credentialType: 'StackOverflowReputationGT1K',
     entity: 'Stack Overflow Reputation > 1K',
     icon: <Stack />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/stack'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    badgeText: 'New',
+
     steps: [
       {
         title: 'Overview',
@@ -1103,7 +1183,7 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
     icon: <Dework />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/dework'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    badgeText: 'New',
+
     steps: [
       {
         title: 'Overview',
@@ -1235,7 +1315,8 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
           ],
           action: {
             text: 'Verify',
-            method: async () => await provider.handleFetchOAuth(currentVerify),
+            method: async () =>
+              await provider.handleGetCredential(currentVerify),
             isDisabled:
               !provider?.claimValues?.circle ||
               provider?.claimValues?.circle === ''
@@ -1563,7 +1644,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
       'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    badgeText: 'New',
+
     steps: [
       {
         title: 'Overview',
@@ -1653,7 +1734,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
       'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    badgeText: 'New',
+
     steps: [
       {
         title: 'Overview',
@@ -1743,7 +1824,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
       'https://guild-xyz.mypinata.cloud/ipfs/QmSJtjpHzaEdMuBE2uAPSN3r32eZkLXndMzQLBSbknFD1W',
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/guild'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
-    badgeText: 'New',
+
     steps: [
       {
         title: 'Overview',
@@ -2358,7 +2439,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
   {
     credentialType: 'Deal',
     entity: 'Deal',
-    icon: <Star />,
+    icon: <Deal />,
     imageUrl:
       process.env.NEXT_PUBLIC_IPFS_GATEWAY +
       '/ipfs/QmchEeUb98p5EpjdGocCc2fxLUziA29vBiRhoeQtzubj4c/github-white.png',

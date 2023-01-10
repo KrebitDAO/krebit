@@ -119,7 +119,8 @@ const CREDENTIAL_TYPES = [
   'Review',
   'WorkExperience',
   'Education',
-  'Attendance'
+  'Attendance',
+  'CredScoreGT500'
 ];
 
 export const getNFTCredentialTypes = () => {

@@ -17,7 +17,9 @@ import {
   GuildController,
   StackController,
   JobsController,
-  OpenAIController
+  OpenAIController,
+  NotifyController,
+  CredController
 } from './controller';
 
 const { SERVER_PORT, SERVER_BASE_URL } = process.env;
@@ -52,7 +54,9 @@ router
   .post('/persona', PersonaController)
   .post('/guild', GuildController)
   .post('/stack', StackController)
-  .post('/openai', OpenAIController);
+  .post('/openai', OpenAIController)
+  .post('/notify', NotifyController)
+  .post('/cred', CredController);
 
 app.use('/', router);
 
