@@ -1,4 +1,5 @@
 import 'isomorphic-fetch';
+import FormData from 'isomorphic-form-data';
 
 interface IProps {
   to: string[];
@@ -12,21 +13,22 @@ const { SERVER_HASHMAIL_API_TOKEN } = process.env;
 
 export const sendMessages = async (props: IProps) => {
   const { to, subject, content } = props;
+
+  const formData = new FormData();
+  formData.append('sender_address', SERVER_HASHMAIL_API_SENDER);
+  formData.append('to_address', to.join(','));
+  formData.append('subject', subject);
+  formData.append('content', content);
+
   try {
     const response = await fetch(
       `${SERVER_HASHMAIL_API_URL}/dapp/messages/send`,
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
           authorization: `Bearer ${SERVER_HASHMAIL_API_TOKEN}`
         },
-        body: new URLSearchParams({
-          sender_address: SERVER_HASHMAIL_API_SENDER,
-          to_address: to.join(','),
-          subject,
-          content
-        })
+        body: formData
       }
     ).then(result => result.json());
     return response;
