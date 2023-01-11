@@ -63,6 +63,7 @@ import { VisibilityOff } from './VisibilityOff';
 import { Login } from './Login';
 import { SmartToy } from './SmartToy';
 import { VideoCall } from './VideoCall';
+import { Cred } from './Cred';
 
 export {
   Close,
@@ -129,5 +130,6 @@ export {
   VisibilityOff,
   Login,
   SmartToy,
-  VideoCall
+  VideoCall,
+  Cred
 };
