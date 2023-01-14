@@ -11,6 +11,9 @@ import {
 } from 'components/Icons';
 import { countries } from 'utils';
 
+// Functions for specific use cases
+import { getReferralCredentials } from '../CredentialsBuilder/utils';
+
 // types
 import { IItems } from 'components/Select';
 
@@ -40,6 +43,7 @@ export interface ICredentialsState {
       isRequired?: boolean;
       isMultiline?: boolean;
       items?: IItems[];
+      asyncFunction?: (props: any) => void | Promise<any | any[]>;
     }[];
     issueTo?: {
       name: string;
@@ -200,10 +204,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           placeholder: 'Image / Logo'
         },
         {
-          type: 'datepicker',
+          type: 'datetimepicker',
           name: 'deliveryTime',
           placeholder: 'Delivery Time',
-          defaultValue: '01/12/2021'
+          defaultValue: '2021-12-01T00:00:00'
         },
         {
           type: 'number',
@@ -216,9 +220,10 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           placeholder: 'Vendor url'
         },
         {
-          type: 'text',
-          name: 'referralId',
-          placeholder: 'Referral Id'
+          type: 'select',
+          name: 'referral',
+          placeholder: 'Referral Id',
+          asyncFunction: props => getReferralCredentials(props)
         },
         {
           type: 'boxes',

@@ -249,6 +249,7 @@ export const Wrapper = styled.div<IProps>`
               display: flex;
               justify-content: center;
               align-items: center;
+              cursor: pointer;
 
               & > svg {
                 width: 18px;
