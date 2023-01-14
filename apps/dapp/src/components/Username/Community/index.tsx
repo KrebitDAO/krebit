@@ -23,7 +23,6 @@ const DynamicShareWithModal = dynamic(
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 import { IProfile, ICredential } from 'utils/normalizeSchema';
-import { ValueOf } from 'next/dist/shared/lib/constants';
 
 interface IProps {
   isAuthenticated: boolean;

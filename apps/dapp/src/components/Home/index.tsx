@@ -34,6 +34,7 @@ export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(0);
   const {
+    auth: { status },
     walletModal: { handleOpenConnectWallet }
   } = useContext(GeneralContext);
   const router = useRouter();
@@ -94,7 +95,11 @@ export const Home = () => {
             </ul>
             <div className="main-buttons">
               <div className="main-button">
-                <Button text="Try it now" onClick={handleOpenConnectWallet} />
+                <Button
+                  text="Try it now"
+                  onClick={handleOpenConnectWallet}
+                  isDisabled={status === 'pending'}
+                />
               </div>
               <div className="main-line-button">
                 <Link href="#web3">
@@ -509,6 +514,7 @@ export const Home = () => {
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               onClick={handleOpenConnectWallet}
+              isDisabled={status === 'pending'}
             />
           </div>
         </div>

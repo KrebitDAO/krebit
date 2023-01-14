@@ -10,6 +10,7 @@ import { Credentials } from './Credentials';
 import { CredentialsBuilder } from './CredentialsBuilder';
 import { ClaimCredential } from './ClaimCredential';
 import { Groups } from './Groups';
+import { Deal } from './Deal';
 
 export {
   NavBar,
@@ -23,5 +24,6 @@ export {
   Credentials,
   CredentialsBuilder,
   ClaimCredential,
-  Groups
+  Groups,
+  Deal
 };

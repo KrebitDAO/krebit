@@ -1,10 +1,12 @@
 import { ChangeEvent } from 'react';
+import isValidDate from 'date-fns/isValid';
 
 import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import { InputWrapper } from 'components/Input/styles';
 import { useWindowSize } from 'hooks';
@@ -18,6 +20,7 @@ interface IProps {
   inputFormat?: string;
   isDisabled?: boolean;
   isRequired?: boolean;
+  type?: string;
 }
 
 export const DatePicker = (props: IProps) => {
@@ -28,13 +31,20 @@ export const DatePicker = (props: IProps) => {
     onChange,
     inputFormat = 'MM/dd/yyyy',
     isDisabled,
-    isRequired
+    isRequired,
+    type = 'datepicker'
   } = props;
   const { width } = useWindowSize();
   const isDesktop = width >= 1024;
 
-  const handleChange = (value: number | Date) => {
+  const handleChange = (value: number | string | Date) => {
     if (!value) return;
+
+    if (type === 'datetimepicker') {
+      if (isValidDate(value)) {
+        value = new Date(value as number | Date);
+      }
+    }
 
     onChange({
       target: {
@@ -47,6 +57,25 @@ export const DatePicker = (props: IProps) => {
   return (
     <>
       <style global jsx>{`
+        .MuiClock-root > .MuiButtonBase-root {
+          color: ${theme.colors.white} !important;
+          background-color: ${theme.colors.bunting} !important;
+        }
+
+        .MuiClockNumber-root {
+          color: ${theme.colors.white} !important;
+        }
+
+        .MuiClockPointer-root,
+        .MuiClock-pin,
+        .MuiClockPointer-thumb {
+          background-color: ${theme.colors.bunting} !important;
+        }
+
+        .MuiClockPointer-thumb {
+          border: 16px solid ${theme.colors.bunting} !important;
+        }
+
         .MuiPickersPopper-paper,
         .MuiDialog-paper {
           background-color: ${theme.colors.brightGray} !important;
@@ -83,27 +112,40 @@ export const DatePicker = (props: IProps) => {
       `}</style>
       <InputWrapper>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          {isDesktop ? (
-            <DesktopDatePicker
-              label={placeholder}
-              value={value}
-              onChange={handleChange}
-              inputFormat={inputFormat}
-              disabled={isDisabled}
-              renderInput={params => (
-                <TextField required={isRequired} {...params} />
-              )}
-            />
+          {type === 'datetimepicker' ? (
+            <>
+              <DateTimePicker
+                label={placeholder}
+                value={value}
+                onChange={handleChange}
+                renderInput={params => <TextField {...params} />}
+              />
+            </>
           ) : (
-            <MobileDatePicker
-              label={placeholder}
-              value={value}
-              onChange={handleChange}
-              inputFormat={inputFormat}
-              renderInput={params => (
-                <TextField required={isRequired} {...params} />
+            <>
+              {isDesktop ? (
+                <DesktopDatePicker
+                  label={placeholder}
+                  value={value}
+                  onChange={handleChange}
+                  inputFormat={inputFormat}
+                  disabled={isDisabled}
+                  renderInput={params => (
+                    <TextField required={isRequired} {...params} />
+                  )}
+                />
+              ) : (
+                <MobileDatePicker
+                  label={placeholder}
+                  value={value}
+                  onChange={handleChange}
+                  inputFormat={inputFormat}
+                  renderInput={params => (
+                    <TextField required={isRequired} {...params} />
+                  )}
+                />
               )}
-            />
+            </>
           )}
         </LocalizationProvider>
       </InputWrapper>

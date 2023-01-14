@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { Web3Storage } from 'web3.storage';
 import Krebit from '@krebitdao/reputation-passport';
+import Deals from '@krebitdao/deals';
 import { Orbis } from '@orbisclub/orbis-sdk';
 import { Web3Auth } from '@web3auth/modal';
 import { WALLET_ADAPTERS, CHAIN_NAMESPACES } from '@web3auth/base';
@@ -23,6 +24,7 @@ import { theme } from 'theme';
 import { IProfile } from 'utils/normalizeSchema';
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
+import { Deal as IDeals } from '@krebitdao/deals/dist/core/Deal';
 
 interface IProps {
   children: JSX.Element;
@@ -45,6 +47,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [status, setStatus] = useState('idle');
   const [passport, setPassport] = useState<Passport>();
   const [issuer, setIssuer] = useState<Issuer>();
+  const [deals, setDeals] = useState<IDeals>();
   const [publicPassport, setPublicPassport] = useState<Passport>();
   const [orbis, setOrbis] = useState<Orbis>();
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -116,8 +119,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           orbis
         });
 
+        const deals = new Deals.core.Deal(information);
+
         setPassport(passport);
         setIssuer(issuer);
+        setDeals(deals);
         setProfile(currentProfile);
       }
 
@@ -325,11 +331,14 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
             orbis
           });
 
+          const deals = new Deals.core.Deal(information);
+
           setProfile(currentProfile);
+          setDeals(deals);
           setStatus('resolved');
 
           if (query?.credential_id) {
-            push(`/${passport.did}/?credential_id=${query.credential_id}`);
+            push(`/claim/?credential_id=${query.credential_id}`);
           } else if (pathname === '/') {
             push(`/${passport.did}`);
           }
@@ -381,7 +390,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           passport,
           issuer,
           publicPassport,
-          orbis
+          orbis,
+          deals
         },
         profileInformation: {
           handleSetProfile,
