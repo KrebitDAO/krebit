@@ -45,29 +45,25 @@ const getCredentials = async (props: IGetCredentialsProps) => {
       const visualInformationIssuers = getIssuers(type).find(issuer =>
         credential.type.includes(issuer.credentialType)
       );
+      const visualInformationBuilderCredential = CREDENTIALS_INITIAL_STATE.find(
+        state =>
+          credential?.credentialSubject?.type?.toLowerCase() ===
+          state.type.toLowerCase()
+      );
 
       if (visualInformationIssuers) {
         visualInformation = visualInformationIssuers;
-      }
-
-      const visualInformationBuilderCredential = credential.type
-        .map(type =>
-          CREDENTIALS_INITIAL_STATE.find(state =>
-            type.toLowerCase().includes(state.type)
-          )
-        )
-        .filter(value => value !== undefined);
-
-      if (visualInformationBuilderCredential?.length > 0) {
+      } else if (visualInformationBuilderCredential) {
         visualInformation = {
-          credentialType: 'Issuer'
+          credentialType: 'Issuer',
+          ...visualInformationBuilderCredential
         };
-      }
-
-      if (!visualInformation) {
-        throw new Error(
-          constants.DEFAULT_ERROR_MESSAGES.NOT_VISUAL_INFORMATION
-        );
+      } else {
+        visualInformation = {
+          credentialType: 'Issuer',
+          primaryColor: 'gray',
+          secondaryColor: 'haiti'
+        };
       }
 
       const claimValue = await passport.getClaimValue(credential);
