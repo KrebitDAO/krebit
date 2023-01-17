@@ -1,10 +1,10 @@
-import { NextPageContext } from 'next';
 import { Orbis } from '@orbisclub/orbis-sdk';
 
 import { Layout, Groups } from 'components';
 import { constants } from 'utils';
 
 // types
+import { NextPageContext } from 'next';
 import { IGroupProps } from 'components/Groups';
 
 const orbis = new Orbis();

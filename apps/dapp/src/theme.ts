@@ -28,7 +28,8 @@ export const systemTheme: Theme = {
     ebony: '#101828',
     pomegranate: '#F44336',
     electricViolet: '#8117FE',
-    oliveDrab: '#60B527'
+    oliveDrab: '#60B527',
+    redOrange: '#FF3932'
   },
   shadows: {
     smallest: '0px 10px 50px #00000029',

@@ -298,6 +298,10 @@ export const Wrapper = styled.div<IProps>`
         grid-area: issueTo;
         margin-top: 36px;
 
+        @media (min-width: ${theme.screens.lg}) {
+          margin-top: 60px;
+        }
+
         .credential-issue-to-title {
           margin: 0;
           margin-bottom: 16px;

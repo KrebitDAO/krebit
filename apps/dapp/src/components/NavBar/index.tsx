@@ -9,6 +9,7 @@ import { GeneralContext } from 'context';
 
 export const NavBar = () => {
   const {
+    auth: { status },
     walletModal: { handleOpenConnectWallet, openConnectWallet }
   } = useContext(GeneralContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -82,7 +83,11 @@ export const NavBar = () => {
               </a>
             </Link>
             <div className="menu-bar-button">
-              <Button text="Try it now" onClick={handleOpenWallet} />
+              <Button
+                text="Try it now"
+                onClick={handleOpenWallet}
+                isDisabled={status === 'pending'}
+              />
             </div>
           </div>
         </div>
@@ -123,7 +128,11 @@ export const NavBar = () => {
             </a>
           </Link>
           <div className="menu-content-button">
-            <Button text="Try it now" onClick={handleOpenWallet} />
+            <Button
+              text="Try it now"
+              onClick={handleOpenWallet}
+              isDisabled={status === 'pending'}
+            />
           </div>
         </div>
       </Wrapper>
