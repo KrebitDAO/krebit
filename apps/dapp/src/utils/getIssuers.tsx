@@ -15,7 +15,7 @@ import {
   Stack,
   Star,
   Deal,
-  AccountBalanceWallet
+  Cred
 } from 'components/Icons';
 import { countries } from './countries';
 import { constants } from './constants';
@@ -937,9 +937,9 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
 
 const WORK_CREDENTIALS: IIssuerParams[] = [
   {
-    credentialType: 'CredScoreGT500',
-    entity: 'Cred Protocol Score > 500',
-    icon: <AccountBalanceWallet />,
+    credentialType: 'CredScoreGTEGood',
+    entity: 'Cred Protocol Score >= Good',
+    icon: <Cred />,
     verificationUrl: process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/cred'),
     address: process.env.NEXT_PUBLIC_ISSUER_ADDRESS,
     badgeText: 'New',
@@ -948,10 +948,10 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         title: 'Overview',
         type: 'overview',
         metadata: {
-          title: 'Cred Protocol Score > 500',
+          title: 'Cred Protocol Score >= Good',
           description:
-            'The Krebit Verification Node issues this Cred Score > 500',
-          icon: <AccountBalanceWallet />,
+            'Issued if your Cred Protocol score is: Good, Very Good or Excellent',
+          icon: <Cred />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/cred'),
           did: process.env.NEXT_PUBLIC_ISSUER_DID || '',
@@ -964,7 +964,7 @@ const WORK_CREDENTIALS: IIssuerParams[] = [
         type: 'credential',
         metadata: {
           title: 'Verify Cred Score',
-          description: 'Claim your Cred Score > 500'
+          description: 'Claim your Cred Score >= Good'
         },
         form: (
           provider: any,

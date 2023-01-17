@@ -76,7 +76,7 @@ export const VerifyCredential = (props: IProps) => {
       return spectCompletedProvider;
     }
 
-    if (credentialType === 'CredScoreGT500') {
+    if (credentialType === 'CredScoreGTEGood') {
       return credScoredProvider;
     }
 

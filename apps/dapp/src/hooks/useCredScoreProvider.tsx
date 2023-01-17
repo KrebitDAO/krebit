@@ -70,7 +70,7 @@ export const useCredScoreProvider = (props: IProps) => {
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     try {
-      console.log('Saving Stamp', { type: 'CredScoreGT500' });
+      console.log('Saving Stamp', { type: 'CredScoreGTEGood' });
 
       const session = window.localStorage.getItem('did-session');
       const currentSession = JSON.parse(session);

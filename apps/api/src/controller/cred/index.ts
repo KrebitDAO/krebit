@@ -63,7 +63,7 @@ export const CredController = async (
       claimedCredential.credentialSubject.encrypted === 'none';
 
     //Tasks for a specific Circle or Skill
-    if (claimedCredential?.credentialSubject?.type === 'CredScoreGT500') {
+    if (claimedCredential?.credentialSubject?.type === 'CredScoreGTEGood') {
       // Connect to spect and get reputation from address
       const score = await cred.getScore({
         address: claimedCredential.credentialSubject.ethereumAddress
@@ -73,7 +73,9 @@ export const CredController = async (
       if (
         claimedCredential.credentialSubject.ethereumAddress.toLowerCase() ==
           score.account.toLowerCase() &&
-        score.value > 400
+        ['good', 'very good', 'excellent'].includes(
+          score.value_rating.toLowerCase()
+        )
       ) {
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
