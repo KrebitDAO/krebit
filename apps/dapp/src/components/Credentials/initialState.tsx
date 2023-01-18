@@ -446,7 +446,6 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'image',
           placeholder: 'add logo'
         },
-
         {
           type: 'select',
           name: 'entity',
@@ -525,10 +524,14 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'entity',
           placeholder: 'Community'
         },
-
         {
           name: 'description',
           placeholder: 'Write your badge description here'
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'add logo'
         },
         {
           type: 'text',
