@@ -7,6 +7,8 @@ import { Loading } from 'components/Loading';
 import { GeneralContext } from 'context';
 import { constants } from 'utils';
 
+const SPECIAL_DEAL_USE_CASE = 'Deal';
+
 export const ClaimCredential = () => {
   const [errorMessage, setErrorMessage] = useState<string>();
   const { query, push } = useRouter();
@@ -45,6 +47,15 @@ export const ClaimCredential = () => {
               (type: string) =>
                 constants.DEFAULT_CLAIM_CREDENTIAL_TYPES.includes(type)
             );
+
+            const hasSpecialDealUseCase = currentCredential?.type?.includes(
+              SPECIAL_DEAL_USE_CASE
+            );
+
+            if (hasSpecialDealUseCase && isCredentialValid && hasCorrectTypes) {
+              push(`/deal/?credential_id=${query.credential_id}`);
+              return;
+            }
 
             if (isCredentialValid && hasCorrectTypes) {
               push(`/${auth.did}/?credential_id=${query.credential_id}`);

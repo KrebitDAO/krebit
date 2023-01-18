@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { Wrapper, MenuItem } from './styles';
 import { theme } from 'theme';
 
@@ -20,6 +22,7 @@ interface IProps {
   items: IItems[];
   isDisabled?: boolean;
   isRequired?: boolean;
+  asyncFunction?: () => void | Promise<any>;
 }
 
 export const Select = (props: IProps) => {
@@ -31,8 +34,22 @@ export const Select = (props: IProps) => {
     onChange,
     items,
     isDisabled = false,
-    isRequired = false
+    isRequired = false,
+    asyncFunction
   } = props;
+  const [asyncData, setAsyncData] = useState<any>([]);
+
+  useEffect(() => {
+    const getAsyncData = async () => {
+      const data = await asyncFunction();
+
+      setAsyncData(data);
+    };
+
+    if (asyncFunction) {
+      getAsyncData();
+    }
+  }, [asyncFunction]);
 
   return (
     <>
@@ -61,7 +78,7 @@ export const Select = (props: IProps) => {
               disabled={isDisabled}
               required={isRequired}
             >
-              {items.map((item, index) => (
+              {(items?.length > 0 ? items : asyncData).map((item, index) => (
                 <MenuItem key={index} value={item.value}>
                   {item.text}
                 </MenuItem>

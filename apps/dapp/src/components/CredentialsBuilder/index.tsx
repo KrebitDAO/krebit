@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
-import Krebit from '@krebitdao/reputation-passport';
 
 import { QuestionModalText, Wrapper } from './styles';
 import { Card } from 'components/Credentials/styles';
@@ -33,7 +32,6 @@ import {
   formatFilename,
   formatUrlImage,
   generateUID,
-  getCredential,
   sortByDate
 } from 'utils';
 
@@ -623,9 +621,14 @@ export const CredentialsBuilder = () => {
                           formValues[values.form.fields[index].name] as string
                         }
                         onChange={handleChange}
-                        items={input.items}
+                        items={input?.items || []}
                         isDisabled={input.isDisabled}
                         isRequired={input.isRequired}
+                        asyncFunction={
+                          input?.asyncFunction
+                            ? () => input?.asyncFunction({ passport })
+                            : undefined
+                        }
                       />
                     );
                   }
@@ -664,6 +667,25 @@ export const CredentialsBuilder = () => {
                   if (input.type === 'datepicker') {
                     return (
                       <DatePicker
+                        key={index}
+                        name={input.name}
+                        placeholder={input.placeholder}
+                        value={
+                          formValues[values.form.fields[index].name] as
+                            | string
+                            | number
+                        }
+                        onChange={handleChange}
+                        isDisabled={input.isDisabled}
+                        isRequired={input.isRequired}
+                      />
+                    );
+                  }
+
+                  if (input.type === 'datetimepicker') {
+                    return (
+                      <DatePicker
+                        type="datetimepicker"
                         key={index}
                         name={input.name}
                         placeholder={input.placeholder}

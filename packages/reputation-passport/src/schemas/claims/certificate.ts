@@ -21,6 +21,6 @@ export const certificate = {
     },
     proofs: { type: 'object' }
   },
-  required: ['name', 'entity', 'issuanceDate', 'expirationDate'],
+  required: ['name', 'entity'],
   additionalProperties: true
 };

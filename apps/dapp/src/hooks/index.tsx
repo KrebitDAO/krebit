@@ -23,6 +23,7 @@ import { useGuildXyzRoleProvider } from './useGuildXyzRoleProvider';
 import { useDeworkCompletedProvider } from './useDeworkCompletedProvider';
 import { useStackReputationProvider } from './useStackReputationProvider';
 import { useStackScoreProvider } from './useStackScoreProvider';
+import { useCredScoreProvider } from './useCredScoreProvider';
 
 export {
   useWindowSize,
@@ -49,5 +50,6 @@ export {
   useGuildXyzRoleProvider,
   useDeworkCompletedProvider,
   useStackReputationProvider,
-  useStackScoreProvider
+  useStackScoreProvider,
+  useCredScoreProvider
 };

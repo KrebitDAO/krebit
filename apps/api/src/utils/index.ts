@@ -8,13 +8,19 @@ import { getSpectUser } from './getSpectUser';
 import { twilio } from './twilio';
 import { github } from './github';
 import { getPersonaDecision } from './getPersonaDecision';
-import { getNFTCredentialTypes, getTokenIds } from './getNFTCredentialTypes';
+import {
+  getNFTCredentialTypes,
+  getTokenIds,
+  getTokenId
+} from './getNFTCredentialTypes';
 import { guildXyz } from './guildXyz';
 import { wait } from './wait';
 import { getAge } from './getAge';
 import { stack } from './stack';
 import { jobs } from './jobs';
 import { openAI } from './openAI';
+import { hashmail } from './hashmail';
+import { cred } from './cred';
 
 export {
   connect,
@@ -28,11 +34,14 @@ export {
   github,
   getPersonaDecision,
   getNFTCredentialTypes,
+  getTokenId,
   getTokenIds,
   guildXyz,
   wait,
   getAge,
   stack,
   jobs,
-  openAI
+  openAI,
+  hashmail,
+  cred
 };

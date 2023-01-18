@@ -2,7 +2,12 @@ import express from 'express';
 import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getNFTCredentialTypes, getTokenIds } from '../../utils';
+import {
+  connect,
+  getNFTCredentialTypes,
+  getTokenIds,
+  getTokenId
+} from '../../utils';
 
 const { SERVER_NFT_METADATA_IPFS, SERVER_CERAMIC_URL } = process.env;
 
@@ -42,33 +47,66 @@ export const MetadataController = async (
       return response.json(getTokenIds());
     }
 
-    let tokenType = types[tokenId];
-    console.log('Credential type:', tokenType);
+    //Get verifications from subgraph
+    const credentials = await krebit.lib.graph.verifiableCredentialsQuery({
+      first: 1,
+      where: { _type_contains_nocase: tokenId }
+    });
 
-    let tokenNumber = '0';
-    if (tokenType) {
-      tokenNumber = tokenId;
+    if (credentials.length > 0) {
+      const claimValue = JSON.parse(credentials[0].credentialSubject?.value);
+
+      const typeId = getTokenId(claimValue.credentialType);
+
+      const result = {
+        name: claimValue.name,
+        description: claimValue.description,
+        image_data: claimValue.imageUrl
+          ? claimValue.imageUrl
+          : `${SERVER_NFT_METADATA_IPFS}/${typeId}.jpg`,
+        external_url: 'https://krebit.id',
+        attributes: [
+          {
+            trait_type: 'Issuer',
+            value: claimValue.onBehalveOfIssuer.ethereumAddress
+          },
+          {
+            trait_type: 'Issuer Profile',
+            value: `https://krebit.id/${claimValue.onBehalveOfIssuer.id}`
+          }
+        ]
+      };
+
+      return response.json(result);
     } else {
-      tokenType = 'VerifiedCredential';
-    }
-    if (isNaN(Number(tokenId))) {
-      tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
-    }
+      let tokenType = types[tokenId];
+      console.log('Credential type:', tokenType);
 
-    const result = {
-      name: tokenType,
-      description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
-      image_data: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
-      animation_url: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.mp4`,
-      external_url: 'https://krebit.id',
-      attributes: [
-        { trait_type: 'Creator', value: 'krebit.eth' },
-        { trait_type: 'Website', value: 'https://krebit.id' },
-        { trait_type: 'Twitter', value: 'https://twitter.com/KrebitID' }
-      ]
-    };
+      let tokenNumber = '0';
+      if (tokenType) {
+        tokenNumber = tokenId;
+      } else {
+        tokenType = 'VerifiedCredential';
+      }
+      if (isNaN(Number(tokenId))) {
+        tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
+      }
 
-    return response.json(result);
+      const result = {
+        name: tokenType,
+        description: `Verified ${tokenType} Credential (Non-Transferable NFT for Krebit's Verifiable Credential)`,
+        image_data: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.jpg`,
+        animation_url: `${SERVER_NFT_METADATA_IPFS}/${tokenNumber}.mp4`,
+        external_url: 'https://krebit.id',
+        attributes: [
+          { trait_type: 'Creator', value: 'krebit.eth' },
+          { trait_type: 'Website', value: 'https://krebit.id' },
+          { trait_type: 'Twitter', value: 'https://twitter.com/KrebitID' }
+        ]
+      };
+
+      return response.json(result);
+    }
   } catch (err) {
     next(err);
   }

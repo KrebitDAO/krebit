@@ -23,7 +23,6 @@ const DynamicShareWithModal = dynamic(
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 import { Krebit as Issuer } from '@krebitdao/reputation-passport/dist/core/Krebit';
 import { IProfile, ICredential } from 'utils/normalizeSchema';
-import { ValueOf } from 'next/dist/shared/lib/constants';
 
 interface IProps {
   isAuthenticated: boolean;
@@ -148,10 +147,10 @@ export const Community = (props: IProps) => {
       });
 
       const communities = communityCredentials.map(community => {
-        const communityCredentialFromBuilder = community.skills
-          .map(skill =>
+        const communityCredentialFromBuilder = community?.credential?.type
+          .map(type =>
             CREDENTIALS_INITIAL_STATE.find(state =>
-              skill.toLowerCase().includes(state.type)
+              type.toLowerCase().includes(state.type)
             )
           )
           .filter(value => value !== undefined);
@@ -388,6 +387,7 @@ export const Community = (props: IProps) => {
       .replace(/([a-z])([A-Z])/g, '$1 $2')
       .replace('#', '# ')
       .replace('++', '++ ')
+      .replace('GTE', '>= ')
       .replace('GT', '> ');
   };
 
@@ -559,6 +559,10 @@ export const Community = (props: IProps) => {
                 }}
                 builderCredential={
                   community.credential?.visualInformation?.builder
+                    ? community.credential?.visualInformation?.builder
+                    : community.credential?.visualInformation?.primaryColor
+                    ? community.credential?.visualInformation
+                    : undefined
                 }
               />
             ))

@@ -14,6 +14,8 @@ import { GuildController } from './guild';
 import { StackController } from './stack';
 import { JobsController } from './jobs';
 import { OpenAIController } from './openai';
+import { NotifyController } from './notify';
+import { CredController } from './cred';
 
 export {
   DelegatedController,
@@ -31,5 +33,7 @@ export {
   GuildController,
   StackController,
   JobsController,
-  OpenAIController
+  OpenAIController,
+  NotifyController,
+  CredController
 };
