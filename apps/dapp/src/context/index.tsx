@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 import { Web3Storage } from 'web3.storage';
+import { logAccountConnectedEvent } from 'arena-tools';
 import Krebit from '@krebitdao/reputation-passport';
 import Deals from '@krebitdao/deals';
 import { Orbis } from '@orbisclub/orbis-sdk';
@@ -37,6 +38,7 @@ export interface IWalletInformation {
 }
 
 const { NEXT_PUBLIC_WEB3_STORAGE } = process.env;
+const { NEXT_PUBLIC_ARENA_TOKEN } = process.env;
 
 export const GeneralContext = createContext(undefined);
 
@@ -94,6 +96,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
         await logout();
         throw new Error(constants.DEFAULT_ERROR_MESSAGES.NOT_WALLET_DEFINED);
       }
+
+      logAccountConnectedEvent(NEXT_PUBLIC_ARENA_TOKEN, information.address);
 
       setWalletInformation(information);
 

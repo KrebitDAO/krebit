@@ -279,6 +279,7 @@ export const Work = (props: IProps) => {
       .replace(/([a-z])([A-Z])/g, '$1 $2')
       .replace('#', '# ')
       .replace('++', '++ ')
+      .replace('GTE', '>= ')
       .replace('GT', '> ');
   };
 

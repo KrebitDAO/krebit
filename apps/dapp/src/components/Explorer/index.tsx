@@ -6,6 +6,7 @@ import {
   useState
 } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
+import { logCustomEvent } from 'arena-tools';
 import { useRouter } from 'next/router';
 import { debounce } from 'ts-debounce';
 import Link from 'next/link';
@@ -47,15 +48,18 @@ const DEFAULT_SLICE_SKILLS = 5;
 // TODO: This is not a real pagination, we need to find a way to optimize this better
 const DEFAULT_LIST_PAGINATION = 50;
 
+const { NEXT_PUBLIC_ARENA_TOKEN } = process.env;
+
 export const Explorer = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterValues, setFilterValues] = useState(initialFilterValues);
   const [status, setStatus] = useState('idle');
   const [information, setInformation] = useState<IInformation>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [shouldViewMoreSkills, setShouldViewMoreSkills] = useState(false);
   const {
-    walletInformation: { publicPassport, orbis }
+    walletInformation: { publicPassport, orbis, address }
   } = useContext(GeneralContext);
   const router = useRouter();
   const { width } = useWindowSize();
@@ -84,6 +88,8 @@ export const Explorer = () => {
     if (!publicPassport) return;
     if (!orbis) return;
 
+    logCustomEvent(NEXT_PUBLIC_ARENA_TOKEN, address, 'Explore');
+
     delayedInformation(
       filterValues,
       DEFAULT_LIST_PAGINATION * currentPage,
@@ -91,7 +97,7 @@ export const Explorer = () => {
     );
 
     return delayedInformation.cancel;
-  }, [publicPassport, orbis, filterValues.value, currentPage]);
+  }, [publicPassport, orbis, filterValues.value, currentPage, address]);
 
   const handleFilterOpen = () => {
     if (isDesktop) return;
@@ -153,6 +159,11 @@ export const Explorer = () => {
   ) => {
     try {
       setStatus('pending');
+
+      const totalAccounts = await Krebit.lib.graph.totalAccountsQuery({
+        first: 1000
+      });
+      setTotal(totalAccounts);
 
       const response = await Krebit.lib.graph.exploreAccountsQuery({
         first,
@@ -359,7 +370,7 @@ export const Explorer = () => {
             <p className="explorer-header-title">
               Krebited Profiles{' '}
               <span className="explorer-header-span">
-                {information?.profiles?.length || 0} results
+                {information?.profiles?.length || 0} results of {total}
               </span>
             </p>
             <div className="explorer-header-icon" onClick={handleFilterOpen}>
