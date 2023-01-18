@@ -218,12 +218,12 @@ export const Username = () => {
 
     const getSummary = async (skills: string[]) => {
       const summary = await openAI.getSkillSummary(
-        Krebit.utils
-          .mergeArray(skills)
-          .map(
-            (item, index) =>
-              `${item[0]} ${parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}`
-          )
+        Krebit.utils.mergeArray(skills).map((item, index) => {
+          if (!item[0].startsWith('token') && !item[0].startsWith('issuer-'))
+            return `${item[0]} ${
+              parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'
+            }`;
+        })
       );
 
       setProfile(prevValues => ({ ...prevValues, summary }));
@@ -603,16 +603,22 @@ export const Username = () => {
                     <div className="skills-box">
                       {Krebit.utils
                         .mergeArray(profile.skills)
-                        .map((item, index) => (
-                          <div className="skills-box-item" key={index}>
-                            <p className="skills-box-item-text">
-                              {item[0]}{' '}
-                              {parseInt(item[1]) === 1
-                                ? ''
-                                : '(' + item[1] + ')'}
-                            </p>
-                          </div>
-                        ))}
+                        .map((item, index) => {
+                          if (
+                            !item[0].startsWith('token') &&
+                            !item[0].startsWith('issuer-')
+                          )
+                            return (
+                              <div className="skills-box-item" key={index}>
+                                <p className="skills-box-item-text">
+                                  {item[0]}{' '}
+                                  {parseInt(item[1]) === 1
+                                    ? ''
+                                    : '(' + item[1] + ')'}
+                                </p>
+                              </div>
+                            );
+                        })}
                     </div>
                   )}
                 </Skills>
