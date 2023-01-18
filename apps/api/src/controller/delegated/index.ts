@@ -15,14 +15,6 @@ const {
   SERVER_CERAMIC_URL
 } = process.env;
 
-export const getTokenId = (type: string) => {
-  const tokenIdHex = ethers.utils.keccak256(
-    ethers.utils.defaultAbiCoder.encode(['string'], [type])
-  );
-  const tokenId = ethers.BigNumber.from(tokenIdHex);
-  return tokenId.toString();
-};
-
 export const DelegatedController = async (
   request: express.Request,
   response: express.Response,
@@ -112,7 +104,13 @@ export const DelegatedController = async (
           claimedCredential.credentialSubject.ethereumAddress
         );
 
-        const tokenId = getTokenId(claimedCredential.id);
+        const tokenIdHex = ethers.utils.keccak256(
+          ethers.utils.defaultAbiCoder.encode(
+            ['string'],
+            [claimedCredential.id]
+          )
+        );
+        const tokenId = ethers.BigNumber.from(tokenIdHex);
 
         const claim = {
           id: claimedCredential.id,
@@ -122,12 +120,18 @@ export const DelegatedController = async (
           typeSchema: claimValue.credentialSchema,
           tags: claimValue.tags?.length
             ? [
-                tokenId,
+                `tokenIdHex:${tokenIdHex.toString()}`,
+                `tokenId:${tokenId.toString()}`,
                 'Community',
                 claimValue.credentialType,
                 ...claimValue.tags
               ]
-            : [tokenId, 'Community', claimValue.credentialType],
+            : [
+                `tokenIdHex:${tokenIdHex.toString()}`,
+                `tokenId:${tokenId.toString()}`,
+                'Community',
+                claimValue.credentialType
+              ],
           value: {
             ...claimValue.values,
             parentCredential: claimedCredential.id,

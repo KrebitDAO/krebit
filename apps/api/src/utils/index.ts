@@ -8,7 +8,11 @@ import { getSpectUser } from './getSpectUser';
 import { twilio } from './twilio';
 import { github } from './github';
 import { getPersonaDecision } from './getPersonaDecision';
-import { getNFTCredentialTypes, getTokenIds } from './getNFTCredentialTypes';
+import {
+  getNFTCredentialTypes,
+  getTokenIds,
+  getTokenId
+} from './getNFTCredentialTypes';
 import { guildXyz } from './guildXyz';
 import { wait } from './wait';
 import { getAge } from './getAge';
@@ -30,6 +34,7 @@ export {
   github,
   getPersonaDecision,
   getNFTCredentialTypes,
+  getTokenId,
   getTokenIds,
   guildXyz,
   wait,

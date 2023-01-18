@@ -2,7 +2,12 @@ import express from 'express';
 import { ethers } from 'ethers';
 import krebit from '@krebitdao/reputation-passport';
 
-import { connect, getNFTCredentialTypes, getTokenIds } from '../../utils';
+import {
+  connect,
+  getNFTCredentialTypes,
+  getTokenIds,
+  getTokenId
+} from '../../utils';
 
 const { SERVER_NFT_METADATA_IPFS, SERVER_CERAMIC_URL } = process.env;
 
@@ -51,10 +56,14 @@ export const MetadataController = async (
     if (credentials.length > 0) {
       const claimValue = JSON.parse(credentials[0].credentialSubject?.value);
 
+      const typeId = getTokenId(claimValue.credentialType);
+
       const result = {
         name: claimValue.name,
         description: claimValue.description,
-        image_data: claimValue.imageUrl,
+        image_data: claimValue.imageUrl
+          ? claimValue.imageUrl
+          : `${SERVER_NFT_METADATA_IPFS}/${typeId}.jpg`,
         external_url: 'https://krebit.id',
         attributes: [
           {
