@@ -8,6 +8,7 @@ import { verifiableCredentials } from './verifiableCredentials.js';
 import { exploreAccounts } from './exploreAccounts.js';
 import { ensResolvedAddress } from './ensResolvedAddress.js';
 import { ensDomains } from './ensDomains.js';
+import { totalAccounts } from './totalAccounts.js';
 
 export {
   credentialRegistries,
@@ -19,5 +20,6 @@ export {
   verifiableCredentials,
   exploreAccounts,
   ensResolvedAddress,
-  ensDomains
+  ensDomains,
+  totalAccounts
 };

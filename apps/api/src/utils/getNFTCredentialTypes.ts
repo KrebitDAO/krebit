@@ -119,7 +119,8 @@ const CREDENTIAL_TYPES = [
   'Review',
   'WorkExperience',
   'Education',
-  'Attendance'
+  'Attendance',
+  'CredScoreGTEGood'
 ];
 
 export const getNFTCredentialTypes = () => {
@@ -156,6 +157,7 @@ export const getTokenIds = () => {
         .replace(/([a-z])([A-Z])/g, '$1 $2')
         .replace('#', '# ')
         .replace('++', '++ ')
+        .replace('GTE', '>= ')
         .replace('GT', '> '),
       tokenId: tokenId.toString()
     };

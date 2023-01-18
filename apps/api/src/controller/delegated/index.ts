@@ -3,6 +3,7 @@
 import express from 'express';
 import LitJsSdk from '@lit-protocol/sdk-nodejs';
 import krebit from '@krebitdao/reputation-passport';
+import { ethers } from 'ethers';
 
 import { connect, generateUID } from '../../utils';
 
@@ -13,6 +14,14 @@ const {
   SERVER_PRICE,
   SERVER_CERAMIC_URL
 } = process.env;
+
+export const getTokenId = (type: string) => {
+  const tokenIdHex = ethers.utils.keccak256(
+    ethers.utils.defaultAbiCoder.encode(['string'], [type])
+  );
+  const tokenId = ethers.BigNumber.from(tokenIdHex);
+  return tokenId.toString();
+};
 
 export const DelegatedController = async (
   request: express.Request,
@@ -103,18 +112,26 @@ export const DelegatedController = async (
           claimedCredential.credentialSubject.ethereumAddress
         );
 
+        const tokenId = getTokenId(claimedCredential.id);
+
         const claim = {
           id: claimedCredential.id,
           ethereumAddress: credentialSubjectAddress,
           did: credentialSubjectAddressDID,
-          type: claimValue.credentialType,
+          type: claimedCredential.id,
           typeSchema: claimValue.credentialSchema,
           tags: claimValue.tags?.length
-            ? ['Community', ...claimValue.tags]
-            : ['Community'],
+            ? [
+                tokenId,
+                'Community',
+                claimValue.credentialType,
+                ...claimValue.tags
+              ]
+            : [tokenId, 'Community', claimValue.credentialType],
           value: {
             ...claimValue.values,
             parentCredential: claimedCredential.id,
+            credentialType: claimValue.credentialType,
             onBehalveOfIssuer: claimedCredential.issuer
           },
           trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?

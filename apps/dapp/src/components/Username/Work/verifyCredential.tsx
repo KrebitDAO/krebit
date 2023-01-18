@@ -10,7 +10,8 @@ import {
   useSpectCompletedProvider,
   useDeworkCompletedProvider,
   useStackReputationProvider,
-  useStackScoreProvider
+  useStackScoreProvider,
+  useCredScoreProvider
 } from 'hooks';
 
 // types
@@ -47,6 +48,9 @@ export const VerifyCredential = (props: IProps) => {
   const spectCompletedProvider = useSpectCompletedProvider({
     walletInformation
   });
+  const credScoredProvider = useCredScoreProvider({
+    walletInformation
+  });
   const deworkCompletedProvider = useDeworkCompletedProvider({
     walletInformation
   });
@@ -70,6 +74,10 @@ export const VerifyCredential = (props: IProps) => {
 
     if (credentialType === 'SpectCompletedTasksGT10') {
       return spectCompletedProvider;
+    }
+
+    if (credentialType === 'CredScoreGTEGood') {
+      return credScoredProvider;
     }
 
     if (credentialType === 'DeworkCompletedTasksGT10') {

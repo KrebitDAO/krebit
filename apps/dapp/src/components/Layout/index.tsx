@@ -55,9 +55,7 @@ const MENU_OPTIONS = [
     title: 'Inbox',
     href: '/messages',
     icon: <Send />,
-    isPrivate: true,
-    badgeText: 'Beta',
-    badgeColor: 'blueRibbon'
+    isPrivate: true
   }
 ];
 

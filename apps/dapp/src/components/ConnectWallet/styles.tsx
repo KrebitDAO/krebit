@@ -174,9 +174,11 @@ export const WalletButton = styled.button<WalletButtonProps>`
       font-size: ${theme.fonts.xl};
     }
 
-    & > img {
+    & > img,
+    & > svg {
       width: 30px;
       height: 24px;
+      fill: ${theme.colors.white};
     }
   `}
 `;

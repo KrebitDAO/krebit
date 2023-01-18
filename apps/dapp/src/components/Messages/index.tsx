@@ -657,20 +657,36 @@ export const Messages = () => {
               />
               <div className="message-right-box-chat-options">
                 {!form?.messageValue && (
-                  <div
-                    className={`message-right-box-chat-icon ${
-                      isMessagesLoading || isActionMessageLoading
-                        ? 'message-right-box-chat-icon-disabled'
-                        : ''
-                    }`}
-                    onClick={
-                      isMessagesLoading || isActionMessageLoading
-                        ? undefined
-                        : handleCreateVideoCall
-                    }
-                  >
-                    <VideoCall />
-                  </div>
+                  <>
+                    <div
+                      className={`message-right-box-chat-icon ${
+                        isMessagesLoading || isActionMessageLoading
+                          ? 'message-right-box-chat-icon-disabled'
+                          : ''
+                      }`}
+                      onClick={
+                        isMessagesLoading || isActionMessageLoading
+                          ? undefined
+                          : handleCreateVideoCall
+                      }
+                    >
+                      <VideoCall />
+                    </div>
+                    <div
+                      className={`message-right-box-chat-icon ${
+                        isMessagesLoading || isActionMessageLoading
+                          ? 'message-right-box-chat-icon-disabled'
+                          : ''
+                      }`}
+                      onClick={
+                        isMessagesLoading || isActionMessageLoading
+                          ? undefined
+                          : handleCreateDeal
+                      }
+                    >
+                      <Deal />
+                    </div>
+                  </>
                 )}
                 <button
                   type="button"
@@ -682,13 +698,6 @@ export const Messages = () => {
                   disabled={isMessagesLoading || isActionMessageLoading}
                 >
                   <ArrowSend />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCreateDeal}
-                  disabled={isMessagesLoading || isActionMessageLoading}
-                >
-                  <Deal />
                 </button>
               </div>
             </div>

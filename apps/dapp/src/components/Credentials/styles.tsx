@@ -184,6 +184,7 @@ export const Card = styled(animated.div)<ICardProps>`
 
         & > img,
         & > svg {
+          fill: ${theme.colors.white};
           width: ${smaller ? '60px' : '80px'};
           height: ${smaller ? '60px' : '80px'};
         }
