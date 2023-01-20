@@ -56,6 +56,10 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
   const [walletInformation, setWalletInformation] = useState<
     IWalletInformation | undefined
   >();
+  const [notificationsCount, setNotificationsCount] = useState({
+    messages: 0,
+    social: 0
+  });
   const { push, query, pathname } = useRouter();
   const storage = new Web3Storage({ token: NEXT_PUBLIC_WEB3_STORAGE });
 
@@ -158,6 +162,28 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       window.removeEventListener('beforeunload', handleTabClose);
     };
   }, []);
+
+  useEffect(() => {
+    if (!window) return;
+    if (!orbis) return;
+    if (status !== 'resolved') return;
+
+    const getNotificationsCount = async () => {
+      const social = await orbis.getNotificationsCount({
+        type: 'social'
+      });
+      const messages = await orbis.getNotificationsCount({
+        type: 'messages'
+      });
+
+      setNotificationsCount({
+        messages: messages?.data?.count_new_notifications || 0,
+        social: social?.data?.count_new_notifications || 0
+      });
+    };
+
+    getNotificationsCount();
+  }, [orbis, status]);
 
   const initWeb3Auth = async () => {
     try {
@@ -401,7 +427,11 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           handleSetProfile,
           profile
         },
-        storage
+        storage,
+        notifications: {
+          count: notificationsCount,
+          setNotificationsCount
+        }
       }}
     >
       {children}

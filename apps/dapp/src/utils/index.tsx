@@ -19,6 +19,7 @@ import { guildXyz } from './guildXyz';
 import { getStackUser } from './getStackUser';
 import { orbisParseMarkdown } from './orbisParseMarkdown';
 import { openAI } from './openAI';
+import { sendNotification } from './sendNotification';
 
 export {
   createEmotionCache,
@@ -41,5 +42,6 @@ export {
   guildXyz,
   getStackUser,
   orbisParseMarkdown,
-  openAI
+  openAI,
+  sendNotification
 };
