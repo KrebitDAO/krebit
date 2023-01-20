@@ -1,4 +1,10 @@
-import { FunctionComponent, ReactNode, useContext, useState } from 'react';
+import {
+  FunctionComponent,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -18,12 +24,14 @@ import {
   Menu,
   Send,
   Home,
-  Login
+  Login,
+  Notifications as NotificationsIcon
 } from 'components/Icons';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { Loading } from 'components/Loading';
 import { Badge } from 'components/Badge';
+import { Notifications } from 'components/Notifications';
 import { GeneralContext } from 'context';
 import { formatUrlImage } from 'utils';
 
@@ -65,11 +73,13 @@ export const Layout: FunctionComponent<IProps> = props => {
   const {
     auth,
     profileInformation: { profile },
-    walletModal: { openConnectWallet, handleOpenConnectWallet }
+    walletModal: { openConnectWallet, handleOpenConnectWallet },
+    notifications: { count: notificationsCount }
   } = useContext(GeneralContext);
   const [isMenuContentMobileOpen, setIsMenuContentMobileOpen] = useState(false);
   const [navBarDesktopOptionHovered, setNavBarDesktopOptionHovered] =
     useState<string>();
+  const [areNotificationsOpen, setAreNotificationsOpen] = useState(false);
   const { push, asPath } = useRouter();
   const isLoading = auth.status === 'pending';
 
@@ -104,11 +114,19 @@ export const Layout: FunctionComponent<IProps> = props => {
     window.open('https://discord.gg/VHSq4ABsfz', '_blank');
   };
 
+  const handleNotificationsOpen = (status: boolean) => {
+    setAreNotificationsOpen(status);
+  };
+
   return (
     <>
       <ConnectWallet
         isOpen={openConnectWallet}
         onClose={handleOpenConnectWallet}
+      />
+      <Notifications
+        isModalOpen={areNotificationsOpen}
+        onClose={handleNotificationsOpen}
       />
       <Wrapper>
         <MenuMobile profilePicture={formatUrlImage(profile?.picture)}>
@@ -125,6 +143,19 @@ export const Layout: FunctionComponent<IProps> = props => {
               </div>
             ) : auth?.isAuthenticated ? (
               <>
+                <div
+                  className="profile-menu-icon"
+                  onClick={() => handleNotificationsOpen(true)}
+                >
+                  <Badge
+                    icon={<NotificationsIcon />}
+                    text={
+                      notificationsCount?.social
+                        ? notificationsCount?.social?.toString()
+                        : undefined
+                    }
+                  />
+                </div>
                 <div
                   className="profile-menu-image"
                   onClick={() => handleFilterOpen('mobile')}
@@ -242,7 +273,24 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <Link href={content.href} key={index}>
                   <NavBarOption isActive={asPath.includes(content.href)}>
                     <div className="option-icon">
-                      {content.badgeText ? (
+                      {content.title === 'Inbox' ? (
+                        <Badge
+                          icon={content.icon}
+                          color={
+                            notificationsCount?.messages
+                              ? 'rose'
+                              : content.badgeColor
+                          }
+                          iconColor={
+                            asPath.includes(content.href) ? 'cyan' : 'gray'
+                          }
+                          text={
+                            notificationsCount?.messages
+                              ? notificationsCount?.messages.toString()
+                              : content.badgeText
+                          }
+                        />
+                      ) : content.badgeText ? (
                         <Badge
                           icon={content.icon}
                           color={content.badgeColor}
@@ -295,7 +343,24 @@ export const Layout: FunctionComponent<IProps> = props => {
                       }
                     >
                       <div className="option-icon">
-                        {content.badgeText ? (
+                        {content.title === 'Inbox' ? (
+                          <Badge
+                            icon={content.icon}
+                            color={
+                              notificationsCount?.messages
+                                ? 'rose'
+                                : content.badgeColor
+                            }
+                            iconColor={
+                              asPath.includes(content.href) ? 'cyan' : 'gray'
+                            }
+                            text={
+                              notificationsCount?.messages
+                                ? notificationsCount?.messages.toString()
+                                : content.badgeText
+                            }
+                          />
+                        ) : content.badgeText ? (
                           <Badge
                             icon={content.icon}
                             color={content.badgeColor}
@@ -335,29 +400,56 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <Loading type="skeleton" />
               </div>
             ) : auth?.isAuthenticated ? (
-              <div className="option-profile">
-                <div
-                  className="option-profile-image"
-                  onClick={() => handleFilterOpen('desktop')}
-                />
-                {isFilterOpenInView === 'desktop' && (
-                  <div className="option-profile-dropdown">
-                    <InlineDropdown
-                      items={[
-                        {
-                          title: 'My profile',
-                          onClick: handlePushProfile
-                        },
-                        {
-                          title: 'Log out',
-                          onClick: handleLogout
-                        }
-                      ]}
-                      onClose={() => handleFilterOpen(undefined)}
+              <>
+                <NavBarOption
+                  isActive={false}
+                  onClick={() => handleNotificationsOpen(true)}
+                  onMouseEnter={() =>
+                    handleNavBarDesktopOptionHovered('notifications')
+                  }
+                  onMouseLeave={() =>
+                    handleNavBarDesktopOptionHovered(undefined)
+                  }
+                >
+                  <div className="option-icon">
+                    <Badge
+                      icon={<NotificationsIcon />}
+                      iconColor="gray"
+                      text={
+                        notificationsCount?.social
+                          ? notificationsCount?.social?.toString()
+                          : undefined
+                      }
                     />
                   </div>
-                )}
-              </div>
+                  {navBarDesktopOptionHovered === 'notifications' && (
+                    <p className="option-hover">Notifications</p>
+                  )}
+                </NavBarOption>
+                <div className="option-profile">
+                  <div
+                    className="option-profile-image"
+                    onClick={() => handleFilterOpen('desktop')}
+                  />
+                  {isFilterOpenInView === 'desktop' && (
+                    <div className="option-profile-dropdown">
+                      <InlineDropdown
+                        items={[
+                          {
+                            title: 'My profile',
+                            onClick: handlePushProfile
+                          },
+                          {
+                            title: 'Log out',
+                            onClick: handleLogout
+                          }
+                        ]}
+                        onClose={() => handleFilterOpen(undefined)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
             ) : (
               <NavBarOption
                 isActive={false}

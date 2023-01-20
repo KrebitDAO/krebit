@@ -183,6 +183,7 @@ export const Wrapper = styled.div<IProps>`
         margin-top: 50px;
         display: grid;
         grid-gap: 24px;
+        height: fit-content;
 
         @media (min-width: ${theme.screens.lg}) {
           margin-top: 34px;
