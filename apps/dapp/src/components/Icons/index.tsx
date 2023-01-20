@@ -64,6 +64,7 @@ import { Login } from './Login';
 import { SmartToy } from './SmartToy';
 import { VideoCall } from './VideoCall';
 import { Cred } from './Cred';
+import { Notifications } from './Notifications';
 
 export {
   Close,
@@ -131,5 +132,6 @@ export {
   Login,
   SmartToy,
   VideoCall,
-  Cred
+  Cred,
+  Notifications
 };

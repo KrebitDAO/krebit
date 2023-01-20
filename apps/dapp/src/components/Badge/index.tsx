@@ -15,7 +15,7 @@ export const Badge = (props: IProps) => {
 
   return (
     <Wrapper onClick={onClick} color={color} iconColor={iconColor}>
-      <p className="badge-text">{text}</p>
+      {text && <p className="badge-text">{text}</p>}
       {icon}
     </Wrapper>
   );

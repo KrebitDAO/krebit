@@ -32,6 +32,7 @@ import {
   formatFilename,
   formatUrlImage,
   generateUID,
+  sendNotification,
   sortByDate
 } from 'utils';
 
@@ -56,7 +57,8 @@ export const CredentialsBuilder = () => {
   const { query, push } = useRouter();
   const {
     auth,
-    walletInformation: { passport, issuer, address },
+    walletInformation: { passport, issuer, address, orbis },
+    profileInformation: { profile },
     walletModal: { handleOpenConnectWallet },
     storage
   } = useContext(GeneralContext);
@@ -344,13 +346,28 @@ export const CredentialsBuilder = () => {
 
         if (issuedCredential) {
           const addedCredentialId = await passport.addIssued(issuedCredential);
+          const issueToValues = currentValues?.values?.issueTo;
 
           console.log('addedCredentialId: ', addedCredentialId);
+
+          if (issueToValues && issueToValues?.length > 0) {
+            await sendNotification({
+              orbis,
+              authenticatedDID: auth.did,
+              body: {
+                subject:
+                  currentValues?.values?.name || currentValues?.values?.title,
+                content: `${profile?.name} has created a new credential where you can issue, just click the following link: ${BASE_URL}/?credential_id=${addedCredentialId}`,
+                recipients: issueToValues
+              }
+            });
+          }
 
           setCredentialId(addedCredentialId);
           setStatus('form_resolved');
         }
       } else {
+        const issueToValues = currentValues?.values?.issueTo;
         const encryptedList = await issuer.encryptClaimValue(
           currentValues?.values?.issueTo,
           currentValues.ethereumAddress
@@ -385,6 +402,19 @@ export const CredentialsBuilder = () => {
             delegatedCredential
           );
           console.log('delegatedCredentialId: ', delegatedCredentialId);
+
+          if (issueToValues && issueToValues?.length > 0) {
+            await sendNotification({
+              orbis,
+              authenticatedDID: auth.did,
+              body: {
+                subject:
+                  currentValues?.values?.name || currentValues?.values?.title,
+                content: `${profile?.name} has created a new credential where you can issue, just click the following link: ${BASE_URL}/?credential_id=${delegatedCredentialId}`,
+                recipients: issueToValues
+              }
+            });
+          }
 
           setCredentialId(delegatedCredentialId);
           setStatus('form_resolved');
