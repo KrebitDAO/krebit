@@ -294,14 +294,12 @@ export const Username = () => {
     try {
       setStatus('follow_pending');
 
-      const isValidID = isValid('did', query.id as string);
-
-      if (!isValidID) {
-        setStatus('follow_rejected');
+      if (!isValid('did', currentDIDFromURL)) {
+        setStatus('rejected');
         return;
       }
 
-      const response = await orbis.setFollow(query.id, isFollowing);
+      const response = await orbis.setFollow(currentDIDFromURL, isFollowing);
 
       if (response?.doc) {
         setProfile(prevState => ({
@@ -327,15 +325,13 @@ export const Username = () => {
       return;
     }
 
-    const isValidID = isValid('did', query.id as string);
-
-    if (!isValidID) {
+    if (!isValid('did', currentDIDFromURL)) {
       setStatus('rejected');
       return;
     }
 
     const currentConversations = await orbis.getConversations({
-      did: query.id
+      did: currentDIDFromURL
     });
 
     if (currentConversations?.data?.length > 0) {
@@ -350,7 +346,7 @@ export const Username = () => {
         push(`/messages/?conversation_id=${conversationWithJustMe.stream_id}`);
       } else {
         const response = await orbis.createConversation({
-          recipients: [query.id]
+          recipients: [currentDIDFromURL]
         });
 
         if (response?.doc) {
@@ -359,7 +355,7 @@ export const Username = () => {
       }
     } else {
       const response = await orbis.createConversation({
-        recipients: [query.id]
+        recipients: [currentDIDFromURL]
       });
 
       if (response?.doc) {

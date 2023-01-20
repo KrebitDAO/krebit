@@ -1134,7 +1134,7 @@
     serialize-error "8.1.0"
     ws "^8.8.0"
 
-"@ceramicnetwork/blockchain-utils-linking@^2.0.8", "@ceramicnetwork/blockchain-utils-linking@^2.7.1":
+"@ceramicnetwork/blockchain-utils-linking@^2.7.1":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/blockchain-utils-linking/-/blockchain-utils-linking-2.8.0.tgz#4b270c9e64a6e2879d756ff215b385671e34666f"
   integrity sha512-QIn2ko1XBvCzytdVRqOP4O6YYQbVacZFQpupxKaJZPfqFqyYrfbRFs8U2fJHdjJY1wPAdFcA0OcQ6aHiDXwFyg==
@@ -1168,7 +1168,7 @@
     rxjs "^7.5.2"
     uint8arrays "^3.0.0"
 
-"@ceramicnetwork/http-client@^2.12.1", "@ceramicnetwork/http-client@^2.13.0-hotfix.0", "@ceramicnetwork/http-client@^2.3.1":
+"@ceramicnetwork/http-client@^2.12.1", "@ceramicnetwork/http-client@^2.13.0-hotfix.0":
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-2.13.0.tgz#5b3ecaf0d8650ac421ca45ff5a2c8fb13c3f7e23"
   integrity sha512-IKnYpmwH75v64GND/1Kj7U62RZG17Zyk0rLSl5XTJLczuYGn5vsbJjfMydt8Lt8wsa0mib0rcydbmMRXFJ7+jg==
@@ -1220,7 +1220,7 @@
     multihashes "^4.0.3"
     uint8arrays "^3.0.0"
 
-"@ceramicnetwork/stream-tile@^2.11.1", "@ceramicnetwork/stream-tile@^2.12.0", "@ceramicnetwork/stream-tile@^2.12.0-hotfix.0", "@ceramicnetwork/stream-tile@^2.2.2", "@ceramicnetwork/stream-tile@^2.4.0", "@ceramicnetwork/stream-tile@^2.4.4":
+"@ceramicnetwork/stream-tile@^2.11.1", "@ceramicnetwork/stream-tile@^2.12.0", "@ceramicnetwork/stream-tile@^2.12.0-hotfix.0", "@ceramicnetwork/stream-tile@^2.2.2", "@ceramicnetwork/stream-tile@^2.4.4":
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-tile/-/stream-tile-2.12.0.tgz#7c9e227c9ecdd7a4196c38847b550d35e508f707"
   integrity sha512-885QI8TWM0jvCzGDnluubIVLg3NlUAF1kYQCzmZQjT7W8kyD9EIlnBSgA1CU0Xbpa1nEe4EUTGPM+JTxOfa0tA==
@@ -1506,16 +1506,6 @@
     "@stablelib/random" "^1.0.2"
     caip "^1.1.0"
 
-"@didtools/pkh-ethereum@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@didtools/pkh-ethereum/-/pkh-ethereum-0.0.2.tgz#c470660bd9e2e2cacc5b0f1f54e92965e40b4fa9"
-  integrity sha512-ka+iwlvBCVQqO3btZ1wssAm0VmG25nqZkD1rSV5IRT8LNAvne2cjKzt/hMutK9PULMD/yJRifwFupgfu7JI9Cg==
-  dependencies:
-    "@didtools/cacao" "^1.0.0"
-    "@ethersproject/wallet" "^5.7.0"
-    "@stablelib/random" "^1.0.2"
-    caip "^1.1.0"
-
 "@didtools/pkh-ethereum@^0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@didtools/pkh-ethereum/-/pkh-ethereum-0.0.3.tgz#ca86ce1fc0770c0043aade2dc5036ea38756e403"
@@ -1533,17 +1523,6 @@
   dependencies:
     "@didtools/cacao" "^1.0.0"
     "@stablelib/ed25519" "^1.0.3"
-    caip "^1.1.0"
-    uint8arrays "^3.1.0"
-
-"@didtools/pkh-solana@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@didtools/pkh-solana/-/pkh-solana-0.0.2.tgz#6776dda625d7aeb9e271abd4ed6550a8681c4a5b"
-  integrity sha512-PTV8Eu37+/7u+GNqH0fjjoiUpss5v9cfpnCo5yXi+lQ06VR02MvMAfWtI61+QN8xjgmd8wHpQP7CtX32skWOxw==
-  dependencies:
-    "@didtools/cacao" "^1.0.0"
-    "@stablelib/ed25519" "^1.0.3"
-    "@stablelib/random" "^1.0.2"
     caip "^1.1.0"
     uint8arrays "^3.1.0"
 
@@ -2792,29 +2771,26 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@orbisclub/orbis-sdk@^0.3.93":
-  version "0.3.99"
-  resolved "https://registry.yarnpkg.com/@orbisclub/orbis-sdk/-/orbis-sdk-0.3.99.tgz#901bd21ed3b58d07002826baf2a8d3e53f521171"
-  integrity sha512-Qq/pML9hsfddxJTEJZtwJqU13swjXkFsaKGyPUeMfiiVefTRMR6Vr2U6xnslye1PVH/T0cj+rKsdylXd79Mhkg==
+"@orbisclub/orbis-sdk@^0.4.17":
+  version "0.4.17"
+  resolved "https://registry.yarnpkg.com/@orbisclub/orbis-sdk/-/orbis-sdk-0.4.17.tgz#6f4e64be3cd7cbfd326ed66ee54aed29f00b4798"
+  integrity sha512-EhnT7WX/M85h5Nfp9Q6VP4Yp1ndBcmQYZqixW//0JgkiBJr8Z1WdDmkVPk06PrWDn1bLkvoUnjqv3THngU4JNw==
   dependencies:
-    "@ceramicnetwork/blockchain-utils-linking" "^2.0.8"
-    "@ceramicnetwork/http-client" "^2.3.1"
-    "@ceramicnetwork/stream-tile" "^2.4.0"
-    "@didtools/pkh-ethereum" "^0.0.2"
-    "@didtools/pkh-solana" "^0.0.2"
+    "@ceramicnetwork/http-client" "^2.13.0-hotfix.0"
+    "@ceramicnetwork/stream-tile" "^2.12.0-hotfix.0"
+    "@didtools/pkh-ethereum" "^0.0.3"
+    "@didtools/pkh-solana" "^0.0.4"
+    "@didtools/pkh-tezos" "^0.0.2"
     "@ethersproject/bytes" "^5.6.1"
     "@ethersproject/providers" "^5.7.0"
     "@ethersproject/strings" "^5.6.1"
+    "@lit-protocol/sdk-browser" "^1.1.238"
     "@supabase/supabase-js" "^1.35.3"
     axios "^1.1.3"
-    buffer "^6.0.3"
     did-session "^1.0.0"
-    dids "^3.3.0"
-    key-did-provider-ed25519 "^2.0.0"
-    key-did-resolver "^2.0.4"
-    lit-js-sdk "^1.1.185"
+    key-did-provider-ed25519 "^2.0.1"
+    key-did-resolver "^2.3.0"
     react-image-file-resizer "^0.4.8"
-    uint8arrays "^3.1.0"
 
 "@orbisclub/orbis-sdk@^0.4.9":
   version "0.4.12"
@@ -5897,7 +5873,7 @@ did-session@^1.0.0:
     key-did-resolver "^2.0.6"
     uint8arrays "^3.0.0"
 
-dids@^3.2.0, dids@^3.3.0, dids@^3.4.0:
+dids@^3.2.0, dids@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/dids/-/dids-3.4.0.tgz#ac37c914c8d862bb7619515a5deb11ef19c988a3"
   integrity sha512-hXHkOTL9E5R4rbQwDVOktiiEq57Y6yWOEYjev1ojOpMr2Rkx9g8bw0v6BQIsbPB94aaYxUCtaejNl2FrublfiA==
@@ -8928,7 +8904,7 @@ keccak@^3.0.0, keccak@^3.0.2:
     node-gyp-build "^4.2.0"
     readable-stream "^3.6.0"
 
-key-did-provider-ed25519@^2.0.0, key-did-provider-ed25519@^2.0.1:
+key-did-provider-ed25519@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/key-did-provider-ed25519/-/key-did-provider-ed25519-2.0.1.tgz#7178169831d36cdc99a0640d6bee3cbfd95f9a56"
   integrity sha512-FaB2g7zUAeN/bLaFl2YSNQx9NsxgDd/3TR1YGvoXLhENsvZBdyA2V7hX8/MZhZ5jm82wL5lRw3O4UXuz/pJANQ==
@@ -8939,7 +8915,7 @@ key-did-provider-ed25519@^2.0.0, key-did-provider-ed25519@^2.0.1:
     rpc-utils "^0.6.2"
     uint8arrays "^3.0.0"
 
-key-did-resolver@^2.0.4, key-did-resolver@^2.0.6, key-did-resolver@^2.3.0:
+key-did-resolver@^2.0.6, key-did-resolver@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/key-did-resolver/-/key-did-resolver-2.3.0.tgz#38c636be72d769cdf8a4ebdfb1e35f36fb5550c1"
   integrity sha512-q3ChQILPe+u8qkpWP196fEoxsygEyjM3K25qrGaMSolVaUdfgj7qwMz2DE/GRIlfNK2HgKW6KXA8RZMy8aL4MA==
@@ -9067,7 +9043,7 @@ lit-connect-modal@^0.1.10:
   dependencies:
     micromodal "^0.4.10"
 
-lit-js-sdk@^1.1.185, lit-js-sdk@^1.1.198:
+lit-js-sdk@^1.1.198:
   version "1.1.241"
   resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.241.tgz#3276dfcbe8cec4733bf04106201c327da6316299"
   integrity sha512-03tnpz1GqygJuDf9608NXFfYKtcMms4tClTVezVa4O+uu5kBEmcSND5pVF1SPaR5WpJkgfGiA0YvJw31IotuCg==
