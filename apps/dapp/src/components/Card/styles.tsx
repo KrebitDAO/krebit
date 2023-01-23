@@ -166,9 +166,12 @@ export const SmallCardWrapper = styled.div<ICardProps>`
         font-size: ${theme.fonts.lg};
         color: ${theme.colors.white};
         font-family: 'HelveticaNowDisplay-Medium';
+        word-wrap: break-word;
+        max-width: 200px;
 
         @media (min-width: ${theme.screens.lg}) {
           font-size: ${theme.fonts.xl};
+          max-width: 250px;
         }
       }
 
@@ -327,9 +330,12 @@ export const LongCardWrapper = styled.div<ICardProps>`
         font-size: ${theme.fonts.base};
         color: ${theme.colors.white};
         font-family: 'HelveticaNowDisplay-Medium';
+        word-wrap: break-word;
+        max-width: 150px;
 
         @media (min-width: ${theme.screens.lg}) {
           font-size: ${theme.fonts.xl};
+          max-width: 400px;
         }
       }
 
@@ -338,10 +344,13 @@ export const LongCardWrapper = styled.div<ICardProps>`
         margin-top: 5px;
         font-size: ${theme.fonts.xs};
         color: ${theme.colors.white}B3;
+        word-wrap: break-word;
+        max-width: 150px;
 
         @media (min-width: ${theme.screens.lg}) {
           margin: 0;
           font-size: ${theme.fonts.sm};
+          max-width: 400px;
         }
       }
 

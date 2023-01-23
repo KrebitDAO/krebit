@@ -363,10 +363,14 @@ export const Verify = (props: IProps) => {
                     <div className="verify-steps-content-card">
                       <CredentialCard
                         primaryColor={
+                          credential?.credential?.visualInformation
+                            ?.primaryColor ||
                           credential?.credential?.visualInformation?.builder
                             ?.primaryColor
                         }
                         secondaryColor={
+                          credential?.credential?.visualInformation
+                            ?.secondaryColor ||
                           credential?.credential?.visualInformation?.builder
                             ?.secondaryColor
                         }
@@ -374,7 +378,9 @@ export const Verify = (props: IProps) => {
                         frontChildren={
                           <>
                             <p className="card-title">
-                              {credential?.credential?.value?.values?.name ||
+                              {credential?.credential?.visualInformation
+                                ?.metadata?.title ||
+                                credential?.credential?.value?.values?.name ||
                                 credential?.credential?.value?.values?.title ||
                                 currentVerify.steps[currentStep || 0]?.metadata
                                   ?.title ||
@@ -420,8 +426,11 @@ export const Verify = (props: IProps) => {
                               </div>
                             ) : (
                               <p className="card-description">
-                                {credential?.credential?.value?.values
-                                  ?.description || ''}
+                                {credential?.credential?.visualInformation
+                                  ?.metadata?.description ||
+                                  credential?.credential?.value?.values
+                                    ?.description ||
+                                  ''}
                               </p>
                             )}
                             <div className="card-bottom">
@@ -452,7 +461,15 @@ export const Verify = (props: IProps) => {
                               </div>
                               <div className="card-brand">
                                 {credential?.credential?.visualInformation
-                                  ?.builder?.imageUrl ? (
+                                  ?.metadata?.image ? (
+                                  <img
+                                    src={formatUrlImage(
+                                      credential?.credential?.visualInformation
+                                        ?.metadata?.image
+                                    )}
+                                  />
+                                ) : credential?.credential?.visualInformation
+                                    ?.builder?.imageUrl ? (
                                   <img
                                     src={formatUrlImage(
                                       credential?.credential?.visualInformation

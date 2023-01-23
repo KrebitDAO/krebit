@@ -34,6 +34,7 @@ import { GeneralContext } from 'context';
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
+import { Issue } from './Issue';
 
 interface IFilterMenuProps {
   currentFilter: string;
@@ -93,6 +94,14 @@ const FilterMenu = (props: IFilterMenuProps) => {
         onClick={() => onClick('Community')}
       >
         Community Credentials
+      </p>
+      <p
+        className={`content-filter-menu-item ${
+          currentFilter === 'Issue' ? 'content-filter-menu-item-active' : ''
+        }`}
+        onClick={() => onClick('Issue')}
+      >
+        Issued Credentials
       </p>
     </div>
   );
@@ -688,6 +697,18 @@ export const Username = () => {
                   handleProfile={handleProfile}
                   customCredential={currentCustomCredential}
                   onCustomCredential={handleCurrentCustomCredential}
+                />
+                <Issue
+                  isAuthenticated={currentDIDFromURL === auth?.did}
+                  passport={passport}
+                  publicPassport={publicPassport}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={
+                    currentFilterOption !== 'overview' &&
+                    currentFilterOption !== 'Issue'
+                  }
+                  handleProfile={handleProfile}
                 />
               </div>
             </div>
