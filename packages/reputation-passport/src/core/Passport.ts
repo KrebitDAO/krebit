@@ -408,7 +408,7 @@ export class Passport {
                     vcId: vcId
                   };
               } else {
-                return vcStream.content;
+                return { ...vcStream.content, vcId: vcId };
               }
             }
           })

@@ -30,6 +30,7 @@ import {
 import { QuestionModal } from 'components/QuestionModal';
 import { Autocomplete } from 'components/Autocomplete';
 import { Button } from 'components/Button';
+import { substring } from 'components/Groups/utils';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { formatUrlImage, orbisParseMarkdown } from 'utils';
 import { GeneralContext } from 'context';
@@ -542,8 +543,13 @@ export const Messages = () => {
                 <p className="messages-box-item-text">
                   {conversation?.recipients_details
                     .filter(details => details?.did !== auth?.did)
-                    .slice(0, DEFAULT_LIMIT_PICTURES_LIST)
-                    .map(details => details?.profile?.username || details?.did)
+                    .map(details =>
+                      substring(
+                        details?.profile?.username || details?.did,
+                        isDesktop ? 20 : 10,
+                        !details?.profile?.username
+                      )
+                    )
                     .join(', ')}
                   {conversation?.recipients_details?.length > 2 && '...'}
                 </p>
