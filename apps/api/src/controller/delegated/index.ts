@@ -88,14 +88,16 @@ export const DelegatedController = async (
       const valid =
         issueTo.findIndex(element => {
           return (
-            element.toLowerCase() === credentialSubjectAddress.toLowerCase() ||
-            element.toLowerCase() === credentialSubjectEmail.toLowerCase()
+            element
+              .toLowerCase()
+              .includes(credentialSubjectAddress.toLowerCase()) ||
+            element.toLowerCase().includes(credentialSubjectEmail.toLowerCase())
           );
         }) > -1 &&
         claimValue.ethereumAddress.toLowerCase() ===
           wallet.address.toLowerCase() &&
         credentialSubjectAddress.toLowerCase() !==
-          claimedCredential.credentialSubject.ethereumAddress;
+          claimedCredential.credentialSubject.ethereumAddress.toLowerCase();
 
       // If valid issuer
       if (valid) {
