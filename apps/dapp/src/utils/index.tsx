@@ -20,6 +20,7 @@ import { getStackUser } from './getStackUser';
 import { orbisParseMarkdown } from './orbisParseMarkdown';
 import { openAI } from './openAI';
 import { sendNotification } from './sendNotification';
+import { isValidJSON } from './isValidJSON';
 
 export {
   createEmotionCache,
@@ -43,5 +44,6 @@ export {
   getStackUser,
   orbisParseMarkdown,
   openAI,
-  sendNotification
+  sendNotification,
+  isValidJSON
 };

@@ -6,7 +6,7 @@ import { Wrapper } from './styles';
 import { Loading } from 'components/Loading';
 import { CredentialCard } from 'components/Credentials/credentialCard';
 import { CREDENTIALS_INITIAL_STATE } from 'components/Credentials/initialState';
-import { formatUrlImage } from 'utils';
+import { formatUrlImage, isValidJSON } from 'utils';
 import { substring } from 'components/Groups/utils';
 import { GeneralContext } from 'context';
 import { Button } from 'components/Button';
@@ -62,6 +62,7 @@ export const Deal = () => {
     if (!window) return;
     if (!query?.credential_id) return;
     if (auth.status !== 'resolved') return;
+    if (!walletInformation?.passport) return;
 
     const getCredential = async () => {
       try {
@@ -83,7 +84,7 @@ export const Deal = () => {
               query?.credential_id
             );
 
-          if (
+          /* if (
             currentCredential?.issuer?.ethereumAddress !==
               walletInformation?.address &&
             !currentCredential?.credentialSubject?.value?.issueTo?.includes(
@@ -92,7 +93,7 @@ export const Deal = () => {
           ) {
             push(`/${auth?.did}`);
             return;
-          }
+          } */
 
           const dealStatus = await walletInformation?.deals?.checkStatus(
             currentCredential
@@ -110,7 +111,9 @@ export const Deal = () => {
             ...currentCredential,
             credentialSubject: {
               ...currentCredential?.credentialSubject,
-              value: JSON.parse(currentCredential?.credentialSubject?.value)
+              value: isValidJSON(currentCredential?.credentialSubject?.value)
+                ? JSON.parse(currentCredential?.credentialSubject?.value)
+                : currentCredential?.credentialSubject?.value
             },
             visualInformation: visualInformation[0] || {}
           };

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import Link from 'next/link';
@@ -35,11 +35,26 @@ export const Home = () => {
   const [currentUser, setCurrentUser] = useState(0);
   const {
     auth: { status },
-    walletModal: { handleOpenConnectWallet }
+    walletModal: {
+      openConnectWallet,
+      setOpenConnectWallet,
+      handleOpenConnectWallet
+    }
   } = useContext(GeneralContext);
   const router = useRouter();
   const windowSize = useWindowSize();
   const isHigher = windowSize.height >= 750;
+
+  useEffect(() => {
+    // Ask the user to login if in the url has the credential_id
+    if (
+      router.query?.credential_id &&
+      status === 'resolved' &&
+      !openConnectWallet
+    ) {
+      setOpenConnectWallet(true);
+    }
+  }, [status, router.query?.credential_id, openConnectWallet]);
 
   const handleExtended = (index: number | undefined) => {
     if (isExtended === undefined || isExtended !== index) {

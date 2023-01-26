@@ -1,3 +1,5 @@
+import { isValidJSON } from 'utils';
+
 // types
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
 
@@ -14,7 +16,9 @@ export const getReferralCredentials = async (props: IProps) => {
       ...credential,
       credentialSubject: {
         ...credential.credentialSubject,
-        value: JSON.parse(credential?.credentialSubject?.value)
+        value: isValidJSON(credential?.credentialSubject?.value)
+          ? JSON.parse(credential?.credentialSubject?.value)
+          : credential?.credentialSubject?.value
       }
     }))
     .map(credential => ({

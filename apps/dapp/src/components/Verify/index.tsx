@@ -65,9 +65,11 @@ export const Verify = (props: IProps) => {
   const [areStepsCompleted, setAreStepsCompleted] = useState(false);
   const provider = getProvider(currentVerify?.credentialType);
   const isLoading =
+    provider?.status === 'verification_pending' ||
     provider?.status === 'credential_pending' ||
     provider?.status === 'mint_pending';
   const hasError =
+    provider?.status === 'verification_rejected' ||
     provider?.status === 'credential_rejected' ||
     provider?.status === 'mint_rejected';
   const allStepsCompleted =
@@ -114,12 +116,14 @@ export const Verify = (props: IProps) => {
     }
 
     if (
+      provider?.status === 'verification_pending' ||
       provider?.status === 'credential_pending' ||
       provider?.status === 'mint_pending'
     )
       return;
 
     if (
+      provider?.status === 'verification_rejected' ||
       provider?.status === 'credential_rejected' ||
       provider?.status === 'mint_rejected'
     ) {
@@ -127,6 +131,7 @@ export const Verify = (props: IProps) => {
     }
 
     if (
+      provider?.status === 'verification_resolved' ||
       provider?.status === 'credential_resolved' ||
       provider?.status === 'mint_resolved'
     ) {
@@ -363,15 +368,15 @@ export const Verify = (props: IProps) => {
                     <div className="verify-steps-content-card">
                       <CredentialCard
                         primaryColor={
-                          credential?.credential?.visualInformation
-                            ?.primaryColor ||
                           credential?.credential?.visualInformation?.builder
+                            ?.primaryColor ||
+                          credential?.credential?.visualInformation
                             ?.primaryColor
                         }
                         secondaryColor={
-                          credential?.credential?.visualInformation
-                            ?.secondaryColor ||
                           credential?.credential?.visualInformation?.builder
+                            ?.secondaryColor ||
+                          credential?.credential?.visualInformation
                             ?.secondaryColor
                         }
                         smaller={true}

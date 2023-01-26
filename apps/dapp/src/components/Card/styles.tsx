@@ -248,14 +248,29 @@ export const SmallCardWrapper = styled.div<ICardProps>`
       height: 31px;
       justify-self: flex-end;
       align-self: flex-end;
-      background-image: url('${image}');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: contain;
+
+      ${image &&
+      css`
+        background-image: url('${image}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+      `}
 
       @media (min-width: ${theme.screens.lg}) {
         width: 112px;
         height: 44px;
+      }
+
+      & > svg {
+        width: 81px;
+        height: 31px;
+        fill: ${theme.colors.white};
+
+        @media (min-width: ${theme.screens.lg}) {
+          width: 112px;
+          height: 44px;
+        }
       }
     }
 

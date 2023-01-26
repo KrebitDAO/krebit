@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { Verify } from 'components/Verify';
-import { formatCredential } from './formatCredential';
+import { formatCredential } from '../utils';
 import { getIssuers } from 'utils';
 import { GeneralContext } from 'context';
 import { useIssuerProvider } from 'hooks';
