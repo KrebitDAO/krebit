@@ -38,7 +38,7 @@ import { useWindowSize } from 'hooks';
 import { theme } from 'theme';
 
 const DEFAULT_LIMIT_PICTURES_LIST = 4;
-const DEFAULT_CALL_SERVICE = 'https://iframe.huddle01.com/';
+const DEFAULT_CALL_SERVICE = 'https://krebit.huddle01.com/';
 
 export const Messages = () => {
   const [status, setStatus] = useState('idle');
