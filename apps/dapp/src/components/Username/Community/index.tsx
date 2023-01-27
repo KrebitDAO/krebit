@@ -8,14 +8,8 @@ import { OpenInNew } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
-import {
-  buildCredential,
-  formatCredential,
-  getCredential,
-  getCredentials
-} from '../utils';
+import { buildCredential, getCredential, getCredentials } from '../utils';
 import { constants } from 'utils';
-import { CREDENTIALS_INITIAL_STATE } from '../../Credentials/initialState';
 
 const DynamicShareWithModal = dynamic(
   () => import('../../ShareWithModal').then(c => c.ShareWithModal),
@@ -329,7 +323,6 @@ export const Community = (props: IProps) => {
   };
 
   const formatCredentialType = (value: any) => {
-    return value;
     return value
       .replace('Github', ' Github')
       .replace(/([a-z])([A-Z])/g, '$1 $2')

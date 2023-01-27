@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 
 import { Verify } from 'components/Verify';
-import { formatCredential } from '../utils';
 import { getIssuers } from 'utils';
 import { GeneralContext } from 'context';
 import {
@@ -40,7 +39,6 @@ export const VerifyCredential = (props: IProps) => {
     formatLitValue,
     readOnly = false
   } = props;
-  const [customCredential, setCustomCredential] = useState<ICredential>();
   const { walletInformation } = useContext(GeneralContext);
   const issuerProvider = useIssuerProvider({ walletInformation });
   const githubOrgMemberProvider = useGithubOrgMemberProvider({
@@ -60,27 +58,6 @@ export const VerifyCredential = (props: IProps) => {
   });
   const guildXyzAdminProvider = useGuildXyzAdminProvider({ walletInformation });
   const guildXyzRoleProvider = useGuildXyzRoleProvider({ walletInformation });
-
-  useEffect(() => {
-    const title = formatCredential(credential.credential, 'title');
-    const description = formatCredential(credential.credential, 'description');
-    const image = formatCredential(credential.credential, 'image');
-
-    setCustomCredential({
-      ...credential,
-      credential: {
-        ...credential?.credential,
-        visualInformation: {
-          ...credential?.credential?.visualInformation,
-          metadata: {
-            title,
-            description,
-            image
-          }
-        }
-      }
-    });
-  }, []);
 
   const getProvider = (credentialType: string) => {
     if (credentialType === 'Issuer') {
@@ -146,8 +123,8 @@ export const VerifyCredential = (props: IProps) => {
       initialList={getIssuers('Community')}
       onClose={handleClose}
       onClean={handleCleanState}
-      verifyId={customCredential?.credential?.visualInformation?.credentialType}
-      credential={customCredential}
+      verifyId={credential?.credential?.visualInformation?.credentialType}
+      credential={credential}
       getProvider={getProvider}
       isAuthenticated={isAuthenticated}
       formatCredentialName={formatCredentialName}
