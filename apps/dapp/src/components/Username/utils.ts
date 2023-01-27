@@ -265,8 +265,6 @@ const buildCredential = async (props: IBuildCredentialProps) => {
     value: claimValue
   };
 
-  console.log(customCredential);
-
   return {
     credential: customCredential,
     stamps,
