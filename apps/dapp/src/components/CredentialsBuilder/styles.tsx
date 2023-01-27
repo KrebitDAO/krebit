@@ -72,6 +72,7 @@ export const Wrapper = styled.div<IProps>`
           height: 20px;
           transform: rotate(180deg);
           cursor: pointer;
+          align-self: center;
 
           @media (min-width: ${theme.screens.lg}) {
             width: 30px;
@@ -175,6 +176,30 @@ export const Wrapper = styled.div<IProps>`
               fill: ${theme.colors.white};
             }
           }
+        }
+      }
+
+      .credential-form-loading {
+        display: grid;
+        grid-gap: 24px;
+        height: fit-content;
+        margin-top: 60px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          margin-top: 20px;
+        }
+
+        .credential-form-loading-animation {
+          width: 60px;
+          height: 60px;
+          margin: 0 auto;
+        }
+
+        .credential-form-loading-text {
+          margin: 0 auto;
+          margin-top: 10px;
+          font-size: ${theme.fonts.base};
+          color: ${theme.colors.white};
         }
       }
 

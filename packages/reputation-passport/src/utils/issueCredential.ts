@@ -91,6 +91,10 @@ export const validateSchema = async (props: ValidateProps) => {
   const validateSchema = ajv.compile(schema);
   const validSchema = validateSchema(claim.value);
   if (!validSchema) {
+    console.error(
+      'the schema should be: ',
+      JSON.stringify(validateSchema.errors)
+    );
     throw new Error(
       'Claim value does not match typeSchema: ' +
         validateSchema.errors.toString()

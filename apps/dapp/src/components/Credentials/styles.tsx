@@ -113,7 +113,7 @@ export const Card = styled(animated.div)<ICardProps>`
 
     .card-bottom {
       position: absolute;
-      bottom: 5px;
+      bottom: 10px;
       right: 20px;
       left: 20px;
       display: flex;
@@ -165,18 +165,17 @@ export const Card = styled(animated.div)<ICardProps>`
       .card-icon {
         margin-left: auto;
         width: ${smaller ? '60px' : '80px'};
-        height: ${smaller ? '60px' : '80px'};
+        height: ${smaller ? '44px' : '80px'};
 
         & > svg {
           width: ${smaller ? '60px' : '80px'};
-          height: ${smaller ? '60px' : '80px'};
+          height: ${smaller ? '44px' : '80px'};
           fill: ${theme.colors.white};
         }
       }
 
       .card-brand {
-        width: ${smaller ? '60px' : '80px'};
-        height: ${smaller ? '60px' : '80px'};
+        height: ${smaller ? '44px' : '80px'};
         margin-left: auto;
         display: flex;
         align-items: center;
@@ -185,8 +184,8 @@ export const Card = styled(animated.div)<ICardProps>`
         & > img,
         & > svg {
           fill: ${theme.colors.white};
-          width: ${smaller ? '60px' : '80px'};
-          height: ${smaller ? '60px' : '80px'};
+          width: fit-content;
+          height: ${smaller ? '44px' : '80px'};
         }
       }
     }

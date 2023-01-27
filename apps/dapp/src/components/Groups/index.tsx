@@ -666,11 +666,11 @@ export const Groups = (props: IGroupProps) => {
     window.open(applyUrl, '_blank');
   };
 
-  const handleReferr = (jobId: string) => {
+  const handleReferal = (jobId: string) => {
     if (!jobId) return;
 
     push(
-      `/create/referr/?name=${'Job Referral'}&proof=https://krebit.id/posts?post_id=${jobId}`
+      `/create/referral/?name=${'Job Referral'}&description=https://krebit.id/posts?post_id=${jobId}`
     );
   };
 
@@ -922,8 +922,8 @@ export const Groups = (props: IGroupProps) => {
                             </div>
                             <div className="comment-box-information-job-button">
                               <Button
-                                text="Referr a Friend"
-                                onClick={() => handleReferr(values?.stream_id)}
+                                text="Refer a Friend"
+                                onClick={() => handleReferal(values?.stream_id)}
                                 isDisabled={
                                   isPostsLoading ||
                                   isMorePostsLoading ||
