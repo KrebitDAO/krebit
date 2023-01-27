@@ -366,7 +366,7 @@ export const CredentialsBuilder = () => {
               body: {
                 subject:
                   currentValues?.values?.name || currentValues?.values?.title,
-                content: `${profile?.name} has created a new credential where you can issue, just click the following link: ${BASE_URL}/?credential_id=${addedCredentialId}`,
+                content: `${profile?.name} has created a new Krebit credential that you can claim, just follow the steps on the following link: ${BASE_URL}/?credential_id=${addedCredentialId}`,
                 recipients: issueToValues
               }
             });
@@ -423,7 +423,7 @@ export const CredentialsBuilder = () => {
               body: {
                 subject:
                   currentValues?.values?.name || currentValues?.values?.title,
-                content: `${profile?.name} has created a new credential where you can issue, just click the following link: ${BASE_URL}/?credential_id=${delegatedCredentialId}`,
+                content: `${profile?.name} has created a new Krebit credential that you can claim, just follow the steps on the following link: ${BASE_URL}/?credential_id=${delegatedCredentialId}`,
                 recipients: issueToValues
               }
             });
