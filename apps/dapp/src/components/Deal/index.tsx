@@ -17,12 +17,12 @@ import { Flip } from 'components/Icons';
 
 const INITIAL_STATUS_METADATA = {
   None: {
-    title: 'None',
+    title: 'New',
     description: 'Deal waiting for buyer to add funds',
     color: 'tango'
   },
   Created: {
-    title: 'Created',
+    title: 'Started',
     description: 'The buyer added funds to this deal',
     color: 'melrose'
   },
@@ -64,6 +64,7 @@ export const Deal = () => {
   const isLoading = status === 'idle' || status === 'pending';
   const seller = credential?.issuer?.ethereumAddress.toLowerCase();
   const buyers = credential?.value?.issueTo;
+  const waitingTx = result === 'waiting';
 
   useEffect(() => {
     if (!window) return;
@@ -139,6 +140,7 @@ export const Deal = () => {
           setCredentialStatus(dealStatus);
           setBalance(balance);
           setStatus('resolved');
+          setResult('');
         }
       } catch (error) {
         console.error(error);
@@ -150,6 +152,7 @@ export const Deal = () => {
   }, [walletInformation, auth.status, auth?.did, query?.credential_id]);
 
   const createDeal = async () => {
+    setResult('waiting');
     console.log('deal Credential: ', credential);
     console.log('referral Credential: ', referral);
     const result = await walletInformation?.deals?.createDeal(
@@ -157,46 +160,51 @@ export const Deal = () => {
       credential
     );
     console.log('createDeal: ', result);
-    setResult(result.toString());
+    setResult(result);
   };
 
   const buyerCancel = async () => {
+    setResult('waiting');
     const result = await walletInformation?.deals?.buyerCancel(
       referral,
       credential
     );
     console.log('buyerCancel: ', result);
-    setResult(result.toString());
+    setResult(result);
   };
 
   const sellerCancel = async () => {
+    setResult('waiting');
     const result = await walletInformation?.deals?.sellerCancel(
       referral,
       credential
     );
     console.log('sellerCancel: ', result);
-    setResult(result.toString());
+    setResult(result);
   };
 
   const releaseDeal = async () => {
+    setResult('waiting');
     const result = await walletInformation?.deals?.releaseDeal(
       referral,
       credential
     );
     console.log('releaseDeal: ', result);
-    setResult(result.toString());
+    setResult(result);
   };
 
   const markDelivered = async () => {
+    setResult('waiting');
     const result = await walletInformation?.deals?.markDelivered(credential);
     console.log('markDelivered: ', result);
-    setResult(result.toString());
+    setResult(result);
   };
 
   const withdrawPayments = async () => {
+    setResult('waiting');
     const result = await walletInformation?.deals?.withdrawPayments();
     console.log('withdrawPayments: ', result);
-    setResult(result.toString());
+    setResult(result);
   };
 
   const handleHelp = () => {
@@ -341,16 +349,29 @@ export const Deal = () => {
           }
         />
       </div>
-      <p className="actions-description">
-        {INITIAL_STATUS_METADATA[credentialStatus]?.description}
-        {result && (
-          <Button
-            text="Check Details"
-            onClick={() => checkCredentialsURLs('polygon', 'tx', result)}
-            isDisabled={false}
-          />
-        )}
-      </p>
+      {waitingTx ? (
+        <div className="loading">
+          <Loading />
+        </div>
+      ) : (
+        <p className="actions-description">
+          {INITIAL_STATUS_METADATA[credentialStatus]?.description}
+
+          {result && result !== 'waiting' && (
+            <div className="actions-buttons">
+              <Button
+                text="Transaction Details"
+                onClick={() =>
+                  checkCredentialsURLs('polygon', 'tx', { transaction: result })
+                }
+                isDisabled={false}
+                styleType="border"
+                borderBackgroundColor="ebony"
+              />
+            </div>
+          )}
+        </p>
+      )}
       {seller && buyers ? (
         <>
           {(credentialStatus as string) === 'None' && (

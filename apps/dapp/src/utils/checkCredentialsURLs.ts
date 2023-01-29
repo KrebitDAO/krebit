@@ -65,5 +65,6 @@ export const checkCredentialsURLs = (
         : `https://testnets.opensea.io/assets/mumbai/${contract}/${value}`;
   }
 
+  console.log('currentUrl:', currentUrl);
   window.open(currentUrl, '_blank');
 };
