@@ -60,7 +60,7 @@ export interface ICredentialsState {
 export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   {
     type: 'referral',
-    title: 'Referr a friend',
+    title: 'Refer a friend',
     description: 'Invite a friend to the Krebiters community',
     primaryColor: 'haiti',
     secondaryColor: 'rose',
@@ -172,7 +172,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   },
   {
     type: 'deal',
-    title: 'Deal',
+    title: 'Deal (beta)',
     description: 'Offer or quotation for a service or product',
     primaryColor: 'blueCharcoal',
     secondaryColor: 'pomegranate',

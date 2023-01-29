@@ -51,6 +51,7 @@ export const Notifications = (props: IProps) => {
     if (!postId) return;
 
     window.open(`https://app.orbis.club/post/${postId}`, '_blank');
+    onClose(false);
   };
 
   const handleClose = async () => {
@@ -107,7 +108,10 @@ export const Notifications = (props: IProps) => {
                       <Link
                         href={`/${notification?.user_notifiying_details?.did}`}
                       >
-                        <a className="notifications-card-content-title">
+                        <a
+                          className="notifications-card-content-title"
+                          onClick={handleClose}
+                        >
                           <span>
                             {
                               notification?.user_notifiying_details?.profile

@@ -210,7 +210,7 @@ export const Card = (props: IProps) => {
             </div>
           )}
         </div>
-        <div className="card-bottom-icon"></div>
+        <div className="card-bottom-icon">{image ? undefined : icon}</div>
       </SmallCardWrapper>
     );
   }

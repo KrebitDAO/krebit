@@ -42,6 +42,8 @@ interface IFilterMenuProps {
   onClick: (value: string) => void;
 }
 
+const TEXT_LIMIT = 200;
+
 const FilterMenu = (props: IFilterMenuProps) => {
   const { currentFilter, isHidden, onClick } = props;
 
@@ -490,7 +492,9 @@ export const Username = () => {
                     </div>
                     {profile.description && (
                       <p className="profile-info-description">
-                        {profile.description}
+                        {profile.description?.length > TEXT_LIMIT
+                          ? profile.description.slice(0, TEXT_LIMIT) + '...'
+                          : profile.description}
                       </p>
                     )}
                   </div>

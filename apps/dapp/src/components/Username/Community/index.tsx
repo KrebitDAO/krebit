@@ -10,7 +10,6 @@ import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
 import { buildCredential, getCredential, getCredentials } from '../utils';
 import { constants } from 'utils';
-import { CREDENTIALS_INITIAL_STATE } from '../../Credentials/initialState';
 
 const DynamicShareWithModal = dynamic(
   () => import('../../ShareWithModal').then(c => c.ShareWithModal),
@@ -84,45 +83,12 @@ export const Community = (props: IProps) => {
       try {
         let values = await buildCredential({
           type: 'Community',
-          credential: {
-            ...customCredential,
-            credential: {
-              ...customCredential.credential,
-              value: customCredential.credential?.credentialsubject?.value
-                ? JSON.parse(
-                    customCredential.credential?.credentialsubject?.value
-                  )
-                : {}
-            }
-          },
+          credential: customCredential,
           passport
         });
 
-        if (values) {
-          const communityCredentialFromBuilder = values.skills
-            .map(skill =>
-              CREDENTIALS_INITIAL_STATE.find(state =>
-                skill.toLowerCase().includes(state.type)
-              )
-            )
-            .filter(value => value !== undefined);
-
-          if (communityCredentialFromBuilder?.length > 0) {
-            values = {
-              ...values,
-              credential: {
-                ...values.credential,
-                visualInformation: {
-                  ...values.credential?.visualInformation,
-                  builder: communityCredentialFromBuilder[0]
-                }
-              }
-            };
-          }
-
-          setCurrentCommunitySelected(values);
-          setIsVerifyCredentialOpen(true);
-        }
+        setCurrentCommunitySelected(values);
+        setIsVerifyCredentialOpen(true);
       } catch (error) {
         console.error(error);
       }
@@ -146,37 +112,12 @@ export const Community = (props: IProps) => {
         limit: currentFilterOption === 'overview' ? 4 : 100
       });
 
-      const communities = communityCredentials.map(community => {
-        const communityCredentialFromBuilder = community?.credential?.type
-          .map(type =>
-            CREDENTIALS_INITIAL_STATE.find(state =>
-              type.toLowerCase().includes(state.type)
-            )
-          )
-          .filter(value => value !== undefined);
-
-        if (communityCredentialFromBuilder?.length > 0) {
-          return {
-            ...community,
-            credential: {
-              ...community.credential,
-              visualInformation: {
-                ...community.credential?.visualInformation,
-                builder: communityCredentialFromBuilder[0]
-              }
-            }
-          };
-        }
-
-        return community;
-      });
-
-      setCommunities(communities);
+      setCommunities(communityCredentials);
       handleProfile(prevValues => ({
         ...prevValues,
         skills:
           (prevValues.skills || [])?.concat(
-            communities.flatMap(credential => credential.skills)
+            communityCredentials.flatMap(credential => credential.skills)
           ) || []
       }));
       setStatus('resolved');
@@ -474,13 +415,9 @@ export const Community = (props: IProps) => {
                 key={index}
                 type="small"
                 id={`community_${index}`}
-                icon={
-                  community?.credential?.visualInformation?.builder?.icon ||
-                  community.credential?.visualInformation?.icon
-                }
+                icon={community?.credential?.visualInformation?.metadata?.icon}
                 title={formatCredentialType(
-                  community?.credential?.visualInformation?.builder?.title ||
-                    community.credential?.credentialSubject?.type
+                  community?.credential?.visualInformation?.metadata?.title
                 )}
                 description={formatCredentialName(community.credential?.value)}
                 dates={{
@@ -548,9 +485,7 @@ export const Community = (props: IProps) => {
                 }}
                 isIssued={community.credential && community.stamps?.length > 0}
                 image={
-                  community.credential?.value?.imageUrl
-                    ? community.credential?.value?.imageUrl
-                    : community.credential?.visualInformation?.imageUrl
+                  community?.credential?.visualInformation?.metadata?.image
                 }
                 tooltip={{
                   message: `This credential has ${
