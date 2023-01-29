@@ -6,7 +6,8 @@ import {
   ArrowForward,
   Close,
   Visibility,
-  VisibilityOff
+  VisibilityOff,
+  Flip
 } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Badge } from 'components/Badge';
@@ -382,7 +383,10 @@ export const Verify = (props: IProps) => {
                         smaller={true}
                         frontChildren={
                           <>
-                            <p className="card-title">
+                            <div className="card-title">
+                              <div className="card-flip">
+                                <Flip />
+                              </div>
                               {credential?.credential?.visualInformation
                                 ?.metadata?.title ||
                                 credential?.credential?.value?.values?.name ||
@@ -390,7 +394,7 @@ export const Verify = (props: IProps) => {
                                 currentVerify.steps[currentStep || 0]?.metadata
                                   ?.title ||
                                 ''}
-                            </p>
+                            </div>
                             {credential.credential?.value ? (
                               <div
                                 className="verify-steps-content-visibility-container"
@@ -493,12 +497,15 @@ export const Verify = (props: IProps) => {
                         }
                         backChildren={
                           <>
-                            <p className="card-title">
+                            <div className="card-title">
+                              <div className="card-flip">
+                                <Flip />
+                              </div>
                               {
                                 currentVerify.steps[currentStep || 0]?.metadata
                                   .title
                               }
-                            </p>
+                            </div>
                             <p className="card-description">
                               {
                                 currentVerify.steps[currentStep || 0]?.metadata

@@ -1,6 +1,7 @@
 import express from 'express';
 import krebit from '@krebitdao/reputation-passport';
 import puppeteer from 'puppeteer-core';
+import { executablePath } from 'puppeteer';
 
 import { connect, jobs, openAI } from '../../utils';
 
@@ -11,7 +12,10 @@ const channel =
   'kjzl6cwe1jw145l8g0ojf3ku355i6ybovcpbiir8nam0385w8ajalywyd8un11b';
 
 const getPageSummary = async (pageUrl: string) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: executablePath()
+  });
   const page = await browser.newPage();
   await page.goto(pageUrl);
   const pageContent = await page.$eval(

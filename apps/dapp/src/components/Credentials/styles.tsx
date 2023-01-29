@@ -100,6 +100,21 @@ export const Card = styled(animated.div)<ICardProps>`
       @media (min-width: ${theme.screens.xl}) {
         font-size: ${smaller ? theme.fonts.xl : theme.fonts['2xl']};
       }
+
+      .card-flip {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: ${smaller ? '30px' : '40px'};
+        height: ${smaller ? '22px' : '40px'};
+
+        & > svg {
+          width: ${smaller ? '30px' : '40px'};
+          height: ${smaller ? '22px' : '40px'};
+          fill: ${theme.colors.white};
+        }
+      }
     }
 
     .card-description {
