@@ -22,6 +22,7 @@ export const Wrapper = styled.div<IProps>`
     justify-content: center;
 
     .verify-box {
+      position: relative;
       background-color: ${theme.colors.bunting};
       box-shadow: ${theme.shadows.smallest};
       padding: 20px;
@@ -37,7 +38,6 @@ export const Wrapper = styled.div<IProps>`
         width: ${stepsWidth}px;
         border-radius: 15px;
         padding: 36px 30px;
-        position: relative;
       }
 
       .verify-box-header {
@@ -251,9 +251,9 @@ export const Wrapper = styled.div<IProps>`
           .verify-steps-content-card {
             min-height: 230px;
             height: 100%;
-            margin-left: 15px;
 
             @media (min-width: ${theme.screens.lg}) {
+              margin-left: 15px;
               width: 500px;
             }
           }
@@ -376,12 +376,15 @@ export const Wrapper = styled.div<IProps>`
       .verify-steps-bottom {
         display: flex;
         justify-content: space-between;
-        position: absolute;
-        position: absolute;
+        position: fixed;
         left: 30px;
         right: 30px;
         bottom: 20px;
         background-color: ${theme.colors.bunting};
+
+        @media (min-width: ${theme.screens.lg}) {
+          position: absolute;
+        }
 
         .verify-steps-bottom-button {
           margin-top: 10px;
