@@ -226,7 +226,7 @@ export const Deal = () => {
       headerStatusColor={INITIAL_STATUS_METADATA[credentialStatus]?.color}
     >
       <div className="header">
-        <p className="header-text">Payment Deal</p>
+        <p className="header-text">Payment Deal (beta)</p>
         <div className="header-status">
           <p className="header-status-text">
             {INITIAL_STATUS_METADATA[credentialStatus]?.title}

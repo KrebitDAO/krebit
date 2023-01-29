@@ -172,7 +172,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
   },
   {
     type: 'deal',
-    title: 'Deal',
+    title: 'Deal (beta)',
     description: 'Offer or quotation for a service or product',
     primaryColor: 'blueCharcoal',
     secondaryColor: 'pomegranate',
