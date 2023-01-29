@@ -368,7 +368,8 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
           setStatus('resolved');
 
           if (query?.credential_id) {
-            push(`/claim/?credential_id=${query.credential_id}`);
+            // Force the webpage to go to /claim to claim the credential.
+            window.location.href = `/claim/?credential_id=${query.credential_id}`;
           } else if (pathname === '/') {
             push(`/${passport.did}`);
           }
@@ -405,6 +406,7 @@ export const GeneralProvider: FunctionComponent<IProps> = props => {
       value={{
         walletModal: {
           handleOpenConnectWallet,
+          setOpenConnectWallet,
           openConnectWallet
         },
         auth: {

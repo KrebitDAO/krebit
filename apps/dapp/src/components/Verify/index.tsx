@@ -6,7 +6,8 @@ import {
   ArrowForward,
   Close,
   Visibility,
-  VisibilityOff
+  VisibilityOff,
+  Flip
 } from 'components/Icons';
 import { Button } from 'components/Button';
 import { Badge } from 'components/Badge';
@@ -65,9 +66,11 @@ export const Verify = (props: IProps) => {
   const [areStepsCompleted, setAreStepsCompleted] = useState(false);
   const provider = getProvider(currentVerify?.credentialType);
   const isLoading =
+    provider?.status === 'verification_pending' ||
     provider?.status === 'credential_pending' ||
     provider?.status === 'mint_pending';
   const hasError =
+    provider?.status === 'verification_rejected' ||
     provider?.status === 'credential_rejected' ||
     provider?.status === 'mint_rejected';
   const allStepsCompleted =
@@ -114,12 +117,14 @@ export const Verify = (props: IProps) => {
     }
 
     if (
+      provider?.status === 'verification_pending' ||
       provider?.status === 'credential_pending' ||
       provider?.status === 'mint_pending'
     )
       return;
 
     if (
+      provider?.status === 'verification_rejected' ||
       provider?.status === 'credential_rejected' ||
       provider?.status === 'mint_rejected'
     ) {
@@ -127,6 +132,7 @@ export const Verify = (props: IProps) => {
     }
 
     if (
+      provider?.status === 'verification_resolved' ||
       provider?.status === 'credential_resolved' ||
       provider?.status === 'mint_resolved'
     ) {
@@ -363,21 +369,24 @@ export const Verify = (props: IProps) => {
                     <div className="verify-steps-content-card">
                       <CredentialCard
                         primaryColor={
-                          credential?.credential?.visualInformation
-                            ?.primaryColor ||
                           credential?.credential?.visualInformation?.builder
+                            ?.primaryColor ||
+                          credential?.credential?.visualInformation
                             ?.primaryColor
                         }
                         secondaryColor={
-                          credential?.credential?.visualInformation
-                            ?.secondaryColor ||
                           credential?.credential?.visualInformation?.builder
+                            ?.secondaryColor ||
+                          credential?.credential?.visualInformation
                             ?.secondaryColor
                         }
                         smaller={true}
                         frontChildren={
                           <>
-                            <p className="card-title">
+                            <div className="card-title">
+                              <div className="card-flip">
+                                <Flip />
+                              </div>
                               {credential?.credential?.visualInformation
                                 ?.metadata?.title ||
                                 credential?.credential?.value?.values?.name ||
@@ -385,7 +394,7 @@ export const Verify = (props: IProps) => {
                                 currentVerify.steps[currentStep || 0]?.metadata
                                   ?.title ||
                                 ''}
-                            </p>
+                            </div>
                             {credential.credential?.value ? (
                               <div
                                 className="verify-steps-content-visibility-container"
@@ -488,12 +497,15 @@ export const Verify = (props: IProps) => {
                         }
                         backChildren={
                           <>
-                            <p className="card-title">
+                            <div className="card-title">
+                              <div className="card-flip">
+                                <Flip />
+                              </div>
                               {
                                 currentVerify.steps[currentStep || 0]?.metadata
                                   .title
                               }
-                            </p>
+                            </div>
                             <p className="card-description">
                               {
                                 currentVerify.steps[currentStep || 0]?.metadata

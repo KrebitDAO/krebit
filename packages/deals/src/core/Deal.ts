@@ -196,7 +196,7 @@ export class Deal {
   // Pending payments
   paymentsBalance = async () => {
     const balance = await this.escrowContract.payments(this.address);
-    return balance;
+    return ethers.utils.formatUnits(balance, 18);
   };
 
   // Withdraw Pending payments

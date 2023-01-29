@@ -76,6 +76,12 @@ export const globalStyles = (
       .fade-exit-active {
         transition: opacity 0.6s;
       }
+
+      .torusIframe {
+        position: fixed !important;
+        bottom: 80px !important;
+        z-index: 10 !important;
+      }
     `}
   />
 );

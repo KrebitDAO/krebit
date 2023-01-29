@@ -76,6 +76,12 @@ export const Wrapper = styled.div<IProps>`
       color: ${theme.colors.white};
     }
 
+    .actions-balance {
+      margin: 0;
+      font-size: ${theme.fonts.xl};
+      color: ${theme.colors.white};
+    }
+
     .actions-buttons {
       display: flex;
       justify-content: space-between;

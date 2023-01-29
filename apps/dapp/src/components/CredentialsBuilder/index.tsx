@@ -48,6 +48,7 @@ const DEFAULT_FIELDS_QUERY_URL = 2;
 
 export const CredentialsBuilder = () => {
   const [status, setStatus] = useState('idle');
+  const [statusMessage, setStatusMessage] = useState<string>();
   const [values, setValues] = useState<ICredentialsState>();
   const [formValues, setFormValues] = useState<IFormValues>({});
   const [currentInputModal, setCurrentInputModal] =
@@ -108,10 +109,10 @@ export const CredentialsBuilder = () => {
           const queryFields = Object.keys(query);
 
           fields = values.form?.fields.map(field => ({
+            ...field,
             defaultValue: queryFields.includes(field.name)
               ? query[field.name]
-              : '',
-            ...field
+              : ''
           }));
         } else {
           fields = values.form?.fields;
@@ -257,7 +258,7 @@ export const CredentialsBuilder = () => {
         ...prevValues,
         [name]: (prevValues[name] as string[])?.includes(value)
           ? (prevValues[name] as string[]).filter(val => val !== value)
-          : [...((prevValues[name] as string[]) || []), value]
+          : [...((prevValues[name] as string[]) || []), value.trim()]
       }));
     }
 
@@ -279,6 +280,7 @@ export const CredentialsBuilder = () => {
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setStatus('form_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     let imageUrl = '';
 
@@ -318,6 +320,10 @@ export const CredentialsBuilder = () => {
         ).toISOString();
       }
 
+      setStatusMessage(
+        constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ISSUER_CONNECTION
+      );
+
       if (
         currentValues?.values?.issueTo?.length == 1 &&
         currentValues?.values?.issueTo[0].startsWith('0x')
@@ -347,8 +353,11 @@ export const CredentialsBuilder = () => {
         if (issuedCredential) {
           const addedCredentialId = await passport.addIssued(issuedCredential);
           const issueToValues = currentValues?.values?.issueTo;
-
           console.log('addedCredentialId: ', addedCredentialId);
+
+          setStatusMessage(
+            constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+          );
 
           if (issueToValues && issueToValues?.length > 0) {
             await sendNotification({
@@ -357,7 +366,7 @@ export const CredentialsBuilder = () => {
               body: {
                 subject:
                   currentValues?.values?.name || currentValues?.values?.title,
-                content: `${profile?.name} has created a new credential where you can issue, just click the following link: ${BASE_URL}/?credential_id=${addedCredentialId}`,
+                content: `${profile?.name} has created a new Krebit credential that you can claim, just follow the steps on the following link: ${BASE_URL}/?credential_id=${addedCredentialId}`,
                 recipients: issueToValues
               }
             });
@@ -403,6 +412,10 @@ export const CredentialsBuilder = () => {
           );
           console.log('delegatedCredentialId: ', delegatedCredentialId);
 
+          setStatusMessage(
+            constants.DEFAULT_MESSAGES_FOR_PROVIDERS.ADDING_CREDENTIAL
+          );
+
           if (issueToValues && issueToValues?.length > 0) {
             await sendNotification({
               orbis,
@@ -410,7 +423,7 @@ export const CredentialsBuilder = () => {
               body: {
                 subject:
                   currentValues?.values?.name || currentValues?.values?.title,
-                content: `${profile?.name} has created a new credential where you can issue, just click the following link: ${BASE_URL}/?credential_id=${delegatedCredentialId}`,
+                content: `${profile?.name} has created a new Krebit credential that you can claim, just follow the steps on the following link: ${BASE_URL}/?credential_id=${delegatedCredentialId}`,
                 recipients: issueToValues
               }
             });
@@ -451,6 +464,8 @@ export const CredentialsBuilder = () => {
   };
 
   const handleGoBack = () => {
+    if (isLoading || isFormLoading) return;
+
     push('/create');
   };
 
@@ -581,228 +596,255 @@ export const CredentialsBuilder = () => {
                   </div>
                 </Card>
               </div>
-              <div className="credential-form">
-                {values.form.fields.map((input, index) => {
-                  if (input.type === 'boxes') {
-                    return (
-                      <div className="credential-form-boxes" key={index}>
-                        <p className="credential-form-boxes-title">
-                          {input.placeholder}
-                        </p>
-                        <div className="credential-form-boxes-content">
-                          {((formValues[input.name] as string[]) || []).map(
-                            (value, index) => (
+              {isFormLoading ? (
+                <div className="credential-form-loading">
+                  <div className="credential-form-loading-animation">
+                    <Loading />
+                  </div>
+                  <p className="credential-form-loading-text">
+                    {statusMessage}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="credential-form">
+                    {values.form.fields.map((input, index) => {
+                      if (input.type === 'boxes') {
+                        return (
+                          <div className="credential-form-boxes" key={index}>
+                            <p className="credential-form-boxes-title">
+                              {input.placeholder}
+                            </p>
+                            <div className="credential-form-boxes-content">
+                              {((formValues[input.name] as string[]) || []).map(
+                                (value, index) => (
+                                  <div
+                                    className="credential-form-box"
+                                    key={index}
+                                    onClick={() =>
+                                      handleChangeArrayValues(input.name, value)
+                                    }
+                                  >
+                                    <div className="credential-form-box-close">
+                                      <Close />
+                                    </div>
+                                    <p className="credential-form-box-text">
+                                      {value}
+                                    </p>
+                                  </div>
+                                )
+                              )}
                               <div
-                                className="credential-form-box"
-                                key={index}
+                                className="credential-form-box-add"
                                 onClick={() =>
-                                  handleChangeArrayValues(input.name, value)
+                                  handleCurrentInputModal(input.name)
                                 }
                               >
-                                <div className="credential-form-box-close">
-                                  <Close />
-                                </div>
-                                <p className="credential-form-box-text">
-                                  {value}
-                                </p>
+                                <Add />
                               </div>
-                            )
-                          )}
-                          <div
-                            className="credential-form-box-add"
-                            onClick={() => handleCurrentInputModal(input.name)}
-                          >
-                            <Add />
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  if (input.type === 'upload') {
-                    return (
-                      <div className="credential-form-upload-input" key={index}>
-                        <input
-                          type="file"
-                          id={input.name}
-                          accept="image/*"
-                          name={input.name}
-                          onChange={handleChange}
-                        />
-                        <label
-                          className="credential-form-upload-input-label"
-                          htmlFor={input.name}
-                        >
-                          <p>{input.placeholder}</p>
-                          <AddPhotoAlternate />
-                        </label>
-                      </div>
-                    );
-                  }
-
-                  if (input.type === 'select') {
-                    return (
-                      <Select
-                        key={index}
-                        id={input.name}
-                        name={input.name}
-                        label={input.placeholder}
-                        value={
-                          formValues[values.form.fields[index].name] as string
-                        }
-                        onChange={handleChange}
-                        items={input?.items || []}
-                        isDisabled={input.isDisabled}
-                        isRequired={input.isRequired}
-                        asyncFunction={
-                          input?.asyncFunction
-                            ? () => input?.asyncFunction({ passport })
-                            : undefined
-                        }
-                      />
-                    );
-                  }
-
-                  if (input.type === 'rating') {
-                    return (
-                      <Rating
-                        key={index}
-                        label={input.placeholder}
-                        name={input.name}
-                        value={
-                          formValues[values.form.fields[index].name] as number
-                        }
-                        onChange={handleChange}
-                        isDisabled={input.isDisabled}
-                      />
-                    );
-                  }
-
-                  if (input.type === 'switch') {
-                    return (
-                      <Switch
-                        key={index}
-                        name={input.name}
-                        label={input.placeholder}
-                        value={
-                          formValues[values.form.fields[index].name] as boolean
-                        }
-                        onChange={handleChange}
-                        isDisabled={input.isDisabled}
-                        isRequired={input.isRequired}
-                      />
-                    );
-                  }
-
-                  if (input.type === 'datepicker') {
-                    return (
-                      <DatePicker
-                        key={index}
-                        name={input.name}
-                        placeholder={input.placeholder}
-                        value={
-                          formValues[values.form.fields[index].name] as
-                            | string
-                            | number
-                        }
-                        onChange={handleChange}
-                        isDisabled={input.isDisabled}
-                        isRequired={input.isRequired}
-                      />
-                    );
-                  }
-
-                  if (input.type === 'datetimepicker') {
-                    return (
-                      <DatePicker
-                        type="datetimepicker"
-                        key={index}
-                        name={input.name}
-                        placeholder={input.placeholder}
-                        value={
-                          formValues[values.form.fields[index].name] as
-                            | string
-                            | number
-                        }
-                        onChange={handleChange}
-                        isDisabled={input.isDisabled}
-                        isRequired={input.isRequired}
-                      />
-                    );
-                  }
-
-                  return (
-                    <Input
-                      key={index}
-                      type={(input.type as any) || 'text'}
-                      name={input.name}
-                      placeholder={input.placeholder}
-                      value={
-                        formValues[values.form.fields[index].name] as
-                          | string
-                          | number
+                        );
                       }
-                      onChange={handleChange}
-                      isMultiline={input.isMultiline}
-                      isDisabled={input.isDisabled}
-                      isRequired={input.isRequired}
-                      pattern={input.pattern}
-                    />
-                  );
-                })}
-              </div>
-              {values.form?.issueTo && (
-                <div className="credential-issue-to">
-                  <p className="credential-issue-to-title">
-                    {values.form.issueTo.placeholder}
-                  </p>
-                  <div className="credential-issue-to-list">
-                    {(
-                      (formValues[values.form.issueTo.name] as string[]) || []
-                    ).map((value, index) => (
+
+                      if (input.type === 'upload') {
+                        return (
+                          <div
+                            className="credential-form-upload-input"
+                            key={index}
+                          >
+                            <input
+                              type="file"
+                              id={input.name}
+                              accept="image/*"
+                              name={input.name}
+                              onChange={handleChange}
+                            />
+                            <label
+                              className="credential-form-upload-input-label"
+                              htmlFor={input.name}
+                            >
+                              <p>{input.placeholder}</p>
+                              <AddPhotoAlternate />
+                            </label>
+                          </div>
+                        );
+                      }
+
+                      if (input.type === 'select') {
+                        return (
+                          <Select
+                            key={index}
+                            id={input.name}
+                            name={input.name}
+                            label={input.placeholder}
+                            value={
+                              formValues[
+                                values.form.fields[index].name
+                              ] as string
+                            }
+                            onChange={handleChange}
+                            items={input?.items || []}
+                            isDisabled={input.isDisabled}
+                            isRequired={input.isRequired}
+                            asyncFunction={
+                              input?.asyncFunction
+                                ? () => input?.asyncFunction({ passport })
+                                : undefined
+                            }
+                          />
+                        );
+                      }
+
+                      if (input.type === 'rating') {
+                        return (
+                          <Rating
+                            key={index}
+                            label={input.placeholder}
+                            name={input.name}
+                            value={
+                              formValues[
+                                values.form.fields[index].name
+                              ] as number
+                            }
+                            onChange={handleChange}
+                            isDisabled={input.isDisabled}
+                          />
+                        );
+                      }
+
+                      if (input.type === 'switch') {
+                        return (
+                          <Switch
+                            key={index}
+                            name={input.name}
+                            label={input.placeholder}
+                            value={
+                              formValues[
+                                values.form.fields[index].name
+                              ] as boolean
+                            }
+                            onChange={handleChange}
+                            isDisabled={input.isDisabled}
+                            isRequired={input.isRequired}
+                          />
+                        );
+                      }
+
+                      if (input.type === 'datepicker') {
+                        return (
+                          <DatePicker
+                            key={index}
+                            name={input.name}
+                            placeholder={input.placeholder}
+                            value={
+                              formValues[values.form.fields[index].name] as
+                                | string
+                                | number
+                            }
+                            onChange={handleChange}
+                            isDisabled={input.isDisabled}
+                            isRequired={input.isRequired}
+                          />
+                        );
+                      }
+
+                      if (input.type === 'datetimepicker') {
+                        return (
+                          <DatePicker
+                            type="datetimepicker"
+                            key={index}
+                            name={input.name}
+                            placeholder={input.placeholder}
+                            value={
+                              formValues[values.form.fields[index].name] as
+                                | string
+                                | number
+                            }
+                            onChange={handleChange}
+                            isDisabled={input.isDisabled}
+                            isRequired={input.isRequired}
+                          />
+                        );
+                      }
+
+                      return (
+                        <Input
+                          key={index}
+                          type={(input.type as any) || 'text'}
+                          name={input.name}
+                          placeholder={input.placeholder}
+                          value={
+                            formValues[values.form.fields[index].name] as
+                              | string
+                              | number
+                          }
+                          onChange={handleChange}
+                          isMultiline={input.isMultiline}
+                          isDisabled={input.isDisabled}
+                          isRequired={input.isRequired}
+                          pattern={input.pattern}
+                        />
+                      );
+                    })}
+                  </div>
+                  {values.form?.issueTo && (
+                    <div className="credential-issue-to">
+                      <p className="credential-issue-to-title">
+                        {values.form.issueTo.placeholder}
+                      </p>
+                      <div className="credential-issue-to-list">
+                        {(
+                          (formValues[values.form.issueTo.name] as string[]) ||
+                          []
+                        ).map((value, index) => (
+                          <div
+                            className="credential-issue-to-item"
+                            key={index}
+                            onClick={() =>
+                              handleChangeArrayValues(
+                                values.form.issueTo.name,
+                                value
+                              )
+                            }
+                          >
+                            <p className="credential-issue-to-item-text">
+                              {value}
+                            </p>
+                            <div className="credential-issue-to-item-close">
+                              <Close />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                       <div
-                        className="credential-issue-to-item"
-                        key={index}
+                        className="credential-issue-to-new-cred"
                         onClick={() =>
-                          handleChangeArrayValues(
-                            values.form.issueTo.name,
-                            value
-                          )
+                          handleCurrentInputModal(values.form.issueTo.name)
                         }
                       >
-                        <p className="credential-issue-to-item-text">{value}</p>
-                        <div className="credential-issue-to-item-close">
-                          <Close />
+                        <div className="credential-issue-to-new-cred-icon">
+                          <Add />
                         </div>
+                        <p className="credential-issue-to-new-cred-text">
+                          Add new address or email
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                  <div
-                    className="credential-issue-to-new-cred"
-                    onClick={() =>
-                      handleCurrentInputModal(values.form.issueTo.name)
-                    }
-                  >
-                    <div className="credential-issue-to-new-cred-icon">
-                      <Add />
                     </div>
-                    <p className="credential-issue-to-new-cred-text">
-                      Add new address
-                    </p>
+                  )}
+                  <div className="credential-button">
+                    <Button
+                      text={
+                        values.form.button.text
+                          ? values.form.button.text
+                          : 'Issue credential'
+                      }
+                      onClick={handleSubmit}
+                      isDisabled={isFormLoading}
+                    />
                   </div>
-                </div>
+                </>
               )}
-              <div className="credential-button">
-                <Button
-                  text={
-                    values.form.button.text
-                      ? values.form.button.text
-                      : 'Issue credential'
-                  }
-                  onClick={handleSubmit}
-                  isDisabled={isFormLoading}
-                />
-              </div>
             </div>
           )}
         </Wrapper>

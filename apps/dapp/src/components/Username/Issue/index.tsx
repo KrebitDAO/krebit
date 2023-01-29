@@ -7,8 +7,8 @@ import { QuestionModal } from 'components/QuestionModal';
 import { OpenInNew } from 'components/Icons';
 import { Card } from 'components/Card';
 import { Loading } from 'components/Loading';
-import { constants, sortByDate } from 'utils';
-import { formatCredential } from './formatCredential';
+import { constants, isValidJSON, sortByDate } from 'utils';
+import { formatCredential } from '../utils';
 import { CREDENTIALS_INITIAL_STATE } from '../../Credentials/initialState';
 
 // types
@@ -72,31 +72,54 @@ export const Issue = (props: IProps) => {
         .slice(0, currentFilterOption === 'overview' ? 4 : 100);
 
       const currentCredentials = credentials
-        .map(credential => ({
-          ...credential,
-          credentialSubject: {
-            ...credential.credentialSubject,
-            value: JSON.parse(credential.credentialSubject.value)
-          }
-        }))
         .map(credential => {
+          let parsedCredential = {
+            ...credential,
+            credentialSubject: {
+              ...credential?.credentialSubject,
+              value: isValidJSON(credential?.credentialSubject?.value)
+                ? JSON.parse(credential?.credentialSubject?.value)
+                : credential?.credentialSubject?.value
+            }
+          };
+
           const visualInformation = CREDENTIALS_INITIAL_STATE.find(
             state =>
               credential?.credentialSubject?.type?.toLowerCase() ===
               state.type.toLowerCase()
           );
+          const title = formatCredential(parsedCredential, 'title');
+          const description = formatCredential(parsedCredential, 'description');
+          const image = formatCredential(parsedCredential, 'image');
+          const icon = formatCredential(parsedCredential, 'icon');
 
           if (visualInformation) {
             return {
               ...credential,
               credentialType: DEFAULT_CREDENTIAL_TYPE,
-              visualInformation: visualInformation
+              visualInformation: {
+                ...visualInformation,
+                metadata: {
+                  title,
+                  description,
+                  image,
+                  icon
+                }
+              }
             };
           }
 
           return {
             ...credential,
-            credentialType: DEFAULT_CREDENTIAL_TYPE
+            credentialType: DEFAULT_CREDENTIAL_TYPE,
+            visualInformation: {
+              metadata: {
+                title,
+                description,
+                image,
+                icon
+              }
+            }
           };
         })
         ?.filter(credential => !credential?.credentialSubject?.value?.removed);
@@ -260,8 +283,9 @@ export const Issue = (props: IProps) => {
                 key={index}
                 type="small"
                 id={`issue_${index}`}
-                title={formatCredential(issue, 'title')}
-                description={formatCredential(issue, 'description')}
+                title={issue?.visualInformation?.metadata?.title}
+                description={issue?.visualInformation?.metadata?.description}
+                icon={issue?.visualInformation?.metadata?.icon}
                 dates={{
                   issuanceDate: {
                     text: 'ISSUED',
@@ -290,7 +314,7 @@ export const Issue = (props: IProps) => {
                       : undefined
                   ]
                 }}
-                image={formatCredential(issue, 'image')}
+                image={issue?.visualInformation?.metadata?.image}
                 builderCredential={
                   issue?.visualInformation?.primaryColor
                     ? issue?.visualInformation
