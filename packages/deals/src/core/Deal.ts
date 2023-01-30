@@ -118,7 +118,11 @@ export class Deal {
   };
 
   //on-chain
-  buyerCancel = async (referralStamp: any, dealCredential: W3CCredential) => {
+  buyerCancelWithStamp = async (
+    referralStamp: any,
+    dealCredential: W3CCredential,
+    referrer: string
+  ) => {
     const referralEip712credential =
       getEIP712CredentialFromStamp(referralStamp);
     const dealEip712credential = getEIP712Credential(dealCredential);
@@ -126,6 +130,7 @@ export class Deal {
     const tx = await this.escrowContract.buyerCancel(
       referralEip712credential,
       dealEip712credential,
+      referrer,
       {
         value: ethers.constants.Zero.toString(),
         from: this.address
@@ -136,7 +141,33 @@ export class Deal {
   };
 
   //on-chain
-  sellerCancel = async (referralStamp: any, dealCredential: W3CCredential) => {
+  buyerCancel = async (
+    referralCredential: W3CCredential,
+    dealCredential: W3CCredential,
+    referrer: string
+  ) => {
+    const referralEip712credential = getEIP712Credential(referralCredential);
+    const dealEip712credential = getEIP712Credential(dealCredential);
+
+    const tx = await this.escrowContract.buyerCancel(
+      referralEip712credential,
+      dealEip712credential,
+      referrer,
+      {
+        value: ethers.constants.Zero.toString(),
+        from: this.address
+      }
+    );
+    console.log('buyerCancel Tx: ', tx);
+    return tx.hash;
+  };
+
+  //on-chain
+  sellerCancelWithStamp = async (
+    referralStamp: any,
+    dealCredential: W3CCredential,
+    referrer: string
+  ) => {
     const referralEip712credential =
       getEIP712CredentialFromStamp(referralStamp);
     const dealEip712credential = getEIP712Credential(dealCredential);
@@ -144,6 +175,29 @@ export class Deal {
     const tx = await this.escrowContract.sellerCancel(
       referralEip712credential,
       dealEip712credential,
+      referrer,
+      {
+        value: ethers.constants.Zero.toString(),
+        from: this.address
+      }
+    );
+    console.log('sellerCancel Tx: ', tx);
+    return tx.hash;
+  };
+
+  //on-chain
+  sellerCancel = async (
+    referralCredential: W3CCredential,
+    dealCredential: W3CCredential,
+    referrer: string
+  ) => {
+    const referralEip712credential = getEIP712Credential(referralCredential);
+    const dealEip712credential = getEIP712Credential(dealCredential);
+
+    const tx = await this.escrowContract.sellerCancel(
+      referralEip712credential,
+      dealEip712credential,
+      referrer,
       {
         value: ethers.constants.Zero.toString(),
         from: this.address
@@ -156,7 +210,8 @@ export class Deal {
   //on-chain
   releaseDealWithStamp = async (
     referralStamp: any,
-    dealCredential: W3CCredential
+    dealCredential: W3CCredential,
+    referrer: string
   ) => {
     const referralEip712credential =
       getEIP712CredentialFromStamp(referralStamp);
@@ -165,6 +220,7 @@ export class Deal {
     const tx = await this.escrowContract.release(
       referralEip712credential,
       dealEip712credential,
+      referrer,
       {
         value: ethers.constants.Zero.toString(),
         from: this.address
@@ -176,7 +232,8 @@ export class Deal {
 
   releaseDeal = async (
     referralCredential: W3CCredential,
-    dealCredential: W3CCredential
+    dealCredential: W3CCredential,
+    referrer: string
   ) => {
     const referralEip712credential = getEIP712Credential(referralCredential);
     const dealEip712credential = getEIP712Credential(dealCredential);
@@ -184,6 +241,7 @@ export class Deal {
     const tx = await this.escrowContract.release(
       referralEip712credential,
       dealEip712credential,
+      referrer,
       {
         value: ethers.constants.Zero.toString(),
         from: this.address

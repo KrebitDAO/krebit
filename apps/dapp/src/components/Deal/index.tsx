@@ -135,8 +135,15 @@ export const Deal = () => {
               credential?.value?.referral
             );
 
+          const referral = {
+            ...referralCredential,
+            value: isValidJSON(referralCredential?.credentialSubject?.value)
+              ? JSON.parse(referralCredential?.credentialSubject?.value)
+              : referralCredential?.credentialSubject?.value
+          };
+
           setCredential(credential);
-          setReferral(referralCredential);
+          setReferral(referral);
           setCredentialStatus(dealStatus);
           setBalance(balance);
           setStatus('resolved');
@@ -167,7 +174,10 @@ export const Deal = () => {
     setResult('waiting');
     const result = await walletInformation?.deals?.buyerCancel(
       referral,
-      credential
+      credential,
+      referral.value?.onBehalveOfIssuer
+        ? referral.value?.onBehalveOfIssuer?.ethereumAddress
+        : referral.issuer?.ethereumAddress
     );
     console.log('buyerCancel: ', result);
     setResult(result);
@@ -177,7 +187,10 @@ export const Deal = () => {
     setResult('waiting');
     const result = await walletInformation?.deals?.sellerCancel(
       referral,
-      credential
+      credential,
+      referral.value?.onBehalveOfIssuer
+        ? referral.value?.onBehalveOfIssuer?.ethereumAddress
+        : referral.issuer?.ethereumAddress
     );
     console.log('sellerCancel: ', result);
     setResult(result);
@@ -187,7 +200,10 @@ export const Deal = () => {
     setResult('waiting');
     const result = await walletInformation?.deals?.releaseDeal(
       referral,
-      credential
+      credential,
+      referral.value?.onBehalveOfIssuer
+        ? referral.value?.onBehalveOfIssuer?.ethereumAddress
+        : referral.issuer?.ethereumAddress
     );
     console.log('releaseDeal: ', result);
     setResult(result);

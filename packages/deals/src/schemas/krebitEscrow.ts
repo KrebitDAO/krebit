@@ -3,7 +3,7 @@ export const krebitEscrow = {
     contractName: 'Krebit Escrow',
     token: 'polygon',
     name: 'Polygon',
-    address: '0xe85a0E63f25375c9DcfD528180B79F83fA0AE390',
+    address: '0x1Bb2B59BA70A8d42d2C0c1d62DBea7920BcbebF5',
     block: 34019949,
     network: 'polygon',
     blockUrl: 'https://polygonscan.com/',
@@ -14,7 +14,7 @@ export const krebitEscrow = {
     contractName: 'Krebit Escrow',
     token: 'polygon',
     name: 'Polygon Testnet',
-    address: '0x75F6D7c2E586D58b6F2e0A04EF80E6727082BE5c',
+    address: '0x53FcC337D4619Bcd028EB811F5E1A0B23cf88BEd',
     block: 28447492,
     network: 'mumbai',
     blockUrl: 'https://mumbai.polygonscan.com/',
@@ -627,6 +627,11 @@ export const krebitEscrow = {
           internalType: 'struct VCTypes.VerifiableCredential',
           name: 'dealCredential',
           type: 'tuple'
+        },
+        {
+          internalType: 'address payable',
+          name: '_referrer',
+          type: 'address'
         }
       ],
       name: 'buyerCancel',
@@ -1802,6 +1807,11 @@ export const krebitEscrow = {
           internalType: 'struct VCTypes.VerifiableCredential',
           name: 'dealCredential',
           type: 'tuple'
+        },
+        {
+          internalType: 'address payable',
+          name: '_referrer',
+          type: 'address'
         }
       ],
       name: 'release',
@@ -2249,6 +2259,11 @@ export const krebitEscrow = {
           internalType: 'struct VCTypes.VerifiableCredential',
           name: 'dealCredential',
           type: 'tuple'
+        },
+        {
+          internalType: 'address payable',
+          name: '_referrer',
+          type: 'address'
         }
       ],
       name: 'sellerCancel',
