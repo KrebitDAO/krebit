@@ -578,9 +578,11 @@ export const CredentialsBuilder = () => {
                   primaryColor={values.primaryColor}
                   secondaryColor={values.secondaryColor}
                 >
-                  <p className="card-title">
-                    {(formValues?.name as string) || 'Credential Title'}
-                  </p>
+                  <div className="card-title-header">
+                    <p className="card-title">
+                      {(formValues?.name as string) || 'Credential Title'}
+                    </p>
+                  </div>
                   <p className="card-description">
                     {(formValues?.description as string) ||
                       'Credential description'}
