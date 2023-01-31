@@ -222,7 +222,8 @@ export const useEmailProvider = (props: IProps) => {
           console.log('addedCredentialId: ', addedCredentialId);
 
           //Restrict access to my claim again
-          await Issuer.removeAllEncryptedCredentialShares(claimedCredentialId);
+          //TODO: Opt-in
+          //await Issuer.removeAllEncryptedCredentialShares(claimedCredentialId);
 
           setCurrentCredential({
             ...issuedCredential,
