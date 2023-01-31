@@ -63,7 +63,11 @@ export const Deal = () => {
   const [balance, setBalance] = useState<string>('0.00');
   const [result, setResult] = useState<string>('');
   const { query, push } = useRouter();
-  const { auth, walletInformation, orbis } = useContext(GeneralContext);
+  const {
+    auth,
+    walletInformation,
+    walletInformation: { orbis }
+  } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
   const seller = credential?.issuer?.ethereumAddress.toLowerCase();
   const buyers = credential?.value?.issueTo;
@@ -174,9 +178,11 @@ export const Deal = () => {
       orbis,
       authenticatedDID: auth.did,
       body: {
-        subject: `Krebit.id Notification: ${credential?.values?.title} - status: STARTED`,
+        subject: `Krebit.id Notification - deal: ${
+          credential?.value?.name || credential?.value?.title || ''
+        } - status: STARTED`,
         content: `${buyers[0]} has added funds to the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
-        recipients: [seller, buyers[0]]
+        recipients: [seller]
       }
     });
     setResult(result);
@@ -196,9 +202,11 @@ export const Deal = () => {
       orbis,
       authenticatedDID: auth.did,
       body: {
-        subject: `Krebit.id Notification: ${credential?.values?.title} - status: BuyerCanceled`,
+        subject: `Krebit.id Notification - deal: ${
+          credential?.value?.name || credential?.value?.title || ''
+        } - status: BuyerCanceled`,
         content: `${buyers[0]} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
-        recipients: [seller, buyers[0]]
+        recipients: [seller]
       }
     });
     setResult(result);
@@ -218,9 +226,11 @@ export const Deal = () => {
       orbis,
       authenticatedDID: auth.did,
       body: {
-        subject: `Krebit.id Notification: ${credential?.values?.title} - status: SellerCanceled`,
+        subject: `Krebit.id Notification - deal: ${
+          credential?.value?.name || credential?.value?.title || ''
+        } - status: SellerCanceled`,
         content: `${seller} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
-        recipients: [seller, buyers[0]]
+        recipients: buyers
       }
     });
     setResult(result);
@@ -240,16 +250,20 @@ export const Deal = () => {
       orbis,
       authenticatedDID: auth.did,
       body: {
-        subject: `Krebit.id Notification: ${credential?.values?.title} - status: Released`,
+        subject: `Krebit.id Notification - deal: ${
+          credential?.value?.name || credential?.value?.title || ''
+        } - status: Released`,
         content: `${buyers[0]} has released the Deal payment: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
-        recipients: [seller, buyers[0]]
+        recipients: [seller]
       }
     });
     await sendNotification({
       orbis,
       authenticatedDID: auth.did,
       body: {
-        subject: `Krebit.id Notification: ${credential?.values?.title} - Referral Payment`,
+        subject: `Krebit.id Notification - deal: ${
+          credential?.value?.name || credential?.value?.title || ''
+        } - Referral Payment`,
         content: `You've received a referral payment for the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
         recipients: [
           referral.value?.onBehalveOfIssuer
@@ -269,9 +283,11 @@ export const Deal = () => {
       orbis,
       authenticatedDID: auth.did,
       body: {
-        subject: `Krebit.id Notification: ${credential?.values?.title} status: Delivered`,
+        subject: `Krebit.id Notification - deal: ${
+          credential?.value?.name || credential?.value?.title || ''
+        } status: Delivered`,
         content: `${seller} has marked the Deal as delivered: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
-        recipients: [seller, buyers[0]]
+        recipients: buyers
       }
     });
     setResult(result);
