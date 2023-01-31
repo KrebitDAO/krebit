@@ -627,7 +627,9 @@ export const Messages = () => {
                 messages.map((message, index) => (
                   <MessagesRightSideBoxMessage
                     key={index}
-                    image={message?.creator_details?.profile?.pfp}
+                    image={
+                      message?.creator_details?.profile?.pfp || DEFAULT_PICTURE
+                    }
                   >
                     {message?.creator !== auth?.did && (
                       <div className="messages-right-side-box-item-image"></div>

@@ -54,7 +54,9 @@ export const Credentials = () => {
                     primaryColor={values.primaryColor}
                     secondaryColor={values.secondaryColor}
                   >
-                    <p className="card-title">{values.title}</p>
+                    <div className="card-title-header">
+                      <p className="card-title">{values.title}</p>
+                    </div>
                     <p className="card-description">{values.description}</p>
                     <div className="card-bottom">
                       <div className="card-button">
