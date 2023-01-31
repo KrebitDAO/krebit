@@ -189,6 +189,7 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           name: 'deliverableType',
           placeholder: 'Deliverable Type',
           items: [
+            { text: 'Service', value: 'service' },
             { text: 'File', value: 'file' },
             { text: 'Video Call', value: 'meeting' },
             { text: 'Product', value: 'product' }

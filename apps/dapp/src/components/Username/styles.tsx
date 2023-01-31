@@ -445,6 +445,40 @@ export const Summary = styled.div`
   `}
 `;
 
+export const Payments = styled.div`
+  ${({ theme }) => css`
+    margin-bottom: 10px;
+
+    .payments-header {
+      display: grid;
+      margin-bottom: 10px;
+      align-items: center;
+
+      .payments-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+      }
+
+      .payments-header-balance {
+        margin: 10px;
+        display: flex;
+        font-size: ${theme.fonts.xl};
+        color: ${theme.colors.cyan};
+      }
+
+      .payments-buttons {
+        justify-self: right;
+
+        & > button {
+          height: 35px;
+          width: 120px;
+        }
+      }
+    }
+  `}
+`;
+
 export const QuestionModalText = styled.div`
   ${({ theme }) => css`
     margin: 0;

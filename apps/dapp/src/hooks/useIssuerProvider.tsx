@@ -465,57 +465,6 @@ export const useIssuerProvider = (props: IProps) => {
     }
   };
 
-  const handlePayment = async dealCredential => {
-    try {
-      if (!walletInformation) return;
-
-      setStatus('mint_pending');
-      setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
-
-      const session = window.localStorage.getItem('did-session');
-      const currentSession = JSON.parse(session);
-
-      if (!currentSession) return;
-      const Issuer = new Krebit.core.Krebit({
-        ...walletInformation,
-        litSdk: LitJsSdk,
-        ceramicUrl: NEXT_PUBLIC_CERAMIC_URL
-      });
-      await Issuer.connect(currentSession);
-
-      //TODO get Referral
-      const referralValue = JSON.parse(dealCredential.credentialSubject?.value);
-      console.log('referralValue: ', referralValue);
-      const referralCredential = await Issuer.getDocument(
-        referralValue.referralId
-      );
-      console.log('referralCredential: ', referralCredential);
-
-      setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.MINTING_NFT);
-
-      const deals = new Deals.core.Deal({ ...walletInformation });
-      const paymentTx = await deals.releaseDeal(
-        referralCredential as W3CCredential,
-        dealCredential
-      );
-      console.log('paymentTx: ', paymentTx);
-
-      setCurrentMint({ transaction: paymentTx });
-      setStatus('mint_resolved');
-      setStatusMessage(undefined);
-      setErrorMessage(undefined);
-    } catch (error) {
-      console.error('Error handleMintCredential: ', error);
-      setStatus('mint_rejected');
-      setStatusMessage(undefined);
-      setErrorMessage(
-        constants.DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS.ERROR_MINT.concat(
-          ' Error:' + error.message
-        )
-      );
-    }
-  };
-
   const handleClaimValues = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
@@ -541,7 +490,6 @@ export const useIssuerProvider = (props: IProps) => {
     handleAddCredential,
     handleDeal,
     handleStatus,
-    handlePayment,
     claimValues,
     status,
     statusMessage,
