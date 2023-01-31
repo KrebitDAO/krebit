@@ -9,7 +9,8 @@ import {
   QuestionModalText,
   Skills,
   Wrapper,
-  Summary
+  Summary,
+  Payments
 } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
@@ -116,6 +117,7 @@ export const Username = () => {
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
   const [currentCustomCredential, setCurrentCustomCredential] =
     useState<ICredential>();
+  const [balance, setBalance] = useState<string>('0.00');
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const [isExportWalletOpen, setIsExportWalletOpen] = useState(false);
@@ -129,7 +131,8 @@ export const Username = () => {
       publicPassport,
       passport,
       issuer,
-      orbis
+      orbis,
+      deals
     },
     walletModal: { handleOpenConnectWallet },
     profileInformation: { handleSetProfile }
@@ -165,6 +168,9 @@ export const Username = () => {
           isFollowingUser = response?.data;
         }
 
+        const balance = await deals.paymentsBalance();
+        setBalance(balance);
+
         setProfile({
           ...currentProfile,
           isFollowingUser,
@@ -179,7 +185,14 @@ export const Username = () => {
     };
 
     getProfile();
-  }, [publicPassport, auth.status, auth?.did, query.id]);
+  }, [publicPassport, auth.status, auth?.did, query.id, deals]);
+
+  const withdrawPayments = async () => {
+    setStatus('pending');
+    const result = await deals?.withdrawPayments();
+    console.log('withdrawPayments: ', result);
+    setStatus('resolved');
+  };
 
   useEffect(() => {
     if (!window) return;
@@ -574,6 +587,22 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
+                {currentDIDFromURL === auth?.did && (
+                  <Payments>
+                    <div className="payments-header">
+                      <p className="payments-header-text">Payments Balance:</p>
+                      <p className="payments-header-balance">{`$ ${balance}`}</p>
+                      <div className="payments-buttons">
+                        <Button
+                          text="Withdraw"
+                          onClick={withdrawPayments}
+                          isDisabled={false}
+                        />
+                      </div>
+                    </div>
+                  </Payments>
+                )}
+
                 {profile?.summary && (
                   <Summary>
                     <div className="summary-header">

@@ -10,10 +10,13 @@ import { CredentialCard } from 'components/Credentials/credentialCard';
 import { CREDENTIALS_INITIAL_STATE } from 'components/Credentials/initialState';
 import { formatUrlImage, isValidJSON } from 'utils';
 import { substring } from 'components/Groups/utils';
-import { checkCredentialsURLs } from 'utils';
+import { checkCredentialsURLs, sendNotification } from 'utils';
 import { GeneralContext } from 'context';
 import { Button } from 'components/Button';
 import { Flip } from 'components/Icons';
+
+const BASE_URL = 'https://krebit.id/deal';
+const TX_URL = 'https://polygonscan.com/tx/';
 
 const INITIAL_STATUS_METADATA = {
   None: {
@@ -42,7 +45,7 @@ const INITIAL_STATUS_METADATA = {
     color: 'redOrange'
   },
   Released: {
-    title: 'Released',
+    title: 'Completed',
     description: 'Deal completed',
     color: 'tango'
   },
@@ -60,7 +63,7 @@ export const Deal = () => {
   const [balance, setBalance] = useState<string>('0.00');
   const [result, setResult] = useState<string>('');
   const { query, push } = useRouter();
-  const { auth, walletInformation } = useContext(GeneralContext);
+  const { auth, walletInformation, orbis } = useContext(GeneralContext);
   const isLoading = status === 'idle' || status === 'pending';
   const seller = credential?.issuer?.ethereumAddress.toLowerCase();
   const buyers = credential?.value?.issueTo;
@@ -167,6 +170,15 @@ export const Deal = () => {
       credential
     );
     console.log('createDeal: ', result);
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `Krebit.id Notification: ${credential?.values?.title} - status: STARTED`,
+        content: `${buyers[0]} has added funds to the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        recipients: [seller, buyers[0]]
+      }
+    });
     setResult(result);
   };
 
@@ -180,6 +192,15 @@ export const Deal = () => {
         : referral.issuer?.ethereumAddress
     );
     console.log('buyerCancel: ', result);
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `Krebit.id Notification: ${credential?.values?.title} - status: BuyerCanceled`,
+        content: `${buyers[0]} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        recipients: [seller, buyers[0]]
+      }
+    });
     setResult(result);
   };
 
@@ -193,6 +214,15 @@ export const Deal = () => {
         : referral.issuer?.ethereumAddress
     );
     console.log('sellerCancel: ', result);
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `Krebit.id Notification: ${credential?.values?.title} - status: SellerCanceled`,
+        content: `${seller} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        recipients: [seller, buyers[0]]
+      }
+    });
     setResult(result);
   };
 
@@ -206,6 +236,28 @@ export const Deal = () => {
         : referral.issuer?.ethereumAddress
     );
     console.log('releaseDeal: ', result);
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `Krebit.id Notification: ${credential?.values?.title} - status: Released`,
+        content: `${buyers[0]} has released the Deal payment: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        recipients: [seller, buyers[0]]
+      }
+    });
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `Krebit.id Notification: ${credential?.values?.title} - Referral Payment`,
+        content: `You've received a referral payment for the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        recipients: [
+          referral.value?.onBehalveOfIssuer
+            ? referral.value?.onBehalveOfIssuer?.ethereumAddress
+            : referral.issuer?.ethereumAddress
+        ]
+      }
+    });
     setResult(result);
   };
 
@@ -213,6 +265,15 @@ export const Deal = () => {
     setResult('waiting');
     const result = await walletInformation?.deals?.markDelivered(credential);
     console.log('markDelivered: ', result);
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `Krebit.id Notification: ${credential?.values?.title} status: Delivered`,
+        content: `${seller} has marked the Deal as delivered: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        recipients: [seller, buyers[0]]
+      }
+    });
     setResult(result);
   };
 
