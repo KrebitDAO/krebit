@@ -253,6 +253,7 @@ export const DiscordController = async (
       }
     }
   } catch (err) {
+    console.error('discord error ', err);
     next(err);
   }
 };

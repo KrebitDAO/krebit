@@ -106,114 +106,120 @@ export const validateSchema = async (props: ValidateProps) => {
 export const issueCredential = async (props: IssueProps) => {
   const { wallet, idx, claim } = props;
 
-  if (!wallet) {
-    throw new Error('Wallet not defined');
-  }
+  try {
+    if (!wallet) {
+      throw new Error('Wallet not defined');
+    }
 
-  if (!idx) {
-    throw new Error('IDX not defined');
-  }
+    if (!idx) {
+      throw new Error('IDX not defined');
+    }
 
-  const issuerAddres: string = await wallet.getAddress();
+    const issuerAddres: string = await wallet.getAddress();
 
-  // 5 min ago (there is a delay on the blockchain time)
-  const issuanceDate = Date.now() - 1000 * 60 * 5;
-  const expirationDate = new Date(claim?.expirationDate);
+    // 5 min ago (there is a delay on the blockchain time)
+    const issuanceDate = Date.now() - 1000 * 60 * 5;
+    const expirationDate = new Date(claim?.expirationDate);
 
-  if (!expirationDate) {
-    throw new Error('No expiration date defined');
-  }
+    if (!expirationDate) {
+      throw new Error('No expiration date defined');
+    }
 
-  const lit = new lib.Lit();
+    const lit = new lib.Lit();
 
-  if (typeof claim.value === 'object') {
-    if (claim.encrypt == 'hash') {
-      claim['value'] = hashClaimValue({ did: idx.id, value: claim.value });
-      claim['encrypted'] = 'hash';
-    } else if (claim.encrypt == 'lit') {
-      let unifiedAccessControlConditions = lit.getOwnsAddressCondition(
-        claim.ethereumAddress
-      );
-      if (claim.shareEncryptedWith) {
-        unifiedAccessControlConditions = unifiedAccessControlConditions?.concat(
-          lit.getShareWithCondition(claim.shareEncryptedWith)
+    if (typeof claim.value === 'object') {
+      if (claim.encrypt == 'hash') {
+        claim['value'] = hashClaimValue({ did: idx.id, value: claim.value });
+        claim['encrypted'] = 'hash';
+      } else if (claim.encrypt == 'lit') {
+        let unifiedAccessControlConditions = lit.getOwnsAddressCondition(
+          claim.ethereumAddress
         );
+        if (claim.shareEncryptedWith) {
+          unifiedAccessControlConditions =
+            unifiedAccessControlConditions?.concat(
+              lit.getShareWithCondition(claim.shareEncryptedWith)
+            );
+        }
+        let encryptedContent = await lit.encrypt(
+          JSON.stringify(claim.value),
+          unifiedAccessControlConditions,
+          wallet
+        );
+        if (!encryptedContent) {
+          throw new Error('Problem creating encryptedContent');
+        }
+        const stream = await TileDocument.create(
+          idx.ceramic,
+          unifiedAccessControlConditions
+        );
+        claim['value'] = JSON.stringify({
+          ...encryptedContent,
+          unifiedAccessControlConditions: stream.id.toUrl()
+        });
+        claim['encrypted'] = 'lit';
+      } else {
+        claim['value'] = JSON.stringify(claim.value);
+        claim['encrypted'] = 'none';
       }
-      let encryptedContent = await lit.encrypt(
-        JSON.stringify(claim.value),
-        unifiedAccessControlConditions,
-        wallet
-      );
-      if (!encryptedContent) {
-        throw new Error('Problem creating encryptedContent');
-      }
-      const stream = await TileDocument.create(
-        idx.ceramic,
-        unifiedAccessControlConditions
-      );
-      claim['value'] = JSON.stringify({
-        ...encryptedContent,
-        unifiedAccessControlConditions: stream.id.toUrl()
-      });
-      claim['encrypted'] = 'lit';
-    } else {
-      claim['value'] = JSON.stringify(claim.value);
-      claim['encrypted'] = 'none';
     }
-  }
-  delete claim.encrypt;
+    delete claim.encrypt;
 
-  const credential = {
-    '@context': [
-      'https://www.w3.org/2018/credentials/v1',
-      'https://w3id.org/security/suites/eip712sig-2021'
-    ],
-    type: ['VerifiableCredential']?.concat(claim.type, ...claim.tags),
-    id: claim.id,
-    issuer: {
-      id: idx.id,
-      ethereumAddress: issuerAddres
-    },
-    credentialSubject: {
-      ...claim,
-      id: claim.did,
-      trust: claim.trust ? claim.trust : 100, // How much we trust the evidence to sign this?
-      stake: claim.stake ? claim.stake : 1, // In KRB
-      price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
-      nbf: Math.floor(issuanceDate / 1000),
-      exp: Math.floor(expirationDate.getTime() / 1000)
-    },
-    credentialSchema: {
-      id: 'https://github.com/KrebitDAO/eip712-vc',
-      type: 'Eip712SchemaValidator2021'
-    },
-    issuanceDate: new Date(issuanceDate).toISOString(),
-    expirationDate: claim.expirationDate
-  };
-  console.debug('Credential: ', credential);
-  const eip712credential = getEIP712Credential(credential);
-  console.debug('eip712credential: ', eip712credential);
-  const krebitTypes = getKrebitCredentialTypes();
-  const eip712_vc = new EIP712VC(
-    schemas.krbToken[currentConfig.network].domain
-  );
-  const verifiableCredential = await eip712_vc.createEIP712VerifiableCredential(
-    eip712credential,
-    krebitTypes,
-    async () => {
-      return await wallet._signTypedData(
-        schemas.krbToken[currentConfig.network].domain,
+    const credential = {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        'https://w3id.org/security/suites/eip712sig-2021'
+      ],
+      type: ['VerifiableCredential']?.concat(claim.type, ...claim.tags),
+      id: claim.id,
+      issuer: {
+        id: idx.id,
+        ethereumAddress: issuerAddres
+      },
+      credentialSubject: {
+        ...claim,
+        id: claim.did,
+        trust: claim.trust ? claim.trust : 100, // How much we trust the evidence to sign this?
+        stake: claim.stake ? claim.stake : 1, // In KRB
+        price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
+        nbf: Math.floor(issuanceDate / 1000),
+        exp: Math.floor(expirationDate.getTime() / 1000)
+      },
+      credentialSchema: {
+        id: 'https://github.com/KrebitDAO/eip712-vc',
+        type: 'Eip712SchemaValidator2021'
+      },
+      issuanceDate: new Date(issuanceDate).toISOString(),
+      expirationDate: claim.expirationDate
+    };
+    console.debug('Credential: ', credential);
+    const eip712credential = getEIP712Credential(credential);
+    console.debug('eip712credential: ', eip712credential);
+    const krebitTypes = getKrebitCredentialTypes();
+    const eip712_vc = new EIP712VC(
+      schemas.krbToken[currentConfig.network].domain
+    );
+    const verifiableCredential =
+      await eip712_vc.createEIP712VerifiableCredential(
+        eip712credential,
         krebitTypes,
-        eip712credential
+        async () => {
+          return await wallet._signTypedData(
+            schemas.krbToken[currentConfig.network].domain,
+            krebitTypes,
+            eip712credential
+          );
+        }
       );
-    }
-  );
 
-  const w3Credential = {
-    ...credential,
-    proof: verifiableCredential.proof
-  };
+    const w3Credential = {
+      ...credential,
+      proof: verifiableCredential.proof
+    };
 
-  console.log('W3C Verifiable Credential: ', w3Credential);
-  return w3Credential;
+    console.log('W3C Verifiable Credential: ', w3Credential);
+    return w3Credential;
+  } catch (error) {
+    console.error('issueCredential', error);
+  }
 };

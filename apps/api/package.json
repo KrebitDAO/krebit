@@ -19,6 +19,7 @@
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
     "@lit-protocol/sdk-nodejs": "^1.1.228",
+    "@lit-protocol/pkp-ethers.js": "^5.7.48",
     "cors": "^2.8.5",
     "ethers": "^5.5.1",
     "express": "^4.18.1",

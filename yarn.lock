@@ -2449,6 +2449,29 @@
     "@json-rpc-tools/types" "^1.7.6"
     "@pedrouid/environment" "^1.0.1"
 
+"@lit-protocol/pkp-ethers.js@^5.7.48":
+  version "5.7.48"
+  resolved "https://registry.yarnpkg.com/@lit-protocol/pkp-ethers.js/-/pkp-ethers.js-5.7.48.tgz#bc5fe6f8f8ce0e148d8f4f164f8fb0e21cfc1676"
+  integrity sha512-3KGsppcgNm9qWAaxIxJjM+b6WIeHqPBlnq2PJFBpvyYjHdoIJth8EjN0aOoikTBlFDLgQr0q5aLd4z2wdLvY1w==
+  dependencies:
+    "@ethersproject/abstract-provider" "^5.7.0"
+    "@ethersproject/abstract-signer" "^5.7.0"
+    "@ethersproject/address" "^5.7.0"
+    "@ethersproject/bignumber" "^5.7.0"
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/hash" "^5.7.0"
+    "@ethersproject/hdnode" "^5.7.0"
+    "@ethersproject/json-wallets" "^5.7.0"
+    "@ethersproject/keccak256" "^5.7.0"
+    "@ethersproject/logger" "^5.7.0"
+    "@ethersproject/properties" "^5.7.0"
+    "@ethersproject/random" "^5.7.0"
+    "@ethersproject/signing-key" "^5.7.0"
+    "@ethersproject/transactions" "^5.7.0"
+    "@ethersproject/wordlists" "^5.7.0"
+    lit-js-sdk "1.2.24"
+    multiformats "10.0.2"
+
 "@lit-protocol/sdk-browser@^1.1.228", "@lit-protocol/sdk-browser@^1.1.238":
   version "1.1.241"
   resolved "https://registry.yarnpkg.com/@lit-protocol/sdk-browser/-/sdk-browser-1.1.241.tgz#a4ef74c2e2f1ad5dc9c12413318c6851bbefdf00"
@@ -9110,6 +9133,32 @@ lit-connect-modal@^0.1.10:
   dependencies:
     micromodal "^0.4.10"
 
+lit-js-sdk@1.2.24:
+  version "1.2.24"
+  resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.2.24.tgz#82c3a1c2998b1dec85375b6f861cabe784590e4a"
+  integrity sha512-B6eqvMmbDbNMjPhRtBxHArMbE/SEvaDKZSD++Eh333Faa25eAzR7Y14grBaAjD0so8s3h7I0Xn92WSjZMwy+mw==
+  dependencies:
+    "@ethersproject/bytes" "^5.5.0"
+    "@ethersproject/contracts" "^5.2.0"
+    "@ethersproject/hash" "^5.4.0"
+    "@ethersproject/providers" "^5.2.0"
+    "@ethersproject/strings" "^5.5.0"
+    "@ethersproject/units" "^5.4.0"
+    "@ethersproject/wallet" "^5.2.0"
+    "@walletconnect/ethereum-provider" "1.7.8"
+    buffer "^6.0.3"
+    bufferutil "^4.0.6"
+    cross-blob "^3.0.1"
+    jszip "^3.6.0"
+    lit-connect-modal "^0.1.10"
+    lit-siwe "^1.1.8"
+    node-fetch "^3.2.3"
+    pako "^2.0.4"
+    tslib "^2.3.1"
+    tweetnacl "^1.0.3"
+    tweetnacl-util "^0.15.1"
+    utf-8-validate "^5.0.8"
+
 lit-js-sdk@^1.1.198:
   version "1.1.241"
   resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.241.tgz#3276dfcbe8cec4733bf04106201c327da6316299"
@@ -9669,6 +9718,11 @@ multibase@^4.0.1:
   integrity sha512-x23pDe5+svdLz/k5JPGCVdfn7Q5mZVMBETiC+ORfO+sor9Sgs0smJzAjfTbM5tckeCqnaUuMYoz+k3RXMmJClQ==
   dependencies:
     "@multiformats/base-x" "^4.0.1"
+
+multiformats@10.0.2:
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-10.0.2.tgz#e549ae833dac77edb534bece4adf1d1a214879f0"
+  integrity sha512-nJEHLFOYhO4L+aNApHhCnWqa31FyqAHv9Q77AhmwU3KsM2f1j7tuJpCk5ByZ33smzycNCpSG5klNIejIyfFx2A==
 
 multiformats@^11.0.0:
   version "11.0.0"
