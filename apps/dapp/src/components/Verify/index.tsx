@@ -195,27 +195,6 @@ export const Verify = (props: IProps) => {
     }
 
     if (
-      currentVerify?.steps[step]?.type === 'deal' &&
-      (provider?.currentCredential || credential?.credential)
-    ) {
-      //TODO
-      /*if (escrowCreated) {
-        newCompleted[step] = 'Deal created';
-      }*/
-      newCompleted[step] = 'Deal created';
-    }
-
-    if (
-      currentVerify?.steps[step]?.type === 'check' &&
-      (provider?.currentCredential || credential?.credential)
-    ) {
-      //TODO:
-      /*if (escrowDelivered) {
-        newCompleted[step] = 'Deal was delivered by seller';
-      }*/
-    }
-
-    if (
       currentVerify?.steps[step]?.type === 'mint' &&
       (provider?.currentMint || credential?.stamps?.length > 0)
     ) {
@@ -383,17 +362,20 @@ export const Verify = (props: IProps) => {
                         smaller={true}
                         frontChildren={
                           <>
-                            <div className="card-title">
+                            <div className="card-title-header">
+                              <p className="card-title">
+                                {credential?.credential?.visualInformation
+                                  ?.metadata?.title ||
+                                  credential?.credential?.value?.values?.name ||
+                                  credential?.credential?.value?.values
+                                    ?.title ||
+                                  currentVerify.steps[currentStep || 0]
+                                    ?.metadata?.title ||
+                                  ''}
+                              </p>
                               <div className="card-flip">
                                 <Flip />
                               </div>
-                              {credential?.credential?.visualInformation
-                                ?.metadata?.title ||
-                                credential?.credential?.value?.values?.name ||
-                                credential?.credential?.value?.values?.title ||
-                                currentVerify.steps[currentStep || 0]?.metadata
-                                  ?.title ||
-                                ''}
                             </div>
                             {credential.credential?.value ? (
                               <div
@@ -497,14 +479,16 @@ export const Verify = (props: IProps) => {
                         }
                         backChildren={
                           <>
-                            <div className="card-title">
+                            <div className="card-title-header">
+                              <p className="card-title">
+                                {
+                                  currentVerify.steps[currentStep || 0]
+                                    ?.metadata.title
+                                }
+                              </p>
                               <div className="card-flip">
                                 <Flip />
                               </div>
-                              {
-                                currentVerify.steps[currentStep || 0]?.metadata
-                                  .title
-                              }
                             </div>
                             <p className="card-description">
                               {
