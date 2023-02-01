@@ -90,22 +90,25 @@ export const Card = styled(animated.div)<ICardProps>`
     cursor: pointer;
     will-change: transform, opacity;
 
-    .card-title {
-      margin: 0;
-      font-family: 'HelveticaNowDisplay-Bold';
-      font-size: ${smaller ? theme.fonts.base : theme.fonts.lg};
-      color: ${theme.colors.white};
-      word-wrap: break-word;
+    .card-title-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-      @media (min-width: ${theme.screens.xl}) {
-        font-size: ${smaller ? theme.fonts.xl : theme.fonts['2xl']};
+      .card-title {
+        margin: 0;
+        font-family: 'HelveticaNowDisplay-Bold';
+        font-size: ${smaller ? theme.fonts.base : theme.fonts.lg};
+        color: ${theme.colors.white};
+        word-wrap: break-word;
+
+        @media (min-width: ${theme.screens.xl}) {
+          font-size: ${smaller ? theme.fonts.xl : theme.fonts['2xl']};
+        }
       }
 
       .card-flip {
         margin-left: auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         width: ${smaller ? '30px' : '40px'};
         height: ${smaller ? '22px' : '40px'};
 

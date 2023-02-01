@@ -8,9 +8,12 @@ import { Wrapper } from './styles';
 import { Loading } from 'components/Loading';
 import { CredentialCard } from 'components/Credentials/credentialCard';
 import { CREDENTIALS_INITIAL_STATE } from 'components/Credentials/initialState';
-import { formatUrlImage, isValidJSON } from 'utils';
-import { substring } from 'components/Groups/utils';
-import { checkCredentialsURLs, sendNotification } from 'utils';
+import {
+  checkCredentialsURLs,
+  sendNotification,
+  formatUrlImage,
+  isValidJSON
+} from 'utils';
 import { GeneralContext } from 'context';
 import { Button } from 'components/Button';
 import { Flip } from 'components/Icons';
@@ -333,15 +336,16 @@ export const Deal = () => {
           smaller={true}
           frontChildren={
             <>
-              <div className="card-title">
+              <div className="card-title-header">
+                <p className="card-title">
+                  {credential?.value?.name ||
+                    credential?.value?.title ||
+                    'Credential Title'}
+                </p>
                 <div className="card-flip">
                   <Flip />
                 </div>
-                {credential?.value?.name ||
-                  credential?.value?.title ||
-                  'Credential Title'}
               </div>
-
               <p className="card-description">
                 Price: ${' ' + credential?.price || 0}
               </p>
@@ -384,13 +388,12 @@ export const Deal = () => {
           }
           backChildren={
             <>
-              <div className="card-title">
+              <div className="card-title-header">
+                <p className="card-title">Deal Conditions</p>
                 <div className="card-flip">
                   <Flip />
                 </div>
-                Deal Conditions
               </div>
-
               <p className="card-description">
                 {credential?.value?.description || ''}
               </p>

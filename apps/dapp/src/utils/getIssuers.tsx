@@ -14,7 +14,6 @@ import {
   Dework,
   Stack,
   Star,
-  Deal,
   Cred
 } from 'components/Icons';
 import { countries } from './countries';
@@ -39,15 +38,7 @@ interface IStepMetadata {
 
 interface IIssuerParamsStep {
   title: string;
-  type:
-    | 'overview'
-    | 'verification'
-    | 'credential'
-    | 'mint'
-    | 'add'
-    | 'deal'
-    | 'check'
-    | 'payment';
+  type: 'overview' | 'verification' | 'credential' | 'mint' | 'add';
   metadata: IStepMetadata;
   form?: (
     provider: any,
