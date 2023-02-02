@@ -29,6 +29,7 @@ import {
 import { GeneralContext } from 'context';
 import {
   constants,
+  yupSchema,
   formatFilename,
   formatUrlImage,
   generateUID,
@@ -279,6 +280,23 @@ export const CredentialsBuilder = () => {
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    const validationFields = [
+      ...values.form.fields,
+      values.form?.issueTo ? values.form.issueTo : undefined
+    ].filter(x => x !== undefined);
+
+    const yupValidation = await yupSchema.validateYupSchema(
+      validationFields,
+      formValues
+    );
+
+    if (yupValidation?.error) {
+      setStatus('form_rejected');
+      setErrorMessage(yupValidation?.error);
+      return;
+    }
+
     setStatus('form_pending');
     setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 

@@ -117,7 +117,7 @@ export const Username = () => {
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
   const [currentCustomCredential, setCurrentCustomCredential] =
     useState<ICredential>();
-  const [balance, setBalance] = useState<string>('0.00');
+  const [balance, setBalance] = useState<string>('0.0');
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const [isExportWalletOpen, setIsExportWalletOpen] = useState(false);
@@ -587,22 +587,6 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
-                {currentDIDFromURL === auth?.did && (
-                  <Payments>
-                    <div className="payments-header">
-                      <p className="payments-header-text">Payments Balance:</p>
-                      <p className="payments-header-balance">{`$ ${balance}`}</p>
-                      <div className="payments-buttons">
-                        <Button
-                          text="Withdraw"
-                          onClick={withdrawPayments}
-                          isDisabled={false}
-                        />
-                      </div>
-                    </div>
-                  </Payments>
-                )}
-
                 {profile?.summary && (
                   <Summary>
                     <div className="summary-header">
@@ -613,6 +597,23 @@ export const Username = () => {
                     </div>
                     <p className="summary-text">{profile.summary}</p>
                   </Summary>
+                )}
+                {currentDIDFromURL === auth?.did && (
+                  <Payments>
+                    <div className="payments-header">
+                      <p className="payments-header-text">Payments Balance</p>
+                      <p className="payments-header-balance">{`$ ${balance}`}</p>
+                      {parseFloat(balance) !== 0 ? (
+                        <div className="payments-buttons">
+                          <Button
+                            text="Withdraw"
+                            onClick={withdrawPayments}
+                            isDisabled={false}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </Payments>
                 )}
                 <Skills>
                   <div className="skills-header">

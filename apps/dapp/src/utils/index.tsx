@@ -21,6 +21,7 @@ import { orbisParseMarkdown } from './orbisParseMarkdown';
 import { openAI } from './openAI';
 import { sendNotification } from './sendNotification';
 import { isValidJSON } from './isValidJSON';
+import { yupSchema } from './yupSchema';
 
 export {
   createEmotionCache,
@@ -45,5 +46,6 @@ export {
   orbisParseMarkdown,
   openAI,
   sendNotification,
-  isValidJSON
+  isValidJSON,
+  yupSchema
 };
