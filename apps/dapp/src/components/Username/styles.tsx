@@ -445,6 +445,27 @@ export const Summary = styled.div`
   `}
 `;
 
+export const AvrStars = styled.div`
+  ${({ theme }) => css`
+    margin-bottom: 10px;
+
+    .arv-stars-header {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+
+      .arv-stars-header-text {
+        margin: 0;
+        font-size: ${theme.fonts.lg};
+        color: ${theme.colors.white};
+      }
+    }
+
+    .arv-stars-content {
+    }
+  `}
+`;
+
 export const Payments = styled.div`
   ${({ theme }) => css`
     margin-bottom: 10px;
@@ -460,8 +481,15 @@ export const Payments = styled.div`
         color: ${theme.colors.white};
       }
 
+      .payments-loading {
+        margin: 0 auto;
+        margin-top: 10px;
+        width: 50px;
+        height: 50px;
+      }
+
       .payments-header-balance {
-        margin: 10px;
+        margin: 10px 0;
         display: flex;
         font-size: ${theme.fonts.xl};
         color: ${theme.colors.cyan};

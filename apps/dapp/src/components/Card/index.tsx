@@ -7,6 +7,7 @@ import { ToolTip } from 'components/ToolTip';
 
 // types
 import { ICredentialsState } from 'components/Credentials/initialState';
+import { Rating } from 'components/Rating';
 
 interface IProps {
   type: 'simple' | 'small' | 'medium' | 'large' | 'long';
@@ -31,6 +32,7 @@ interface IProps {
   };
   icon?: JSX.Element;
   image?: string;
+  rating?: string;
   isIssued?: boolean;
   tooltip?: {
     message: string;
@@ -49,6 +51,7 @@ export const Card = (props: IProps) => {
     dropdown,
     icon,
     image,
+    rating,
     isIssued = false,
     tooltip,
     builderCredential
@@ -223,6 +226,16 @@ export const Card = (props: IProps) => {
         </div>
         <div className="card-information">
           <p className="card-information-title">{title}</p>
+          {rating ? (
+            <div className="card-information-rating">
+              <Rating
+                name="rating-long-card"
+                value={parseFloat(rating)}
+                readOnly={true}
+                shouldHaveLabel={false}
+              />
+            </div>
+          ) : undefined}
           <p className="card-information-description">{description}</p>
           <div className="card-information-dates">
             {dates.issuanceDate && (
