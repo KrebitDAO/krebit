@@ -16,6 +16,7 @@ import { DatePicker } from 'components/DatePicker';
 import { Select } from 'components/Select';
 import { Switch } from 'components/Switch';
 import { Loading } from 'components/Loading';
+import { Rating } from 'components/Rating';
 import { CredentialCard } from 'components/Credentials/credentialCard';
 import { substring } from 'components/Groups/utils';
 import { checkCredentialsURLs, formatUrlImage } from 'utils';
@@ -377,7 +378,22 @@ export const Verify = (props: IProps) => {
                                 <Flip />
                               </div>
                             </div>
-                            {credential.credential?.value ? (
+                            {credential?.credential?.visualInformation?.metadata
+                              ?.rating ? (
+                              <div className="card-avr-stars">
+                                <Rating
+                                  name="verify-avr-stars"
+                                  value={parseFloat(
+                                    credential?.credential?.visualInformation?.metadata?.rating.toString()
+                                  )}
+                                  iconColor="melrose"
+                                  readOnly={true}
+                                  shouldHaveLabel={false}
+                                />
+                              </div>
+                            ) : undefined}
+                            {credential.credential?.value &&
+                            formatCredentialName ? (
                               <div
                                 className="verify-steps-content-visibility-container"
                                 data-not-parent-click

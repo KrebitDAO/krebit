@@ -188,7 +188,7 @@ const DEFAULT_EMPTY_CARD_PERSONHOOD = {
 };
 
 const DEFAULT_EMPTY_CARD_WORK = {
-  title: 'Job Title',
+  title: 'Title',
   description: 'Company / Dates',
   dates: {
     issuanceDate: {

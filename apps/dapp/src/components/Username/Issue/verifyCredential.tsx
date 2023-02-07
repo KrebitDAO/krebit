@@ -12,11 +12,20 @@ interface IProps {
   isAuthenticated: boolean;
   credential: ICredential;
   onClose: () => void;
+  getInformation?: () => Promise<void>;
+  updateCredential?: (vcId: string) => Promise<void>;
   readOnly?: boolean;
 }
 
 export const VerifyCredential = (props: IProps) => {
-  const { isAuthenticated, credential, onClose, readOnly = true } = props;
+  const {
+    isAuthenticated,
+    credential,
+    onClose,
+    getInformation,
+    updateCredential,
+    readOnly = true
+  } = props;
   const { walletInformation } = useContext(GeneralContext);
   const issuerProvider = useIssuerProvider({
     walletInformation
@@ -29,7 +38,13 @@ export const VerifyCredential = (props: IProps) => {
   };
 
   const handleClose = async () => {
-    onClose();
+    if (getInformation) {
+      await getInformation().then(() => {
+        onClose();
+      });
+    } else {
+      onClose();
+    }
   };
 
   const handleCleanState = (credentialType: string) => {
@@ -43,15 +58,18 @@ export const VerifyCredential = (props: IProps) => {
       initialList={getIssuers('Community')}
       onClose={handleClose}
       onClean={handleCleanState}
-      verifyId={credential?.credential?.credentialType}
+      verifyId={
+        credential?.credential?.credentialType ||
+        credential?.credential?.visualInformation?.credentialType
+      }
       credential={credential}
       getProvider={getProvider}
       isAuthenticated={isAuthenticated}
       walletInformation={walletInformation}
       readOnly={readOnly}
-      formatCredentialName={() => undefined} // This is not necessary for this unique use case
+      updateCredential={updateCredential}
+      formatCredentialName={undefined} // This is not necessary for this unique use case
       formatLitValue={async () => {}} // This is not necessary for this unique use case
-      updateCredential={async () => {}} // This is not necessary for this unique use case
     />
   );
 };
