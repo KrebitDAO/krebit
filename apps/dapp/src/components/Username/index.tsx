@@ -181,8 +181,10 @@ export const Username = () => {
           isFollowingUser = response?.data;
         }
 
-        const balance = await deals.paymentsBalance();
-        setBalance(balance);
+        if (deals) {
+          const balance = await deals.paymentsBalance();
+          setBalance(balance);
+        }
 
         setProfile({
           ...currentProfile,
