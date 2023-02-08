@@ -425,7 +425,7 @@ export class Krebit {
 
   // sign
   // returns w3cCredential
-  issue = async (claim: ClaimProps) => {
+  issue = async (claim: ClaimProps, wallet = this.wallet as ethers.Wallet) => {
     if (!this.isConnected()) throw new Error('Not connected');
 
     try {
@@ -433,7 +433,7 @@ export class Krebit {
       await utils.validateSchema({ idx: this.idx, claim });
 
       return await utils.issueCredential({
-        wallet: this.wallet as ethers.Wallet,
+        wallet,
         idx: this.idx,
         claim
       });
