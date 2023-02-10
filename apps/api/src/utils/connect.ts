@@ -4,10 +4,7 @@ import { PKPWallet } from '@lit-protocol/pkp-ethers.js';
 
 import { signAuthMessage } from '../utils';
 
-const PKP_PUBKEY =
-  '0x04797148be34da069b7a91ed0e017ea97ee91a0346f54f85a364be5857d112e39656280dbf145f4071546a4f48c86c2ebd1d03636d9233520400e80b0291c5a7a7';
-
-const { SERVER_ETHEREUM_SEED, SERVER_NETWORK } = process.env;
+const { SERVER_ETHEREUM_SEED, SERVER_NETWORK, SERVER_PUBLIC_PKP } = process.env;
 
 export const connect = async () => {
   try {
@@ -17,6 +14,9 @@ export const connect = async () => {
     // Create wallet from ethereum seed
     let wallet: ethers.Wallet;
     let pkpWallet: PKPWallet;
+
+    // Create sign from Lit
+    let litAuthSign;
 
     try {
       // Unlock/Decrypt local wallet
@@ -28,8 +28,11 @@ export const connect = async () => {
       const authSign = await signAuthMessage({
         wallet
       });
+
+      litAuthSign = authSign;
+
       const pkp = new PKPWallet({
-        pkpPubKey: PKP_PUBKEY,
+        pkpPubKey: SERVER_PUBLIC_PKP,
         controllerAuthSig: authSign,
         provider: 'https://rpc-mumbai.maticvigil.com'
       });
@@ -71,7 +74,7 @@ export const connect = async () => {
         throw new Error('Not enough $KRB balance to Issue');
       }
 
-      return { wallet, ethProvider, pkpWallet, pkpEthProvider };
+      return { wallet, ethProvider, pkpWallet, pkpEthProvider, litAuthSign };
     }
 
     return undefined;

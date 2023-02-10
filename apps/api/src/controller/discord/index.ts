@@ -1,5 +1,5 @@
 import express from 'express';
-import LitJsSdk from '@lit-protocol/sdk-nodejs';
+import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
 
 import { connect, discord } from '../../utils';
@@ -28,7 +28,7 @@ export const DiscordController = async (
     }
 
     const { claimedCredentialId } = request.body;
-    const { wallet, ethProvider, pkpWallet } = await connect();
+    const { wallet, ethProvider, pkpWallet, litAuthSign } = await connect();
 
     // Log in with wallet to Ceramic DID
     const Issuer = new krebit.core.Krebit({
@@ -68,10 +68,25 @@ export const DiscordController = async (
     // If claim is digitalProperty "Discord"
     if (claimedCredential?.credentialSubject?.type === 'Discord') {
       // Connect to discord and get user ID from token
-      const discordUser = await discord.getDiscordUser({
+      /* const discordUser = await discord.getDiscordUser({
         tokenType: claimValue.proofs.tokenType,
         accessToken: claimValue.proofs.accessToken
-      });
+      }); */
+
+      // Connect to discord lit action and get user ID from token
+      const lit = new krebit.lib.Lit();
+      const discordUser = await lit.callLitAction(
+        litAuthSign,
+        discord.getDiscordUserLitAction,
+        {
+          sigName: 'getDiscordUserLitAction',
+          params: {
+            serverDiscordApiUrl: process.env.SERVER_DISCORD_API_URL,
+            tokenType: claimValue.proofs.tokenType,
+            accessToken: claimValue.proofs.accessToken
+          }
+        }
+      );
 
       // If discord userID == the VC userID
       if (discordUser.id === claimValue.id) {
