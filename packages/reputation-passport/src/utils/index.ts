@@ -1,6 +1,7 @@
 import { WalletProvider } from './WalletProvider.js';
 import {
   issueCredential,
+  getCredentialToSign,
   validateSchema,
   ClaimProps,
   hashClaimValue
@@ -12,6 +13,7 @@ import { mergeArray } from './mergeArray.js';
 export const utils = {
   WalletProvider,
   issueCredential,
+  getCredentialToSign,
   validateSchema,
   base64,
   hashClaimValue,

@@ -10,6 +10,7 @@ import {
   getKrebitCredentialTypes
 } from '@krebitdao/eip712-vc';
 import { base64 } from 'ethers/lib/utils.js';
+import { _TypedDataEncoder } from '@ethersproject/hash';
 
 import { schemas } from '../schemas/index.js';
 import { lib } from '../lib/index.js';
@@ -219,6 +220,121 @@ export const issueCredential = async (props: IssueProps) => {
 
     console.log('W3C Verifiable Credential: ', w3Credential);
     return w3Credential;
+  } catch (error) {
+    console.error('issueCredential', error);
+  }
+};
+
+export const getCredentialToSign = async (props: IssueProps) => {
+  const { wallet, idx, claim } = props;
+
+  try {
+    if (!wallet) {
+      throw new Error('Wallet not defined');
+    }
+
+    if (!idx) {
+      throw new Error('IDX not defined');
+    }
+
+    const issuerAddres: string = await wallet.getAddress();
+
+    // 5 min ago (there is a delay on the blockchain time)
+    const issuanceDate = Date.now() - 1000 * 60 * 5;
+    const expirationDate = new Date(claim?.expirationDate);
+
+    if (!expirationDate) {
+      throw new Error('No expiration date defined');
+    }
+
+    const lit = new lib.Lit();
+
+    if (typeof claim.value === 'object') {
+      if (claim.encrypt == 'hash') {
+        claim['value'] = hashClaimValue({ did: idx.id, value: claim.value });
+        claim['encrypted'] = 'hash';
+      } else if (claim.encrypt == 'lit') {
+        let unifiedAccessControlConditions = lit.getOwnsAddressCondition(
+          claim.ethereumAddress
+        );
+        if (claim.shareEncryptedWith) {
+          unifiedAccessControlConditions =
+            unifiedAccessControlConditions?.concat(
+              lit.getShareWithCondition(claim.shareEncryptedWith)
+            );
+        }
+        let encryptedContent = await lit.encrypt(
+          JSON.stringify(claim.value),
+          unifiedAccessControlConditions,
+          wallet
+        );
+        if (!encryptedContent) {
+          throw new Error('Problem creating encryptedContent');
+        }
+        const stream = await TileDocument.create(
+          idx.ceramic,
+          unifiedAccessControlConditions
+        );
+        claim['value'] = JSON.stringify({
+          ...encryptedContent,
+          unifiedAccessControlConditions: stream.id.toUrl()
+        });
+        claim['encrypted'] = 'lit';
+      } else {
+        claim['value'] = JSON.stringify(claim.value);
+        claim['encrypted'] = 'none';
+      }
+    }
+    delete claim.encrypt;
+
+    const credential = {
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        'https://w3id.org/security/suites/eip712sig-2021'
+      ],
+      type: ['VerifiableCredential']?.concat(claim.type, ...claim.tags),
+      id: claim.id,
+      issuer: {
+        id: idx.id,
+        ethereumAddress: issuerAddres
+      },
+      credentialSubject: {
+        ...claim,
+        id: claim.did,
+        trust: claim.trust ? claim.trust : 100, // How much we trust the evidence to sign this?
+        stake: claim.stake ? claim.stake : 1, // In KRB
+        price: claim.price ? claim.price : 0, // charged to the user for claiming KRBs
+        nbf: Math.floor(issuanceDate / 1000),
+        exp: Math.floor(expirationDate.getTime() / 1000)
+      },
+      credentialSchema: {
+        id: 'https://github.com/KrebitDAO/eip712-vc',
+        type: 'Eip712SchemaValidator2021'
+      },
+      issuanceDate: new Date(issuanceDate).toISOString(),
+      expirationDate: claim.expirationDate
+    };
+    console.debug('Credential: ', credential);
+    const eip712credential = getEIP712Credential(credential);
+    console.debug('eip712credential: ', eip712credential);
+    const krebitTypes = getKrebitCredentialTypes();
+    const eip712_vc = new EIP712VC(
+      schemas.krbToken[currentConfig.network].domain
+    );
+
+    const toSign = _TypedDataEncoder.hash(
+      schemas.krbToken[currentConfig.network].domain,
+      krebitTypes,
+      eip712credential
+    );
+
+    return {
+      toSign,
+      credential,
+      eip712_vc,
+      eip712credential,
+      krebitTypes
+    };
   } catch (error) {
     console.error('issueCredential', error);
   }

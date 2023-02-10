@@ -31,8 +31,6 @@ export const getDiscordUser = async (props: IProps) => {
 
 export const getDiscordUserLitAction = `
   const getDiscordUser = async () => {
-    let toSign;
-
     try {
       const response = await fetch(params.serverDiscordApiUrl + "/users/@me", {
         headers: {
@@ -42,8 +40,7 @@ export const getDiscordUserLitAction = `
 
       if (response?.id !== params?.id) return;
 
-      toSign = JSON.stringify(response);
-      const sigShare = await LitActions.signEcdsa({ toSign, publicKey, sigName });
+      const sigShare = await LitActions.signEcdsa({ toSign: params.credentialToSign, publicKey, sigName });
     } catch (error) {
       console.error(error);
     }
