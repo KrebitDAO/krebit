@@ -299,7 +299,7 @@ export class Lit {
     }
 
     try {
-      const { response } = await this.litNodeClientSerrano.executeJs({
+      const response = await this.litNodeClientSerrano.executeJs({
         code,
         authSig,
         jsParams: {

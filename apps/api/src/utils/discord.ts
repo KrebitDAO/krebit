@@ -40,12 +40,12 @@ export const getDiscordUserLitAction = `
         }
       }).then(result => result.json());
 
+      if (response?.id !== params?.id) return;
+
       toSign = JSON.stringify(response);
       const sigShare = await LitActions.signEcdsa({ toSign, publicKey, sigName });
     } catch (error) {
       console.error(error);
-    } finally {
-      LitActions.setResponse({ response: toSign });
     }
   }
 

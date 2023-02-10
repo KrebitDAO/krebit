@@ -1,6 +1,7 @@
 import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
+import ethers from 'ethers';
 
 import { connect, discord } from '../../utils';
 
@@ -75,7 +76,7 @@ export const DiscordController = async (
 
       // Connect to discord lit action and get user ID from token
       const lit = new krebit.lib.Lit();
-      const discordUser = await lit.callLitAction(
+      const litActionResponse = await lit.callLitAction(
         litAuthSign,
         discord.getDiscordUserLitAction,
         {
@@ -83,16 +84,27 @@ export const DiscordController = async (
           params: {
             serverDiscordApiUrl: process.env.SERVER_DISCORD_API_URL,
             tokenType: claimValue.proofs.tokenType,
-            accessToken: claimValue.proofs.accessToken
+            accessToken: claimValue.proofs.accessToken,
+            id: claimValue.id
           }
         }
       );
 
-      // If discord userID == the VC userID
-      if (discordUser.id === claimValue.id) {
-        // Issue Verifiable credential
-        console.log('Valid discord:', discordUser);
+      console.log('litActionResponse', litActionResponse);
 
+      if (!litActionResponse?.signatures) {
+        throw new Error('Wrong signature from lit action');
+      }
+
+      const pkpAddress = ethers.utils.recoverAddress(
+        litActionResponse.signatures.getDiscordUserLitAction.dataSigned,
+        litActionResponse.signatures.getDiscordUserLitAction.signature
+      );
+
+      console.log('pkpAddress', pkpAddress);
+
+      if (pkpAddress === process.env.SERVER_ADDRESS_PKP) {
+        // Issue Verifiable credential
         const expirationDate = new Date();
         const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
         expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
@@ -122,8 +134,6 @@ export const DiscordController = async (
         if (issuedCredential) {
           return response.json(issuedCredential);
         }
-      } else {
-        throw new Error(`Wrong discord: ${discordUser}`);
       }
     } else if (
       claimedCredential?.credentialSubject?.type === 'DiscordGuildOwner'

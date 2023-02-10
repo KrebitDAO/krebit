@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ethersproject/hash": "^5.7.0",
     "@guildxyz/sdk": "^1.1.1",
     "@krebitdao/eip712-vc": "*",
     "@krebitdao/reputation-passport": "*",
