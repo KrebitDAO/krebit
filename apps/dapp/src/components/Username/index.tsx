@@ -27,13 +27,7 @@ import { ShareContentModal } from 'components/ShareContentModal';
 import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Rating } from 'components/Rating';
-import {
-  isValid,
-  normalizeSchema,
-  formatUrlImage,
-  constants,
-  openAI
-} from 'utils';
+import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
 import { getCredentials } from './utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
@@ -243,7 +237,8 @@ export const Username = () => {
     query.credential_id
   ]);
 
-  useEffect(() => {
+  /* TODO: Open ai get summary is disabled for now */
+  /* useEffect(() => {
     if (!window) return;
     if (auth.status !== 'resolved') return;
     if (status !== 'resolved') return;
@@ -268,7 +263,7 @@ export const Username = () => {
         getSummary(skills);
       }
     }
-  }, [status, auth, profile]);
+  }, [status, auth, profile]); */
 
   useEffect(() => {
     if (!window) return;
