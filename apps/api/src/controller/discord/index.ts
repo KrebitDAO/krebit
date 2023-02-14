@@ -1,6 +1,8 @@
 import express from 'express';
-import LitJsSdk from '@lit-protocol/sdk-nodejs';
+import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
+import ethers from 'ethers';
+import { arrayify, joinSignature } from '@ethersproject/bytes';
 
 import { connect, discord } from '../../utils';
 
@@ -28,7 +30,7 @@ export const DiscordController = async (
     }
 
     const { claimedCredentialId } = request.body;
-    const { wallet, ethProvider } = await connect();
+    const { wallet, ethProvider, pkpWallet, litAuthSign } = await connect();
 
     // Log in with wallet to Ceramic DID
     const Issuer = new krebit.core.Krebit({
@@ -68,47 +70,97 @@ export const DiscordController = async (
     // If claim is digitalProperty "Discord"
     if (claimedCredential?.credentialSubject?.type === 'Discord') {
       // Connect to discord and get user ID from token
-      const discordUser = await discord.getDiscordUser({
+      /* const discordUser = await discord.getDiscordUser({
         tokenType: claimValue.proofs.tokenType,
         accessToken: claimValue.proofs.accessToken
-      });
+      }); */
 
-      // If discord userID == the VC userID
-      if (discordUser.id === claimValue.id) {
-        // Issue Verifiable credential
-        console.log('Valid discord:', discordUser);
+      const expirationDate = new Date();
+      const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
+      expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
+      console.log('expirationDate: ', expirationDate);
 
-        const expirationDate = new Date();
-        const expiresYears = parseInt(SERVER_EXPIRES_YEARS, 10);
-        expirationDate.setFullYear(expirationDate.getFullYear() + expiresYears);
-        console.log('expirationDate: ', expirationDate);
+      const claim = {
+        id: claimedCredentialId,
+        ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
+        did: claimedCredential.credentialSubject.id,
+        type: claimedCredential.credentialSubject.type,
+        typeSchema: claimedCredential.credentialSubject.typeSchema,
+        tags: claimedCredential.type.slice(2),
+        value: claimValue,
+        trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
+        stake: parseInt(SERVER_STAKE, 10), // In KRB
+        price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
+        expirationDate: new Date(expirationDate).toISOString()
+      };
+      if (!publicClaim) {
+        claim['encrypt'] = 'hash' as 'hash';
+      }
+      console.log('claim: ', claim);
 
-        const claim = {
-          id: claimedCredentialId,
-          ethereumAddress: claimedCredential.credentialSubject.ethereumAddress,
-          did: claimedCredential.credentialSubject.id,
-          type: claimedCredential.credentialSubject.type,
-          typeSchema: claimedCredential.credentialSubject.typeSchema,
-          tags: claimedCredential.type.slice(2),
-          value: claimValue,
-          trust: parseInt(SERVER_TRUST, 10), // How much we trust the evidence to sign this?
-          stake: parseInt(SERVER_STAKE, 10), // In KRB
-          price: parseInt(SERVER_PRICE, 10) * 10 ** 18, // charged to the user for claiming KRBs
-          expirationDate: new Date(expirationDate).toISOString()
+      const { toSign, credential, eip712_vc, eip712credential, krebitTypes } =
+        await krebit.utils.getCredentialToSign({
+          wallet,
+          claim,
+          idx: Issuer.idx
+        });
+
+      // Connect to discord lit action and get user ID from token
+      const lit = new krebit.lib.Lit();
+      const litActionResponse = await lit.callLitAction(
+        litAuthSign,
+        discord.getDiscordUserLitAction,
+        {
+          sigName: 'getDiscordUserLitAction',
+          params: {
+            serverDiscordApiUrl: process.env.SERVER_DISCORD_API_URL,
+            tokenType: claimValue.proofs.tokenType,
+            accessToken: claimValue.proofs.accessToken,
+            id: claimValue.id,
+            credentialToSign: arrayify(toSign)
+          }
+        }
+      );
+
+      console.log('litActionResponse', litActionResponse);
+
+      if (!litActionResponse?.signatures) {
+        throw new Error('Wrong signature from lit action');
+      }
+
+      const pkpAddress = ethers.utils.recoverAddress(
+        litActionResponse.signatures.getDiscordUserLitAction.dataSigned,
+        litActionResponse.signatures.getDiscordUserLitAction.signature
+      );
+
+      console.log('pkpAddress', pkpAddress);
+
+      if (pkpAddress === process.env.SERVER_ADDRESS_PKP) {
+        const signature = joinSignature({
+          r: '0x' + litActionResponse.signatures.getDiscordUserLitAction.r,
+          s: '0x' + litActionResponse.signatures.getDiscordUserLitAction.s,
+          v: litActionResponse.signatures.getDiscordUserLitAction.recid
+        });
+
+        const verifiableCredential =
+          await eip712_vc.createEIP712VerifiableCredential(
+            eip712credential,
+            krebitTypes,
+            async () => {
+              return signature;
+            }
+          );
+
+        const w3Credential = {
+          ...credential,
+          proof: verifiableCredential.proof
         };
-        if (!publicClaim) {
-          claim['encrypt'] = 'hash' as 'hash';
-        }
-        console.log('claim: ', claim);
 
-        const issuedCredential = await Issuer.issue(claim);
-        console.log('issuedCredential: ', issuedCredential);
+        console.log(w3Credential);
 
-        if (issuedCredential) {
-          return response.json(issuedCredential);
+        if (w3Credential) {
+          return response.json(w3Credential);
         }
-      } else {
-        throw new Error(`Wrong discord: ${discordUser}`);
       }
     } else if (
       claimedCredential?.credentialSubject?.type === 'DiscordGuildOwner'
@@ -164,7 +216,7 @@ export const DiscordController = async (
         }
         console.log('claim: ', claim);
 
-        const issuedCredential = await Issuer.issue(claim);
+        const issuedCredential = await Issuer.issue(claim, pkpWallet as any);
         console.log('issuedCredential: ', issuedCredential);
 
         if (issuedCredential) {
@@ -242,7 +294,7 @@ export const DiscordController = async (
         }
         console.log('claim: ', claim);
 
-        const issuedCredential = await Issuer.issue(claim);
+        const issuedCredential = await Issuer.issue(claim, pkpWallet as any);
         console.log('issuedCredential: ', issuedCredential);
 
         if (issuedCredential) {
@@ -253,6 +305,7 @@ export const DiscordController = async (
       }
     }
   } catch (err) {
+    console.error('discord error ', err);
     next(err);
   }
 };

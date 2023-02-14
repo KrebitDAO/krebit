@@ -27,7 +27,7 @@ export const IssuerController = async (
     }
 
     const { claimedCredentialId } = request.body;
-    const { wallet, ethProvider } = await connect();
+    const { wallet, ethProvider, pkpWallet } = await connect();
 
     // Log in with wallet to Ceramic DID
     const Issuer = new krebit.core.Krebit({
@@ -88,7 +88,7 @@ export const IssuerController = async (
         };
         console.log('claim: ', claim);
 
-        const issuedCredential = await Issuer.issue(claim);
+        const issuedCredential = await Issuer.issue(claim, pkpWallet as any);
         console.log('issuedCredential: ', issuedCredential);
 
         if (issuedCredential) {

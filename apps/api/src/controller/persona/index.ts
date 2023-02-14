@@ -28,7 +28,7 @@ export const PersonaController = async (
 
     const { claimedCredentialId } = request.body;
 
-    const { wallet, ethProvider } = await connect();
+    const { wallet, ethProvider, pkpWallet } = await connect();
 
     // Log in with wallet to Ceramic DID
     const Issuer = new krebit.core.Krebit({
@@ -110,7 +110,7 @@ export const PersonaController = async (
 
         // Issue Verifiable credential
 
-        const issuedCredential = await Issuer.issue(claim);
+        const issuedCredential = await Issuer.issue(claim, pkpWallet as any);
         console.log('issuedCredential: ', issuedCredential);
 
         if (issuedCredential) {

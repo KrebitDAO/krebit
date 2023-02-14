@@ -29,6 +29,26 @@ export const getDiscordUser = async (props: IProps) => {
   }
 };
 
+export const getDiscordUserLitAction = `
+  const getDiscordUser = async () => {
+    try {
+      const response = await fetch(params.serverDiscordApiUrl + "/users/@me", {
+        headers: {
+          authorization: params.tokenType + " " + params.accessToken,
+        }
+      }).then(result => result.json());
+
+      if (response?.id !== params?.id) return;
+
+      const sigShare = await LitActions.signEcdsa({ toSign: params.credentialToSign, publicKey, sigName });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getDiscordUser();
+`;
+
 export const getDiscordGuild = async (props: IGuilgProps) => {
   const { tokenType, accessToken, guildId } = props;
 
@@ -71,6 +91,7 @@ export const getDiscordGuildMember = async (props: IGuilgProps) => {
 
 export const discord = {
   getDiscordUser,
+  getDiscordUserLitAction,
   getDiscordGuild,
   getDiscordGuildMember
 };

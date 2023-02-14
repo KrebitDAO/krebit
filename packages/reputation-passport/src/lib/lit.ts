@@ -96,6 +96,7 @@ export function canonicalAccessControlConditionFormatter(cond) {
 export class Lit {
   private litSdk;
   private litNodeClient;
+  private litNodeClientSerrano;
   private currentConfig: IConfigProps;
 
   constructor() {
@@ -107,6 +108,14 @@ export class Lit {
     this.litSdk = this.currentConfig.litSdk;
     this.litNodeClient = new this.litSdk.LitNodeClient();
     await this.litNodeClient.connect();
+  };
+
+  private connectSerrano = async () => {
+    this.litSdk = this.currentConfig.litSdk;
+    this.litNodeClientSerrano = new this.litSdk.LitNodeClient({
+      litNetwork: 'serrano'
+    });
+    await this.litNodeClientSerrano.connect();
   };
 
   public getOwnsAddressCondition = (address: string): Array<any> => {
@@ -278,5 +287,30 @@ export class Lit {
     );
 
     return decryptedString;
+  };
+
+  public callLitAction = async (
+    authSig: Object,
+    code: string,
+    jsParams: Object
+  ) => {
+    if (!this.litNodeClientSerrano) {
+      await this.connectSerrano();
+    }
+
+    try {
+      const response = await this.litNodeClientSerrano.executeJs({
+        code,
+        authSig,
+        jsParams: {
+          publicKey: process.env.SERVER_PUBLIC_PKP,
+          ...jsParams
+        }
+      });
+
+      return response;
+    } catch (error) {
+      console.error('lit action error: ', error);
+    }
   };
 }

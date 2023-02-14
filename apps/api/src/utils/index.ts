@@ -21,6 +21,7 @@ import { jobs } from './jobs';
 import { openAI } from './openAI';
 import { hashmail } from './hashmail';
 import { cred } from './cred';
+import { signAuthMessage } from './signAuthMessage';
 
 export {
   connect,
@@ -43,5 +44,6 @@ export {
   jobs,
   openAI,
   hashmail,
-  cred
+  cred,
+  signAuthMessage
 };
