@@ -25,7 +25,7 @@ export interface IFormValues {
   [key: string]: string | number | string[] | number[] | boolean | File;
 }
 
-export interface ICredentialsState {
+export interface IState {
   type: string;
   title: string;
   description: string;
@@ -67,7 +67,7 @@ export interface ICredentialsState {
   };
 }
 
-export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
+export const CREDENTIALS_INITIAL_STATE: IState[] = [
   {
     type: 'referral',
     title: 'Refer a friend',
@@ -797,6 +797,203 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialSchema: 'krebit://schemas/badge'
           };
         }
+      }
+    }
+  }
+];
+
+export const SERVICES_INITIAL_STATE: IState[] = [
+  {
+    type: 'job',
+    title: 'Post a job',
+    description: 'Find the best professionals in the Krebiters community',
+    primaryColor: 'haiti',
+    secondaryColor: 'rose',
+    icon: <Delegate />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'title',
+          placeholder: 'Title',
+          defaultValue: 'Job position',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Title name is required']
+            }
+          ]
+        },
+        {
+          type: 'text',
+          name: 'description',
+          placeholder: 'Description',
+          isMultiline: true,
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Description is required']
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'select',
+          name: 'entity',
+          placeholder: 'Entity/Organization',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Entity/Organization is required']
+            }
+          ]
+        },
+        {
+          type: 'boxes',
+          name: 'industries',
+          placeholder: 'Industries',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Industries are required']
+            }
+          ]
+        },
+        {
+          type: 'string',
+          name: 'size',
+          placeholder: 'Company size',
+          validationType: 'string'
+        },
+        {
+          type: 'string',
+          name: 'salaryRange',
+          placeholder: 'Salary range',
+          validationType: 'string'
+        },
+        {
+          type: 'boxes',
+          name: 'roles',
+          placeholder: 'Roles',
+          validationType: 'array'
+        },
+        {
+          type: 'url',
+          name: 'applyUrl',
+          placeholder: 'Apply URL',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'url',
+              params: ['Apply URL not valid']
+            },
+            {
+              type: 'required',
+              params: ['Apply URL name is required']
+            }
+          ]
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
+        }
+      ],
+      button: {
+        text: 'Post job',
+        onClick: values => values
+      }
+    }
+  },
+  {
+    type: 'service',
+    title: 'Offer your service',
+    description: 'Find the best professionals in the Krebiters community',
+    primaryColor: 'haiti',
+    secondaryColor: 'rose',
+    icon: <Delegate />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'title',
+          placeholder: 'Title',
+          defaultValue: 'Service position',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Title name is required']
+            }
+          ]
+        },
+        {
+          type: 'text',
+          name: 'description',
+          placeholder: 'Description',
+          isMultiline: true,
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Description is required']
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'select',
+          name: 'entity',
+          placeholder: 'Entity/Organization',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Entity/Organization is required']
+            }
+          ]
+        },
+        {
+          type: 'string',
+          name: 'salaryRange',
+          placeholder: 'Salary range',
+          validationType: 'string'
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
+        }
+      ],
+      button: {
+        text: 'Offer your service',
+        onClick: values => values
       }
     }
   }

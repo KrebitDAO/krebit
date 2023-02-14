@@ -58,6 +58,10 @@ export const Wrapper = styled.div<IProps>`
         grid-template-columns: repeat(3, 1fr);
       }
     }
+
+    .credentials-content.not-margin {
+      margin: 0;
+    }
   `}
 `;
 
