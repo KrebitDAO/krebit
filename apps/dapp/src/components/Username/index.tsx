@@ -243,7 +243,7 @@ export const Username = () => {
     query.credential_id
   ]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!window) return;
     if (auth.status !== 'resolved') return;
     if (status !== 'resolved') return;
@@ -268,7 +268,7 @@ export const Username = () => {
         getSummary(skills);
       }
     }
-  }, [status, auth, profile]);
+  }, [status, auth, profile]); */
 
   useEffect(() => {
     if (!window) return;

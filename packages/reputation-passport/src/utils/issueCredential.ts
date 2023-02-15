@@ -237,7 +237,7 @@ export const getCredentialToSign = async (props: IssueProps) => {
       throw new Error('IDX not defined');
     }
 
-    const issuerAddres: string = await wallet.getAddress();
+    const issuerAddress: string = await wallet.getAddress();
 
     // 5 min ago (there is a delay on the blockchain time)
     const issuanceDate = Date.now() - 1000 * 60 * 5;
@@ -295,8 +295,8 @@ export const getCredentialToSign = async (props: IssueProps) => {
       type: ['VerifiableCredential']?.concat(claim.type, ...claim.tags),
       id: claim.id,
       issuer: {
-        id: idx.id,
-        ethereumAddress: issuerAddres
+        id: `did:pkh:eip155:1:${issuerAddress}`,
+        ethereumAddress: issuerAddress
       },
       credentialSubject: {
         ...claim,

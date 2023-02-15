@@ -40,6 +40,14 @@ export const getDiscordUserLitAction = `
 
       if (response?.id !== params?.id) return;
 
+      const check = await Lit.Actions.checkConditions({
+        conditions: params.conditions,
+        authSig: params.authSig,
+        chain: params.chain
+      });
+
+      if (!check) return;
+
       const sigShare = await LitActions.signEcdsa({ toSign: params.credentialToSign, publicKey, sigName });
     } catch (error) {
       console.error(error);

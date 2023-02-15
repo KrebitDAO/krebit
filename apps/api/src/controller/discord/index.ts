@@ -100,10 +100,24 @@ export const DiscordController = async (
 
       const { toSign, credential, eip712_vc, eip712credential, krebitTypes } =
         await krebit.utils.getCredentialToSign({
-          wallet,
+          wallet: pkpWallet as any,
           claim,
           idx: Issuer.idx
         });
+
+      const conditions = [
+        {
+          contractAddress: krebit.schemas.krbToken[SERVER_NETWORK].address,
+          standardContractType: 'ERC20',
+          chain: krebit.schemas.krbToken[SERVER_NETWORK].network,
+          method: 'balanceOf',
+          parameters: [':userAddress'],
+          returnValueTest: {
+            comparator: '>',
+            value: '100000000000000000000'
+          }
+        }
+      ];
 
       // Connect to discord lit action and get user ID from token
       const lit = new krebit.lib.Lit();
@@ -117,7 +131,10 @@ export const DiscordController = async (
             tokenType: claimValue.proofs.tokenType,
             accessToken: claimValue.proofs.accessToken,
             id: claimValue.id,
-            credentialToSign: arrayify(toSign)
+            credentialToSign: arrayify(toSign),
+            conditions,
+            chain: krebit.schemas.krbToken[SERVER_NETWORK].network,
+            authSig: litAuthSign
           }
         }
       );
