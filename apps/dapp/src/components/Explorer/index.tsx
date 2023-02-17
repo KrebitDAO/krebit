@@ -7,43 +7,58 @@ import {
 } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import { logCustomEvent } from 'arena-tools';
-import { useRouter } from 'next/router';
 import { debounce } from 'ts-debounce';
 import Link from 'next/link';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { Card, FilterMenu, Wrapper } from './styles';
+import { ProfileCard, FilterMenu, Wrapper, ServiceCard } from './styles';
 import { Close, Search, Tune } from 'components/Icons';
 import { Slider } from 'components/Slider';
 import { Button } from 'components/Button';
 import { Loading } from 'components/Loading';
+import { Tabs } from 'components/Tabs';
 import { formatUrlImage, normalizeSchema } from 'utils';
+import { DEFAULT_PICTURE, IProfile } from 'utils/normalizeSchema';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
-interface IProfile {
-  did: string;
-  background: string;
-  picture: string;
-  name: string;
-  reputation: string | number;
-  countFollowers: number;
-  countFollowing: number;
-  stamps: any[];
+interface ICard {
+  href?: string;
+  title?: string;
+  picture?: string;
+  reputation?: string | number;
+  countFollowers?: number;
+  countFollowing?: number;
+  metadata?: IProfile;
 }
 
 interface IInformation {
-  profiles: IProfile[];
+  cards: ICard[];
   skills: string[];
 }
 
+const initialSearchTypes = [
+  {
+    text: 'Profiles',
+    value: 'profile'
+  },
+  {
+    text: 'Jobs',
+    value: 'job',
+    orbisTag: 'krebit-job'
+  },
+  {
+    text: 'Services',
+    value: 'service',
+    orbisTag: 'krebit-service'
+  }
+];
 const initialFilterValues = {
   skill: '',
   krbs: [1, 99],
   value: ''
 };
-
 const DEFAULT_SLICE_SKILLS = 5;
 // TODO: This is not a real pagination, we need to find a way to optimize this better
 const DEFAULT_LIST_PAGINATION = 50;
@@ -55,13 +70,14 @@ export const Explorer = () => {
   const [filterValues, setFilterValues] = useState(initialFilterValues);
   const [status, setStatus] = useState('idle');
   const [information, setInformation] = useState<IInformation>();
+  const [searchType, setSearchType] = useState(initialSearchTypes[0].value);
+  const [tab, setTab] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [shouldViewMoreSkills, setShouldViewMoreSkills] = useState(false);
   const {
     walletInformation: { publicPassport, orbis, address }
   } = useContext(GeneralContext);
-  const router = useRouter();
   const { width } = useWindowSize();
   const isDesktop = width >= 1024;
   const isLoading = status === 'pending';
@@ -77,11 +93,12 @@ export const Explorer = () => {
       (
         values = initialFilterValues,
         first = DEFAULT_LIST_PAGINATION,
-        skip = 0
-      ) => searchInformation(values, first, skip),
+        skip = 0,
+        type = searchType
+      ) => searchInformation(values, first, skip, type),
       500
     ),
-    [publicPassport, orbis, filterValues.value, currentPage]
+    [publicPassport, orbis]
   );
 
   useEffect(() => {
@@ -97,7 +114,7 @@ export const Explorer = () => {
     );
 
     return delayedInformation.cancel;
-  }, [publicPassport, orbis, filterValues.value, currentPage, address]);
+  }, [publicPassport, orbis, address]);
 
   const handleFilterOpen = () => {
     if (isDesktop) return;
@@ -155,73 +172,168 @@ export const Explorer = () => {
   const searchInformation = async (
     values = initialFilterValues,
     first = DEFAULT_LIST_PAGINATION,
-    skip = 0
+    skip = 0,
+    type = searchType
   ) => {
     try {
       setStatus('pending');
 
-      const totalAccounts = await Krebit.lib.graph.totalAccountsQuery({
-        first: 1000
-      });
-      setTotal(totalAccounts);
+      if (first === DEFAULT_LIST_PAGINATION) {
+        setInformation({
+          cards: [],
+          skills: []
+        });
+        setCurrentPage(DEFAULT_LIST_PAGINATION);
+        setFilterValues(prevStates => ({
+          ...prevStates,
+          value: ''
+        }));
+      }
 
-      const response = await Krebit.lib.graph.exploreAccountsQuery({
-        first,
-        skip,
-        where: {
-          ERC20balances_: {
-            value_gte: values.krbs[0],
-            value_lte: values.krbs[1]
-          },
-          VerifiableCredentials_: {
-            _type_contains_nocase: values.value ? values.value : values.skill,
-            credentialStatus: 'Issued'
-          }
-        }
-      });
+      if (type === 'profile') {
+        const totalAccounts = await Krebit.lib.graph.totalAccountsQuery({
+          first: 1000
+        });
+        setTotal(totalAccounts);
 
-      const profiles = await Promise.all(
-        response.map(async account => {
-          if (!account?.id) return undefined;
-
-          const defaultDID = await Krebit.lib.orbis.getDefaultDID(account.id);
-          const did = defaultDID
-            ? defaultDID
-            : `did:pkh:eip155:1:${account.id}`;
-
-          const profile = await normalizeSchema.profile({
-            orbis,
-            did,
-            reputation: account.ERC20balances[0].value
-          });
-
-          const skills = account.VerifiableCredentials.map(
-            values => values?._type
-          )
-            .map(credentials => (credentials ? JSON.parse(credentials) : []))
-            .flatMap(skills => skills);
-
-          return {
-            ...profile,
-            skills: skills || []
-          };
-        })
-      )
-        .then(profiles => profiles.filter(profile => profile !== undefined))
-        .then(profiles => profiles.sort((a, b) => b.reputation - a.reputation));
-
-      const skills = profiles.flatMap(profile => profile.skills);
-
-      setInformation(prevValues =>
-        currentPage === 1
-          ? { profiles, skills }
-          : {
-              profiles: [...(prevValues?.profiles || []), ...profiles].sort(
-                (a, b) => b.reputation - a.reputation
-              ),
-              skills: [...(prevValues?.skills || []), ...skills]
+        const response = await Krebit.lib.graph.exploreAccountsQuery({
+          first,
+          skip,
+          where: {
+            ERC20balances_: {
+              value_gte: values.krbs[0],
+              value_lte: values.krbs[1]
+            },
+            VerifiableCredentials_: {
+              _type_contains_nocase: values.value ? values.value : values.skill,
+              credentialStatus: 'Issued'
             }
-      );
+          }
+        });
+
+        const cards = await Promise.all(
+          response.map(async account => {
+            if (!account?.id) return undefined;
+
+            const defaultDID = await Krebit.lib.orbis.getDefaultDID(account.id);
+            const did = defaultDID
+              ? defaultDID
+              : `did:pkh:eip155:1:${account.id}`;
+
+            const profile = await normalizeSchema.profile({
+              orbis,
+              did,
+              reputation: account.ERC20balances[0].value
+            });
+
+            const skills = account.VerifiableCredentials.map(
+              values => values?._type
+            )
+              .map(credentials => (credentials ? JSON.parse(credentials) : []))
+              .flatMap(skills => skills);
+
+            return {
+              href: `/${profile.did}`,
+              title: profile.name,
+              picture: profile.picture,
+              reputation: profile.reputation,
+              countFollowers: profile.countFollowers,
+              countFollowing: profile.countFollowing,
+              skills: skills || []
+            };
+          })
+        )
+          .then(cards => cards.filter(card => card !== undefined))
+          .then(cards => cards.sort((a, b) => b.reputation - a.reputation));
+
+        const skills = cards.flatMap(card => card.skills);
+
+        setInformation(prevValues =>
+          currentPage === 1
+            ? { cards, skills }
+            : {
+                cards: [...(prevValues?.cards || []), ...cards].sort(
+                  (a, b) => b.reputation - a.reputation
+                ),
+                skills: [...(prevValues?.skills || []), ...skills]
+              }
+        );
+      } else {
+        const currentSearchType = initialSearchTypes.find(
+          values => type === values.value
+        );
+
+        if (!currentSearchType?.orbisTag) return;
+
+        const filterTag = values?.skill
+          ? `${currentSearchType?.orbisTag}:${values.skill}`
+          : values?.value
+          ? `${currentSearchType?.orbisTag}:${values.value}`
+          : currentSearchType.orbisTag;
+
+        console.log(filterTag);
+
+        const { data, error } = await orbis.getPosts({
+          tag: filterTag
+        });
+
+        const cards = await Promise.all(
+          data?.map(async values => {
+            if (!values) return undefined;
+
+            const reputation = await Krebit.lib.graph.erc20BalanceQuery(
+              values?.creator_details?.metadata?.address
+            );
+
+            const profile = {
+              href: `/posts?post_id=${values?.stream_id}`,
+              title: values?.content?.data?.title,
+              description: values?.content?.data?.description,
+              picture:
+                values?.content?.data?.imageUrl ||
+                values?.creator_details?.profile?.pfp ||
+                DEFAULT_PICTURE,
+              reputation: reputation?.value || 0,
+              metadata: {
+                picture:
+                  values?.creator_details?.profile?.pfp || DEFAULT_PICTURE,
+                name:
+                  values?.creator_details?.profile?.username ||
+                  values?.creator_details?.metadata?.address
+              }
+            };
+
+            const skills = values?.content?.tags
+              ?.map(tag => tag.slug)
+              .filter(tag => tag !== currentSearchType.orbisTag);
+
+            return {
+              ...profile,
+              skills: skills || []
+            };
+          })
+        ).then(profiles => profiles.filter(profile => profile !== undefined));
+
+        const skills = cards.flatMap(profile => profile.skills);
+
+        setInformation(prevValues =>
+          currentPage === 1
+            ? { cards, skills }
+            : {
+                cards: [...(prevValues?.cards || []), ...cards].sort(
+                  (a, b) => b.reputation - a.reputation
+                ),
+                skills: [...(prevValues?.skills || []), ...skills]
+              }
+        );
+
+        if (error) {
+          setStatus('rejected_posts');
+          console.error('postsError', error);
+          return;
+        }
+      }
+
       setStatus('resolved');
     } catch (error) {
       console.error(error);
@@ -231,12 +343,23 @@ export const Explorer = () => {
 
   const handleSearch = async () => {
     handleFilterOpen();
-    setCurrentPage(1);
-    setFilterValues(prevStates => ({
-      ...prevStates,
-      value: ''
-    }));
-    await searchInformation(filterValues);
+    await searchInformation(
+      filterValues,
+      DEFAULT_LIST_PAGINATION,
+      0,
+      searchType
+    );
+  };
+
+  const handleTab = async (_, value: number) => {
+    setTab(value);
+    setSearchType(initialSearchTypes[value].value);
+    await searchInformation(
+      filterValues,
+      DEFAULT_LIST_PAGINATION,
+      0,
+      initialSearchTypes[value].value
+    );
   };
 
   return (
@@ -312,7 +435,10 @@ export const Explorer = () => {
                           onClick={() => handleSkillValue(item[0])}
                         >
                           <p className="filter-menu-skills-item-text">
-                            {item[0]}{' '}
+                            {console.log(item)}
+                            {item[0]
+                              ?.replace('krebit-job:', '')
+                              ?.replace('krebit-service:', '')}{' '}
                             {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
                           </p>
                         </div>
@@ -337,7 +463,7 @@ export const Explorer = () => {
             </div>
             <div className="filter-menu-slider">
               <p className="filter-menu-slider-text">Krebits Reputation</p>
-              <div className="filter-menu-slider-component">
+              <div className="filter-menu-component">
                 <Slider
                   ariaLabel="Reputation"
                   name="krbs"
@@ -368,9 +494,9 @@ export const Explorer = () => {
         <div className="explorer-container">
           <div className="explorer-header">
             <p className="explorer-header-title">
-              Krebited Profiles{' '}
+              Explore the Krebited Community{' '}
               <span className="explorer-header-span">
-                {information?.profiles?.length || 0} results of {total}
+                {information?.cards?.length || 0} results of {total}
               </span>
             </p>
             <div className="explorer-header-icon" onClick={handleFilterOpen}>
@@ -382,7 +508,7 @@ export const Explorer = () => {
               <Search />
             </div>
             <input
-              placeholder="Search skills"
+              placeholder="Explore the community"
               value={filterValues.value}
               onChange={handleFilterValues}
               name="value"
@@ -397,52 +523,101 @@ export const Explorer = () => {
               <Close />
             </div>
           </div>
-          {information?.profiles?.length === 0 ? (
+          <div className="explore-tabs">
+            <Tabs
+              tabs={initialSearchTypes}
+              value={tab}
+              onChange={handleTab}
+              isDisabled={isLoading}
+            />
+          </div>
+          {information?.cards?.length === 0 && !isLoading ? (
             <p className="explore-card-not-found">No profiles found</p>
-          ) : information?.profiles?.length > 0 ? (
-            <div className="explorer-cards">
-              {information?.profiles.map((profile, index) => (
-                <Link href={`/${profile.did}`} key={index}>
-                  <Card
-                    href={`/${profile.did}`}
-                    picture={formatUrlImage(profile.picture)}
-                    key={index}
-                  >
-                    <div className="explorer-card-picture"></div>
-                    <p className="explorer-card-title">{profile.name}</p>
-                    <p className="explorer-card-description">
-                      {profile.reputation} Krebits
-                    </p>
-                    <div className="explorer-card-followers">
-                      <span className="explorer-card-follow">
-                        {profile.countFollowers >= 100
-                          ? '+99'
-                          : profile.countFollowers}{' '}
-                        <span className="explorer-card-follow-text">
-                          Followers
-                        </span>
-                      </span>
-                      <span className="explorer-card-follow-dot"></span>
-                      <span className="explorer-card-follow">
-                        {profile.countFollowing >= 100
-                          ? '+99'
-                          : profile.countFollowing}{' '}
-                        <span className="explorer-card-follow-text">
-                          Following
-                        </span>
-                      </span>
-                    </div>
-                    <div className="explorer-card-button">
-                      <Button
-                        text="View profile"
-                        styleType="border"
-                        borderBackgroundColor="ebonyClay"
-                        onClick={() => {}}
-                      />
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+          ) : information?.cards?.length > 0 ? (
+            <div
+              className={
+                searchType === 'profile'
+                  ? 'explorer-cards'
+                  : 'explorer-cards-services'
+              }
+            >
+              {searchType === 'profile'
+                ? information?.cards.map((card, index) => (
+                    <Link href={card.href} key={index}>
+                      <ProfileCard
+                        href={card.href}
+                        picture={formatUrlImage(card.picture)}
+                        key={index}
+                      >
+                        <div className="explorer-card-picture"></div>
+                        <p className="explorer-card-title">{card.title}</p>
+                        <p className="explorer-card-description">
+                          {card.reputation} Krebits
+                        </p>
+                        <div className="explorer-card-followers">
+                          <span className="explorer-card-follow">
+                            {card.countFollowers >= 100
+                              ? '+99'
+                              : card.countFollowers}{' '}
+                            <span className="explorer-card-follow-text">
+                              Followers
+                            </span>
+                          </span>
+                          <span className="explorer-card-follow-dot"></span>
+                          <span className="explorer-card-follow">
+                            {card.countFollowing >= 100
+                              ? '+99'
+                              : card.countFollowing}{' '}
+                            <span className="explorer-card-follow-text">
+                              Following
+                            </span>
+                          </span>
+                        </div>
+                        <div className="explorer-card-button">
+                          <Button
+                            text="View profile"
+                            styleType="border"
+                            borderBackgroundColor="ebonyClay"
+                            onClick={() => {}}
+                          />
+                        </div>
+                      </ProfileCard>
+                    </Link>
+                  ))
+                : information?.cards.map((card, index) => (
+                    <Link href={card.href} key={index}>
+                      <ServiceCard
+                        href={card.href}
+                        picture={formatUrlImage(card.picture)}
+                        profilePicture={formatUrlImage(card.metadata?.picture)}
+                        key={index}
+                      >
+                        <div className="explore-service-picture"></div>
+                        <div className="explore-service-content">
+                          <div className="explore-service-profile">
+                            <div className="explore-service-profile-picture"></div>
+                            <p className="explore-service-profile-text">
+                              {card.metadata?.name}
+                              {card.reputation && (
+                                <span>{card.reputation} Krebits</span>
+                              )}
+                            </p>
+                          </div>
+                          <p className="explore-service-description">
+                            {card.title}
+                          </p>
+                        </div>
+                        <div className="explorer-card-button">
+                          <Button
+                            text="View more"
+                            styleType="border"
+                            borderBackgroundColor="ebonyClay"
+                            onClick={() => {}}
+                          />
+                        </div>
+                      </ServiceCard>
+                    </Link>
+                  ))}
             </div>
           ) : null}
           {isLoading && (
@@ -454,7 +629,7 @@ export const Explorer = () => {
               ))}
             </div>
           )}
-          {information?.profiles?.length >=
+          {information?.cards?.length >=
             DEFAULT_LIST_PAGINATION * currentPage && (
             <div className="explorer-cards-button">
               <Button

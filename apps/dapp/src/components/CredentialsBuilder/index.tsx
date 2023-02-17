@@ -563,7 +563,10 @@ export const CredentialsBuilder = () => {
               slug: 'krebit-job',
               title: 'Krebit Job'
             },
-            ...skillTags
+            ...skillTags.map(tag => ({
+              ...tag,
+              slug: `krebit-job:${tag.slug}`
+            }))
           ],
           channel: job_channel
         };
@@ -576,7 +579,10 @@ export const CredentialsBuilder = () => {
               slug: 'krebit-service',
               title: 'Krebit Service'
             },
-            ...skillTags
+            ...skillTags.map(tag => ({
+              ...tag,
+              slug: `krebit-service:${tag.slug}`
+            }))
           ],
           channel: service_channel
         };
@@ -669,6 +675,7 @@ export const CredentialsBuilder = () => {
 
   const handleCloseModal = () => {
     setCredentialId(undefined);
+    setServiceId(undefined);
     setErrorMessage(undefined);
   };
 

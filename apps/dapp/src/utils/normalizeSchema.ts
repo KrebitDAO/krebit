@@ -66,6 +66,7 @@ export const profile = async (props: IProps) => {
       name:
         orbisProfile?.data?.details?.profile?.username ||
         orbisProfile?.data?.details?.metadata?.ensName ||
+        orbisProfile?.data?.details?.metadata?.address ||
         passport?.address,
       description: orbisProfile?.data?.details?.profile?.description,
       reputation: reputation || 0,

@@ -7,6 +7,7 @@ interface IProps {
 
 interface ICardProps {
   picture: string;
+  profilePicture?: string;
 }
 
 export const Wrapper = styled.div<IProps>`
@@ -195,6 +196,15 @@ export const Wrapper = styled.div<IProps>`
         }
       }
 
+      .explorer-card-loading {
+        width: 100%;
+        height: 222px;
+
+        @media (min-width: ${theme.screens.lg}) {
+          height: 383px;
+        }
+      }
+
       .explorer-cards {
         margin-top: 22px;
         display: grid;
@@ -205,14 +215,16 @@ export const Wrapper = styled.div<IProps>`
           grid-template-columns: repeat(3, minmax(auto, 0.5fr));
           grid-gap: 26px;
         }
+      }
 
-        .explorer-card-loading {
-          width: 100%;
-          height: 222px;
+      .explorer-cards-services {
+        margin-top: 22px;
+        display: grid;
+        grid-gap: 12px;
 
-          @media (min-width: ${theme.screens.lg}) {
-            height: 383px;
-          }
+        @media (min-width: ${theme.screens.lg}) {
+          grid-template-columns: repeat(3, minmax(auto, 0.5fr));
+          grid-gap: 26px;
         }
       }
 
@@ -432,7 +444,7 @@ export const FilterMenu = styled.div<IProps>`
   `}
 `;
 
-export const Card = styled.a<ICardProps>`
+export const ProfileCard = styled.a<ICardProps>`
   ${({ theme, picture }) => css`
     width: 100%;
     background-color: ${theme.colors.ebonyClay};
@@ -531,6 +543,89 @@ export const Card = styled.a<ICardProps>`
       width: 94px;
       height: 28px;
       margin: 0 auto;
+
+      @media (min-width: ${theme.screens.lg}) {
+        width: 144px;
+        height: 44px;
+      }
+    }
+  `}
+`;
+
+export const ServiceCard = styled.a<ICardProps>`
+  ${({ theme, picture, profilePicture }) => css`
+    width: 100%;
+    background-color: ${theme.colors.ebonyClay};
+    border: 1px solid ${theme.colors.scorpion}80;
+    border-radius: 15px;
+    cursor: pointer;
+
+    .explore-service-picture {
+      width: 100%;
+      height: 200px;
+      background-image: url('${picture}');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .explore-service-content {
+      padding: 20px 16px;
+      padding-bottom: 0px;
+      height: 130px;
+
+      .explore-service-profile {
+        display: flex;
+        align-items: center;
+
+        .explore-service-profile-picture {
+          width: 25px;
+          height: 25px;
+          border-radius: 9999px;
+          background-image: url('${profilePicture}');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          margin-right: 10px;
+        }
+
+        .explore-service-profile-text {
+          margin: 0;
+          font-size: ${theme.fonts.xs};
+          color: ${theme.colors.white};
+          max-width: 140px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+
+          @media (min-width: ${theme.screens.lg}) {
+            font-size: ${theme.fonts.sm};
+          }
+
+          & > span {
+            font-size: ${theme.fonts.xs};
+            color: ${theme.colors.cyan};
+            margin-left: 10px;
+          }
+        }
+      }
+
+      .explore-service-description {
+        margin: 10px 0;
+        font-size: ${theme.fonts.sm};
+        color: ${theme.colors.white};
+
+        @media (min-width: ${theme.screens.lg}) {
+          font-size: ${theme.fonts.base};
+        }
+      }
+    }
+
+    .explorer-card-button {
+      width: 94px;
+      height: 28px;
+      margin: 0 auto;
+      margin-bottom: 20px;
 
       @media (min-width: ${theme.screens.lg}) {
         width: 144px;
