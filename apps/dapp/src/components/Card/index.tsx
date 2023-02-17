@@ -4,10 +4,10 @@ import { LongCardWrapper, SimpleCardWrapper, SmallCardWrapper } from './styles';
 import { Krebit, MoreVert } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { ToolTip } from 'components/ToolTip';
+import { Rating } from 'components/Rating';
 
 // types
-import { ICredentialsState } from 'components/Credentials/initialState';
-import { Rating } from 'components/Rating';
+import { IState } from 'components/Credentials/initialState';
 
 interface IProps {
   type: 'simple' | 'small' | 'medium' | 'large' | 'long';
@@ -37,7 +37,7 @@ interface IProps {
   tooltip?: {
     message: string;
   };
-  builderCredential?: ICredentialsState;
+  builderCredential?: IState;
 }
 
 export const Card = (props: IProps) => {

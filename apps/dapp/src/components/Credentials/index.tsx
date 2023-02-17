@@ -6,7 +6,10 @@ import { Card, Wrapper } from './styles';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ArrowForward } from 'components/Icons';
-import { CREDENTIALS_INITIAL_STATE } from './initialState';
+import {
+  CREDENTIALS_INITIAL_STATE,
+  SERVICES_INITIAL_STATE
+} from './initialState';
 import { GeneralContext } from 'context';
 
 export const Credentials = () => {
@@ -44,6 +47,33 @@ export const Credentials = () => {
           </div>
         ) : (
           <>
+            <h1 className="credentials-title">
+              Create a job or offer your services
+            </h1>
+            <div className="credentials-content not-margin">
+              {SERVICES_INITIAL_STATE.map((values, index) => (
+                <Link href={`/create/${values.type}`} key={index}>
+                  <Card
+                    primaryColor={values.primaryColor}
+                    secondaryColor={values.secondaryColor}
+                  >
+                    <div className="card-title-header">
+                      <p className="card-title">{values.title}</p>
+                    </div>
+                    <p className="card-description">{values.description}</p>
+                    <div className="card-bottom">
+                      <div className="card-button">
+                        <p className="card-button-text">Create</p>
+                        <div className="card-button-icon">
+                          <ArrowForward />
+                        </div>
+                      </div>
+                      <div className="card-icon">{values.icon}</div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
             <h1 className="credentials-title">
               Issue credentials to other Krebiters
             </h1>

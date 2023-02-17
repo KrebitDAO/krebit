@@ -277,6 +277,14 @@ const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
   ERROR_MINT: 'Error minting stamp NFT. Please check later'
 };
 
+const DEFAULT_MESSAGES_FOR_SERVICES = {
+  INITIAL: 'Saving information...'
+};
+
+const DEFAULT_ERROR_MESSAGE_FOR_SERVICES = {
+  ERROR_INFORMATION: 'Error saving Information. Please check later'
+};
+
 const DEFAULT_SKILL_LANGUAGES = [
   { text: 'JavaScript', value: 'JavaScript' },
   { text: 'Java', value: 'Java' },
@@ -317,5 +325,7 @@ export const constants = {
   DEFAULT_ERROR_MESSAGES,
   DEFAULT_MESSAGES_FOR_PROVIDERS,
   DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS,
+  DEFAULT_MESSAGES_FOR_SERVICES,
+  DEFAULT_ERROR_MESSAGE_FOR_SERVICES,
   DEFAULT_SKILL_LANGUAGES
 };

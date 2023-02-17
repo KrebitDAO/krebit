@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
+import Krebit from '@krebitdao/reputation-passport';
 
 import { QuestionModalText, Wrapper } from './styles';
 import { Card } from 'components/Credentials/styles';
@@ -23,8 +24,9 @@ import { QuestionModal } from 'components/QuestionModal';
 import { Button } from 'components/Button';
 import {
   CREDENTIALS_INITIAL_STATE,
-  ICredentialsState,
-  IFormValues
+  IState,
+  IFormValues,
+  SERVICES_INITIAL_STATE
 } from '../Credentials/initialState';
 import { GeneralContext } from 'context';
 import {
@@ -45,21 +47,39 @@ interface ICurrentInputModal {
 }
 
 const BASE_URL = 'https://krebit.id/claim';
+const BASE_URL_POSTS = 'https://krebit.id/posts';
 const DEFAULT_FIELDS_QUERY_URL = 2;
+
+// orbis information
+const CERAMIC_URL = 'https://node1.orbis.club';
+const postSchemaCommit =
+  'k1dpgaqe3i64kjuyet4w0zyaqwamf9wrp1jim19y27veqkppo34yghivt2pag4wxp0fv2yl4hedynpfuynp2wvd8s7ctabea6lx732xrr8b0cgqauwlh0vwg6';
+const job_channel =
+  'kjzl6cwe1jw145l8g0ojf3ku355i6ybovcpbiir8nam0385w8ajalywyd8un11b';
+const service_channel =
+  'kjzl6cwe1jw14bnj2h9kzgwdve4vrz7gwjcq3suytizuvc3slaellqd6g7hr18y';
 
 export const CredentialsBuilder = () => {
   const [status, setStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState<string>();
-  const [values, setValues] = useState<ICredentialsState>();
+  const [values, setValues] = useState<IState>();
   const [formValues, setFormValues] = useState<IFormValues>({});
   const [currentInputModal, setCurrentInputModal] =
     useState<ICurrentInputModal>({});
   const [credentialId, setCredentialId] = useState<string>();
+  const [serviceId, setServiceId] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
   const { query, push } = useRouter();
   const {
     auth,
-    walletInformation: { passport, issuer, address, orbis },
+    walletInformation: {
+      passport,
+      issuer,
+      orbis,
+      address,
+      wallet,
+      ethProvider
+    },
     profileInformation: { profile },
     walletModal: { handleOpenConnectWallet },
     storage
@@ -83,11 +103,21 @@ export const CredentialsBuilder = () => {
 
     const validateFormValues = async () => {
       try {
-        const values = CREDENTIALS_INITIAL_STATE.find(
+        let values: IState;
+
+        const credentialsInitialState = CREDENTIALS_INITIAL_STATE.find(
           values => values.type === query.type
         );
 
-        if (!values) {
+        const servicesInitialState = SERVICES_INITIAL_STATE.find(
+          values => values.type === query.type
+        );
+
+        if (credentialsInitialState) {
+          values = credentialsInitialState;
+        } else if (servicesInitialState) {
+          values = servicesInitialState;
+        } else {
           throw new Error('Not authorized');
         }
 
@@ -95,7 +125,10 @@ export const CredentialsBuilder = () => {
           field => field.name === 'entity'
         );
 
-        if (entityField !== -1) {
+        if (
+          entityField !== -1 &&
+          values.form.fields[entityField].type === 'select'
+        ) {
           const entities = await getEntities();
 
           values.form.fields[entityField].items = entities;
@@ -251,7 +284,10 @@ export const CredentialsBuilder = () => {
         ...prevValues,
         [name]: [
           ...((prevValues[name] as string[]) || []),
-          ...value.split(',').filter(val => (!val ? undefined : val.trim()))
+          ...value
+            .split(',')
+            .map(val => val?.trim())
+            .filter(val => val !== undefined)
         ]
       }));
     } else {
@@ -278,9 +314,7 @@ export const CredentialsBuilder = () => {
     }));
   };
 
-  const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
+  const handleSubmitCredential = async () => {
     const validationFields = [
       ...values.form.fields,
       values.form?.issueTo ? values.form.issueTo : undefined
@@ -462,10 +496,171 @@ export const CredentialsBuilder = () => {
     }
   };
 
-  const handleCopyIssuedId = async () => {
+  const handleSubmitServices = async () => {
+    const validationFields = [
+      ...values.form.fields,
+      values.form?.issueTo ? values.form.issueTo : undefined
+    ].filter(x => x !== undefined);
+
+    const yupValidation = await yupSchema.validateYupSchema(
+      validationFields,
+      formValues
+    );
+
+    if (yupValidation?.error) {
+      setStatus('form_rejected');
+      setErrorMessage(yupValidation?.error);
+      return;
+    }
+
+    setStatus('form_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_SERVICES.INITIAL);
+
+    let imageUrl = '';
+
+    if (formValues?.image instanceof File) {
+      const node = await storage.put([formValues?.image] as any);
+
+      if (node) {
+        imageUrl = `https://${node}.ipfs.dweb.link/${formValues?.image.name}`;
+      }
+    }
+
+    const currentValues = values.form.button.onClick({
+      ...formValues,
+      type: values.type,
+      imageUrl,
+      publishedDate: new Date().toISOString()
+    });
+
+    try {
+      const Issuer = new Krebit.core.Krebit({
+        wallet,
+        ethProvider,
+        address,
+        ceramicUrl: CERAMIC_URL
+      });
+      const session = window.localStorage.getItem('did-session');
+      const currentSession = JSON.parse(session);
+      const did = await Issuer.connect(currentSession);
+      console.log('DID:', did);
+
+      let metadata: { tags: Array<Object>; channel: string };
+
+      const skillTags = currentValues?.skills?.map(skill => ({
+        slug: skill
+          ?.toLowerCase()
+          ?.trim()
+          ?.replace(/[^a-z0-9. ]/g, '')
+          ?.replace(/\s+/g, '-'),
+        title: skill
+      }));
+
+      if (currentValues.type === 'job') {
+        metadata = {
+          tags: [
+            {
+              slug: 'krebit-job',
+              title: 'Krebit Job'
+            },
+            ...skillTags.map(tag => ({
+              ...tag,
+              slug: `krebit-job:${tag.slug}`
+            }))
+          ],
+          channel: job_channel
+        };
+      }
+
+      if (currentValues.type === 'service') {
+        metadata = {
+          tags: [
+            {
+              slug: 'krebit-service',
+              title: 'Krebit Service'
+            },
+            ...skillTags.map(tag => ({
+              ...tag,
+              slug: `krebit-service:${tag.slug}`
+            }))
+          ],
+          channel: service_channel
+        };
+      }
+
+      if (!metadata) return;
+
+      const jobDoc = {
+        context: metadata.channel,
+        title: currentValues.title,
+        body: '',
+        tags: metadata.tags,
+        data: currentValues
+      };
+      console.log('jobDoc:', jobDoc);
+
+      let streamId = await Issuer.createDocument(
+        jobDoc,
+        ['orbis', 'post'],
+        postSchemaCommit,
+        'orbis'
+      );
+
+      await Issuer.updateDocument(
+        {
+          ...jobDoc,
+          body:
+            currentValues.type === 'job'
+              ? `Job offer: ${jobDoc?.data?.title}\nCompany: ${jobDoc?.data?.entity} #hiring\nApply: https://krebit.id/posts?post_id=${streamId}`
+              : `Service included: ${jobDoc?.data?.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
+        },
+        streamId
+      );
+      console.log('streamId: ', streamId);
+
+      await fetch('https://api.orbis.club/index-stream/mainnet/' + streamId, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+      console.log('Indexed ' + streamId + ' with success.');
+
+      setServiceId(streamId);
+      setStatus('form_resolved');
+    } catch (error) {
+      setStatus('form_rejected');
+      setErrorMessage(
+        constants.DEFAULT_ERROR_MESSAGE_FOR_SERVICES.ERROR_INFORMATION
+      );
+      console.error(error);
+    }
+  };
+
+  const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    const isCredentialType = CREDENTIALS_INITIAL_STATE.find(
+      vals => vals.type === values.type
+    );
+    const isServicesType = SERVICES_INITIAL_STATE.find(
+      vals => vals.type === values.type
+    );
+
+    if (isCredentialType) {
+      await handleSubmitCredential();
+    }
+
+    if (isServicesType) {
+      await handleSubmitServices();
+    }
+  };
+
+  const handleCopyURL = async (url: string) => {
     setStatus('form_pending');
 
-    const url = `${BASE_URL}/?credential_id=${credentialId}`;
+    if (!url) return;
 
     try {
       await navigator?.clipboard?.writeText(url).then(() => {
@@ -480,6 +675,7 @@ export const CredentialsBuilder = () => {
 
   const handleCloseModal = () => {
     setCredentialId(undefined);
+    setServiceId(undefined);
     setErrorMessage(undefined);
   };
 
@@ -510,7 +706,26 @@ export const CredentialsBuilder = () => {
               </a>
             </QuestionModalText>
           )}
-          continueButton={{ text: 'Copy URL', onClick: handleCopyIssuedId }}
+          continueButton={{
+            text: 'Copy URL',
+            onClick: () =>
+              handleCopyURL(`${BASE_URL}/?credential_id=${credentialId}`)
+          }}
+          cancelButton={{
+            text: 'Close',
+            onClick: handleCloseModal
+          }}
+        />
+      )}
+      {serviceId && (
+        <QuestionModal
+          title="Service created"
+          text="This service was created. You can check it out by clicking Copy URL"
+          continueButton={{
+            text: 'Copy URL',
+            onClick: () =>
+              handleCopyURL(`${BASE_URL_POSTS}/?post_id=${serviceId}`)
+          }}
           cancelButton={{
             text: 'Close',
             onClick: handleCloseModal
@@ -598,12 +813,13 @@ export const CredentialsBuilder = () => {
                 >
                   <div className="card-title-header">
                     <p className="card-title">
-                      {(formValues?.name as string) || 'Credential Title'}
+                      {(formValues?.name as string) ||
+                        (formValues?.title as string) ||
+                        'Card Title'}
                     </p>
                   </div>
                   <p className="card-description">
-                    {(formValues?.description as string) ||
-                      'Credential description'}
+                    {(formValues?.description as string) || 'Card description'}
                   </p>
                   <div className="card-bottom">
                     <div className="card-brand">
