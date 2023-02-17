@@ -601,12 +601,12 @@ export const ServiceCard = styled.a<ICardProps>`
           @media (min-width: ${theme.screens.lg}) {
             font-size: ${theme.fonts.sm};
           }
+        }
 
-          & > span {
-            font-size: ${theme.fonts.xs};
-            color: ${theme.colors.cyan};
-            margin-left: 10px;
-          }
+        .explore-service-profile-text-reputation {
+          font-size: ${theme.fonts.xs};
+          color: ${theme.colors.cyan};
+          margin-left: 10px;
         }
       }
 

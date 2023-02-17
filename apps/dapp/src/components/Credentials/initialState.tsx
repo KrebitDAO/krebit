@@ -961,18 +961,6 @@ export const SERVICES_INITIAL_STATE: IState[] = [
           placeholder: 'Image / Logo'
         },
         {
-          type: 'select',
-          name: 'entity',
-          placeholder: 'Entity/Organization',
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Entity/Organization is required']
-            }
-          ]
-        },
-        {
           type: 'string',
           name: 'salaryRange',
           placeholder: 'Salary range',

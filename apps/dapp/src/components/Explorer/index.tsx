@@ -56,12 +56,13 @@ const initialSearchTypes = [
 ];
 const initialFilterValues = {
   skill: '',
-  krbs: [1, 99],
+  krbs: [1, 222],
   value: ''
 };
 const DEFAULT_SLICE_SKILLS = 5;
 // TODO: This is not a real pagination, we need to find a way to optimize this better
 const DEFAULT_LIST_PAGINATION = 50;
+const DEFAULT_CURRENT_PAGE = 1;
 
 const { NEXT_PUBLIC_ARENA_TOKEN } = process.env;
 
@@ -72,7 +73,7 @@ export const Explorer = () => {
   const [information, setInformation] = useState<IInformation>();
   const [searchType, setSearchType] = useState(initialSearchTypes[0].value);
   const [tab, setTab] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
   const [total, setTotal] = useState(0);
   const [shouldViewMoreSkills, setShouldViewMoreSkills] = useState(false);
   const {
@@ -94,8 +95,9 @@ export const Explorer = () => {
         values = initialFilterValues,
         first = DEFAULT_LIST_PAGINATION,
         skip = 0,
+        page = currentPage,
         type = searchType
-      ) => searchInformation(values, first, skip, type),
+      ) => searchInformation(values, first, skip, page, type),
       500
     ),
     [publicPassport, orbis]
@@ -110,11 +112,15 @@ export const Explorer = () => {
     delayedInformation(
       filterValues,
       DEFAULT_LIST_PAGINATION * currentPage,
-      currentPage === 1 ? 0 : DEFAULT_LIST_PAGINATION * (currentPage - 1)
+      currentPage === DEFAULT_CURRENT_PAGE
+        ? 0
+        : DEFAULT_LIST_PAGINATION * (currentPage - DEFAULT_CURRENT_PAGE),
+      currentPage,
+      searchType
     );
 
     return delayedInformation.cancel;
-  }, [publicPassport, orbis, address]);
+  }, [publicPassport, orbis, currentPage]);
 
   const handleFilterOpen = () => {
     if (isDesktop) return;
@@ -173,6 +179,7 @@ export const Explorer = () => {
     values = initialFilterValues,
     first = DEFAULT_LIST_PAGINATION,
     skip = 0,
+    page = DEFAULT_CURRENT_PAGE,
     type = searchType
   ) => {
     try {
@@ -183,11 +190,8 @@ export const Explorer = () => {
           cards: [],
           skills: []
         });
-        setCurrentPage(DEFAULT_LIST_PAGINATION);
-        setFilterValues(prevStates => ({
-          ...prevStates,
-          value: ''
-        }));
+        setCurrentPage(DEFAULT_CURRENT_PAGE);
+        handleCleanFilterValues();
       }
 
       if (type === 'profile') {
@@ -249,7 +253,7 @@ export const Explorer = () => {
         const skills = cards.flatMap(card => card.skills);
 
         setInformation(prevValues =>
-          currentPage === 1
+          page === DEFAULT_CURRENT_PAGE
             ? { cards, skills }
             : {
                 cards: [...(prevValues?.cards || []), ...cards].sort(
@@ -266,16 +270,21 @@ export const Explorer = () => {
         if (!currentSearchType?.orbisTag) return;
 
         const filterTag = values?.skill
-          ? `${currentSearchType?.orbisTag}:${values.skill}`
+          ? values.skill
           : values?.value
-          ? `${currentSearchType?.orbisTag}:${values.value}`
+          ? `${currentSearchType.orbisTag}:${values.value
+              ?.toLowerCase()
+              ?.trim()
+              ?.replace(/[^a-z0-9. ]/g, '')
+              ?.replace(/\s+/g, '-')}`
           : currentSearchType.orbisTag;
 
-        console.log(filterTag);
-
-        const { data, error } = await orbis.getPosts({
-          tag: filterTag
-        });
+        const { data, error } = await orbis.getPosts(
+          {
+            tag: filterTag
+          },
+          page - 1
+        );
 
         const cards = await Promise.all(
           data?.map(async values => {
@@ -312,20 +321,30 @@ export const Explorer = () => {
               skills: skills || []
             };
           })
-        ).then(profiles => profiles.filter(profile => profile !== undefined));
+        )
+          .then(cards => cards.filter(card => card !== undefined))
+          .then(cards =>
+            /* TODO: This filter can alter the final result, this is just a local filter based on the data fetched, we should find a way to filter based on the data saved in orbis */
+            cards.filter(
+              card =>
+                card.reputation >= values.krbs[0] &&
+                card.reputation <= values.krbs[1]
+            )
+          );
 
         const skills = cards.flatMap(profile => profile.skills);
 
         setInformation(prevValues =>
-          currentPage === 1
+          page === DEFAULT_CURRENT_PAGE
             ? { cards, skills }
             : {
-                cards: [...(prevValues?.cards || []), ...cards].sort(
-                  (a, b) => b.reputation - a.reputation
-                ),
+                cards: [...(prevValues?.cards || []), ...cards],
                 skills: [...(prevValues?.skills || []), ...skills]
               }
         );
+
+        // TODO: In orbis, there's no method to get the total of posts
+        setTotal(cards.length);
 
         if (error) {
           setStatus('rejected_posts');
@@ -347,6 +366,7 @@ export const Explorer = () => {
       filterValues,
       DEFAULT_LIST_PAGINATION,
       0,
+      DEFAULT_CURRENT_PAGE,
       searchType
     );
   };
@@ -358,6 +378,7 @@ export const Explorer = () => {
       filterValues,
       DEFAULT_LIST_PAGINATION,
       0,
+      DEFAULT_CURRENT_PAGE,
       initialSearchTypes[value].value
     );
   };
@@ -435,7 +456,6 @@ export const Explorer = () => {
                           onClick={() => handleSkillValue(item[0])}
                         >
                           <p className="filter-menu-skills-item-text">
-                            {console.log(item)}
                             {item[0]
                               ?.replace('krebit-job:', '')
                               ?.replace('krebit-service:', '')}{' '}
@@ -598,10 +618,12 @@ export const Explorer = () => {
                             <div className="explore-service-profile-picture"></div>
                             <p className="explore-service-profile-text">
                               {card.metadata?.name}
-                              {card.reputation && (
-                                <span>{card.reputation} Krebits</span>
-                              )}
                             </p>
+                            {card.reputation && (
+                              <span className="explore-service-profile-text-reputation">
+                                {card.reputation} Krebits
+                              </span>
+                            )}
                           </div>
                           <p className="explore-service-description">
                             {card.title}
