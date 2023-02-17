@@ -241,7 +241,6 @@ export const Wrapper = styled.div<IProps>`
               cursor: pointer;
               display: flex;
               align-items: center;
-              cursor: pointer;
 
               .credential-form-box-close {
                 margin-right: 5px;
@@ -433,6 +432,52 @@ export const QuestionModalText = styled.div`
       color: ${theme.colors.white}B3;
       text-decoration: underline;
       word-wrap: break-word;
+    }
+  `}
+`;
+
+export const SuggestionBoxes = styled.div`
+  ${({ theme }) => css`
+    margin-top: 20px;
+
+    .suggestion-boxes-text {
+      margin: 0;
+      margin-bottom: 10px;
+      font-size: ${theme.fonts.sm};
+      color: ${theme.colors.white};
+    }
+
+    .suggestion-boxes-container {
+      max-width: 340px;
+      overflow-x: auto;
+
+      @media (min-width: ${theme.screens.lg}) {
+        max-width: 577px;
+        width: fit-content;
+      }
+
+      .suggestion-boxes {
+        display: grid;
+        grid-auto-flow: column;
+        grid-gap: 10px;
+
+        .suggestion-box {
+          border: 1px solid ${theme.colors.melrose};
+          border-radius: 20px;
+          padding: 4px 14px;
+          height: 33px;
+          width: max-content;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+
+          .suggestion-box-text {
+            margin: 0;
+            font-size: ${theme.fonts.sm};
+            color: ${theme.colors.melrose};
+          }
+        }
+      }
     }
   `}
 `;

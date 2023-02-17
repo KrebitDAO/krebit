@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import ErrorWrapper from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
 
-import { QuestionModalText, Wrapper } from './styles';
+import { QuestionModalText, SuggestionBoxes, Wrapper } from './styles';
 import { Card } from 'components/Credentials/styles';
 import { Layout } from 'components/Layout';
 import { Add, AddPhotoAlternate, ArrowForward, Close } from 'components/Icons';
@@ -302,9 +302,27 @@ export const CredentialsBuilder = () => {
     handleCurrentInputModal(undefined);
   };
 
-  const handleCurrentInputModal = (name: string, value?: string) => {
+  const handleCurrentInputModal = (
+    name: string,
+    value?: string,
+    isSuggestion?: boolean
+  ) => {
     if (!name) {
       setCurrentInputModal({});
+      return;
+    }
+
+    // There's a QuestionModal component that has the most popular skills, so if the user is interested in any of these, we want to know if the value passed is a suggestion
+    if (isSuggestion) {
+      setCurrentInputModal(prevValues => {
+        return {
+          ...prevValues,
+          [name]:
+            /,\s*$/.test(prevValues[name] as string) || prevValues[name] === ''
+              ? prevValues[name] + value
+              : `${prevValues[name]}, ${value}`
+        };
+      });
       return;
     }
 
@@ -759,14 +777,41 @@ export const CredentialsBuilder = () => {
             onClick: () => handleCurrentInputModal(undefined)
           }}
           component={() => (
-            <Input
-              name={Object.keys(currentInputModal)[0]}
-              value={Object.values(currentInputModal)[0] as string}
-              onChange={event =>
-                handleCurrentInputModal(event.target.name, event.target.value)
-              }
-              placeholder="Enter new value"
-            />
+            <>
+              <Input
+                name={Object.keys(currentInputModal)[0]}
+                value={Object.values(currentInputModal)[0] as string}
+                onChange={event =>
+                  handleCurrentInputModal(event.target.name, event.target.value)
+                }
+                placeholder="Enter new value"
+              />
+              {constants.DEFAULT_SKILL_TAGS?.length > 0 &&
+              Object.keys(currentInputModal)[0] === 'skills' ? (
+                <SuggestionBoxes>
+                  <p className="suggestion-boxes-text">Most popular skills</p>
+                  <div className="suggestion-boxes-container">
+                    <div className="suggestion-boxes">
+                      {constants.DEFAULT_SKILL_TAGS.map((tag, index) => (
+                        <div
+                          className="suggestion-box"
+                          onClick={() =>
+                            handleCurrentInputModal(
+                              Object.keys(currentInputModal)[0],
+                              tag.text,
+                              true
+                            )
+                          }
+                          key={index}
+                        >
+                          <p className="suggestion-box-text">{tag.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </SuggestionBoxes>
+              ) : null}
+            </>
           )}
         />
       )}

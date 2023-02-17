@@ -10,6 +10,10 @@ interface ICardProps {
   profilePicture?: string;
 }
 
+interface IItemBoxProps {
+  isActive: boolean;
+}
+
 export const Wrapper = styled.div<IProps>`
   ${({ theme, isFilterOpen }) => css`
     margin: 0 auto;
@@ -193,6 +197,23 @@ export const Wrapper = styled.div<IProps>`
           &::placeholder {
             color: ${theme.colors.gray}80;
           }
+        }
+      }
+
+      .explorer-suggestions-container {
+        max-width: auto;
+        margin-top: 20px;
+        overflow-x: auto;
+
+        @media (min-width: ${theme.screens.lg}) {
+          max-width: 922px;
+          width: fit-content;
+        }
+
+        .explorer-suggestions {
+          display: grid;
+          grid-auto-flow: column;
+          grid-gap: 10px;
         }
       }
 
@@ -631,6 +652,24 @@ export const ServiceCard = styled.a<ICardProps>`
         width: 144px;
         height: 44px;
       }
+    }
+  `}
+`;
+
+export const ItemBox = styled.div<IItemBoxProps>`
+  ${({ theme, isActive }) => css`
+    border: 1px solid ${theme.colors.melrose};
+    border-radius: 20px;
+    padding: 4px 14px;
+    height: 100%;
+    width: max-content;
+    cursor: pointer;
+    background-color: ${isActive ? theme.colors.melrose : 'initial'};
+
+    .item-text-box {
+      margin: 0;
+      font-size: ${theme.fonts.sm};
+      color: ${isActive ? theme.colors.white : theme.colors.melrose};
     }
   `}
 `;

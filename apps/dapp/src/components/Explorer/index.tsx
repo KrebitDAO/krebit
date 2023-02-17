@@ -12,13 +12,19 @@ import Link from 'next/link';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { ProfileCard, FilterMenu, Wrapper, ServiceCard } from './styles';
+import {
+  ProfileCard,
+  FilterMenu,
+  Wrapper,
+  ServiceCard,
+  ItemBox
+} from './styles';
 import { Close, Search, Tune } from 'components/Icons';
 import { Slider } from 'components/Slider';
 import { Button } from 'components/Button';
 import { Loading } from 'components/Loading';
 import { Tabs } from 'components/Tabs';
-import { formatUrlImage, normalizeSchema } from 'utils';
+import { constants, formatUrlImage, normalizeSchema } from 'utils';
 import { DEFAULT_PICTURE, IProfile } from 'utils/normalizeSchema';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
@@ -191,7 +197,6 @@ export const Explorer = () => {
           skills: []
         });
         setCurrentPage(DEFAULT_CURRENT_PAGE);
-        handleCleanFilterValues();
       }
 
       if (type === 'profile') {
@@ -269,8 +274,10 @@ export const Explorer = () => {
 
         if (!currentSearchType?.orbisTag) return;
 
-        const filterTag = values?.skill
-          ? values.skill
+        const filterTag = values?.skill?.includes(currentSearchType.orbisTag)
+          ? values?.skill
+          : values?.skill
+          ? `${currentSearchType.orbisTag}:${values.skill}`
           : values?.value
           ? `${currentSearchType.orbisTag}:${values.value
               ?.toLowerCase()
@@ -383,6 +390,25 @@ export const Explorer = () => {
     );
   };
 
+  const handleSearchPopularSkill = async (value: string) => {
+    let values = {
+      ...filterValues,
+      skill: value
+    };
+
+    setFilterValues(prevValues => ({
+      ...prevValues,
+      skill: value
+    }));
+    await searchInformation(
+      values,
+      DEFAULT_LIST_PAGINATION,
+      0,
+      DEFAULT_CURRENT_PAGE,
+      searchType
+    );
+  };
+
   return (
     <>
       {isFilterOpen && !isDesktop ? (
@@ -446,22 +472,18 @@ export const Explorer = () => {
                         shouldViewMoreSkills ? undefined : DEFAULT_SLICE_SKILLS
                       )
                       .map((item, index) => (
-                        <div
-                          className={`filter-menu-skills-item ${
-                            filterValues.skill === item[0]
-                              ? 'filter-menu-skills-item-active'
-                              : ''
-                          }`}
+                        <ItemBox
                           key={index}
+                          isActive={filterValues.skill === item[0]}
                           onClick={() => handleSkillValue(item[0])}
                         >
-                          <p className="filter-menu-skills-item-text">
+                          <p className="item-text-box">
                             {item[0]
                               ?.replace('krebit-job:', '')
                               ?.replace('krebit-service:', '')}{' '}
                             {parseInt(item[1]) === 1 ? '' : '(' + item[1] + ')'}
                           </p>
-                        </div>
+                        </ItemBox>
                       ))}
                   </div>
                   {Krebit.utils.mergeArray(information?.skills || []).length >
@@ -543,6 +565,29 @@ export const Explorer = () => {
               <Close />
             </div>
           </div>
+          {constants.DEFAULT_SKILL_TAGS.length > 0 && (
+            <div className="explorer-suggestions-container">
+              <div className="explorer-suggestions">
+                {constants.DEFAULT_SKILL_TAGS.map((tag, index) => (
+                  <ItemBox
+                    isActive={
+                      filterValues.skill
+                        ?.replace('krebit-job:', '')
+                        ?.replace('krebit-service:', '') === tag.value
+                    }
+                    onClick={
+                      isLoading
+                        ? undefined
+                        : () => handleSearchPopularSkill(tag.value)
+                    }
+                    key={index}
+                  >
+                    <p className="item-text-box">{tag.text}</p>
+                  </ItemBox>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="explore-tabs">
             <Tabs
               tabs={initialSearchTypes}
