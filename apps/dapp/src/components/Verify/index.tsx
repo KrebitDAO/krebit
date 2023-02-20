@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import addYears from 'date-fns/addYears';
 
 import { Wrapper } from './styles';
@@ -65,6 +66,7 @@ export const Verify = (props: IProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentStepsCompleted, setCurrentStepsCompleted] = useState({});
   const [areStepsCompleted, setAreStepsCompleted] = useState(false);
+  const { query } = useRouter();
   const provider = getProvider(currentVerify?.credentialType);
   const isLoading =
     provider?.status === 'verification_pending' ||
@@ -181,7 +183,15 @@ export const Verify = (props: IProps) => {
       currentVerify?.steps[step]?.type === 'credential' &&
       (provider?.currentCredential || credential?.credential)
     ) {
-      if (!canClaimBuilderCredentials) {
+      if (query?.credential_id) {
+        let values = provider?.currentCredential || credential?.credential;
+
+        if (values?.value?.issueTo?.length > 1 && !canAddMemberCredentials) {
+          if (!canClaimBuilderCredentials) {
+            newCompleted[step] = 'Credential step completed';
+          }
+        }
+      } else {
         newCompleted[step] = 'Credential step completed';
       }
     }
@@ -190,7 +200,11 @@ export const Verify = (props: IProps) => {
       currentVerify?.steps[step]?.type === 'add' &&
       (provider?.currentCredential || credential?.credential)
     ) {
-      if (!canAddMemberCredentials) {
+      if (query?.credential_id) {
+        if (!canAddMemberCredentials) {
+          newCompleted[step] = 'Add step completed';
+        }
+      } else {
         newCompleted[step] = 'Credential step completed';
       }
     }
@@ -655,7 +669,8 @@ export const Verify = (props: IProps) => {
                         currentVerify,
                         walletInformation
                       )
-                      ?.fields?.map((input, index) => {
+                      ?.fields?.filter(input => input !== undefined)
+                      .map((input, index) => {
                         if (input.type === 'select') {
                           return (
                             <Select

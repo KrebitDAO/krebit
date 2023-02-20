@@ -78,6 +78,7 @@ export const Deal = () => {
   const seller = credential?.issuer?.ethereumAddress.toLowerCase();
   const buyers = credential?.value?.issueTo;
   const hasCompletedStatus =
+    credentialStatus === 'Released' ||
     credentialStatus === 'BuyerCanceled' ||
     credentialStatus === 'SellerCanceled' ||
     credentialStatus === 'Completed' ||

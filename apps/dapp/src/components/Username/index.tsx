@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
+import { getAddressFromDid } from '@orbisclub/orbis-sdk/utils';
 
 import {
   Background,
@@ -27,7 +28,13 @@ import { ShareContentModal } from 'components/ShareContentModal';
 import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Rating } from 'components/Rating';
-import { isValid, normalizeSchema, formatUrlImage, constants } from 'utils';
+import {
+  isValid,
+  normalizeSchema,
+  formatUrlImage,
+  constants,
+  sleep
+} from 'utils';
 import { getCredentials } from './utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
@@ -41,7 +48,15 @@ interface IFilterMenuProps {
   onClick: (value: string) => void;
 }
 
+interface IHashMailProps {
+  subject: string;
+  content: string;
+  recipients: string[];
+}
+
+const { NEXT_PUBLIC_NOTIFY_API_URL } = process.env;
 const TEXT_LIMIT = 200;
+const SLEEP_TIME = 30000;
 
 const FilterMenu = (props: IFilterMenuProps) => {
   const { currentFilter, isHidden, onClick } = props;
@@ -317,7 +332,12 @@ export const Username = () => {
     setStatus('pending_withdraw');
     const result = await deals?.withdrawPayments();
     console.log('withdrawPayments: ', result);
-    setStatus('resolved');
+
+    await sleep(SLEEP_TIME);
+
+    if (result) {
+      window.location.reload();
+    }
   };
 
   const handleProfile = (profile: IProfile) => {
@@ -412,6 +432,8 @@ export const Username = () => {
       return;
     }
 
+    setStatus('message_pending');
+
     const currentConversations = await orbis.getConversations({
       did: currentDIDFromURL
     });
@@ -432,7 +454,16 @@ export const Username = () => {
         });
 
         if (response?.doc) {
-          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+          const { address } = getAddressFromDid(currentDIDFromURL);
+          const hashMailNotification = await sendHashMailNotification({
+            subject: 'Hey! You have received a new message!',
+            content: `${auth?.did} has sent you a new message! Check it out here: https://krebit.id/messages/?conversation_id=${response?.doc}`,
+            recipients: [address]
+          });
+
+          if (hashMailNotification) {
+            window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+          }
         }
       }
     } else {
@@ -441,8 +472,39 @@ export const Username = () => {
       });
 
       if (response?.doc) {
-        window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        const { address } = getAddressFromDid(currentDIDFromURL);
+        const hashMailNotification = await sendHashMailNotification({
+          subject: 'Hey! You have received a new message!',
+          content: `${auth?.did} has sent you a new message! Check it out here: https://krebit.id/messages/?conversation_id=${response?.doc}`,
+          recipients: [address]
+        });
+
+        if (hashMailNotification) {
+          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        }
       }
+    }
+  };
+
+  const sendHashMailNotification = async (props: IHashMailProps) => {
+    try {
+      const { subject, content, recipients } = props;
+
+      const sendHashmailMessage = fetch(NEXT_PUBLIC_NOTIFY_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subject,
+          content,
+          recipients
+        })
+      }).then(result => result.json());
+
+      return sendHashmailMessage;
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -604,6 +666,7 @@ export const Username = () => {
                           text="Send Message"
                           onClick={handleSendMessage}
                           styleType="border"
+                          isDisabled={status === 'message_pending'}
                         />
                       </div>
                     </>

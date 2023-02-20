@@ -10,8 +10,27 @@ interface IProps {
 export const getReferralCredentials = async (props: IProps) => {
   const { passport } = props;
 
-  const credentials = await passport.getCredentials(undefined, 'Referral');
+  const currentCredentials = await passport.getCredentials(
+    undefined,
+    'Referral'
+  );
+  const credentials = await Promise.all(
+    currentCredentials.map(async credential => {
+      const stamps = await passport.getStamps({
+        type: 'Referral',
+        claimId: credential.id
+      });
+
+      if (stamps && stamps?.length > 0) {
+        return credential;
+      }
+
+      return undefined;
+    })
+  );
+
   const values = credentials
+    .filter(credential => credential !== undefined)
     .map(credential => ({
       ...credential,
       credentialSubject: {

@@ -60,7 +60,7 @@ export const NotifyController = async (
         await publicPassport.read(recipient.toLowerCase());
         const profileEmails = await publicPassport.getCredentials('Email');
 
-        if (profileEmails.length) {
+        if (profileEmails?.length > 0) {
           console.log('Emails:', profileEmails.length);
           const emailvalue = await Issuer.decryptClaimValue(profileEmails[0]);
           console.log('Email value:', emailvalue);
