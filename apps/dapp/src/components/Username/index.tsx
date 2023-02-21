@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 import Krebit from '@krebitdao/reputation-passport';
+import { getAddressFromDid } from '@orbisclub/orbis-sdk/utils';
 
 import {
   Background,
@@ -10,32 +11,36 @@ import {
   Skills,
   Wrapper,
   Summary,
-  Payments
+  Payments,
+  AvrStars
 } from './styles';
 import { Personhood } from './Personhood';
 import { Community } from './Community';
 import { Work } from './Work';
 import { Activity } from './Activity';
 import { EditProfile } from './EditProfile';
+import { Issue } from './Issue';
+import { Review } from './Review';
 import { Button } from 'components/Button';
 import { Layout } from 'components/Layout';
 import { Loading } from 'components/Loading';
 import { ShareContentModal } from 'components/ShareContentModal';
 import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
+import { Rating } from 'components/Rating';
 import {
   isValid,
   normalizeSchema,
   formatUrlImage,
   constants,
-  openAI
+  sleep
 } from 'utils';
+import { getCredentials } from './utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
-import { Issue } from './Issue';
 
 interface IFilterMenuProps {
   currentFilter: string;
@@ -43,7 +48,15 @@ interface IFilterMenuProps {
   onClick: (value: string) => void;
 }
 
+interface IHashMailProps {
+  subject: string;
+  content: string;
+  recipients: string[];
+}
+
+const { NEXT_PUBLIC_NOTIFY_API_URL } = process.env;
 const TEXT_LIMIT = 200;
+const SLEEP_TIME = 30000;
 
 const FilterMenu = (props: IFilterMenuProps) => {
   const { currentFilter, isHidden, onClick } = props;
@@ -68,7 +81,7 @@ const FilterMenu = (props: IFilterMenuProps) => {
         }`}
         onClick={() => onClick('Activity')}
       >
-        Activity
+        Activities
       </p>
       <p
         className={`content-filter-menu-item ${
@@ -78,7 +91,15 @@ const FilterMenu = (props: IFilterMenuProps) => {
         }`}
         onClick={() => onClick('Personhood')}
       >
-        Personhood Credentials
+        Personhood
+      </p>
+      <p
+        className={`content-filter-menu-item ${
+          currentFilter === 'Review' ? 'content-filter-menu-item-active' : ''
+        }`}
+        onClick={() => onClick('Review')}
+      >
+        Reviews
       </p>
       <p
         className={`content-filter-menu-item ${
@@ -88,7 +109,7 @@ const FilterMenu = (props: IFilterMenuProps) => {
         }`}
         onClick={() => onClick('WorkExperience')}
       >
-        Work Credentials
+        Works
       </p>
       <p
         className={`content-filter-menu-item ${
@@ -96,7 +117,7 @@ const FilterMenu = (props: IFilterMenuProps) => {
         }`}
         onClick={() => onClick('Community')}
       >
-        Community Credentials
+        Communities
       </p>
       <p
         className={`content-filter-menu-item ${
@@ -104,7 +125,7 @@ const FilterMenu = (props: IFilterMenuProps) => {
         }`}
         onClick={() => onClick('Issue')}
       >
-        Issued Credentials
+        Issued
       </p>
     </div>
   );
@@ -117,10 +138,11 @@ export const Username = () => {
   const [currentFilterOption, setCurrentFilterOption] = useState('overview');
   const [currentCustomCredential, setCurrentCustomCredential] =
     useState<ICredential>();
-  const [balance, setBalance] = useState<string>('0.00');
+  const [balance, setBalance] = useState<string>('0.0');
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const [isExportWalletOpen, setIsExportWalletOpen] = useState(false);
+  const [arvStars, setArvStars] = useState(0);
   const { query, push } = useRouter();
   const {
     auth,
@@ -168,8 +190,10 @@ export const Username = () => {
           isFollowingUser = response?.data;
         }
 
-        const balance = await deals.paymentsBalance();
-        setBalance(balance);
+        if (deals) {
+          const balance = await deals.paymentsBalance();
+          setBalance(balance);
+        }
 
         setProfile({
           ...currentProfile,
@@ -186,13 +210,6 @@ export const Username = () => {
 
     getProfile();
   }, [publicPassport, auth.status, auth?.did, query.id, deals]);
-
-  const withdrawPayments = async () => {
-    setStatus('pending');
-    const result = await deals?.withdrawPayments();
-    console.log('withdrawPayments: ', result);
-    setStatus('resolved');
-  };
 
   useEffect(() => {
     if (!window) return;
@@ -235,7 +252,8 @@ export const Username = () => {
     query.credential_id
   ]);
 
-  useEffect(() => {
+  /* TODO: Open ai get summary is disabled for now */
+  /* useEffect(() => {
     if (!window) return;
     if (auth.status !== 'resolved') return;
     if (status !== 'resolved') return;
@@ -260,7 +278,67 @@ export const Username = () => {
         getSummary(skills);
       }
     }
-  }, [status, auth, profile]);
+  }, [status, auth, profile]); */
+
+  useEffect(() => {
+    if (!window) return;
+    if (auth.status !== 'resolved') return;
+    if (status !== 'resolved') return;
+
+    const getArvStars = async () => {
+      const reviewCredentials = await getCredentials({
+        type: 'Review',
+        passport: publicPassport,
+        limit: 100
+      });
+
+      if (reviewCredentials?.length === 0) return;
+
+      const ratingReviewsList = reviewCredentials
+        ?.map(values => values.credential?.value?.values?.rating || 0)
+        .map(rating => parseInt(rating, 10) || 0)
+        .reduce(
+          (acc, value) => ({
+            ...acc,
+            [value]: (acc[value] || 0) + 1
+          }),
+          {}
+        );
+      const ratingReviewsListDoubled = Object.keys(ratingReviewsList).reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: ratingReviewsList[key] * parseInt(key, 10)
+        }),
+        {}
+      );
+
+      const ratingReviewsListTotal = Object.values(ratingReviewsList).reduce(
+        (partialSum: number, a: number) => partialSum + a,
+        0
+      ) as number;
+      const ratingReviewsListDoubledTotal = Object.values(
+        ratingReviewsListDoubled
+      ).reduce((partialSum: number, a: number) => partialSum + a, 0) as number;
+
+      const avgStars = ratingReviewsListDoubledTotal / ratingReviewsListTotal;
+
+      setArvStars(avgStars);
+    };
+
+    getArvStars();
+  }, [status, auth]);
+
+  const withdrawPayments = async () => {
+    setStatus('pending_withdraw');
+    const result = await deals?.withdrawPayments();
+    console.log('withdrawPayments: ', result);
+
+    await sleep(SLEEP_TIME);
+
+    if (result) {
+      window.location.reload();
+    }
+  };
 
   const handleProfile = (profile: IProfile) => {
     setProfile(profile);
@@ -354,6 +432,8 @@ export const Username = () => {
       return;
     }
 
+    setStatus('message_pending');
+
     const currentConversations = await orbis.getConversations({
       did: currentDIDFromURL
     });
@@ -374,7 +454,16 @@ export const Username = () => {
         });
 
         if (response?.doc) {
-          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+          const { address } = getAddressFromDid(currentDIDFromURL);
+          const hashMailNotification = await sendHashMailNotification({
+            subject: 'Hey! You have received a new message!',
+            content: `${auth?.did} has sent you a new message! Check it out here: https://krebit.id/messages/?conversation_id=${response?.doc}`,
+            recipients: [address]
+          });
+
+          if (hashMailNotification) {
+            window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+          }
         }
       }
     } else {
@@ -383,8 +472,39 @@ export const Username = () => {
       });
 
       if (response?.doc) {
-        window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        const { address } = getAddressFromDid(currentDIDFromURL);
+        const hashMailNotification = await sendHashMailNotification({
+          subject: 'Hey! You have received a new message!',
+          content: `${auth?.did} has sent you a new message! Check it out here: https://krebit.id/messages/?conversation_id=${response?.doc}`,
+          recipients: [address]
+        });
+
+        if (hashMailNotification) {
+          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        }
       }
+    }
+  };
+
+  const sendHashMailNotification = async (props: IHashMailProps) => {
+    try {
+      const { subject, content, recipients } = props;
+
+      const sendHashmailMessage = fetch(NEXT_PUBLIC_NOTIFY_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subject,
+          content,
+          recipients
+        })
+      }).then(result => result.json());
+
+      return sendHashmailMessage;
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -546,6 +666,7 @@ export const Username = () => {
                           text="Send Message"
                           onClick={handleSendMessage}
                           styleType="border"
+                          isDisabled={status === 'message_pending'}
                         />
                       </div>
                     </>
@@ -587,22 +708,6 @@ export const Username = () => {
             </div>
             <div className="content-container">
               <div className="content-left">
-                {currentDIDFromURL === auth?.did && (
-                  <Payments>
-                    <div className="payments-header">
-                      <p className="payments-header-text">Payments Balance:</p>
-                      <p className="payments-header-balance">{`$ ${balance}`}</p>
-                      <div className="payments-buttons">
-                        <Button
-                          text="Withdraw"
-                          onClick={withdrawPayments}
-                          isDisabled={false}
-                        />
-                      </div>
-                    </div>
-                  </Payments>
-                )}
-
                 {profile?.summary && (
                   <Summary>
                     <div className="summary-header">
@@ -613,6 +718,46 @@ export const Username = () => {
                     </div>
                     <p className="summary-text">{profile.summary}</p>
                   </Summary>
+                )}
+                {arvStars && (
+                  <AvrStars>
+                    <div className="arv-stars-header">
+                      <p className="arv-stars-header-text">Reviews Rating</p>
+                    </div>
+                    <div className="arv-stars-content">
+                      <Rating
+                        name="rating-username-avr-stars"
+                        value={parseFloat(arvStars.toString())}
+                        readOnly={true}
+                        shouldHaveLabel={false}
+                      />
+                    </div>
+                  </AvrStars>
+                )}
+                {currentDIDFromURL === auth?.did && (
+                  <Payments>
+                    <div className="payments-header">
+                      <p className="payments-header-text">Payments Balance</p>
+                      {status === 'pending_withdraw' ? (
+                        <div className="payments-loading">
+                          <Loading />
+                        </div>
+                      ) : (
+                        <>
+                          <p className="payments-header-balance">{`$ ${balance}`}</p>
+                          {parseFloat(balance) !== 0 ? (
+                            <div className="payments-buttons">
+                              <Button
+                                text="Withdraw"
+                                onClick={withdrawPayments}
+                                isDisabled={false}
+                              />
+                            </div>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+                  </Payments>
                 )}
                 <Skills>
                   <div className="skills-header">
@@ -702,6 +847,20 @@ export const Username = () => {
                   }
                   ensDomain={profile?.ensDomain}
                   unsDomain={profile?.unsDomain}
+                />
+                <Review
+                  isAuthenticated={currentDIDFromURL === auth?.did}
+                  passport={passport}
+                  publicPassport={publicPassport}
+                  issuer={issuer}
+                  orbis={orbis}
+                  currentFilterOption={currentFilterOption}
+                  onFilterOption={handleFilterOption}
+                  isHidden={
+                    currentFilterOption !== 'overview' &&
+                    currentFilterOption !== 'Review'
+                  }
+                  handleProfile={handleProfile}
                 />
                 <Work
                   isAuthenticated={currentDIDFromURL === auth?.did}

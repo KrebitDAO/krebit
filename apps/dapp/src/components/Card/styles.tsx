@@ -354,6 +354,9 @@ export const LongCardWrapper = styled.div<ICardProps>`
         }
       }
 
+      .card-information-rating {
+      }
+
       .card-information-description {
         margin: 0;
         margin-top: 5px;

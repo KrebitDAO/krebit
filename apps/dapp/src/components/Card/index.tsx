@@ -4,9 +4,10 @@ import { LongCardWrapper, SimpleCardWrapper, SmallCardWrapper } from './styles';
 import { Krebit, MoreVert } from 'components/Icons';
 import { InlineDropdown } from 'components/InlineDropdown';
 import { ToolTip } from 'components/ToolTip';
+import { Rating } from 'components/Rating';
 
 // types
-import { ICredentialsState } from 'components/Credentials/initialState';
+import { IState } from 'components/Credentials/initialState';
 
 interface IProps {
   type: 'simple' | 'small' | 'medium' | 'large' | 'long';
@@ -31,11 +32,12 @@ interface IProps {
   };
   icon?: JSX.Element;
   image?: string;
+  rating?: string;
   isIssued?: boolean;
   tooltip?: {
     message: string;
   };
-  builderCredential?: ICredentialsState;
+  builderCredential?: IState;
 }
 
 export const Card = (props: IProps) => {
@@ -49,6 +51,7 @@ export const Card = (props: IProps) => {
     dropdown,
     icon,
     image,
+    rating,
     isIssued = false,
     tooltip,
     builderCredential
@@ -223,6 +226,16 @@ export const Card = (props: IProps) => {
         </div>
         <div className="card-information">
           <p className="card-information-title">{title}</p>
+          {rating ? (
+            <div className="card-information-rating">
+              <Rating
+                name="rating-long-card"
+                value={parseFloat(rating)}
+                readOnly={true}
+                shouldHaveLabel={false}
+              />
+            </div>
+          ) : undefined}
           <p className="card-information-description">{description}</p>
           <div className="card-information-dates">
             {dates.issuanceDate && (

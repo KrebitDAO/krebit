@@ -92,5 +92,16 @@ export const Wrapper = styled.div<IProps>`
         width: 120px;
       }
     }
+
+    .actions-buttons-center {
+      display: flex;
+      justify-content: center;
+
+      & > button {
+        margin-top: 30px;
+        height: 35px;
+        width: fit-content;
+      }
+    }
   `}
 `;

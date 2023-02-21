@@ -12,7 +12,8 @@ import {
   checkCredentialsURLs,
   sendNotification,
   formatUrlImage,
-  isValidJSON
+  isValidJSON,
+  sleep
 } from 'utils';
 import { GeneralContext } from 'context';
 import { Button } from 'components/Button';
@@ -20,6 +21,7 @@ import { Flip } from 'components/Icons';
 
 const BASE_URL = 'https://krebit.id/deal';
 const TX_URL = 'https://polygonscan.com/tx/';
+const SLEEP_TIME = 30000;
 
 const INITIAL_STATUS_METADATA = {
   None: {
@@ -58,6 +60,7 @@ const INITIAL_STATUS_METADATA = {
     color: 'tango'
   }
 };
+
 export const Deal = () => {
   const [status, setStatus] = useState('idle');
   const [credential, setCredential] = useState<any>();
@@ -74,7 +77,12 @@ export const Deal = () => {
   const isLoading = status === 'idle' || status === 'pending';
   const seller = credential?.issuer?.ethereumAddress.toLowerCase();
   const buyers = credential?.value?.issueTo;
-  const waitingTx = result === 'waiting';
+  const hasCompletedStatus =
+    credentialStatus === 'Released' ||
+    credentialStatus === 'BuyerCanceled' ||
+    credentialStatus === 'SellerCanceled' ||
+    credentialStatus === 'Completed' ||
+    credentialStatus === 'DisputeResolved';
 
   useEffect(() => {
     if (!window) return;
@@ -169,7 +177,7 @@ export const Deal = () => {
   }, [walletInformation, auth.status, auth?.did, query?.credential_id]);
 
   const createDeal = async () => {
-    setResult('waiting');
+    setStatus('pending_tx');
     console.log('deal Credential: ', credential);
     console.log('referral Credential: ', referral);
     const result = await walletInformation?.deals?.createDeal(
@@ -177,6 +185,10 @@ export const Deal = () => {
       credential
     );
     console.log('createDeal: ', result);
+    setResult(result);
+
+    await sleep(SLEEP_TIME);
+
     await sendNotification({
       orbis,
       authenticatedDID: auth.did,
@@ -184,15 +196,21 @@ export const Deal = () => {
         subject: `Krebit.id Notification - deal: ${
           credential?.value?.name || credential?.value?.title || ''
         } - status: STARTED`,
-        content: `${buyers[0]} has added funds to the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        content: `${buyers[0]} has added funds to the Deal: ${BASE_URL}?credential_id=${query?.credential_id} Transaction detals: ${TX_URL}${result}`,
         recipients: [seller]
       }
     });
-    setResult(result);
+
+    const currentStatus = await walletInformation?.deals?.checkStatus(
+      credential
+    );
+
+    setCredentialStatus(currentStatus);
+    setStatus('resolved');
   };
 
   const buyerCancel = async () => {
-    setResult('waiting');
+    setStatus('pending_tx');
     const result = await walletInformation?.deals?.buyerCancel(
       referral,
       credential,
@@ -201,6 +219,10 @@ export const Deal = () => {
         : referral.issuer?.ethereumAddress
     );
     console.log('buyerCancel: ', result);
+    setResult(result);
+
+    await sleep(SLEEP_TIME);
+
     await sendNotification({
       orbis,
       authenticatedDID: auth.did,
@@ -208,15 +230,22 @@ export const Deal = () => {
         subject: `Krebit.id Notification - deal: ${
           credential?.value?.name || credential?.value?.title || ''
         } - status: BuyerCanceled`,
-        content: `${buyers[0]} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        content: `${buyers[0]} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id} Transaction detals: ${TX_URL}${result}`,
         recipients: [seller]
       }
     });
-    setResult(result);
+
+    const currentStatus = await walletInformation?.deals?.checkStatus(
+      credential
+    );
+
+    setCredentialStatus(currentStatus);
+    setStatus('resolved');
   };
 
   const sellerCancel = async () => {
-    setResult('waiting');
+    setStatus('pending_tx');
+
     const result = await walletInformation?.deals?.sellerCancel(
       referral,
       credential,
@@ -225,6 +254,10 @@ export const Deal = () => {
         : referral.issuer?.ethereumAddress
     );
     console.log('sellerCancel: ', result);
+    setResult(result);
+
+    await sleep(SLEEP_TIME);
+
     await sendNotification({
       orbis,
       authenticatedDID: auth.did,
@@ -232,15 +265,21 @@ export const Deal = () => {
         subject: `Krebit.id Notification - deal: ${
           credential?.value?.name || credential?.value?.title || ''
         } - status: SellerCanceled`,
-        content: `${seller} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        content: `${seller} has cancelled the Deal: ${BASE_URL}?credential_id=${query?.credential_id} Transaction detals: ${TX_URL}${result}`,
         recipients: buyers
       }
     });
-    setResult(result);
+
+    const currentStatus = await walletInformation?.deals?.checkStatus(
+      credential
+    );
+
+    setCredentialStatus(currentStatus);
+    setStatus('resolved');
   };
 
   const releaseDeal = async () => {
-    setResult('waiting');
+    setStatus('pending_tx');
     const result = await walletInformation?.deals?.releaseDeal(
       referral,
       credential,
@@ -249,6 +288,10 @@ export const Deal = () => {
         : referral.issuer?.ethereumAddress
     );
     console.log('releaseDeal: ', result);
+    setResult(result);
+
+    await sleep(SLEEP_TIME);
+
     await sendNotification({
       orbis,
       authenticatedDID: auth.did,
@@ -256,7 +299,7 @@ export const Deal = () => {
         subject: `Krebit.id Notification - deal: ${
           credential?.value?.name || credential?.value?.title || ''
         } - status: Released`,
-        content: `${buyers[0]} has released the Deal payment: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        content: `${buyers[0]} has released the Deal payment: ${BASE_URL}?credential_id=${query?.credential_id} Transaction detals: ${TX_URL}${result}`,
         recipients: [seller]
       }
     });
@@ -267,7 +310,7 @@ export const Deal = () => {
         subject: `Krebit.id Notification - deal: ${
           credential?.value?.name || credential?.value?.title || ''
         } - Referral Payment`,
-        content: `You've received a referral payment for the Deal: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        content: `You've received a referral payment for the Deal: ${BASE_URL}?credential_id=${query?.credential_id} Transaction detals: ${TX_URL}${result}`,
         recipients: [
           referral.value?.onBehalveOfIssuer
             ? referral.value?.onBehalveOfIssuer?.ethereumAddress
@@ -275,13 +318,23 @@ export const Deal = () => {
         ]
       }
     });
-    setResult(result);
+
+    const currentStatus = await walletInformation?.deals?.checkStatus(
+      credential
+    );
+
+    setCredentialStatus(currentStatus);
+    setStatus('resolved');
   };
 
   const markDelivered = async () => {
-    setResult('waiting');
+    setStatus('pending_tx');
     const result = await walletInformation?.deals?.markDelivered(credential);
     console.log('markDelivered: ', result);
+    setResult(result);
+
+    await sleep(SLEEP_TIME);
+
     await sendNotification({
       orbis,
       authenticatedDID: auth.did,
@@ -289,18 +342,49 @@ export const Deal = () => {
         subject: `Krebit.id Notification - deal: ${
           credential?.value?.name || credential?.value?.title || ''
         } status: Delivered`,
-        content: `${seller} has marked the Deal as delivered: ${BASE_URL}?credential_id=${query?.credential_id}, Transaction detals: ${TX_URL}${result}`,
+        content: `${seller} has marked the Deal as delivered: ${BASE_URL}?credential_id=${query?.credential_id} Transaction detals: ${TX_URL}${result}`,
         recipients: buyers
       }
     });
-    setResult(result);
+
+    const currentStatus = await walletInformation?.deals?.checkStatus(
+      credential
+    );
+
+    setCredentialStatus(currentStatus);
+    setStatus('resolved');
   };
 
   const withdrawPayments = async () => {
-    setResult('waiting');
+    setStatus('pending_tx');
     const result = await walletInformation?.deals?.withdrawPayments();
     console.log('withdrawPayments: ', result);
     setResult(result);
+
+    await sleep(SLEEP_TIME);
+
+    const currentStatus = await walletInformation?.deals?.checkStatus(
+      credential
+    );
+
+    setCredentialStatus(currentStatus);
+    setStatus('resolved');
+  };
+
+  const handleReview = () => {
+    let value: string;
+
+    if (seller === walletInformation?.address) {
+      value = buyers[0];
+    }
+
+    if (buyers?.includes(walletInformation?.address.toLowerCase())) {
+      value = seller;
+    }
+
+    if (!value) return;
+
+    push(`/create/review/?issueTo=${value}`);
   };
 
   const handleHelp = () => {
@@ -347,7 +431,7 @@ export const Deal = () => {
                 </div>
               </div>
               <p className="card-description">
-                Price: ${' ' + credential?.price || 0}
+                Price: ${' ' + (credential?.price || 0)}
               </p>
               <div className="card-bottom">
                 <div className="card-dates">
@@ -445,20 +529,24 @@ export const Deal = () => {
           }
         />
       </div>
-      {waitingTx ? (
-        <div className="loading">
-          <Loading />
-        </div>
-      ) : (
-        <p className="actions-description">
-          {INITIAL_STATUS_METADATA[credentialStatus]?.description}
-
-          {result && result !== 'waiting' && (
-            <div className="actions-buttons">
+      <p className="actions-description">
+        {hasCompletedStatus
+          ? 'This deal is completed. Tell us how was the expirience! Create a review to recommend this user!'
+          : INITIAL_STATUS_METADATA[credentialStatus]?.description}
+      </p>
+      {status === 'pending_tx' ? (
+        <>
+          <div className="loading">
+            <Loading />
+          </div>
+          {result && (
+            <div className="actions-buttons-center">
               <Button
                 text="Transaction Details"
                 onClick={() =>
-                  checkCredentialsURLs('polygon', 'tx', { transaction: result })
+                  checkCredentialsURLs('polygon', 'tx', {
+                    transaction: result
+                  })
                 }
                 isDisabled={false}
                 styleType="border"
@@ -466,9 +554,8 @@ export const Deal = () => {
               />
             </div>
           )}
-        </p>
-      )}
-      {seller && buyers ? (
+        </>
+      ) : seller && buyers ? (
         <>
           {(credentialStatus as string) === 'None' && (
             <>
@@ -568,6 +655,15 @@ export const Deal = () => {
             </>
           )}
         </>
+      ) : null}
+      {hasCompletedStatus ? (
+        <div className="actions-buttons">
+          <Button
+            text="Create review"
+            onClick={handleReview}
+            isDisabled={false}
+          />
+        </div>
       ) : null}
     </Wrapper>
   );

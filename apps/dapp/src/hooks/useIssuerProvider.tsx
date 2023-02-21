@@ -185,12 +185,17 @@ export const useIssuerProvider = (props: IProps) => {
   const handleClaimCredential = async delegatedCredential => {
     if (!walletInformation) return;
 
-    const isValid = Boolean(
-      walletInformation.address.toLowerCase() !==
+    // If the wallet owner is equal to credentialSubject?.ethereumAddress
+    // It means that the only one who can claim this credential is the owner
+    if (
+      delegatedCredential?.value?.issueTo?.length === 1 &&
+      walletInformation?.address?.toLowerCase() ===
         delegatedCredential?.credentialSubject?.ethereumAddress
-    );
+    ) {
+      await handleAddCredential(delegatedCredential);
+      return;
+    }
 
-    if (!isValid) return;
     delete delegatedCredential.credential;
     delete delegatedCredential.value;
     delete delegatedCredential.visualInformation;

@@ -58,6 +58,10 @@ export const Wrapper = styled.div<IProps>`
         grid-template-columns: repeat(3, 1fr);
       }
     }
+
+    .credentials-content.not-margin {
+      margin: 0;
+    }
   `}
 `;
 
@@ -80,7 +84,7 @@ export const Card = styled(animated.div)<ICardProps>`
     min-height: 220px;
     height: 100%;
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 14px;
     background: linear-gradient(
       to top,
       ${theme.colors[primaryColor]}CC,
@@ -89,6 +93,10 @@ export const Card = styled(animated.div)<ICardProps>`
     backdrop-filter: blur(20px);
     cursor: pointer;
     will-change: transform, opacity;
+
+    @media (min-width: ${theme.screens.xl}) {
+      padding: 16px 20px;
+    }
 
     .card-title-header {
       display: flex;
@@ -118,6 +126,9 @@ export const Card = styled(animated.div)<ICardProps>`
           fill: ${theme.colors.white};
         }
       }
+    }
+
+    .card-avr-stars {
     }
 
     .card-description {

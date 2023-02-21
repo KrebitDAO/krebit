@@ -39,7 +39,13 @@ import { InlineDropdown } from 'components/InlineDropdown';
 import { QuestionModal } from 'components/QuestionModal';
 import { Input } from 'components/Input';
 import { getDomains, substring } from './utils';
-import { constants, orbisParseMarkdown, sortByDate, openAI } from 'utils';
+import {
+  constants,
+  orbisParseMarkdown,
+  sortByDate,
+  openAI,
+  isValid
+} from 'utils';
 import { DEFAULT_CHARACTER_LIMIT } from 'utils/orbisParseMarkdown';
 import { DEFAULT_PICTURE } from 'utils/normalizeSchema';
 import { GeneralContext } from 'context';
@@ -697,6 +703,50 @@ export const Groups = (props: IGroupProps) => {
     }
   };
 
+  const handleSendMessage = async (userDID: string) => {
+    if (!auth?.isAuthenticated) {
+      handleOpenConnectWallet();
+      return;
+    }
+
+    if (!isValid('did', userDID)) {
+      setStatus('rejected');
+      return;
+    }
+
+    const currentConversations = await orbis.getConversations({
+      did: userDID
+    });
+
+    if (currentConversations?.data?.length > 0) {
+      const conversationsWithMe = currentConversations?.data?.filter(
+        conversation => conversation?.recipients.includes(auth?.did)
+      );
+      const conversationWithJustMe = conversationsWithMe?.find(
+        conversation => conversation?.recipients?.length === 2
+      );
+
+      if (conversationWithJustMe) {
+        push(`/messages/?conversation_id=${conversationWithJustMe.stream_id}`);
+      } else {
+        const response = await orbis.createConversation({
+          recipients: [userDID]
+        });
+
+        if (response?.doc) {
+          window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+        }
+      }
+    } else {
+      const response = await orbis.createConversation({
+        recipients: [userDID]
+      });
+
+      if (response?.doc) {
+        window.open(`/messages/?conversation_id=${response.doc}`, '_self');
+      }
+    }
+  };
   return (
     <>
       <style global jsx>{`
@@ -802,19 +852,25 @@ export const Groups = (props: IGroupProps) => {
                           )}
                         </a>
                       </Link>
-                      {values?.content?.data?.type === 'job' ? (
+                      {values?.content?.data?.type === 'job' ||
+                      values?.content?.data?.type === 'service' ? (
                         <div className="comment-box-information-job">
-                          <img
-                            className="comment-box-information-job-image"
-                            src={values?.content?.data?.imageUrl}
-                          />
+                          {values?.content?.data?.imageUrl && (
+                            <img
+                              className="comment-box-information-job-image"
+                              src={values?.content?.data?.imageUrl}
+                            />
+                          )}
                           <p className="comment-box-information-job-title">
                             {values?.content?.data?.title}
                           </p>
-                          <p className="comment-box-information-job-subtitle">
-                            {values?.content?.data?.entity}
-                          </p>
-                          {values?.content?.data?.industries && (
+                          {values?.content?.data?.entity && (
+                            <p className="comment-box-information-job-subtitle">
+                              {values?.content?.data?.entity}
+                            </p>
+                          )}
+                          {values?.content?.data?.industries &&
+                          values?.content?.data?.industries?.length > 0 ? (
                             <>
                               <p className="comment-box-information-job-subtitle">
                                 Industries:
@@ -834,8 +890,9 @@ export const Groups = (props: IGroupProps) => {
                                 )}
                               </div>
                             </>
-                          )}
-                          {values?.content?.data?.size && (
+                          ) : null}
+                          {values?.content?.data?.size &&
+                          values?.content?.data?.size !== 'N/A' ? (
                             <>
                               <p className="comment-box-information-job-subtitle">
                                 Company size:
@@ -844,8 +901,9 @@ export const Groups = (props: IGroupProps) => {
                                 {values?.content?.data?.size}
                               </p>
                             </>
-                          )}
-                          {values?.content?.data?.roles && (
+                          ) : null}
+                          {values?.content?.data?.roles &&
+                          values?.content?.data?.roles?.length > 0 ? (
                             <>
                               <p className="comment-box-information-job-subtitle">
                                 Roles:
@@ -865,7 +923,7 @@ export const Groups = (props: IGroupProps) => {
                                 )}
                               </div>
                             </>
-                          )}
+                          ) : null}
                           <p className="comment-box-information-job-subtitle">
                             Description:
                           </p>
@@ -904,22 +962,42 @@ export const Groups = (props: IGroupProps) => {
                             </>
                           )}
                           <div className="comment-box-information-job-buttons">
-                            <div className="comment-box-information-job-button">
-                              <Button
-                                text="Apply to this Job"
-                                onClick={() =>
-                                  handleApplyJob(
-                                    values?.content?.data?.applyUrl
-                                  )
-                                }
-                                isDisabled={
-                                  isPostsLoading ||
-                                  isMorePostsLoading ||
-                                  isPostActionLoading ||
-                                  status === 'pending_comment'
-                                }
-                              />
-                            </div>
+                            {values?.content?.data?.type === 'service' && (
+                              <div className="comment-box-information-job-button">
+                                <Button
+                                  text="Send message"
+                                  onClick={() =>
+                                    handleSendMessage(
+                                      values?.creator_details?.did
+                                    )
+                                  }
+                                  isDisabled={
+                                    isPostsLoading ||
+                                    isMorePostsLoading ||
+                                    isPostActionLoading ||
+                                    status === 'pending_comment'
+                                  }
+                                />
+                              </div>
+                            )}
+                            {values?.content?.data?.applyUrl && (
+                              <div className="comment-box-information-job-button">
+                                <Button
+                                  text="Apply to this Job"
+                                  onClick={() =>
+                                    handleApplyJob(
+                                      values?.content?.data?.applyUrl
+                                    )
+                                  }
+                                  isDisabled={
+                                    isPostsLoading ||
+                                    isMorePostsLoading ||
+                                    isPostActionLoading ||
+                                    status === 'pending_comment'
+                                  }
+                                />
+                              </div>
+                            )}
                             <div className="comment-box-information-job-button">
                               <Button
                                 text="Refer a Friend"

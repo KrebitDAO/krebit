@@ -20,8 +20,12 @@ export const Wrapper = styled.div`
       background-color: ${theme.colors.bunting};
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
-      padding: 36px 28px;
+      padding: 26px 18px;
       width: 577px;
+
+      @media (min-width: ${theme.screens.lg}) {
+        padding: 36px 28px;
+      }
 
       .question-modal-header {
         display: flex;

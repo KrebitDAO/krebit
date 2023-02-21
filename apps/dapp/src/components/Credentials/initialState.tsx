@@ -25,7 +25,7 @@ export interface IFormValues {
   [key: string]: string | number | string[] | number[] | boolean | File;
 }
 
-export interface ICredentialsState {
+export interface IState {
   type: string;
   title: string;
   description: string;
@@ -36,6 +36,11 @@ export interface ICredentialsState {
     fields?: {
       name: string;
       placeholder: string;
+      validationType?: string;
+      validations?: {
+        type: string;
+        params: any[];
+      }[];
       type?: string;
       defaultValue?: string | number | string[] | number[] | boolean;
       pattern?: string;
@@ -48,6 +53,11 @@ export interface ICredentialsState {
     issueTo?: {
       name: string;
       placeholder: string;
+      validationType?: string;
+      validations?: {
+        type: string;
+        params: any[];
+      }[];
     };
     button?: {
       text: string;
@@ -57,7 +67,7 @@ export interface ICredentialsState {
   };
 }
 
-export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
+export const CREDENTIALS_INITIAL_STATE: IState[] = [
   {
     type: 'referral',
     title: 'Refer a friend',
@@ -71,7 +81,14 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'text',
           name: 'name',
           placeholder: 'Referral Title',
-          defaultValue: 'Referral'
+          defaultValue: 'Referral',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Referral title is required']
+            }
+          ]
         },
         {
           name: 'description',
@@ -80,7 +97,14 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'Invite',
@@ -113,32 +137,57 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'text',
           name: 'name',
           placeholder: 'Review Title',
-          defaultValue: 'Review'
+          defaultValue: 'Review',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Review title is required']
+            }
+          ]
         },
         {
           type: 'rating',
           name: 'rating',
-          placeholder: 'Rating: 2/5'
+          validationType: 'string',
+          placeholder: 'Rating: 2/5',
+          defaultValue: '2'
         },
         {
           name: 'description',
+          validationType: 'string',
           placeholder: 'Write your review here'
         },
 
         {
           type: 'text',
           name: 'proof',
+          validationType: 'string',
           placeholder: 'Proof url'
         },
         {
           type: 'boxes',
           name: 'skills',
-          placeholder: 'Skills'
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
         }
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'Review',
@@ -182,7 +231,14 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'name',
-          placeholder: 'Offer Title'
+          placeholder: 'Offer Title',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Offer title is required']
+            }
+          ]
         },
         {
           type: 'select',
@@ -193,10 +249,18 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             { text: 'File', value: 'file' },
             { text: 'Video Call', value: 'meeting' },
             { text: 'Product', value: 'product' }
+          ],
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Deliverable type is required']
+            }
           ]
         },
         {
           name: 'description',
+          validationType: 'string',
           placeholder: 'Deliverable description & requirements'
         },
         {
@@ -208,33 +272,63 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'datetimepicker',
           name: 'deliveryTime',
           placeholder: 'Delivery Time',
-          defaultValue: '2021-12-01T00:00:00'
+          defaultValue: '2021-12-01T00:00:00',
+          validationType: 'string'
         },
         {
           type: 'number',
           name: 'price',
-          placeholder: 'Price'
+          placeholder: 'Price',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Price is required']
+            }
+          ]
         },
         {
           type: 'text',
           name: 'proof',
+          validationType: 'string',
           placeholder: 'Vendor url'
         },
         {
           type: 'select',
           name: 'referral',
           placeholder: 'Referral Id',
-          asyncFunction: props => getReferralCredentials(props)
+          asyncFunction: props => getReferralCredentials(props),
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Referral is required']
+            }
+          ]
         },
         {
           type: 'boxes',
           name: 'skills',
-          placeholder: 'Skills'
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
         }
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'Offer',
@@ -274,12 +368,20 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'name',
-          placeholder: 'Role / Job Title'
+          placeholder: 'Role / Job Title',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Role / Job title is required']
+            }
+          ]
         },
         {
           name: 'description',
           placeholder:
-            'Write the description of the tasks/achievements of that person here'
+            'Write the description of the tasks/achievements of that person here',
+          validationType: 'string'
         },
         {
           type: 'upload',
@@ -289,32 +391,56 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization'
+          placeholder: 'Entity/Organization',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Entity/Organization is required']
+            }
+          ]
         },
         {
           type: 'datepicker',
           name: 'startDate',
-          placeholder: 'Start date'
+          placeholder: 'Start date',
+          validationType: 'string'
         },
         {
           type: 'datepicker',
           name: 'endDate',
-          placeholder: 'End date'
+          placeholder: 'End date',
+          validationType: 'string'
         },
         {
           type: 'text',
           name: 'proof',
-          placeholder: 'Proof url'
+          placeholder: 'Proof url',
+          validationType: 'string'
         },
         {
           type: 'boxes',
           name: 'skills',
-          placeholder: 'Skills'
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
         }
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'WorkExperience',
@@ -356,11 +482,19 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'name',
-          placeholder: 'Class/Course Title'
+          placeholder: 'Class/Course Title',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Class/Course title is required']
+            }
+          ]
         },
         {
           name: 'description',
-          placeholder: 'Write your class/course description here'
+          placeholder: 'Write your class/course description here',
+          validationType: 'string'
         },
         {
           type: 'upload',
@@ -371,32 +505,56 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization'
+          placeholder: 'Entity/Organization',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Entity/Organization title is required']
+            }
+          ]
         },
         {
           type: 'datepicker',
           name: 'issuanceDate',
-          placeholder: 'Completion date'
+          placeholder: 'Completion date',
+          validationType: 'string'
         },
         {
           type: 'number',
           name: 'hours',
-          placeholder: 'Total hours completed'
+          placeholder: 'Total hours completed',
+          validationType: 'string'
         },
         {
           type: 'text',
           name: 'proof',
-          placeholder: 'Proof url'
+          placeholder: 'Proof url',
+          validationType: 'string'
         },
         {
           type: 'boxes',
           name: 'skills',
-          placeholder: 'Skills'
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
         }
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'Issue Credential',
@@ -436,11 +594,19 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'name',
-          placeholder: 'Event Name'
+          placeholder: 'Event Name',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Event name is required']
+            }
+          ]
         },
         {
           name: 'description',
-          placeholder: 'Write your event description here'
+          placeholder: 'Write your event description here',
+          validationType: 'string'
         },
         {
           type: 'upload',
@@ -450,7 +616,14 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Entity/Organization'
+          placeholder: 'Entity/Organization',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Entity/Organization is required']
+            }
+          ]
         },
         {
           type: 'switch',
@@ -461,32 +634,44 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
           type: 'select',
           name: 'country',
           placeholder: 'select',
-          items: countries.isoCodes
+          items: countries.isoCodes,
+          validationType: 'string'
         },
         {
           type: 'text',
           name: 'city',
-          placeholder: 'City'
+          placeholder: 'City',
+          validationType: 'string'
         },
         {
           type: 'datepicker',
           name: 'startDate',
-          placeholder: 'Start date'
+          placeholder: 'Start date',
+          validationType: 'string'
         },
         {
           type: 'datepicker',
           name: 'endDate',
-          placeholder: 'End date'
+          placeholder: 'End date',
+          validationType: 'string'
         },
         {
           type: 'text',
           name: 'proof',
-          placeholder: 'Proof url'
+          placeholder: 'Proof url',
+          validationType: 'string'
         }
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'Issue Credential',
@@ -518,16 +703,25 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'name',
-          placeholder: 'Badge Name'
+          placeholder: 'Badge Name',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Badge Name is required']
+            }
+          ]
         },
         {
           type: 'select',
           name: 'entity',
-          placeholder: 'Community'
+          placeholder: 'Community',
+          validationType: 'string'
         },
         {
           name: 'description',
-          placeholder: 'Write your badge description here'
+          placeholder: 'Write your badge description here',
+          validationType: 'string'
         },
         {
           type: 'upload',
@@ -537,28 +731,45 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
         {
           type: 'text',
           name: 'role',
-          placeholder: 'Role'
+          placeholder: 'Role',
+          validationType: 'string'
         },
         {
           type: 'rating',
           name: 'level',
-          placeholder: 'Level: 2/5'
+          placeholder: 'Level: 2/5',
+          defaultValue: '2',
+          validationType: 'string'
         },
-
         {
           type: 'text',
           name: 'proof',
-          placeholder: 'Proof url'
+          placeholder: 'Proof url',
+          validationType: 'string'
         },
         {
           type: 'boxes',
           name: 'skills',
-          placeholder: 'Skills'
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
         }
       ],
       issueTo: {
         name: 'issueTo',
-        placeholder: 'Issue to'
+        placeholder: 'Issue to',
+        validationType: 'array',
+        validations: [
+          {
+            type: 'min',
+            params: [1, 'Issuers are required']
+          }
+        ]
       },
       button: {
         text: 'Issue Credential',
@@ -586,6 +797,191 @@ export const CREDENTIALS_INITIAL_STATE: ICredentialsState[] = [
             credentialSchema: 'krebit://schemas/badge'
           };
         }
+      }
+    }
+  }
+];
+
+export const SERVICES_INITIAL_STATE: IState[] = [
+  {
+    type: 'job',
+    title: 'Post a job',
+    description: 'Find the best professionals in the Krebiters community',
+    primaryColor: 'haiti',
+    secondaryColor: 'rose',
+    icon: <Delegate />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'title',
+          placeholder: 'Title',
+          defaultValue: 'Job position',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Title name is required']
+            }
+          ]
+        },
+        {
+          type: 'text',
+          name: 'description',
+          placeholder: 'Description',
+          isMultiline: true,
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Description is required']
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'select',
+          name: 'entity',
+          placeholder: 'Entity/Organization',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Entity/Organization is required']
+            }
+          ]
+        },
+        {
+          type: 'boxes',
+          name: 'industries',
+          placeholder: 'Industries',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Industries are required']
+            }
+          ]
+        },
+        {
+          type: 'string',
+          name: 'size',
+          placeholder: 'Company size',
+          validationType: 'string'
+        },
+        {
+          type: 'string',
+          name: 'salaryRange',
+          placeholder: 'Salary range',
+          validationType: 'string'
+        },
+        {
+          type: 'boxes',
+          name: 'roles',
+          placeholder: 'Roles',
+          validationType: 'array'
+        },
+        {
+          type: 'url',
+          name: 'applyUrl',
+          placeholder: 'Apply URL',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'url',
+              params: ['Apply URL not valid']
+            },
+            {
+              type: 'required',
+              params: ['Apply URL name is required']
+            }
+          ]
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
+        }
+      ],
+      button: {
+        text: 'Post job',
+        onClick: values => values
+      }
+    }
+  },
+  {
+    type: 'service',
+    title: 'Offer your service',
+    description: 'Find the best professionals in the Krebiters community',
+    primaryColor: 'haiti',
+    secondaryColor: 'rose',
+    icon: <Delegate />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'title',
+          placeholder: 'Title',
+          defaultValue: 'Service position',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Title name is required']
+            }
+          ]
+        },
+        {
+          type: 'text',
+          name: 'description',
+          placeholder: 'Description',
+          isMultiline: true,
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Description is required']
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'string',
+          name: 'salaryRange',
+          placeholder: 'Salary range',
+          validationType: 'string'
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
+        }
+      ],
+      button: {
+        text: 'Offer your service',
+        onClick: values => values
       }
     }
   }
