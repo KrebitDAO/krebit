@@ -291,7 +291,7 @@ export class Lit {
 
   public callLitAction = async (
     authSig: Object,
-    code: string,
+    code: string | Buffer,
     jsParams: Object
   ) => {
     if (!this.litNodeClientSerrano) {

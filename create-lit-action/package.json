@@ -1,0 +1,19 @@
+{
+  "name": "create-lit-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@krebitdao/eip712-vc": "^1.0.3",
+    "esbuild": "^0.17.10",
+    "node-stdlib-browser": "^1.2.0"
+  }
+}

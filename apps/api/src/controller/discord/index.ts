@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import express from 'express';
 import LitJsSdk from 'lit-js-sdk/build/index.node.js';
 import krebit from '@krebitdao/reputation-passport';
@@ -118,6 +120,10 @@ export const DiscordController = async (
           }
         }
       ];
+
+      const litActionCodeFromBundle = fs.readFileSync(
+        `${path.resolve()}/src/controller/discord/bundled.js`
+      );
 
       // Connect to discord lit action and get user ID from token
       const lit = new krebit.lib.Lit();
