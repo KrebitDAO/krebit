@@ -2461,7 +2461,7 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
         metadata: {
           title: 'Claim credential',
           description:
-            'Claim credential and add to your passport. Only add your email if the credential was issued to your email addrress.'
+            'Claim credential and add to your passport. Only add your email if the credential was issued to your email address.'
         },
         form: (
           provider: any,
@@ -2470,13 +2470,19 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
           walletInformation: IWalletInformation
         ) => ({
           fields: [
-            {
-              type: 'email',
-              name: 'email',
-              placeholder: 'username@example.com',
-              value: provider?.claimValues?.email,
-              onChange: provider?.handleClaimValues
-            },
+            walletInformation?.address?.toLowerCase() !==
+            credential?.credential?.credentialSubject?.ethereumAddress
+              ? {
+                  type: 'email',
+                  name: 'email',
+                  placeholder: 'username@example.com',
+                  value: provider?.claimValues?.email,
+                  onChange: provider?.handleClaimValues,
+                  isHidden:
+                    walletInformation?.address?.toLowerCase() ===
+                    credential?.credential?.credentialSubject?.ethereumAddress
+                }
+              : undefined,
             {
               name: 'private',
               type: 'switch',
@@ -2495,10 +2501,12 @@ const COMMUNITY_CREDENTIALS: IIssuerParams[] = [
                 provider?.currentCredential || credential?.credential
               ),
             isDisabled: !Boolean(
-              walletInformation?.address?.toLowerCase() !==
-                credential?.credential?.issuer?.ethereumAddress &&
-                walletInformation?.address?.toLowerCase() !==
-                  credential?.credential?.credentialSubject?.ethereumAddress
+              walletInformation?.address?.toLowerCase() ===
+                credential?.credential?.credentialSubject?.ethereumAddress ||
+                (walletInformation?.address?.toLowerCase() !==
+                  credential?.credential?.issuer?.ethereumAddress &&
+                  walletInformation?.address?.toLowerCase() !==
+                    credential?.credential?.credentialSubject?.ethereumAddress)
             )
           }
         })

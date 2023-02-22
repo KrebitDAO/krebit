@@ -118,7 +118,7 @@ export const DelegatedController = async (
           id: claimedCredential.id,
           ethereumAddress: credentialSubjectAddress,
           did: credentialSubjectAddressDID,
-          type: claimedCredential.id,
+          type: claimValue.credentialType,
           typeSchema: claimValue.credentialSchema,
           tags: claimValue.tags?.length
             ? [

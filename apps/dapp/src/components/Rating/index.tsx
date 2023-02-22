@@ -8,10 +8,12 @@ import MaterialRating from '@mui/material/Rating';
 
 interface IProps {
   name: string;
-  label: string;
-  value: number;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  label?: string;
+  value?: number;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   isDisabled?: boolean;
+  readOnly?: boolean;
+  shouldHaveLabel?: boolean;
   iconColor?: string;
 }
 
@@ -24,6 +26,8 @@ export const Rating = (props: IProps) => {
     value = DEFAULT_VALUE,
     onChange,
     isDisabled = false,
+    readOnly = false,
+    shouldHaveLabel = true,
     iconColor = 'cyan'
   } = props;
   const [hover, setHover] = useState(-1);
@@ -39,6 +43,7 @@ export const Rating = (props: IProps) => {
               name={name}
               disabled={isDisabled}
               precision={0.5}
+              readOnly={readOnly}
               onChange={isDisabled ? undefined : onChange}
               onChangeActive={(event, newHover) => {
                 if (isDisabled) return;
@@ -48,7 +53,11 @@ export const Rating = (props: IProps) => {
             />
           }
           disabled={isDisabled}
-          label={`Rating: ${hover === -1 ? value || DEFAULT_VALUE : hover}/5`}
+          label={
+            shouldHaveLabel
+              ? `Rating: ${hover === -1 ? value || DEFAULT_VALUE : hover}/5`
+              : ''
+          }
         />
       </Wrapper>
     </StyledEngineProvider>

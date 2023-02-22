@@ -74,6 +74,7 @@ const getCredentials = async (props: IGetCredentialsProps) => {
       const description = formatCredential(parsedCredential, 'description');
       const image = formatCredential(parsedCredential, 'image');
       const icon = formatCredential(parsedCredential, 'icon');
+      const rating = formatCredential(parsedCredential, 'rating');
 
       if (visualInformationIssuers) {
         visualInformation = {
@@ -82,7 +83,8 @@ const getCredentials = async (props: IGetCredentialsProps) => {
             title,
             description,
             image,
-            icon
+            icon,
+            rating
           }
         };
       } else if (visualInformationBuilderCredential) {
@@ -93,7 +95,8 @@ const getCredentials = async (props: IGetCredentialsProps) => {
             title,
             description,
             image,
-            icon
+            icon,
+            rating
           }
         };
       } else {
@@ -105,7 +108,8 @@ const getCredentials = async (props: IGetCredentialsProps) => {
             title,
             description,
             image,
-            icon
+            icon,
+            rating
           }
         };
       }
@@ -216,6 +220,7 @@ const buildCredential = async (props: IBuildCredentialProps) => {
   const description = formatCredential(parsedCredential, 'description');
   const image = formatCredential(parsedCredential, 'image');
   const icon = formatCredential(parsedCredential, 'icon');
+  const rating = formatCredential(parsedCredential, 'rating');
 
   if (visualInformationIssuers) {
     visualInformation = {
@@ -224,7 +229,8 @@ const buildCredential = async (props: IBuildCredentialProps) => {
         title,
         description,
         image,
-        icon
+        icon,
+        rating
       }
     };
   } else {
@@ -236,7 +242,8 @@ const buildCredential = async (props: IBuildCredentialProps) => {
         title,
         description,
         image,
-        icon
+        icon,
+        rating
       }
     };
   }
@@ -249,7 +256,8 @@ const buildCredential = async (props: IBuildCredentialProps) => {
         title,
         description,
         image,
-        icon
+        icon,
+        rating
       }
     };
   }
@@ -375,6 +383,21 @@ const formatCredential = (credential: any, type?: string) => {
     }
 
     return '';
+  }
+
+  if (type === 'rating') {
+    if (
+      credential?.credentialSubject?.value?.values?.rating ||
+      credential?.credentialSubject?.value?.rating
+    ) {
+      return parseInt(
+        credential?.credentialSubject?.value?.values?.rating ||
+          credential?.credentialSubject?.value?.rating,
+        10
+      );
+    }
+
+    return 0;
   }
 
   return credential;

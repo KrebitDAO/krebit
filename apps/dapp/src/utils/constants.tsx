@@ -188,7 +188,7 @@ const DEFAULT_EMPTY_CARD_PERSONHOOD = {
 };
 
 const DEFAULT_EMPTY_CARD_WORK = {
-  title: 'Job Title',
+  title: 'Title',
   description: 'Company / Dates',
   dates: {
     issuanceDate: {
@@ -277,6 +277,14 @@ const DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS = {
   ERROR_MINT: 'Error minting stamp NFT. Please check later'
 };
 
+const DEFAULT_MESSAGES_FOR_SERVICES = {
+  INITIAL: 'Saving information...'
+};
+
+const DEFAULT_ERROR_MESSAGE_FOR_SERVICES = {
+  ERROR_INFORMATION: 'Error saving Information. Please check later'
+};
+
 const DEFAULT_SKILL_LANGUAGES = [
   { text: 'JavaScript', value: 'JavaScript' },
   { text: 'Java', value: 'Java' },
@@ -301,6 +309,25 @@ const DEFAULT_SKILL_LANGUAGES = [
   { text: 'Solidity', value: 'Solidity' }
 ];
 
+const DEFAULT_SKILL_TAGS = [
+  {
+    text: 'React.js',
+    value: 'react.js'
+  },
+  {
+    text: 'Node.js',
+    value: 'node.js'
+  },
+  {
+    text: 'Customer service',
+    value: 'customer-service'
+  },
+  {
+    text: 'Amazon Web Services',
+    value: 'amazon-web-services'
+  }
+];
+
 export const constants = {
   DEFAULT_DATE,
   DEFAULT_CLAIM_CREDENTIAL_TYPES,
@@ -317,5 +344,8 @@ export const constants = {
   DEFAULT_ERROR_MESSAGES,
   DEFAULT_MESSAGES_FOR_PROVIDERS,
   DEFAULT_ERROR_MESSAGE_FOR_PROVIDERS,
-  DEFAULT_SKILL_LANGUAGES
+  DEFAULT_MESSAGES_FOR_SERVICES,
+  DEFAULT_ERROR_MESSAGE_FOR_SERVICES,
+  DEFAULT_SKILL_LANGUAGES,
+  DEFAULT_SKILL_TAGS
 };
