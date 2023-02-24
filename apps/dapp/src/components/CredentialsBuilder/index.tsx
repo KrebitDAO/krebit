@@ -437,7 +437,7 @@ export const CredentialsBuilder = () => {
                 subject: `Krebit.id Notification: ${
                   currentValues?.values?.name || currentValues?.values?.title
                 }`,
-                content: `${profile?.name} has created a new Krebit credential that you can claim, just follow the steps on the following link: ${BASE_URL}/?credential_id=${addedCredentialId}`,
+                content: `<b>${profile?.name}</b> has created a new Krebit credential that you can claim, just follow the steps on the following link: <a href="${BASE_URL}/?credential_id=${addedCredentialId}">${BASE_URL}/?credential_id=${addedCredentialId}</a>`,
                 recipients: issueToValues
               }
             });
@@ -495,7 +495,7 @@ export const CredentialsBuilder = () => {
                 subject: `Krebit.id Notification: ${
                   currentValues?.values?.name || currentValues?.values?.title
                 }`,
-                content: `${profile?.name} has created a new Krebit credential that you can claim, just follow the steps on the following link: ${BASE_URL}/?credential_id=${delegatedCredentialId}`,
+                content: `<b>${profile?.name}</b> has created a new Krebit credential that you can claim, just follow the steps on the following link: <a href="${BASE_URL}/?credential_id=${delegatedCredentialId}">${BASE_URL}/?credential_id=${delegatedCredentialId}</a>`,
                 recipients: issueToValues
               }
             });
