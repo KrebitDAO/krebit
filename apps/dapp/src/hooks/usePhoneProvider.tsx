@@ -262,7 +262,6 @@ export const usePhoneProvider = (props: IProps) => {
   };
 
   const handleCleanClaimValues = () => {
-    setClaimValues(initialState);
     setStatus('idle');
     setStatusMessage(undefined);
     setErrorMessage(undefined);

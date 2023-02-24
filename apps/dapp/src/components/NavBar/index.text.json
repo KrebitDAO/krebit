@@ -1,0 +1,20 @@
+{
+  "en": {
+    "menu-bar-items": [
+      "Discord",
+      "Docs",
+      "Recruiters",
+      "Credential Issuers"
+    ],
+    "menu-bar-button": "Try it now"
+  },
+  "es": {
+    "menu-bar-items": [
+      "Discord",
+      "Docs",
+      "Reclutadores",
+      "Emisores de Credenciales"
+    ],
+    "menu-bar-button": "Probar ahora"
+  }
+}
