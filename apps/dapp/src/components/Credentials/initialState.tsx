@@ -7,7 +7,8 @@ import {
   School,
   Deal,
   WorkExperience,
-  Star
+  Star,
+  Quote
 } from 'components/Icons';
 import { countries } from 'utils';
 
@@ -221,11 +222,11 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
   },
   {
     type: 'deal',
-    title: 'Deal (beta)',
-    description: 'Offer or quotation for a service or product',
+    title: 'Deal Quote (Beta)',
+    description: 'Offer a quotation for a service or product',
     primaryColor: 'blueCharcoal',
     secondaryColor: 'pomegranate',
-    icon: <Deal />,
+    icon: <Quote />,
     form: {
       fields: [
         {
@@ -691,8 +692,74 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
 
 export const SERVICES_INITIAL_STATE: IState[] = [
   {
+    type: 'service',
+    title: 'Offer your service (Beta)',
+    description:
+      'Referred members can sell with low commisions and fair dispute resolution',
+    primaryColor: 'haiti',
+    secondaryColor: 'rose',
+    icon: <Deal />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'title',
+          placeholder: 'Title',
+          defaultValue: 'Service title',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Title name is required']
+            }
+          ]
+        },
+        {
+          type: 'text',
+          name: 'description',
+          placeholder: 'Description',
+          isMultiline: true,
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Description is required']
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'string',
+          name: 'salaryRange',
+          placeholder: 'Price / Rate',
+          validationType: 'string'
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
+        }
+      ],
+      button: {
+        text: 'Post Service',
+        onClick: values => values
+      }
+    }
+  },
+  {
     type: 'job',
-    title: 'Post a job',
+    title: 'Post a job (Pro)',
     description: 'Find the best professionals in the Krebiters community',
     primaryColor: 'haiti',
     secondaryColor: 'blueRibbon',
@@ -802,72 +869,7 @@ export const SERVICES_INITIAL_STATE: IState[] = [
         }
       ],
       button: {
-        text: 'Post job',
-        onClick: values => values
-      }
-    }
-  },
-  {
-    type: 'service',
-    title: 'Offer your service',
-    description: 'Find the best professionals in the Krebiters community',
-    primaryColor: 'haiti',
-    secondaryColor: 'rose',
-    icon: <Delegate />,
-    form: {
-      fields: [
-        {
-          type: 'text',
-          name: 'title',
-          placeholder: 'Title',
-          defaultValue: 'Service position',
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Title name is required']
-            }
-          ]
-        },
-        {
-          type: 'text',
-          name: 'description',
-          placeholder: 'Description',
-          isMultiline: true,
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Description is required']
-            }
-          ]
-        },
-        {
-          type: 'upload',
-          name: 'image',
-          placeholder: 'Image / Logo'
-        },
-        {
-          type: 'string',
-          name: 'salaryRange',
-          placeholder: 'Salary range',
-          validationType: 'string'
-        },
-        {
-          type: 'boxes',
-          name: 'skills',
-          placeholder: 'Skills',
-          validationType: 'array',
-          validations: [
-            {
-              type: 'min',
-              params: [1, 'Skills are required']
-            }
-          ]
-        }
-      ],
-      button: {
-        text: 'Offer your service',
+        text: 'Post Job',
         onClick: values => values
       }
     }

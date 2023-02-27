@@ -11,7 +11,7 @@ import {
   Wrapper
 } from './styles';
 import {
-  Token,
+  Add,
   Close,
   Explore,
   Help,
@@ -38,18 +38,18 @@ const MENU_OPTIONS = (locale: string) => [
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][0],
     href: '/posts',
-    icon: <Home />,
-    badgeText: LayoutText[locale]['badge-texts'][0]
+    icon: <Home />
   },
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][1],
     href: '/explore',
-    icon: <Explore />
+    icon: <Explore />,
+    badgeText: LayoutText[locale]['badge-texts'][0]
   },
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][2],
     href: '/create',
-    icon: <Token />,
+    icon: <Add />,
     isPrivate: true,
     badgeText: LayoutText[locale]['badge-texts'][1],
     badgeColor: 'blueRibbon'
