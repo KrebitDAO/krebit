@@ -1067,6 +1067,7 @@ export const CredentialsBuilder = () => {
                           isDisabled={input.isDisabled}
                           isRequired={input.isRequired}
                           pattern={input.pattern}
+                          endAdornment={input?.endAdornment}
                         />
                       );
                     })}

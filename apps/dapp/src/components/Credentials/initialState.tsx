@@ -50,6 +50,7 @@ export interface IState {
       isMultiline?: boolean;
       items?: IItems[];
       asyncFunction?: (props: any) => void | Promise<any | any[]>;
+      endAdornment?: string;
     }[];
     issueTo?: {
       name: string;
@@ -280,6 +281,7 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
           type: 'number',
           name: 'price',
           placeholder: 'Price',
+          endAdornment: 'MATIC',
           validationType: 'string',
           validations: [
             {

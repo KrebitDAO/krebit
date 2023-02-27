@@ -29,6 +29,13 @@ import { DEFAULT_PICTURE, IProfile } from 'utils/normalizeSchema';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
 
+export interface IProps {
+  query: {
+    tab?: number;
+    skill?: string;
+  };
+}
+
 interface ICard {
   href?: string;
   title?: string;
@@ -44,7 +51,7 @@ interface IInformation {
   skills: string[];
 }
 
-const initialSearchTypes = [
+export const initialSearchTypes = [
   {
     text: 'Profiles',
     value: 'profile'
@@ -72,13 +79,19 @@ const DEFAULT_CURRENT_PAGE = 1;
 
 const { NEXT_PUBLIC_ARENA_TOKEN } = process.env;
 
-export const Explorer = () => {
+export const Explorer = (props: IProps) => {
+  const { query } = props;
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filterValues, setFilterValues] = useState(initialFilterValues);
+  const [filterValues, setFilterValues] = useState({
+    ...initialFilterValues,
+    skill: query?.skill ? query?.skill : ''
+  });
   const [status, setStatus] = useState('idle');
   const [information, setInformation] = useState<IInformation>();
-  const [searchType, setSearchType] = useState(initialSearchTypes[0].value);
-  const [tab, setTab] = useState(0);
+  const [searchType, setSearchType] = useState(
+    initialSearchTypes[query?.tab || 0].value
+  );
+  const [tab, setTab] = useState(query?.tab || 0);
   const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
   const [total, setTotal] = useState(0);
   const [shouldViewMoreSkills, setShouldViewMoreSkills] = useState(false);
