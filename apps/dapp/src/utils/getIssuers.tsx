@@ -546,8 +546,7 @@ const PERSONHOOD_CREDENTIALS: IIssuerParams[] = [
         type: 'overview',
         metadata: {
           title: 'Email',
-          description:
-            'The Krebit Verification Node issues this email Credential',
+          description: 'Verify your email to opt-in for Krebit notifications',
           icon: <Email />,
           verificationUrl:
             process.env.NEXT_PUBLIC_ISSUER_NODE_URL?.concat('/email'),

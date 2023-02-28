@@ -53,6 +53,11 @@ interface IInformation {
 
 export const initialSearchTypes = [
   {
+    text: 'Services',
+    value: 'service',
+    orbisTag: 'krebit-service'
+  },
+  {
     text: 'Profiles',
     value: 'profile'
   },
@@ -60,11 +65,6 @@ export const initialSearchTypes = [
     text: 'Jobs',
     value: 'job',
     orbisTag: 'krebit-job'
-  },
-  {
-    text: 'Services',
-    value: 'service',
-    orbisTag: 'krebit-service'
   }
 ];
 const initialFilterValues = {
