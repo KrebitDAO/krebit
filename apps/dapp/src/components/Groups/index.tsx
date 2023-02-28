@@ -676,7 +676,7 @@ export const Groups = (props: IGroupProps) => {
     if (!jobId) return;
 
     push(
-      `/create/referral/?name=${'Job Referral'}&description=https://krebit.id/posts?post_id=${jobId}`
+      `/create/referral/?name=${'Job/Service Referral'}&description=https://krebit.id/posts?post_id=${jobId}`
     );
   };
 
@@ -924,6 +924,17 @@ export const Groups = (props: IGroupProps) => {
                               </div>
                             </>
                           ) : null}
+                          {values?.content?.data?.salaryRange &&
+                          values?.content?.data?.salaryRange !== 'N/A' ? (
+                            <>
+                              <p className="comment-box-information-job-subtitle">
+                                Salary / Price Rate:
+                              </p>
+                              <p className="comment-box-information-job-text">
+                                $ {values?.content?.data?.salaryRange} MATIC
+                              </p>
+                            </>
+                          ) : null}
                           <p className="comment-box-information-job-subtitle">
                             Description:
                           </p>
@@ -965,7 +976,7 @@ export const Groups = (props: IGroupProps) => {
                             {values?.content?.data?.type === 'service' && (
                               <div className="comment-box-information-job-button">
                                 <Button
-                                  text="Send message"
+                                  text="Request a Quote"
                                   onClick={() =>
                                     handleSendMessage(
                                       values?.creator_details?.did
@@ -1010,20 +1021,22 @@ export const Groups = (props: IGroupProps) => {
                                 }
                               />
                             </div>
-                            <div className="comment-box-information-job-button">
-                              <Button
-                                text="AI Match %"
-                                onClick={() =>
-                                  handleMatch(values?.content?.data)
-                                }
-                                isDisabled={
-                                  isPostsLoading ||
-                                  isMorePostsLoading ||
-                                  isPostActionLoading ||
-                                  status === 'pending_comment'
-                                }
-                              />
-                            </div>
+                            {values?.content?.data?.applyUrl && (
+                              <div className="comment-box-information-job-button">
+                                <Button
+                                  text="AI Match %"
+                                  onClick={() =>
+                                    handleMatch(values?.content?.data)
+                                  }
+                                  isDisabled={
+                                    isPostsLoading ||
+                                    isMorePostsLoading ||
+                                    isPostActionLoading ||
+                                    status === 'pending_comment'
+                                  }
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       ) : (
