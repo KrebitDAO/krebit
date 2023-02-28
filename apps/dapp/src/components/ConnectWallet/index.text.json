@@ -1,0 +1,38 @@
+{
+  "en": {
+    "loading-title": "Connecting to decentralized identity",
+    "loading-view-text": "Authorizing your wallet",
+    "wallet-header-title": "Connect your Wallet",
+    "wallet-buttons": [
+      "Metamask",
+      "Wallet connect",
+      "Email / Social Login"
+    ],
+    "wallet-terms-text": [
+      "I have read and accept the",
+      "terms",
+      "and",
+      "privacy policy"
+    ],
+    "wallet-remember-session": "Remember session",
+    "wallet-read": "I don't have a wallet"
+  },
+  "es": {
+    "loading-title": "Conectando a identidad decentralizada",
+    "loading-view-text": "Autorizando tu billetera",
+    "wallet-header-title": "Conecta tu billetera",
+    "wallet-buttons": [
+      "Metamask",
+      "Wallet connect",
+      "Correo / Social Login"
+    ],
+    "wallet-terms-text": [
+      "He leído y aceptado los",
+      "términos",
+      "y",
+      "condiciones de privacidad"
+    ],
+    "wallet-remember-session": "Recordar sesión",
+    "wallet-read": "No tengo una billetera"
+  }
+}

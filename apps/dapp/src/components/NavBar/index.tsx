@@ -1,11 +1,13 @@
 import { useContext, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { Wrapper } from './styles';
 import { Menu, Close, Logo } from 'components/Icons';
 import { Button } from 'components/Button';
 import { ConnectWallet } from 'components/ConnectWallet';
 import { GeneralContext } from 'context';
+import NavBarText from './index.text.json';
 
 export const NavBar = () => {
   const {
@@ -13,6 +15,7 @@ export const NavBar = () => {
     walletModal: { handleOpenConnectWallet, openConnectWallet }
   } = useContext(GeneralContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { locale } = useRouter();
 
   const handleMenuOpen = () => {
     setIsMenuOpen(prevState => !prevState);
@@ -53,7 +56,7 @@ export const NavBar = () => {
                 className="menu-bar-item"
                 onClick={handleCloseMenu}
               >
-                Discord
+                {NavBarText[locale]['menu-bar-items'][0]}
               </a>
             </Link>
             <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
@@ -62,12 +65,12 @@ export const NavBar = () => {
                 className="menu-bar-item"
                 onClick={handleCloseMenu}
               >
-                Docs
+                {NavBarText[locale]['menu-bar-items'][1]}
               </a>
             </Link>
             <Link href="#hire">
               <a className="menu-bar-item" onClick={handleCloseMenu}>
-                Recruiters
+                {NavBarText[locale]['menu-bar-items'][2]}
               </a>
             </Link>
             <Link
@@ -79,12 +82,12 @@ export const NavBar = () => {
                 className="menu-bar-item"
                 onClick={handleCloseMenu}
               >
-                Credential Issuers
+                {NavBarText[locale]['menu-bar-items'][3]}
               </a>
             </Link>
             <div className="menu-bar-button">
               <Button
-                text="Try it now"
+                text={NavBarText[locale]['menu-bar-button']}
                 onClick={handleOpenWallet}
                 isDisabled={status === 'pending'}
               />
@@ -98,7 +101,7 @@ export const NavBar = () => {
               className="menu-content-item"
               onClick={handleCloseMenu}
             >
-              Discord
+              {NavBarText[locale]['menu-bar-items'][0]}
             </a>
           </Link>
           <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
@@ -107,12 +110,12 @@ export const NavBar = () => {
               className="menu-content-item"
               onClick={handleCloseMenu}
             >
-              Docs
+              {NavBarText[locale]['menu-bar-items'][1]}
             </a>
           </Link>
           <Link href="#hire">
             <a className="menu-content-item" onClick={handleCloseMenu}>
-              Recruiters
+              {NavBarText[locale]['menu-bar-items'][2]}
             </a>
           </Link>
           <Link
@@ -124,12 +127,12 @@ export const NavBar = () => {
               className="menu-content-item"
               onClick={handleCloseMenu}
             >
-              Credential Issuers
+              {NavBarText[locale]['menu-bar-items'][3]}
             </a>
           </Link>
           <div className="menu-content-button">
             <Button
-              text="Try it now"
+              text={NavBarText[locale]['menu-bar-button']}
               onClick={handleOpenWallet}
               isDisabled={status === 'pending'}
             />

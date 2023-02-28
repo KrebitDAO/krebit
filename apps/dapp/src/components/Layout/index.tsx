@@ -1,10 +1,4 @@
-import {
-  FunctionComponent,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import { FunctionComponent, ReactNode, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -17,7 +11,7 @@ import {
   Wrapper
 } from './styles';
 import {
-  Token,
+  Add,
   Close,
   Explore,
   Help,
@@ -34,33 +28,34 @@ import { Badge } from 'components/Badge';
 import { Notifications } from 'components/Notifications';
 import { GeneralContext } from 'context';
 import { formatUrlImage } from 'utils';
+import LayoutText from './index.text.json';
 
 interface IProps {
   children: ReactNode;
 }
 
-const MENU_OPTIONS = [
+const MENU_OPTIONS = (locale: string) => [
   {
-    title: 'Activity',
+    title: LayoutText[locale]['nav-bar']['menu-options'][0],
     href: '/posts',
-    icon: <Home />,
-    badgeText: 'New'
+    icon: <Home />
   },
   {
-    title: 'Explore',
+    title: LayoutText[locale]['nav-bar']['menu-options'][1],
     href: '/explore',
-    icon: <Explore />
+    icon: <Explore />,
+    badgeText: LayoutText[locale]['badge-texts'][0]
   },
   {
-    title: 'Create',
+    title: LayoutText[locale]['nav-bar']['menu-options'][2],
     href: '/create',
-    icon: <Token />,
+    icon: <Add />,
     isPrivate: true,
-    badgeText: 'Beta',
+    badgeText: LayoutText[locale]['badge-texts'][1],
     badgeColor: 'blueRibbon'
   },
   {
-    title: 'Inbox',
+    title: LayoutText[locale]['nav-bar']['menu-options'][3],
     href: '/messages',
     icon: <Send />,
     isPrivate: true
@@ -80,7 +75,7 @@ export const Layout: FunctionComponent<IProps> = props => {
   const [navBarDesktopOptionHovered, setNavBarDesktopOptionHovered] =
     useState<string>();
   const [areNotificationsOpen, setAreNotificationsOpen] = useState(false);
-  const { push, asPath } = useRouter();
+  const { push, asPath, locale } = useRouter();
   const isLoading = auth.status === 'pending';
 
   const handlePushProfile = () => {
@@ -165,11 +160,13 @@ export const Layout: FunctionComponent<IProps> = props => {
                     <InlineDropdown
                       items={[
                         {
-                          title: 'My profile',
+                          title:
+                            LayoutText[locale].menu['inline-dropdown-items'][0],
                           onClick: handlePushProfile
                         },
                         {
-                          title: 'Log out',
+                          title:
+                            LayoutText[locale].menu['inline-dropdown-items'][1],
                           onClick: handleLogout
                         }
                       ]}
@@ -204,7 +201,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Home
+                    {LayoutText[locale]['menu-content-mobile'].items[0]}
                   </a>
                 </Link>
                 <Link
@@ -216,7 +213,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Discord
+                    {LayoutText[locale]['menu-content-mobile'].items[1]}
                   </a>
                 </Link>
                 <Link href="https://docs.krebit.id/" rel="noopener noreferrer">
@@ -225,7 +222,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Docs
+                    {LayoutText[locale]['menu-content-mobile'].items[2]}
                   </a>
                 </Link>
                 <Link
@@ -237,7 +234,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Recruiters
+                    {LayoutText[locale]['menu-content-mobile'].items[3]}
                   </a>
                 </Link>
                 <Link
@@ -249,7 +246,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                     className="menu-content-mobile-item"
                     onClick={handleMenuContentMobileOpen}
                   >
-                    Credential Issuers
+                    {LayoutText[locale]['menu-content-mobile'].items[4]}
                   </a>
                 </Link>
               </div>
@@ -267,83 +264,16 @@ export const Layout: FunctionComponent<IProps> = props => {
                   <Loading type="skeleton" />
                 </div>
               ))
-            : MENU_OPTIONS.filter(option =>
-                auth.isAuthenticated ? option : !option.isPrivate
-              ).map((content, index) => (
-                <Link href={content.href} key={index}>
-                  <NavBarOption isActive={asPath.includes(content.href)}>
-                    <div className="option-icon">
-                      {content.title === 'Inbox' ? (
-                        <Badge
-                          icon={content.icon}
-                          color={
-                            notificationsCount?.messages
-                              ? 'rose'
-                              : content.badgeColor
-                          }
-                          iconColor={
-                            asPath.includes(content.href) ? 'cyan' : 'gray'
-                          }
-                          text={
-                            notificationsCount?.messages
-                              ? notificationsCount?.messages.toString()
-                              : content.badgeText
-                          }
-                        />
-                      ) : content.badgeText ? (
-                        <Badge
-                          icon={content.icon}
-                          color={content.badgeColor}
-                          iconColor={
-                            asPath.includes(content.href) ? 'cyan' : 'gray'
-                          }
-                          text={content.badgeText}
-                        />
-                      ) : (
-                        content.icon
-                      )}
-                    </div>
-                  </NavBarOption>
-                </Link>
-              ))}
-          {!isLoading && !auth?.isAuthenticated ? (
-            <NavBarOption isActive={false} onClick={handleHelp}>
-              <div className="option-icon">
-                <Help />
-              </div>
-            </NavBarOption>
-          ) : null}
-        </NavBarMobile>
-        <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
-          <div className="options">
-            <div className="option-logo">
-              <Link href="/" rel="noopener noreferrer">
-                <a>
-                  <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
-                </a>
-              </Link>
-            </div>
-            {isLoading
-              ? new Array(3).fill(0).map((_, index) => (
-                  <div className="option-loading" key={index}>
-                    <Loading type="skeleton" />
-                  </div>
-                ))
-              : MENU_OPTIONS.filter(option =>
+            : MENU_OPTIONS(locale)
+                .filter(option =>
                   auth.isAuthenticated ? option : !option.isPrivate
-                ).map((content, index) => (
+                )
+                .map((content, index) => (
                   <Link href={content.href} key={index}>
-                    <NavBarOption
-                      isActive={asPath.includes(content.href)}
-                      onMouseEnter={() =>
-                        handleNavBarDesktopOptionHovered(content.title)
-                      }
-                      onMouseLeave={() =>
-                        handleNavBarDesktopOptionHovered(undefined)
-                      }
-                    >
+                    <NavBarOption isActive={asPath.includes(content.href)}>
                       <div className="option-icon">
-                        {content.title === 'Inbox' ? (
+                        {content.title ===
+                        LayoutText[locale]['nav-bar']['menu-options'][3] ? (
                           <Badge
                             icon={content.icon}
                             color={
@@ -368,18 +298,91 @@ export const Layout: FunctionComponent<IProps> = props => {
                               asPath.includes(content.href) ? 'cyan' : 'gray'
                             }
                             text={content.badgeText}
-                            onClick={() => {}}
                           />
                         ) : (
                           content.icon
                         )}
                       </div>
-                      {navBarDesktopOptionHovered === content.title && (
-                        <p className="option-hover">{content.title}</p>
-                      )}
                     </NavBarOption>
                   </Link>
                 ))}
+          {!isLoading && !auth?.isAuthenticated ? (
+            <NavBarOption isActive={false} onClick={handleHelp}>
+              <div className="option-icon">
+                <Help />
+              </div>
+            </NavBarOption>
+          ) : null}
+        </NavBarMobile>
+        <NavBarDesktop profilePicture={formatUrlImage(profile?.picture)}>
+          <div className="options">
+            <div className="option-logo">
+              <Link href="/" rel="noopener noreferrer">
+                <a>
+                  <img src="/imgs/logos/Krebit.svg" width={40} height={40} />
+                </a>
+              </Link>
+            </div>
+            {isLoading
+              ? new Array(3).fill(0).map((_, index) => (
+                  <div className="option-loading" key={index}>
+                    <Loading type="skeleton" />
+                  </div>
+                ))
+              : MENU_OPTIONS(locale)
+                  .filter(option =>
+                    auth.isAuthenticated ? option : !option.isPrivate
+                  )
+                  .map((content, index) => (
+                    <Link href={content.href} key={index}>
+                      <NavBarOption
+                        isActive={asPath.includes(content.href)}
+                        onMouseEnter={() =>
+                          handleNavBarDesktopOptionHovered(content.title)
+                        }
+                        onMouseLeave={() =>
+                          handleNavBarDesktopOptionHovered(undefined)
+                        }
+                      >
+                        <div className="option-icon">
+                          {content.title ===
+                          LayoutText[locale]['nav-bar']['menu-options'][3] ? (
+                            <Badge
+                              icon={content.icon}
+                              color={
+                                notificationsCount?.messages
+                                  ? 'rose'
+                                  : content.badgeColor
+                              }
+                              iconColor={
+                                asPath.includes(content.href) ? 'cyan' : 'gray'
+                              }
+                              text={
+                                notificationsCount?.messages
+                                  ? notificationsCount?.messages.toString()
+                                  : content.badgeText
+                              }
+                            />
+                          ) : content.badgeText ? (
+                            <Badge
+                              icon={content.icon}
+                              color={content.badgeColor}
+                              iconColor={
+                                asPath.includes(content.href) ? 'cyan' : 'gray'
+                              }
+                              text={content.badgeText}
+                              onClick={() => {}}
+                            />
+                          ) : (
+                            content.icon
+                          )}
+                        </div>
+                        {navBarDesktopOptionHovered === content.title && (
+                          <p className="option-hover">{content.title}</p>
+                        )}
+                      </NavBarOption>
+                    </Link>
+                  ))}
           </div>
           <div className="option-profile-container">
             <NavBarOption
@@ -392,7 +395,9 @@ export const Layout: FunctionComponent<IProps> = props => {
                 <Help />
               </div>
               {navBarDesktopOptionHovered === 'help' && (
-                <p className="option-hover">help</p>
+                <p className="option-hover">
+                  {LayoutText[locale]['nav-bar']['menu-options'][4]}
+                </p>
               )}
             </NavBarOption>
             {isLoading ? (
@@ -423,7 +428,9 @@ export const Layout: FunctionComponent<IProps> = props => {
                     />
                   </div>
                   {navBarDesktopOptionHovered === 'notifications' && (
-                    <p className="option-hover">Notifications</p>
+                    <p className="option-hover">
+                      {LayoutText[locale]['nav-bar']['menu-options'][5]}
+                    </p>
                   )}
                 </NavBarOption>
                 <div className="option-profile">
@@ -436,11 +443,17 @@ export const Layout: FunctionComponent<IProps> = props => {
                       <InlineDropdown
                         items={[
                           {
-                            title: 'My profile',
+                            title:
+                              LayoutText[locale].menu[
+                                'inline-dropdown-items'
+                              ][0],
                             onClick: handlePushProfile
                           },
                           {
-                            title: 'Log out',
+                            title:
+                              LayoutText[locale].menu[
+                                'inline-dropdown-items'
+                              ][1],
                             onClick: handleLogout
                           }
                         ]}
@@ -461,7 +474,9 @@ export const Layout: FunctionComponent<IProps> = props => {
                   <Login />
                 </div>
                 {navBarDesktopOptionHovered === 'wallet' && (
-                  <p className="option-hover">Connect wallet</p>
+                  <p className="option-hover">
+                    {LayoutText[locale]['nav-bar']['menu-options'][6]}
+                  </p>
                 )}
               </NavBarOption>
             )}

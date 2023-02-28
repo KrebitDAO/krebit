@@ -1,0 +1,60 @@
+{
+  "en": {
+    "menu": {
+      "inline-dropdown-items": [
+        "My profile",
+        "Log out"
+      ]
+    },
+    "menu-content-mobile": {
+      "items": [
+        "Home",
+        "Discord",
+        "Docs",
+        "Recruiters",
+        "Credential Issuers"
+      ]
+    },
+    "nav-bar": {
+      "menu-options": [
+        "Activity",
+        "Explore",
+        "Create",
+        "Inbox",
+        "Help",
+        "Notifications",
+        "Connect Wallet"
+      ]
+    },
+    "badge-texts": ["New", "Beta"]
+  },
+  "es": {
+    "menu": {
+      "inline-dropdown-items": [
+        "Mi perfil",
+        "Salir"
+      ]
+    },
+    "menu-content-mobile": {
+      "items": [
+        "Inicio",
+        "Discord",
+        "Docs",
+        "Reclutadores",
+        "Emisores de Credenciales"
+      ]
+    },
+    "nav-bar": {
+      "menu-options": [
+        "Actividad",
+        "Explorar",
+        "Crear",
+        "Buzón",
+        "Ayuda",
+        "Notificaciones",
+        "Conectar billetera"
+      ]
+    },
+    "badge-texts": ["Nuevo", "Beta"]
+  }
+}

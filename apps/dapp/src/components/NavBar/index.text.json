@@ -1,0 +1,15 @@
+{
+  "en": {
+    "menu-bar-items": ["Discord", "Docs", "Recruiters", "Credential Issuers"],
+    "menu-bar-button": "Join the Network!"
+  },
+  "es": {
+    "menu-bar-items": [
+      "Discord",
+      "Docs",
+      "Reclutadores",
+      "Emisores de Credenciales"
+    ],
+    "menu-bar-button": "Probar ahora"
+  }
+}

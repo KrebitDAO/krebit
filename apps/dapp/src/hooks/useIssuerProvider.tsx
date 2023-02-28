@@ -363,7 +363,7 @@ export const useIssuerProvider = (props: IProps) => {
   };
 
   const handleCleanClaimValues = () => {
-    setClaimValues(initialState);
+    // setClaimValues(initialState);
     setStatus('idle');
     setStatusMessage(undefined);
     setErrorMessage(undefined);

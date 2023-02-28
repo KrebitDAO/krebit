@@ -84,10 +84,14 @@ export const Verify = (props: IProps) => {
     (provider?.currentMint || credential?.stamps?.length > 0);
   const canClaimBuilderCredentials =
     walletInformation?.address?.toLowerCase() !==
-    credential?.credential?.credentialSubject?.ethereumAddress.toLowerCase();
+      credential?.credential?.credentialSubject?.ethereumAddress.toLowerCase() &&
+    walletInformation?.address?.toLowerCase() !==
+      credential?.credential?.issuer?.ethereumAddress.toLowerCase();
   const canAddMemberCredentials =
     walletInformation?.address?.toLowerCase() ==
-    credential?.credential?.credentialSubject?.ethereumAddress.toLowerCase();
+      credential?.credential?.credentialSubject?.ethereumAddress.toLowerCase() &&
+    walletInformation?.address?.toLowerCase() !==
+      credential?.credential?.issuer?.ethereumAddress.toLowerCase();
   const isReadOnly = readOnly
     ? true
     : credential?.credential?.visualInformation?.credentialType === 'Issuer' &&

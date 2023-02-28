@@ -66,6 +66,7 @@ import { VideoCall } from './VideoCall';
 import { Cred } from './Cred';
 import { Notifications } from './Notifications';
 import { Flip } from './Flip';
+import { Quote } from './Quote';
 
 export {
   Close,
@@ -135,5 +136,6 @@ export {
   VideoCall,
   Cred,
   Notifications,
-  Flip
+  Flip,
+  Quote
 };
