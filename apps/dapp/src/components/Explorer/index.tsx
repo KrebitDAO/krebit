@@ -37,6 +37,7 @@ export interface IProps {
 }
 
 interface ICard {
+  salaryRange: string;
   href?: string;
   title?: string;
   picture?: string;
@@ -318,6 +319,7 @@ export const Explorer = (props: IProps) => {
               href: `/posts?post_id=${values?.stream_id}`,
               title: values?.content?.data?.title,
               description: values?.content?.data?.description,
+              salaryRange: values?.content?.data?.salaryRange,
               picture:
                 values?.content?.data?.imageUrl ||
                 values?.creator_details?.profile?.pfp ||
@@ -685,6 +687,9 @@ export const Explorer = (props: IProps) => {
                           </div>
                           <p className="explore-service-description">
                             {card.title}
+                          </p>
+                          <p className="explore-service-description">
+                            $ {card.salaryRange} MATIC
                           </p>
                         </div>
                         <div className="explorer-card-button">
