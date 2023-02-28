@@ -8,6 +8,7 @@ interface INofiticationBody {
   subject: string;
   content: string;
   recipients: string[];
+  html?: string;
 }
 
 interface IProps {
@@ -51,7 +52,7 @@ const sendMessage = async (
     },
     body: JSON.stringify({
       subject: body.subject,
-      content: body.content,
+      content: body?.html ? body?.html : body?.content,
       recipients: [value]
     })
   }).then(result => result.json());

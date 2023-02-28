@@ -1,4 +1,5 @@
 import { FunctionComponent, useContext, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import { Wrapper, WalletButton } from './styles';
 import { Close } from 'components/Icons';
@@ -6,6 +7,7 @@ import { Loading } from 'components/Loading';
 import { Checkbox } from 'components/Checkbox';
 import { Login } from 'components/Icons';
 import { GeneralContext } from 'context';
+import ConnectWalletText from './index.text.json';
 
 interface IProps {
   onClose: () => void;
@@ -20,6 +22,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
   const {
     auth: { connect, handleRememberSession }
   } = useContext(GeneralContext);
+  const { locale } = useRouter();
 
   const handleConnect = async (type: string) => {
     try {
@@ -63,19 +66,23 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
           {status === 'pending' ? (
             <>
               <p className="loading-title">
-                Connecting to decentralized identity
+                {ConnectWalletText[locale]['loading-title']}
               </p>
               <div className="loading-view">
                 <div className="loading-view-container">
                   <Loading />
                 </div>
-                <p className="loading-view-text">Authorizing your wallet</p>
+                <p className="loading-view-text">
+                  {ConnectWalletText[locale]['loading-view-text']}
+                </p>
               </div>
             </>
           ) : (
             <>
               <div className="wallet-header">
-                <p className="wallet-header-title">Connect your Wallet</p>
+                <p className="wallet-header-title">
+                  {ConnectWalletText[locale]['wallet-header-title']}
+                </p>
                 <div className="wallet-header-close" onClick={onClose}>
                   <Close />
                 </div>
@@ -87,7 +94,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                   onClick={() => handleConnect('metamask')}
                 >
                   <img src="/imgs/logos/metamask.png" width={24} height={24} />{' '}
-                  Metamask
+                  {ConnectWalletText[locale]['wallet-buttons'][0]}
                 </WalletButton>
                 <WalletButton
                   textColor="white"
@@ -99,19 +106,21 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                     width={30}
                     height={24}
                   />{' '}
-                  Wallet connect
+                  {ConnectWalletText[locale]['wallet-buttons'][1]}
                 </WalletButton>
                 <WalletButton
                   textColor="periwinkle"
                   disabled={!hasAcceptedTerms}
                   onClick={() => handleConnect('web3auth')}
                 >
-                  <Login /> Email / Social Login
+                  <Login /> {ConnectWalletText[locale]['wallet-buttons'][2]}
                 </WalletButton>
               </div>
               <div className="wallet-remember-session">
                 <Checkbox
-                  placeholder="Remember session"
+                  placeholder={
+                    ConnectWalletText[locale]['wallet-remember-session']
+                  }
                   name="remember"
                   value={shouldRememberSession}
                   onChange={handleShouldRememberSession}
@@ -125,13 +134,13 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                   onChange={handleHasAcceptedTerms}
                 />
                 <p className="wallet-terms-text">
-                  I have read and accept the{' '}
+                  {ConnectWalletText[locale]['wallet-terms-text'][0]}{' '}
                   <a className="wallet-terms-text-link" href="/terms">
-                    terms
+                    {ConnectWalletText[locale]['wallet-terms-text'][1]}
                   </a>{' '}
-                  and{' '}
+                  {ConnectWalletText[locale]['wallet-terms-text'][2]}{' '}
                   <a className="wallet-terms-text-link" href="/privacy">
-                    privacy policy
+                    {ConnectWalletText[locale]['wallet-terms-text'][3]}
                   </a>
                   .
                 </p>
@@ -141,7 +150,7 @@ export const ConnectWallet: FunctionComponent<IProps> = props => {
                 href="https://metamask.io/download/"
                 target="_blank"
               >
-                I don't have a wallet
+                {ConnectWalletText[locale]['wallet-read']}
               </a>
             </>
           )}

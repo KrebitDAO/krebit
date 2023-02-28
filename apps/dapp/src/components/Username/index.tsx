@@ -744,7 +744,7 @@ export const Username = () => {
                         </div>
                       ) : (
                         <>
-                          <p className="payments-header-balance">{`$ ${balance}`}</p>
+                          <p className="payments-header-balance">{`$ ${balance} MATIC`}</p>
                           {parseFloat(balance) !== 0 ? (
                             <div className="payments-buttons">
                               <Button

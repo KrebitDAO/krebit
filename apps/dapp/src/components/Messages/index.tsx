@@ -25,7 +25,7 @@ import {
   ArrowSend,
   Close,
   VideoCall,
-  Deal
+  Quote
 } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Autocomplete } from 'components/Autocomplete';
@@ -692,7 +692,7 @@ export const Messages = () => {
                           : handleCreateDeal
                       }
                     >
-                      <Deal />
+                      <Quote />
                     </div>
                   </>
                 )}

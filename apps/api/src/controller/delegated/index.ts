@@ -97,7 +97,9 @@ export const DelegatedController = async (
         claimValue.ethereumAddress.toLowerCase() ===
           wallet.address.toLowerCase() &&
         credentialSubjectAddress.toLowerCase() !==
-          claimedCredential.credentialSubject.ethereumAddress.toLowerCase();
+          claimedCredential.credentialSubject.ethereumAddress.toLowerCase() &&
+        credentialSubjectAddress.toLowerCase() !==
+          claimedCredential.issuer.ethereumAddress.toLowerCase();
 
       // If valid issuer
       if (valid) {

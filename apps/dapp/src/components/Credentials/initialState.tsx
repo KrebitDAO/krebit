@@ -7,7 +7,8 @@ import {
   School,
   Deal,
   WorkExperience,
-  Star
+  Star,
+  Quote
 } from 'components/Icons';
 import { countries } from 'utils';
 
@@ -49,6 +50,7 @@ export interface IState {
       isMultiline?: boolean;
       items?: IItems[];
       asyncFunction?: (props: any) => void | Promise<any | any[]>;
+      endAdornment?: string;
     }[];
     issueTo?: {
       name: string;
@@ -73,7 +75,7 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
     title: 'Refer a friend',
     description: 'Invite a friend to the Krebiters community',
     primaryColor: 'haiti',
-    secondaryColor: 'rose',
+    secondaryColor: 'heliotrope',
     icon: <Delegate />,
     form: {
       fields: [
@@ -221,11 +223,11 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
   },
   {
     type: 'deal',
-    title: 'Deal (beta)',
-    description: 'Offer or quotation for a service or product',
+    title: 'Deal Quote (Beta)',
+    description: 'Offer a quotation for a service or product',
     primaryColor: 'blueCharcoal',
     secondaryColor: 'pomegranate',
-    icon: <Deal />,
+    icon: <Quote />,
     form: {
       fields: [
         {
@@ -279,6 +281,7 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
           type: 'number',
           name: 'price',
           placeholder: 'Price',
+          endAdornment: 'MATIC',
           validationType: 'string',
           validations: [
             {
@@ -351,119 +354,6 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
             ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
             credentialType: 'Deal',
             credentialSchema: 'krebit://schemas/offer'
-          };
-        }
-      }
-    }
-  },
-  {
-    type: 'workExperience',
-    title: 'Work Experience (Pro)',
-    description: 'Certify someone that has worked with/for you',
-    primaryColor: 'haiti',
-    secondaryColor: 'blueRibbon',
-    icon: <WorkExperience />,
-    form: {
-      fields: [
-        {
-          type: 'text',
-          name: 'name',
-          placeholder: 'Role / Job Title',
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Role / Job title is required']
-            }
-          ]
-        },
-        {
-          name: 'description',
-          placeholder:
-            'Write the description of the tasks/achievements of that person here',
-          validationType: 'string'
-        },
-        {
-          type: 'upload',
-          name: 'image',
-          placeholder: 'add logo'
-        },
-        {
-          type: 'select',
-          name: 'entity',
-          placeholder: 'Entity/Organization',
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Entity/Organization is required']
-            }
-          ]
-        },
-        {
-          type: 'datepicker',
-          name: 'startDate',
-          placeholder: 'Start date',
-          validationType: 'string'
-        },
-        {
-          type: 'datepicker',
-          name: 'endDate',
-          placeholder: 'End date',
-          validationType: 'string'
-        },
-        {
-          type: 'text',
-          name: 'proof',
-          placeholder: 'Proof url',
-          validationType: 'string'
-        },
-        {
-          type: 'boxes',
-          name: 'skills',
-          placeholder: 'Skills',
-          validationType: 'array',
-          validations: [
-            {
-              type: 'min',
-              params: [1, 'Skills are required']
-            }
-          ]
-        }
-      ],
-      issueTo: {
-        name: 'issueTo',
-        placeholder: 'Issue to',
-        validationType: 'array',
-        validations: [
-          {
-            type: 'min',
-            params: [1, 'Issuers are required']
-          }
-        ]
-      },
-      button: {
-        text: 'WorkExperience',
-        onClick: values => {
-          // TODO: encrypt issueTo and get credentialSubjectListUrl
-
-          return {
-            values: {
-              ...values,
-              title: values.name,
-              skills: (values.skills as string[]).map(skill => {
-                return {
-                  skillId: skill,
-                  score: 100
-                };
-              })
-            },
-            tags: values.skills,
-            verificationUrl: `${NEXT_PUBLIC_ISSUER_NODE_URL}/delegated`,
-            did: NEXT_PUBLIC_ISSUER_DID,
-            ethereumAddress: NEXT_PUBLIC_ISSUER_ADDRESS,
-            credentialType: 'WorkExperience',
-            credentialSchema: 'krebit://schemas/workExperience'
           };
         }
       }
@@ -804,12 +694,78 @@ export const CREDENTIALS_INITIAL_STATE: IState[] = [
 
 export const SERVICES_INITIAL_STATE: IState[] = [
   {
-    type: 'job',
-    title: 'Post a job',
-    description: 'Find the best professionals in the Krebiters community',
+    type: 'service',
+    title: 'Offer your service (Beta)',
+    description:
+      'Referred members can sell with low commisions and fair dispute resolution',
     primaryColor: 'haiti',
     secondaryColor: 'rose',
-    icon: <Delegate />,
+    icon: <Deal />,
+    form: {
+      fields: [
+        {
+          type: 'text',
+          name: 'title',
+          placeholder: 'Title',
+          defaultValue: 'Service title',
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Title name is required']
+            }
+          ]
+        },
+        {
+          type: 'text',
+          name: 'description',
+          placeholder: 'Description',
+          isMultiline: true,
+          validationType: 'string',
+          validations: [
+            {
+              type: 'required',
+              params: ['Description is required']
+            }
+          ]
+        },
+        {
+          type: 'upload',
+          name: 'image',
+          placeholder: 'Image / Logo'
+        },
+        {
+          type: 'string',
+          name: 'salaryRange',
+          placeholder: 'Price / Rate',
+          validationType: 'string'
+        },
+        {
+          type: 'boxes',
+          name: 'skills',
+          placeholder: 'Skills',
+          validationType: 'array',
+          validations: [
+            {
+              type: 'min',
+              params: [1, 'Skills are required']
+            }
+          ]
+        }
+      ],
+      button: {
+        text: 'Post Service',
+        onClick: values => values
+      }
+    }
+  },
+  {
+    type: 'job',
+    title: 'Post a job (Pro)',
+    description: 'Find the best professionals in the Krebiters community',
+    primaryColor: 'haiti',
+    secondaryColor: 'blueRibbon',
+    icon: <WorkExperience />,
     form: {
       fields: [
         {
@@ -915,72 +871,7 @@ export const SERVICES_INITIAL_STATE: IState[] = [
         }
       ],
       button: {
-        text: 'Post job',
-        onClick: values => values
-      }
-    }
-  },
-  {
-    type: 'service',
-    title: 'Offer your service',
-    description: 'Find the best professionals in the Krebiters community',
-    primaryColor: 'haiti',
-    secondaryColor: 'rose',
-    icon: <Delegate />,
-    form: {
-      fields: [
-        {
-          type: 'text',
-          name: 'title',
-          placeholder: 'Title',
-          defaultValue: 'Service position',
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Title name is required']
-            }
-          ]
-        },
-        {
-          type: 'text',
-          name: 'description',
-          placeholder: 'Description',
-          isMultiline: true,
-          validationType: 'string',
-          validations: [
-            {
-              type: 'required',
-              params: ['Description is required']
-            }
-          ]
-        },
-        {
-          type: 'upload',
-          name: 'image',
-          placeholder: 'Image / Logo'
-        },
-        {
-          type: 'string',
-          name: 'salaryRange',
-          placeholder: 'Salary range',
-          validationType: 'string'
-        },
-        {
-          type: 'boxes',
-          name: 'skills',
-          placeholder: 'Skills',
-          validationType: 'array',
-          validations: [
-            {
-              type: 'min',
-              params: [1, 'Skills are required']
-            }
-          ]
-        }
-      ],
-      button: {
-        text: 'Offer your service',
+        text: 'Post Job',
         onClick: values => values
       }
     }

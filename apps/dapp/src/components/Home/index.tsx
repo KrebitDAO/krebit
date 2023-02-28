@@ -111,7 +111,7 @@ export const Home = () => {
             <div className="main-buttons">
               <div className="main-button">
                 <Button
-                  text="Try it now"
+                  text="Join the Network!"
                   onClick={handleOpenConnectWallet}
                   isDisabled={status === 'pending'}
                 />
@@ -525,7 +525,7 @@ export const Home = () => {
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Try it now"
+              text="Join the Network!"
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               onClick={handleOpenConnectWallet}

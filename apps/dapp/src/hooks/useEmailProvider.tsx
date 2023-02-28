@@ -285,7 +285,6 @@ export const useEmailProvider = (props: IProps) => {
   };
 
   const handleCleanClaimValues = () => {
-    setClaimValues(initialState);
     setStatus('idle');
     setStatusMessage(undefined);
     setErrorMessage(undefined);

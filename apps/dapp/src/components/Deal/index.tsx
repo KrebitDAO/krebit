@@ -374,7 +374,7 @@ export const Deal = () => {
   const handleReview = () => {
     let value: string;
 
-    if (seller === walletInformation?.address) {
+    if (seller === walletInformation?.address.toLowerCase()) {
       value = buyers[0];
     }
 
@@ -572,7 +572,7 @@ export const Deal = () => {
           )}
           {(credentialStatus as string) === 'Created' && (
             <>
-              {seller === walletInformation?.address && (
+              {seller === walletInformation?.address.toLowerCase() && (
                 <div className="actions-buttons">
                   <Button
                     text="Cancel"
@@ -608,7 +608,7 @@ export const Deal = () => {
           )}
           {(credentialStatus as string) === 'Delivered' && (
             <>
-              {seller === walletInformation?.address && (
+              {seller === walletInformation?.address.toLowerCase() && (
                 <div className="actions-buttons">
                   <Button
                     text="Raise Dispute"
@@ -639,7 +639,7 @@ export const Deal = () => {
           )}
           {(credentialStatus as string) === 'Released' && (
             <>
-              {seller === walletInformation?.address && (
+              {seller === walletInformation?.address.toLowerCase() && (
                 <div className="actions-buttons">
                   <p className="actions-balance">
                     Payments Balance: <br />

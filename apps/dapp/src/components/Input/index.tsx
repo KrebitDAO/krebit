@@ -4,6 +4,7 @@ import { InputWrapper } from './styles';
 
 import { StyledEngineProvider } from '@mui/material';
 import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 interface IProps {
   name: string;
@@ -23,6 +24,7 @@ interface IProps {
   isMultiline?: boolean;
   isDisabled?: boolean;
   isRequired?: boolean;
+  endAdornment?: string;
 }
 
 export const Input = (props: IProps) => {
@@ -35,7 +37,8 @@ export const Input = (props: IProps) => {
     pattern,
     isMultiline = false,
     isDisabled = false,
-    isRequired = false
+    isRequired = false,
+    endAdornment
   } = props;
 
   return (
@@ -56,8 +59,13 @@ export const Input = (props: IProps) => {
           required={isRequired}
           rows={isMultiline ? 4 : 0}
           inputProps={{
-            inputMode: type,
             pattern
+          }}
+          InputProps={{
+            inputMode: type,
+            endAdornment: endAdornment ? (
+              <InputAdornment position="end">{endAdornment}</InputAdornment>
+            ) : undefined
           }}
         />
       </InputWrapper>

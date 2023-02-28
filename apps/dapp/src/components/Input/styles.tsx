@@ -55,5 +55,9 @@ export const InputWrapper = styled.div`
     .Mui-error {
       color: ${theme.colors.white}B3 !important;
     }
+
+    .MuiTypography-root {
+      color: ${theme.colors.white}B3 !important;
+    }
   `}
 `;
