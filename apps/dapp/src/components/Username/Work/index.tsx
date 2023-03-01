@@ -316,7 +316,7 @@ export const Work = (props: IProps) => {
         />
       ) : null}
       <Wrapper isHidden={isHidden}>
-        <div className="work-header">
+        <div id="work-header" className="work-header">
           <div className="work-header-text-container">
             <p className="work-header-text">Work credentials</p>
             {currentFilterOption === 'overview' && (

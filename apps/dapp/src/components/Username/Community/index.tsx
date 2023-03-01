@@ -366,7 +366,7 @@ export const Community = (props: IProps) => {
         />
       ) : null}
       <Wrapper isHidden={isHidden}>
-        <div className="community-header">
+        <div id="community-header" className="community-header">
           <div className="community-header-text-container">
             <p className="community-header-text">Community credentials</p>
             {currentFilterOption === 'overview' && (

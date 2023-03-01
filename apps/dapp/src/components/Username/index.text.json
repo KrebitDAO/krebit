@@ -1,0 +1,106 @@
+{
+  "en": {
+    "step-next": "Next",
+    "step-back": "Back",
+    "step-close": "Close",
+    "steps": [
+      {
+        "content": "Let's begin our journey!",
+        "placement": "center",
+        "target": "body"
+      },
+      {
+        "content":
+          "You can edit your profile picture, name and description!",
+        "target": ".profile-buttons-container"
+      },
+      {
+        "content":
+          "Verify your personhood credentials like Github, Discord and Twitter!",
+        "target": ".person-header"
+      },
+      {
+        "content":
+          "Make reviews, so everyone can know how really good you are!",
+        "target": "#review-header"
+      },
+      {
+        "content":
+          "Verify your work credentials like Github collaborations and Dework tasks!",
+        "target": "#work-header"
+      },
+      {
+        "content":
+          "Verify your community credentials like Guild partnership and being part of an organization!",
+        "target": "#community-header"
+      },
+      {
+        "content":
+          "Also you can verify your education, work or even make deals!",
+        "target": "#issue-header"
+      },
+      {
+        "content":
+          "This is your money! Everytime you make a deal or refer someone, you will receive MATIC!",
+        "target": ".payments-header"
+      },
+      {
+        "content":
+          "Last but not least, these are your Krebits. Make them grow!",
+        "target": ".profile-info-token"
+      }
+    ]
+  },
+  "es" : {
+    "step-next": "Siguiente",
+    "step-back": "Volver",
+    "step-close": "Cerrar",
+    "steps": [
+      {
+        "content": "Comencemos este viaje!",
+        "placement": "center",
+        "target": "body"
+      },
+      {
+        "content":
+          "Puedes cambiar tu foto de perfil, nombre y descripción!",
+        "target": ".profile-buttons-container"
+      },
+      {
+        "content":
+          "Verifica tus credenciales personales como Github, Discord y Twitter!",
+        "target": ".person-header"
+      },
+      {
+        "content":
+          "Has reseñas, así todos sabran que tan bueno eres!",
+        "target": "#review-header"
+      },
+      {
+        "content":
+          "Verifica tus credenciales de trabajo, como colaboraciones en Github y tareas de Dework!",
+        "target": "#work-header"
+      },
+      {
+        "content":
+          "Verifica tus credenciales de sociedad de Guild o que eres parte de una organización!",
+        "target": "#community-header"
+      },
+      {
+        "content":
+          "Además, puedes verificar tu educación, trabajo o incluso hacer negocios!",
+        "target": "#issue-header"
+      },
+      {
+        "content":
+          "Este es tu dinero! Cada vez que hagas un negocio o refieras a alguien, recibirás MATIC!",
+        "target": ".payments-header"
+      },
+      {
+        "content":
+          "Por ultimo, estos son tus Krebits. Hazlos crecer!",
+        "target": ".profile-info-token"
+      }
+    ]
+  }
+}

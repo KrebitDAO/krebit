@@ -245,7 +245,7 @@ export const Review = (props: IProps) => {
         />
       ) : null}
       <Wrapper isHidden={isHidden}>
-        <div className="work-header">
+        <div id="review-header" className="work-header">
           <div className="work-header-text-container">
             <p className="work-header-text">Review credentials</p>
             {currentFilterOption === 'overview' && (

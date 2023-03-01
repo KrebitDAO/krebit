@@ -234,7 +234,7 @@ export const Issue = (props: IProps) => {
         />
       ) : null}
       <Wrapper isHidden={isHidden}>
-        <div className="community-header">
+        <div id="issue-header" className="community-header">
           <div className="community-header-text-container">
             <p className="community-header-text">Issued credentials</p>
             {currentFilterOption === 'overview' && (
