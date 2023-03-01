@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Error from 'next/error';
+import dynamic from 'next/dynamic';
 import Krebit from '@krebitdao/reputation-passport';
 import { getAddressFromDid } from '@orbisclub/orbis-sdk/utils';
 
@@ -28,6 +29,7 @@ import { ShareContentModal } from 'components/ShareContentModal';
 import { Share, SmartToy, SystemUpdateAlt } from 'components/Icons';
 import { QuestionModal } from 'components/QuestionModal';
 import { Rating } from 'components/Rating';
+import { HelpTooltip } from 'components/HelpTooltip';
 import {
   isValid,
   normalizeSchema,
@@ -38,9 +40,12 @@ import {
 import { getCredentials } from './utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
+import UsernameText from './index.text.json';
 
 // types
 import { ICredential, IProfile } from 'utils/normalizeSchema';
+
+const JoyRideNoSSR = dynamic(() => import('react-joyride'), { ssr: false });
 
 interface IFilterMenuProps {
   currentFilter: string;
@@ -143,7 +148,7 @@ export const Username = () => {
   const [isShareContentOpen, setIsShareContentOpen] = useState(false);
   const [isExportWalletOpen, setIsExportWalletOpen] = useState(false);
   const [arvStars, setArvStars] = useState(0);
-  const { query, push } = useRouter();
+  const { query, push, locale } = useRouter();
   const {
     auth,
     storage,
@@ -538,6 +543,17 @@ export const Username = () => {
 
   return (
     <>
+      {profile?.reputation === 0 &&
+      auth?.status === 'resolved' &&
+      auth?.isAuthenticated ? (
+        <JoyRideNoSSR
+          tooltipComponent={props => <HelpTooltip {...props} locale={locale} />}
+          continuous
+          showProgress
+          scrollToFirstStep
+          steps={UsernameText[locale].steps}
+        />
+      ) : null}
       {isEditProfileOpen && (
         <EditProfile
           profile={profile}
@@ -581,6 +597,7 @@ export const Username = () => {
           </LoadingWrapper>
         ) : (
           <Wrapper
+            id="container"
             profilePicture={formatUrlImage(profile?.picture)}
             isCurrentProfile={currentDIDFromURL !== auth?.did}
             type={type}
