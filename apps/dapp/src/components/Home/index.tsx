@@ -29,6 +29,7 @@ import { NavBar } from 'components/NavBar';
 import { constants } from 'utils';
 import { useWindowSize } from 'hooks';
 import { GeneralContext } from 'context';
+import HomeText from './index.text.json';
 
 export const Home = () => {
   const [isExtended, setExtended] = useState(undefined);
@@ -94,31 +95,31 @@ export const Home = () => {
       >
         <div className="main">
           <div className="main-content">
-            <h1 className="main-title">
-              Professionals: Earn with your Talent and grow your Reputation
-            </h1>
+            <h1 className="main-title">{HomeText[router.locale].hero.title}</h1>
             <ul>
               <li className="main-description">
-                Proof your skills, import your existing achievements
+                {HomeText[router.locale].hero.descriptions[0]}
               </li>
               <li className="main-description">
-                Safe and fair Escrow payments
+                {HomeText[router.locale].hero.descriptions[1]}
               </li>
               <li className="main-description">
-                Earn with referrals inviting your trusted contacts
+                {HomeText[router.locale].hero.descriptions[2]}
               </li>
             </ul>
             <div className="main-buttons">
               <div className="main-button">
                 <Button
-                  text="Join the Network!"
+                  text={HomeText[router.locale].hero.buttons['main-button']}
                   onClick={handleOpenConnectWallet}
                   isDisabled={status === 'pending'}
                 />
               </div>
               <div className="main-line-button">
                 <Link href="#web3">
-                  <a className="main-line-button-text">Web3 Native</a>
+                  <a className="main-line-button-text">
+                    {HomeText[router.locale].hero.buttons['main-line-button']}
+                  </a>
                 </Link>
               </div>
             </div>
@@ -128,14 +129,16 @@ export const Home = () => {
             className="main-content-explore"
             onClick={() => handleScrollToID('hire')}
           >
-            <p className="main-content-explore-text">Explore more</p>
+            <p className="main-content-explore-text">
+              {HomeText[router.locale].hero['main-content-explore-text']}
+            </p>
             <Arrow />
           </div>
         </div>
         <div className="actions">
           <Fade bottom>
             <h2 className="actions-title">
-              Join the Web3 Professional Movement!
+              {HomeText[router.locale].actions.title}
             </h2>
           </Fade>
           <div className="actions-cards">
@@ -143,8 +146,12 @@ export const Home = () => {
               <div className="actions-card-content">
                 <Approval />
               </div>
-              <p className="actions-card-title">Get Verified</p>
-              <p className="actions-card-description">Import your Reputation</p>
+              <p className="actions-card-title">
+                {HomeText[router.locale].actions.cards[0].title}
+              </p>
+              <p className="actions-card-description">
+                {HomeText[router.locale].actions.cards[0].description}
+              </p>
             </div>
             <div
               className="actions-card"
@@ -153,9 +160,11 @@ export const Home = () => {
               <div className="actions-card-content">
                 <Explore />
               </div>
-              <p className="actions-card-title">Explore</p>
+              <p className="actions-card-title">
+                {HomeText[router.locale].actions.cards[1].title}
+              </p>
               <p className="actions-card-description">
-                Krebited (pre-vetted) profiles
+                {HomeText[router.locale].actions.cards[1].description}
               </p>
             </div>
             <div
@@ -165,9 +174,11 @@ export const Home = () => {
               <div className="actions-card-content">
                 <Community />
               </div>
-              <p className="actions-card-title">Join</p>
+              <p className="actions-card-title">
+                {HomeText[router.locale].actions.cards[2].title}
+              </p>
               <p className="actions-card-description">
-                The Krebiters Community
+                {HomeText[router.locale].actions.cards[2].description}
               </p>
             </div>
             <div
@@ -177,22 +188,24 @@ export const Home = () => {
               <div className="actions-card-content">
                 <Token />
               </div>
-              <p className="actions-card-title">Issue</p>
+              <p className="actions-card-title">
+                {HomeText[router.locale].actions.cards[3].title}
+              </p>
               <p className="actions-card-description">
-                Encripted Verifiable Credentials
+                {HomeText[router.locale].actions.cards[3].description}
               </p>
             </div>
-
             <div className="actions-card" onClick={() => handleRoute('/posts')}>
               <div className="actions-card-content">
                 <Deal />
               </div>
-              <p className="actions-card-title">Deal</p>
+              <p className="actions-card-title">
+                {HomeText[router.locale].actions.cards[4].title}
+              </p>
               <p className="actions-card-description">
-                Offer/Hire professional services
+                {HomeText[router.locale].actions.cards[4].description}
               </p>
             </div>
-
             <div
               className="actions-card"
               onClick={() => handleRoute('https://docs.krebit.id/', true)}
@@ -200,9 +213,11 @@ export const Home = () => {
               <div className="actions-card-content">
                 <Code />
               </div>
-              <p className="actions-card-title">Build</p>
+              <p className="actions-card-title">
+                {HomeText[router.locale].actions.cards[5].title}
+              </p>
               <p className="actions-card-description">
-                Portable reputation in your dApp
+                {HomeText[router.locale].actions.cards[5].description}
               </p>
             </div>
           </div>
@@ -210,7 +225,7 @@ export const Home = () => {
         <div id="hire" className="decentralized">
           <Fade bottom>
             <h2 className="decentralized-title">
-              Find the most Krebited Talent!
+              {HomeText[router.locale].hire.title}
             </h2>
           </Fade>
           <Fade bottom>
@@ -218,11 +233,11 @@ export const Home = () => {
               <div className="decentralized-users-sort-menu">
                 <input
                   className="decentralized-users-sort-menu-input"
-                  placeholder="Search by credential"
+                  placeholder={HomeText[router.locale].hire.input}
                 />
                 <div className="decentralized-users-sort-menu-option-menu">
                   <p className="decentralized-users-sort-menu-option-menu-text">
-                    Reputation
+                    {HomeText[router.locale].hire['sort-menu']}
                   </p>
                   <Arrow />
                 </div>
@@ -301,7 +316,7 @@ export const Home = () => {
                 <div className="decentralized-users-list-button">
                   <Button
                     onClick={() => handleRoute('/explore')}
-                    text="Explore Krebited Profiles"
+                    text={HomeText[router.locale].hire['list-button']}
                   />
                 </div>
               </div>
@@ -313,7 +328,7 @@ export const Home = () => {
             <div className="private-image private-image-first"></div>
             <div className="private-content">
               <h3 className="private-content-title">
-                Smooth access to pre-vetted talent, certified by trusted issuers
+                {HomeText[router.locale].private.title}
               </h3>
               <PrivateOptionQuestion isExtended={isExtended === 0}>
                 <div
@@ -321,12 +336,12 @@ export const Home = () => {
                   onClick={() => handleExtended(0)}
                 >
                   <p className="questions-option-title">
-                    One click skill matching
+                    {HomeText[router.locale].private.questions[0].title}
                   </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Contact pre-vetted candidates.
+                  {HomeText[router.locale].private.questions[0].description}
                 </p>
               </PrivateOptionQuestion>
               <PrivateOptionQuestion isExtended={isExtended === 1}>
@@ -335,12 +350,12 @@ export const Home = () => {
                   onClick={() => handleExtended(1)}
                 >
                   <p className="questions-option-title">
-                    Reach out to undiscovered gems
+                    {HomeText[router.locale].private.questions[1].title}
                   </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Discover candidates you might be ignoring/missing.
+                  {HomeText[router.locale].private.questions[1].description}
                 </p>
               </PrivateOptionQuestion>
               <PrivateOptionQuestion isExtended={isExtended === 2}>
@@ -349,17 +364,17 @@ export const Home = () => {
                   onClick={() => handleExtended(2)}
                 >
                   <p className="questions-option-title">
-                    Get rid of bias in your hiring process
+                    {HomeText[router.locale].private.questions[2].title}
                   </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Hire pseudonymous talent based on pre-vetted merit.
+                  {HomeText[router.locale].private.questions[2].description}
                 </p>
               </PrivateOptionQuestion>
               <div className="private-button">
                 <Button
-                  text="Reserve your Recruiter Profile"
+                  text={HomeText[router.locale].private.button}
                   onClick={() => {
                     window.open('https://d3x2s82dzfa.typeform.com/to/B63Gz2v0');
                   }}
@@ -371,7 +386,7 @@ export const Home = () => {
         <Fade bottom>
           <div className="brands">
             <p className="brands-title">
-              Integrated with the best Web3 partners
+              {HomeText[router.locale].brands.title}
             </p>
             <div className="brands-images">
               <div
@@ -423,7 +438,9 @@ export const Home = () => {
         </Fade>
         <div className="people">
           <Fade bottom>
-            <h2 className="people-title">Passing the vibe check!</h2>
+            <h2 className="people-title">
+              {HomeText[router.locale].people.title}
+            </h2>
           </Fade>
           <div className="people-tweets">
             {constants.DEFAULT_TWEET_PEOPLE.map((tweet, index) => (
@@ -465,27 +482,26 @@ export const Home = () => {
             <div className="private-image private-image-second"></div>
             <div className="private-content">
               <h3 className="private-content-title">
-                Consolidate and own your Identity and Reputation
+                {HomeText[router.locale].identity.title}
               </h3>
               <p className="private-content-description">
-                Today you have to build your reputation on each platform every
-                time. How can we unlock reputation from centralized platforms?
+                {HomeText[router.locale].identity.descriptions[0]}
               </p>
               <p className="private-content-description">
-                With Krebit you can apply to jobs with your Credentials, not
-                filling endless forms.
+                {HomeText[router.locale].identity.descriptions[1]}
               </p>
               <PrivateOptionQuestion isExtended={isExtended === 3}>
                 <div
                   className="questions-option-header"
                   onClick={() => handleExtended(3)}
                 >
-                  <p className="questions-option-title">Portable</p>
+                  <p className="questions-option-title">
+                    {HomeText[router.locale].identity.questions[0].title}
+                  </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Give access to dApps that want to check your existing
-                  reputation.
+                  {HomeText[router.locale].identity.questions[0].description}
                 </p>
               </PrivateOptionQuestion>
               <PrivateOptionQuestion isExtended={isExtended === 4}>
@@ -493,12 +509,13 @@ export const Home = () => {
                   className="questions-option-header"
                   onClick={() => handleExtended(4)}
                 >
-                  <p className="questions-option-title">Privacy-Preserving</p>
+                  <p className="questions-option-title">
+                    {HomeText[router.locale].identity.questions[1].title}
+                  </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Show your talent to the world, without losing your private
-                  life.
+                  {HomeText[router.locale].identity.questions[1].description}
                 </p>
               </PrivateOptionQuestion>
               <PrivateOptionQuestion isExtended={isExtended === 5}>
@@ -506,12 +523,13 @@ export const Home = () => {
                   className="questions-option-header"
                   onClick={() => handleExtended(5)}
                 >
-                  <p className="questions-option-title">Decentralized</p>
+                  <p className="questions-option-title">
+                    {HomeText[router.locale].identity.questions[2].title}
+                  </p>
                   <Arrow />
                 </div>
                 <p className="questions-option-description">
-                  Krebit's protocol makes Web3 Identity more trustworthy with
-                  community-verified credentials.
+                  {HomeText[router.locale].identity.questions[2].description}
                 </p>
               </PrivateOptionQuestion>
             </div>
@@ -521,11 +539,11 @@ export const Home = () => {
       <Footer>
         <div className="footer-image">
           <h2 className="footer-image-title">
-            Share your Reputation, keep your Privacy
+            {HomeText[router.locale].footer.title}
           </h2>
           <div className="footer-image-button">
             <Button
-              text="Join the Network!"
+              text={HomeText[router.locale].footer.button}
               primaryColor="cyan"
               secondaryColor="blueRibbon"
               onClick={handleOpenConnectWallet}
@@ -539,15 +557,15 @@ export const Home = () => {
               <Logo />
             </div>
             <p className="footer-content-left-text">
-              Your Reputation Passport for Better Job Matching.
-              <br />© {new Date().getFullYear()} Krebit ID LLC, All rights
-              reserved.
+              {HomeText[router.locale].footer['left-texts'][0]}
+              <br />© {new Date().getFullYear()}{' '}
+              {HomeText[router.locale].footer['left-texts'][1]}
             </p>
           </div>
           <div className="footer-content-right">
             <Link href="https://twitter.com/KrebitID" rel="noopener noreferrer">
               <a target="_blank" className="footer-content-right-option">
-                Twitter
+                {HomeText[router.locale].footer['right-items'][0]}
               </a>
             </Link>
             <Link
@@ -555,7 +573,7 @@ export const Home = () => {
               rel="noopener noreferrer"
             >
               <a target="_blank" className="footer-content-right-option">
-                Blog
+                {HomeText[router.locale].footer['right-items'][1]}
               </a>
             </Link>
             <Link
@@ -563,14 +581,18 @@ export const Home = () => {
               rel="noopener noreferrer"
             >
               <a target="_blank" className="footer-content-right-option">
-                Gitcoin Grant
+                {HomeText[router.locale].footer['right-items'][2]}
               </a>
             </Link>
             <Link href="/privacy">
-              <a className="footer-content-right-option">Privacy policy</a>
+              <a className="footer-content-right-option">
+                {HomeText[router.locale].footer['right-items'][3]}
+              </a>
             </Link>
             <Link href="/terms">
-              <a className="footer-content-right-option">Terms of use</a>
+              <a className="footer-content-right-option">
+                {HomeText[router.locale].footer['right-items'][4]}
+              </a>
             </Link>
           </div>
         </div>
