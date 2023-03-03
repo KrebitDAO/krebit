@@ -319,6 +319,40 @@ export const Wrapper = styled.div<IProps>`
         }
       }
 
+      .credential-form-html-input {
+        cursor: pointer;
+        height: 38px;
+        display: flex;
+        align-items: center;
+
+        & > input {
+          display: none;
+        }
+
+        .credential-form-html-input-label {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          cursor: pointer;
+
+          & > p {
+            margin: 0;
+            color: ${theme.colors.white}B3;
+            font-size: ${theme.fonts.base};
+            text-decoration: underline;
+          }
+
+          & > a {
+            margin: 0;
+            color: ${theme.colors.white}B3;
+            font-size: ${theme.fonts.base};
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
       .credential-issue-to {
         grid-area: issueTo;
         margin-top: 36px;

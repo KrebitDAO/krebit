@@ -632,7 +632,7 @@ export const CredentialsBuilder = () => {
           body:
             currentValues.type === 'job'
               ? `Job offer: ${jobDoc?.data?.title}\nCompany: ${jobDoc?.data?.entity} #hiring\nApply: https://krebit.id/posts?post_id=${streamId}`
-              : `Service included: ${jobDoc?.data?.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
+              : `Service offer: ${jobDoc?.data?.title}\nApply: https://krebit.id/posts?post_id=${streamId}`
         },
         streamId
       );
@@ -1050,6 +1050,19 @@ export const CredentialsBuilder = () => {
                             isDisabled={input.isDisabled}
                             isRequired={input.isRequired}
                           />
+                        );
+                      }
+
+                      if (input.type === 'html') {
+                        return (
+                          <div className="credential-form-html-input">
+                            <div
+                              className="credential-form-html-input-label"
+                              dangerouslySetInnerHTML={{
+                                __html: input.placeholder
+                              }}
+                            ></div>
+                          </div>
                         );
                       }
 

@@ -1,0 +1,222 @@
+{
+  "en": {
+    "hero": {
+      "title": "Professionals: Earn with your Talent and grow your Reputation",
+      "descriptions": [
+        "Proof your skills, import your existing achievements",
+        "Safe and fair Escrow payments",
+        "Earn with referrals inviting your trusted contacts"
+      ],
+      "buttons": {
+        "main-button": "Join the network!",
+        "main-line-button": "Web3 Native"
+      },
+      "main-content-explore-text": "Explore more"
+    },
+    "actions": {
+      "title": "Join the Web3 Professional Movement!",
+      "cards": [
+        {
+          "title": "Get Verified",
+          "description": "Import your Reputation"
+        },
+        {
+          "title": "Explore",
+          "description": "Krebited (pre-vetted) profiles"
+        },
+        {
+          "title": "Join",
+          "description": "The Krebiters Community"
+        },
+        {
+          "title": "Issue",
+          "description": "Encripted Verifiable Credentials"
+        },
+        {
+          "title": "Deal",
+          "description": "Offer/Hire professional services"
+        },
+        {
+          "title": "Build",
+          "description": "Portable reputation in your dApp"
+        }
+      ]
+    },
+    "hire": {
+      "title": "Find the most Krebited Talent!",
+      "input": "Search by credential",
+      "sort-menu": "Reputation",
+      "list-button": "Explore Krebited Profiles"
+    },
+    "private": {
+      "title": "Smooth access to pre-vetted talent, certified by trusted issuers",
+      "questions": [
+        {
+          "title": "One click skill matching",
+          "description": "Contact pre-vetted candidates."
+        },
+        {
+          "title": "Reach out to undiscovered gems",
+          "description": "Discover candidates you might be ignoring/missing."
+        },
+        {
+          "title": "Get rid of bias in your hiring process",
+          "description": "Hire pseudonymous talent based on pre-vetted merit."
+        }
+      ],
+      "button": "Reserve your Recruiter Profile"
+    },
+    "brands": {
+      "title": "Integrated with the best Web3 partners"
+    },
+    "people": {
+      "title": "Passing the vibe check!"
+    },
+    "identity": {
+      "title": "Consolidate and own your Identity and Reputation",
+      "descriptions": [
+        "Today you have to build your reputation on each platform every time. How can we unlock reputation from centralized platforms?",
+        "With Krebit you can apply to jobs with your Credentials, not filling out endless forms."
+      ],
+      "questions": [
+        {
+          "title": "Portable",
+          "description": "Give access to dApps that want to check your existing reputation."
+        },
+        {
+          "title": "Privacy-Preserving",
+          "description": "Show your talent to the world, without losing your private life."
+        },
+        {
+          "title": "Decentralized",
+          "description": "Krebit's protocol makes Web3 Identity more trustworthy with community-verified credentials."
+        }
+      ]
+    },
+    "footer": {
+      "title": "Share your Reputation, keep your Privacy",
+      "button": "Join the Network!",
+      "left-texts": [
+        "Your Reputation Passport for Better Job Matching.",
+        "Krebit ID LLC, All rights reserved."
+      ],
+      "right-items": [
+        "Twitter",
+        "Blog",
+        "Gitcoin Grant",
+        "Privacy policy",
+        "Terms of use"
+      ]
+    }
+  },
+  "es": {
+    "hero": {
+      "title": "Profesionales: Gana con tu Talento y haz crecer tu Reputación",
+      "descriptions": [
+        "Prueba tus habilidades, importa tus logros existentes",
+        "Pagos de depósito en garantía seguros y justos",
+        "Gana con referidos invitando a tus contactos de confianza"
+      ],
+      "buttons": {
+        "main-button": "Probar ahora!",
+        "main-line-button": "Web3 Nativo"
+      },
+      "main-content-explore-text": "Explorar más"
+    },
+    "actions": {
+      "title": "Unete al movimiento de profesionales Web3",
+      "cards": [
+        {
+          "title": "Vetificate",
+          "description": "Importa tu reputación"
+        },
+        {
+          "title": "Explorar",
+          "description": "Krebited perfiles (pre-vetted)"
+        },
+        {
+          "title": "Unirse",
+          "description": "Comunidad de Krebiters"
+        },
+        {
+          "title": "Publicar",
+          "description": "Credenciales encriptadas"
+        },
+        {
+          "title": "Tratos",
+          "description": "Ofrecer/Contratar servicios de profesionales"
+        },
+        {
+          "title": "Construir",
+          "description": "Reputación portable en tu dApp"
+        }
+      ]
+    },
+    "hire": {
+      "title": "Encuentra el mejor talento!",
+      "input": "Buscar por credencial",
+      "sort-menu": "Reputación",
+      "list-button": "Explorar perfiles"
+    },
+    "private": {
+      "title": "Fácil acceso a talento, certificado por emisores de confianza",
+      "questions": [
+        {
+          "title": "A un click emparejamiento de habilidades",
+          "description": "Contacta pre-examinado candidatos"
+        },
+        {
+          "title": "Llegar a gemas por descubrir",
+          "description": "Descubra candidatos que podría estar ignorando/perdiendo"
+        },
+        {
+          "title": "Deshazte del sesgo en tu proceso de contratación",
+          "description": "Contrate talentos seudónimos en función de los méritos previamente evaluados."
+        }
+      ],
+      "button": "Reserva tu perfil de reclutador"
+    },
+    "brands": {
+      "title": "Integrado con los mejores de Web3"
+    },
+    "people": {
+      "title": "Lo que otros están diciendo!"
+    },
+    "identity": {
+      "title": "Consolide y sea dueño de su Identidad y Reputación",
+      "descriptions": [
+        "Hoy tienes que construir tu reputación en cada plataforma cada vez. ¿Cómo podemos desbloquear la reputación de las plataformas centralizadas?",
+        "Con Krebit puedes aplicar a trabajos con tus Credenciales, sin llenar interminables formularios."
+      ],
+      "questions": [
+        {
+          "title": "Portátil",
+          "description": "Da acceso a dApps que quieran comprobar tu reputación existente."
+        },
+        {
+          "title": "Preservación de la privacidad",
+          "description": "Muestra tu talento al mundo, sin perder tu vida privada."
+        },
+        {
+          "title": "Descentralizado",
+          "description": "El protocolo de Krebit hace que Web3 Identity sea más confiable con credenciales verificadas por la comunidad."
+        }
+      ]
+    },
+    "footer": {
+      "title": "Comparta su Reputación, mantenga su Privacidad",
+      "button": "Probar ahora",
+      "left-texts": [
+        "Su Pasaporte de Reputación para una Mejor Concordancia Laboral.",
+        "Krebit ID LLC, Todos los derechos reservados."
+      ],
+      "right-items": [
+        "Twitter",
+        "Blog",
+        "Gitcoin Grant",
+        "Política de privacidad",
+        "Condiciones de uso"
+      ]
+    }
+  }
+}

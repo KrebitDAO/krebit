@@ -582,6 +582,19 @@ export const Messages = () => {
                       details => details?.did !== auth?.did
                     )?.length
               }
+              onClick={() =>
+                currentConversation?.recipients_details.filter(
+                  details => details?.did !== auth?.did
+                )?.length === 1
+                  ? push(
+                      `/${
+                        currentConversation?.recipients_details.filter(
+                          details => details?.did !== auth?.did
+                        )[0]?.did
+                      }`
+                    )
+                  : undefined
+              }
               hasSpecialSpace={false}
             >
               <div className="messages-box-item-images">
