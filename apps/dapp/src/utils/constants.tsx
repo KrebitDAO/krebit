@@ -327,8 +327,8 @@ const DEFAULT_SKILL_TAGS = [
     value: 'development'
   },
   {
-    text: 'JavaScript',
-    value: 'javascript'
+    text: 'p2p',
+    value: 'p2p'
   },
   {
     text: 'Business',
