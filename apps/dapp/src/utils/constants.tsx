@@ -311,20 +311,44 @@ const DEFAULT_SKILL_LANGUAGES = [
 
 const DEFAULT_SKILL_TAGS = [
   {
-    text: 'React.js',
-    value: 'react.js'
+    text: 'Influencer',
+    value: 'influencer'
   },
   {
-    text: 'Node.js',
-    value: 'node.js'
+    text: 'Design',
+    value: 'design'
   },
   {
-    text: 'Customer service',
-    value: 'customer-service'
+    text: 'Marketing',
+    value: 'marketing'
   },
   {
-    text: 'Amazon Web Services',
-    value: 'amazon-web-services'
+    text: 'Development',
+    value: 'development'
+  },
+  {
+    text: 'JavaScript',
+    value: 'javascript'
+  },
+  {
+    text: 'Business',
+    value: 'business'
+  },
+  {
+    text: 'Video',
+    value: 'video'
+  },
+  {
+    text: 'Audio',
+    value: 'audio'
+  },
+  {
+    text: 'Music',
+    value: 'music'
+  },
+  {
+    text: 'Lifestyle',
+    value: 'lifestyle'
   }
 ];
 
