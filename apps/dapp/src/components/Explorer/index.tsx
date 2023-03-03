@@ -55,16 +55,16 @@ interface IInformation {
 export const initialSearchTypes = [
   {
     text: 'Services',
-    value: 'service',
+    value: 'services',
     orbisTag: 'krebit-service'
   },
   {
     text: 'Profiles',
-    value: 'profile'
+    value: 'profiles'
   },
   {
     text: 'Jobs',
-    value: 'job',
+    value: 'jobs',
     orbisTag: 'krebit-job'
   }
 ];
@@ -213,7 +213,7 @@ export const Explorer = (props: IProps) => {
         setCurrentPage(DEFAULT_CURRENT_PAGE);
       }
 
-      if (type === 'profile') {
+      if (type === 'profiles') {
         const totalAccounts = await Krebit.lib.graph.totalAccountsQuery({
           first: 1000
         });
@@ -616,12 +616,12 @@ export const Explorer = (props: IProps) => {
           ) : information?.cards?.length > 0 ? (
             <div
               className={
-                searchType === 'profile'
+                searchType === 'profiles'
                   ? 'explorer-cards'
                   : 'explorer-cards-services'
               }
             >
-              {searchType === 'profile'
+              {searchType === 'profiles'
                 ? information?.cards.map((card, index) => (
                     <Link href={card.href} key={index}>
                       <ProfileCard
