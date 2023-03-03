@@ -52,7 +52,9 @@ const MENU_OPTIONS = (locale: string) => [
     href: '/create',
     id: 'menu-create',
     icon: <Add />,
-    isPrivate: true
+    isPrivate: true,
+    badgeText: LayoutText[locale]['badge-texts'][1],
+    badgeColor: 'blueRibbon'
   },
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][3],
