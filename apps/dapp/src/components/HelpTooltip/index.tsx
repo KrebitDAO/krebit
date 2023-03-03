@@ -17,7 +17,8 @@ export const HelpTooltip = (props: IProps) => {
     tooltipProps,
     backProps,
     isLastStep,
-    locale
+    locale,
+    size
   } = props;
 
   return (
@@ -27,6 +28,7 @@ export const HelpTooltip = (props: IProps) => {
           <Close />
         </div>
       </div>
+      <div className="help-tooltip-title">{step?.title}</div>
       <p className="help-tooltip-content">{step?.content}</p>
       <div className="help-tooltip-footer">
         {index > 0 && !isLastStep ? (
@@ -36,7 +38,7 @@ export const HelpTooltip = (props: IProps) => {
         ) : null}
         {!isLastStep && (
           <button className="help-tooltip-button background" {...primaryProps}>
-            {UsernameText[locale]['step-next']}
+            ({index}/{size}) {UsernameText[locale]['step-next']}
           </button>
         )}
         {isLastStep && (

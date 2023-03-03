@@ -5,100 +5,94 @@
     "step-close": "Close",
     "steps": [
       {
-        "content": "Let's begin our journey!",
+        "title": "Welcome to Krebit!",
+        "content": "We've prepared a quick tour to help you get started. Let's begin our journey!",
         "placement": "center",
         "target": "body"
       },
       {
-        "content":
-          "You can edit your profile picture, name and description!",
+        "title": "Portable Identity",
+        "content": "You can edit your Web3 profile picture, name and description!",
         "target": ".profile-buttons-container"
       },
       {
-        "content":
-          "Verify your personhood credentials like Github, Discord and Twitter!",
+        "title": "Are you a Robot?",
+        "content": "Proof that you're a real person, and verify you Email to get notifications!",
         "target": ".person-header"
       },
       {
-        "content":
-          "Make reviews, so everyone can know how really good you are!",
+        "title": "Own your Reviews",
+        "content": "Create and receive reviews, so everyone can know how really good you are!",
         "target": "#review-header"
       },
       {
-        "content":
-          "Verify your work credentials like Github collaborations and Dework tasks!",
+        "title": "Proof your Skills",
+        "content": "Verify your work credentials, like Github collaborations and completed projects!",
         "target": "#work-header"
       },
       {
-        "content":
-          "Verify your community credentials like Guild partnership and being part of an organization!",
+        "title": "Proof you are a Community Admin",
+        "content": "Verify your community credentials like Guild roles and being part of an organization!",
         "target": "#community-header"
       },
       {
-        "content":
-          "Also you can verify your education, work or even make deals!",
+        "title": "Engage with the Community",
+        "content": "Offer your Service or post a Job. You can also referr and create credentials for other members!",
         "target": "#issue-header"
       },
       {
-        "content":
-          "This is your money! Everytime you make a deal or refer someone, you will receive MATIC!",
+        "title": "Work to Earn, Reffer to Earn",
+        "content": "This is your money! Everytime you make a deal or refer someone, you will receive $ MATIC!",
         "target": ".payments-header"
       },
       {
-        "content":
-          "Last but not least, these are your Krebits. Make them grow!",
+        "title": "Tour Complete!",
+        "content": "Last but not least, these are your Krebits. Make your reputation grow!",
         "target": ".profile-info-token"
       }
     ]
   },
-  "es" : {
+  "es": {
     "step-next": "Siguiente",
     "step-back": "Volver",
     "step-close": "Cerrar",
     "steps": [
       {
-        "content": "Comencemos este viaje!",
+        "title": "¡Te damos la bienvenida a Krebit!",
+        "content": "Preparamos un tour muy rápido para ayudarte con los primeros pasos. Comencemos este viaje!",
         "placement": "center",
         "target": "body"
       },
       {
-        "content":
-          "Puedes cambiar tu foto de perfil, nombre y descripción!",
+        "content": "Puedes cambiar tu foto de perfil, nombre y descripción!",
         "target": ".profile-buttons-container"
       },
       {
-        "content":
-          "Verifica tus credenciales personales como Github, Discord y Twitter!",
+        "content": "Prueba que eres una persona real y verifica tu Email para recibir notificaciones!",
         "target": ".person-header"
       },
       {
-        "content":
-          "Has reseñas, así todos sabran que tan bueno eres!",
+        "content": "Crea y recibe reseñas, así todos sabran que tan bueno eres!",
         "target": "#review-header"
       },
       {
-        "content":
-          "Verifica tus credenciales de trabajo, como colaboraciones en Github y tareas de Dework!",
+        "content": "Verifica tus credenciales de de trabajo, como colaboraciones en Github o proyectos completados!",
         "target": "#work-header"
       },
       {
-        "content":
-          "Verifica tus credenciales de sociedad de Guild o que eres parte de una organización!",
+        "content": "Verifica tus credenciales de comunidad, como roles en Guild o que eres parte de una organización!",
         "target": "#community-header"
       },
       {
-        "content":
-          "Además, puedes verificar tu educación, trabajo o incluso hacer negocios!",
+        "content": "Ofrece tu Servicio o publica una oferta Laboral. También puedes crear credenciales para otros miembros!",
         "target": "#issue-header"
       },
       {
-        "content":
-          "Este es tu dinero! Cada vez que hagas un negocio o refieras a alguien, recibirás MATIC!",
+        "content": "Este es tu dinero! Cada vez que hagas un negocio o refieras a alguien, recibirás $ MATIC!",
         "target": ".payments-header"
       },
       {
-        "content":
-          "Por ultimo, estos son tus Krebits. Hazlos crecer!",
+        "content": "Por último, estos son tus Krebits. Haz crecer tu reputación!",
         "target": ".profile-info-token"
       }
     ]

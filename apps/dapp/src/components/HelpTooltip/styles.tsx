@@ -29,6 +29,19 @@ export const Wrapper = styled.div`
       }
     }
 
+    .help-tooltip-title {
+      margin: 20px 5px;
+      color: ${theme.colors.white};
+      font-size: ${theme.fonts.lg};
+      font-weight: bold;
+
+      @media (min-width: ${theme.screens.lg}) {
+        margin: 30px;
+        font-size: ${theme.fonts.xl};
+        font-weight: bold;
+      }
+    }
+
     .help-tooltip-content {
       margin: 20px 5px;
       color: ${theme.colors.white};

@@ -730,6 +730,12 @@ export const SERVICES_INITIAL_STATE: IState[] = [
           ]
         },
         {
+          type: 'html',
+          name: 'help',
+          placeholder:
+            '<a target="_blank" href="https://www.canva.com/design/DAFb4137Jkw/WQnRK8BHIk8M3INTDlVAvw/view?utm_content=DAFb4137Jkw&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview">Check our Service Image Templates for inspiration</a>'
+        },
+        {
           type: 'upload',
           name: 'image',
           placeholder: 'Image / Logo'
@@ -738,6 +744,7 @@ export const SERVICES_INITIAL_STATE: IState[] = [
           type: 'string',
           name: 'salaryRange',
           placeholder: 'Price / Rate',
+          endAdornment: 'MATIC',
           validationType: 'string'
         },
         {
