@@ -62,9 +62,9 @@ export const NotifyController = async (
 
         if (profileEmails?.length > 0) {
           console.log('Emails:', profileEmails.length);
-          const emailvalue = await Issuer.decryptClaimValue(profileEmails[0]);
+          const emailvalue = await Issuer.decryptCredential(profileEmails[0]);
           console.log('Email value:', emailvalue);
-          to = to.concat(emailvalue.email);
+          if (emailvalue?.email) to = to.concat(emailvalue.email);
         }
       } else if (recipient.includes('@')) {
         to = [recipient];
