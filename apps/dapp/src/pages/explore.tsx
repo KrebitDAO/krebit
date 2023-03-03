@@ -13,12 +13,14 @@ const ExplorePage = (props: IProps) => {
 };
 
 export async function getServerSideProps(context: NextPageContext) {
-  const tab = parseInt(context.query?.tab as string, 10);
+  const tab = initialSearchTypes.findIndex(
+    values => values.value === context?.query?.tab
+  );
 
   return {
     props: {
       query: {
-        tab: tab >= 0 && tab <= initialSearchTypes?.length - 1 ? tab : null,
+        tab: tab !== -1 ? tab : null,
         skill: context?.query?.skill || null
       }
     }

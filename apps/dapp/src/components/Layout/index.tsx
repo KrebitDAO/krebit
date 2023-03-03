@@ -38,17 +38,19 @@ const MENU_OPTIONS = (locale: string) => [
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][0],
     href: '/posts',
+    id: 'menu-posts',
     icon: <Home />
   },
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][1],
     href: '/explore',
-    icon: <Explore />,
-    badgeText: LayoutText[locale]['badge-texts'][0]
+    id: 'menu-explore',
+    icon: <Explore />
   },
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][2],
     href: '/create',
+    id: 'menu-create',
     icon: <Add />,
     isPrivate: true,
     badgeText: LayoutText[locale]['badge-texts'][1],
@@ -57,6 +59,7 @@ const MENU_OPTIONS = (locale: string) => [
   {
     title: LayoutText[locale]['nav-bar']['menu-options'][3],
     href: '/messages',
+    id: 'menu-messages',
     icon: <Send />,
     isPrivate: true
   }
@@ -271,7 +274,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                 .map((content, index) => (
                   <Link href={content.href} key={index}>
                     <NavBarOption isActive={asPath.includes(content.href)}>
-                      <div className="option-icon">
+                      <div id={content.id} className="option-icon">
                         {content.title ===
                         LayoutText[locale]['nav-bar']['menu-options'][3] ? (
                           <Badge
@@ -344,7 +347,7 @@ export const Layout: FunctionComponent<IProps> = props => {
                           handleNavBarDesktopOptionHovered(undefined)
                         }
                       >
-                        <div className="option-icon">
+                        <div id={content.id} className="option-icon">
                           {content.title ===
                           LayoutText[locale]['nav-bar']['menu-options'][3] ? (
                             <Badge
