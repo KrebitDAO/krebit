@@ -482,18 +482,15 @@ export const SuggestionBoxes = styled.div`
     }
 
     .suggestion-boxes-container {
-      max-width: 340px;
+      max-width: -webkit-fill-available;
+      width: fit-content;
       overflow-x: auto;
-
-      @media (min-width: ${theme.screens.lg}) {
-        max-width: 577px;
-        width: fit-content;
-      }
 
       .suggestion-boxes {
         display: grid;
         grid-auto-flow: column;
         grid-gap: 10px;
+        margin-bottom: 10px;
 
         .suggestion-box {
           border: 1px solid ${theme.colors.melrose};

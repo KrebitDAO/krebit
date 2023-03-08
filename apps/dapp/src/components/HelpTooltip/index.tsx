@@ -28,7 +28,7 @@ export const HelpTooltip = (props: IProps) => {
           <Close />
         </div>
       </div>
-      <div className="help-tooltip-title">{step?.title}</div>
+      <p className="help-tooltip-title">{step?.title}</p>
       <p className="help-tooltip-content">{step?.content}</p>
       <div className="help-tooltip-footer">
         {index > 0 && !isLastStep ? (

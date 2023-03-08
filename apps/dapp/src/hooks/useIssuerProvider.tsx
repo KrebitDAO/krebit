@@ -1,13 +1,12 @@
-import { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState, useEffect, useContext } from 'react';
 import Krebit from '@krebitdao/reputation-passport';
 import LitJsSdk from '@lit-protocol/sdk-browser';
 
-import { getCredential, generateUID, constants } from 'utils';
+import { getCredential, generateUID, constants, sendNotification } from 'utils';
+import { GeneralContext, IWalletInformation } from 'context';
 
 // types
 import { IIssuerParams } from 'utils/getIssuers';
-import { IWalletInformation } from 'context';
-import { W3CCredential } from '@krebitdao/eip712-vc';
 
 interface IClaimValues {
   email: string;
@@ -56,6 +55,11 @@ export const useIssuerProvider = (props: IProps) => {
   const [currentStamp, setCurrentStamp] = useState<Object | undefined>();
   const [currentMint, setCurrentMint] = useState<Object | undefined>();
   const [currentIssuer, setCurrentIssuer] = useState<IIssuerParams>();
+  const {
+    auth,
+    walletInformation: { orbis },
+    profileInformation: { profile }
+  } = useContext(GeneralContext);
 
   useEffect(() => {
     if (!window) return;
@@ -196,12 +200,23 @@ export const useIssuerProvider = (props: IProps) => {
       return;
     }
 
+    setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
+
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `${profile?.name} has claimed a credential`,
+        content: `${profile?.name} has claimed a credential of type ${delegatedCredential?.visualInformation?.credentialType} from you! The credential is ${delegatedCredential?.visualInformation?.metadata?.title}`,
+        recipients: [delegatedCredential?.issuer?.ethereumAddress]
+      }
+    });
+
     delete delegatedCredential.credential;
     delete delegatedCredential.value;
     delete delegatedCredential.visualInformation;
     console.log('delegatedCredential', delegatedCredential);
-    setStatus('credential_pending');
-    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     try {
       const session = window.localStorage.getItem('did-session');
@@ -267,12 +282,23 @@ export const useIssuerProvider = (props: IProps) => {
 
     if (!isValid) return;
 
+    setStatus('credential_pending');
+    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
+
+    await sendNotification({
+      orbis,
+      authenticatedDID: auth.did,
+      body: {
+        subject: `${profile?.name} has claimed a credential`,
+        content: `${profile?.name} has claimed a credential of type ${receivedCredential?.visualInformation?.credentialType} from you! The credential is ${receivedCredential?.visualInformation?.metadata?.title}`,
+        recipients: [receivedCredential?.issuer?.ethereumAddress]
+      }
+    });
+
     delete receivedCredential.credential;
     delete receivedCredential.value;
     delete receivedCredential.visualInformation;
     console.log('receivedCredential', receivedCredential);
-    setStatus('credential_pending');
-    setStatusMessage(constants.DEFAULT_MESSAGES_FOR_PROVIDERS.INITIAL);
 
     try {
       const session = window.localStorage.getItem('did-session');

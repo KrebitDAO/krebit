@@ -21,9 +21,10 @@ export const Wrapper = styled.div`
       border-radius: 15px;
       box-shadow: ${theme.shadows.smallest};
       padding: 26px 18px;
-      width: 577px;
+      width: 100%;
 
       @media (min-width: ${theme.screens.lg}) {
+        width: 577px;
         padding: 36px 28px;
       }
 

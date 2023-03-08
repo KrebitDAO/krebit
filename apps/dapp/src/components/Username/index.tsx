@@ -545,7 +545,8 @@ export const Username = () => {
     <>
       {profile?.reputation === 0 &&
       auth?.status === 'resolved' &&
-      auth?.isAuthenticated ? (
+      auth?.isAuthenticated &&
+      currentDIDFromURL === auth?.did ? (
         <JoyRideNoSSR
           tooltipComponent={props => <HelpTooltip {...props} locale={locale} />}
           continuous
@@ -917,7 +918,6 @@ export const Username = () => {
                     currentFilterOption !== 'overview' &&
                     currentFilterOption !== 'Issue'
                   }
-                  handleProfile={handleProfile}
                 />
               </div>
             </div>
