@@ -5,10 +5,14 @@ const substring = (value: string, length = 20, isAddress = false) => {
   if (isAddress) {
     const address = getAddressFromDid(value)?.address;
 
+    if (!address) {
+      return value?.substring(0, length) + '...';
+    }
+
     return (
-      address.substring(0, length) +
+      address?.substring(0, length) +
       '...' +
-      address.substring(address.length - 4)
+      address?.substring(address?.length - 4)
     );
   }
 
