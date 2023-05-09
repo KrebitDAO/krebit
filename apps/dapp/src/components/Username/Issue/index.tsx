@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { Wrapper } from '../Community/styles';
@@ -13,7 +13,7 @@ import { CREDENTIALS_INITIAL_STATE } from '../../Credentials/initialState';
 
 // types
 import { Passport } from '@krebitdao/reputation-passport/dist/core/Passport';
-import { IProfile, ICredential } from 'utils/normalizeSchema';
+import { ICredential } from 'utils/normalizeSchema';
 
 interface IProps {
   isAuthenticated: boolean;
@@ -22,7 +22,6 @@ interface IProps {
   currentFilterOption: string;
   onFilterOption: (value: string) => void;
   isHidden: boolean;
-  handleProfile: Dispatch<SetStateAction<IProfile>>;
 }
 
 const DEFAULT_CREDENTIAL_TYPE = 'Issuer';
@@ -34,8 +33,7 @@ export const Issue = (props: IProps) => {
     publicPassport,
     currentFilterOption,
     onFilterOption,
-    isHidden,
-    handleProfile
+    isHidden
   } = props;
   const [status, setStatus] = useState('idle');
   const [issues, setIssues] = useState<any[]>([]);
@@ -60,11 +58,6 @@ export const Issue = (props: IProps) => {
 
   const getInformation = async () => {
     setStatus('pending');
-    // This is a temporary solution to determine if this component is loading or not, passing skills as undefined
-    handleProfile(prevValues => ({
-      ...prevValues,
-      skills: undefined
-    }));
 
     try {
       const credentials = (await publicPassport.getIssued())
@@ -125,13 +118,6 @@ export const Issue = (props: IProps) => {
         ?.filter(credential => !credential?.credentialSubject?.value?.removed);
 
       setIssues(currentCredentials);
-      handleProfile(prevValues => ({
-        ...prevValues,
-        skills:
-          (prevValues.skills || [])?.concat(
-            currentCredentials.flatMap(credential => credential?.type)
-          ) || []
-      }));
       setStatus('resolved');
     } catch (error) {
       console.error(error);
